@@ -80,8 +80,13 @@ export const heroTextReveal: TextRevealSettings = {
  * horizontal position and width throughout.
  */
 export const patternField = {
-  /** Number of discrete arrangements cycled through. */
-  stateCount: 4,
+  /**
+   * Two alternating arrangements. Every bar flips on each tick — one set opens
+   * as the other closes — which is what keeps the field continuously in motion.
+   * Assigning on/off randomly per state left some bars on (or off) for several
+   * states running, so parts of the field sat still.
+   */
+  stateCount: 2,
 
   /**
    * Milliseconds each state is held before switching. From the owner's Framer
@@ -90,11 +95,23 @@ export const patternField = {
   stateInterval: 2400,
 
   /**
-   * Spring for the morph between states. The owner's Framer transition is a
-   * time-based spring: 2s, no delay, no bounce. Framer Motion expresses that as
-   * a duration-based spring with `bounce: 0`.
+   * Open and close share one symmetric ease, so a bar collapses exactly as it
+   * grew.
+   *
+   * This deliberately is not a spring. A spring approaches its target
+   * asymptotically, so `scaleY` crawls through the last fraction and leaves a
+   * visible hairline before finally vanishing — the trailing line in the
+   * owner's screenshot. A bezier lands on zero cleanly. The curve is the same
+   * 0.3/0.7 pair used by the text reveal.
    */
-  spring: { type: "spring", duration: 2, bounce: 0 },
+  transition: { duration: 2, ease: [0.3, 0, 0.7, 1] },
+
+  /**
+   * Maximum milliseconds a bar's start is offset by. Without it every bar flips
+   * in lockstep and the field blinks; with it, bars come and go in a ripple.
+   * Set to 0 for a perfectly synchronised flip.
+   */
+  maxStagger: 420,
 
   /**
    * Horizontal rows the field is split into, matching the `1st`..`7th` groups
@@ -118,11 +135,11 @@ export const patternField = {
   maxTarget: 1,
 
   /**
-   * Chance a given bar is switched on in a given state. This is what makes the
-   * arrangement appear to change between states: bars hold their position and
-   * width, and only their on/off state differs.
+   * Chance a bar starts in the open half of the alternation. Bars hold their
+   * position and width throughout — only their open/closed state changes — so
+   * the arrangement appears to rearrange without anything actually moving.
    */
-  onProbability: 0.45,
+  openFirstProbability: 0.5,
 
   /** Bar widths in px, sampled per bar. Matches the Figma fixed widths. */
   widths: [14, 30, 48, 56],

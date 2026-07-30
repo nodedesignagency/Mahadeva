@@ -51,17 +51,24 @@ const BAR_COLORS = [
 type Bar = {
   width: number;
   color: string;
-  /** Which edge of the row the bar grows from. */
-  origin: "top" | "bottom";
-  /** Height as a fraction of the row when switched on. */
+  /** Height as a fraction of the row when open. */
   target: number;
-  /** Whether the bar is switched on, per state. */
-  on: boolean[];
+  /** Which half of the alternation this bar is open on. */
+  phase: 0 | 1;
+  /** Milliseconds this bar's flip is offset by. */
+  stagger: number;
   marginLeft: number;
 };
 
 type Row = {
   bars: Bar[];
+  /**
+   * Which edge every bar in this row grows from. Deliberately per row rather
+   * than per bar: mixing anchors inside a row puts some bars against the top
+   * edge and others against the bottom, which reads as two rows instead of one
+   * and made seven rows look like twelve.
+   */
+  origin: "top" | "bottom";
   insetLeft: number;
   insetRight: number;
 };
@@ -73,34 +80,29 @@ function generateRows(seed: number): Row[] {
     barsPerRow,
     minTarget,
     maxTarget,
-    onProbability,
+    openFirstProbability,
     widths,
-    stateCount,
     maxBarOffset,
     maxRowInset,
+    maxStagger,
   } = patternField;
 
   return Array.from({ length: rows }, () => {
     const count =
       barsPerRow.min + Math.floor(random() * (barsPerRow.max - barsPerRow.min + 1));
 
-    const bars = Array.from({ length: count }, () => {
-      const on = Array.from({ length: stateCount }, () => random() < onProbability);
-      // A bar that is never on would just be dead markup, so guarantee one.
-      if (!on.some(Boolean)) on[Math.floor(random() * stateCount)] = true;
-
-      return {
-        width: widths[Math.floor(random() * widths.length)],
-        color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
-        origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
-        target: minTarget + random() * (maxTarget - minTarget),
-        on,
-        marginLeft: Math.round(random() * maxBarOffset),
-      };
-    });
+    const bars = Array.from({ length: count }, () => ({
+      width: widths[Math.floor(random() * widths.length)],
+      color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
+      target: minTarget + random() * (maxTarget - minTarget),
+      phase: (random() < openFirstProbability ? 0 : 1) as 0 | 1,
+      stagger: Math.round(random() * maxStagger),
+      marginLeft: Math.round(random() * maxBarOffset),
+    }));
 
     return {
       bars,
+      origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
       insetLeft: random() * maxRowInset,
       insetRight: random() * maxRowInset,
     };
@@ -117,7 +119,7 @@ export function PatternField({ side, className }: PatternFieldProps) {
   const reduced = useReducedMotion() ?? false;
   const [state, setState] = useState(0);
 
-  const { rows, stateCount, stateInterval, spring } = patternField;
+  const { rows, stateCount, stateInterval, transition } = patternField;
   const rowSet = useMemo(() => generateRows(patternField.seeds[side]), [side]);
 
   // Cycle through the arrangements. Held still under reduced motion.
@@ -142,25 +144,35 @@ export function PatternField({ side, className }: PatternFieldProps) {
             paddingRight: `${row.insetRight}%`,
           }}
         >
-          {row.bars.map((bar, barIndex) => (
-            <motion.span
-              key={barIndex}
-              // Trailing bars are dropped at narrower widths in CSS rather than
-              // by branching in JS, which would desync the SSR markup.
-              className="mh-bar block shrink-0"
-              style={{
-                width: `${bar.width}px`,
-                marginLeft: barIndex === 0 ? 0 : `${bar.marginLeft}px`,
-                background: bar.color,
-                transformOrigin: bar.origin,
-              }}
-              // `initial` renders inline during SSR, so the first paint already
-              // shows state 0 and nothing snaps on hydration.
-              initial={{ scaleY: bar.on[0] ? bar.target : 0 }}
-              animate={{ scaleY: bar.on[state] ? bar.target : 0 }}
-              transition={reduced ? { duration: 0 } : spring}
-            />
-          ))}
+          {row.bars.map((bar, barIndex) => {
+            // Strict alternation: every bar flips on every tick, so no part of
+            // the field ever sits still. Phase decides which half it opens on.
+            const open = (state + bar.phase) % 2 === 0;
+
+            return (
+              <motion.span
+                key={barIndex}
+                // Trailing bars are dropped at narrower widths in CSS rather
+                // than by branching in JS, which would desync the SSR markup.
+                className="mh-bar block shrink-0"
+                style={{
+                  width: `${bar.width}px`,
+                  marginLeft: barIndex === 0 ? 0 : `${bar.marginLeft}px`,
+                  background: bar.color,
+                  transformOrigin: row.origin,
+                }}
+                // `initial` renders inline during SSR, so the first paint
+                // already shows state 0 and nothing snaps on hydration.
+                initial={{ scaleY: bar.phase === 0 ? bar.target : 0 }}
+                animate={{ scaleY: open ? bar.target : 0 }}
+                transition={
+                  reduced
+                    ? { duration: 0 }
+                    : { ...transition, delay: bar.stagger / 1000 }
+                }
+              />
+            );
+          })}
         </div>
       ))}
     </div>
