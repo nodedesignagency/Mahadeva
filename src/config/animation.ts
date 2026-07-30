@@ -98,21 +98,40 @@ export const patternField = {
 
   /**
    * Horizontal rows the field is split into, matching the `1st`..`7th` groups
-   * in the Framer component (confirmed by the owner as 7). A bar occupies one
-   * row and grows within it, which is what keeps bars short relative to the
-   * viewport rather than spanning it.
+   * in the Framer component. Rows sit flush with no gap between them.
    */
   rows: 7,
 
-  /** Bar height as a fraction of its row, per state. */
-  minScale: 0.15,
-  maxScale: 1,
+  /**
+   * Bars per row, sampled per row. Each row lays its bars out side by side, so
+   * bars can never overlap — an earlier version positioned them at random
+   * offsets, which collided.
+   */
+  barsPerRow: { min: 5, max: 7 },
+
+  /**
+   * Each bar has a single target height, as a fraction of its row, and toggles
+   * between 0 and that target — never drifting between arbitrary values. A bar
+   * whose target is 1 reads as the full-height "100 → 0 → 100" case.
+   */
+  minTarget: 0.35,
+  maxTarget: 1,
+
+  /**
+   * Chance a given bar is switched on in a given state. This is what makes the
+   * arrangement appear to change between states: bars hold their position and
+   * width, and only their on/off state differs.
+   */
+  onProbability: 0.45,
 
   /** Bar widths in px, sampled per bar. Matches the Figma fixed widths. */
   widths: [14, 30, 48, 56],
 
-  /** Bars per side, by breakpoint. */
-  count: { desktop: 20, tablet: 15, mobile: 9 },
+  /** Extra left margin per bar, in px, to break up the rhythm within a row. */
+  maxBarOffset: 18,
+
+  /** Row inset as a percentage, sampled per row so bars do not line up column-wise. */
+  maxRowInset: 14,
 
   /**
    * Fixed PRNG seeds. These MUST stay constant — the field is generated during

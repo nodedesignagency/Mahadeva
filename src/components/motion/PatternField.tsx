@@ -6,25 +6,22 @@ import { patternField } from "@/config/animation";
 import { cn } from "@/lib/cn";
 
 /**
- * The signature background: a field of pastel bars that morph between a set of
- * fixed arrangements.
+ * The signature background: a field of pastel bars that switch on and off
+ * between a set of fixed arrangements.
  *
- * This mirrors how the original is authored in Framer. It is *not* a continuous
- * loop of bars growing from zero — there are N discrete variants
- * ("Animation State 1..N"), each a fixed arrangement, and Framer springs
- * between them on a timer. Each bar keeps its column and width; only its height
- * changes per state, which is what reads as the pattern rearranging itself.
+ * Structure mirrors the Framer component: seven flush horizontal rows, each
+ * holding five to seven bars laid out side by side. Because a row lays its bars
+ * out in normal flow rather than at absolute offsets, bars cannot overlap —
+ * which an earlier absolute-positioned version did.
  *
- * Two details matter for fidelity:
- *
- *  - Bars are sized relative to a *row*, not the whole field. The original's
- *    bars occupy roughly 5–22% of the hero, and treating the full height as the
- *    range makes them far too tall.
- *  - The morph is a duration-based spring (2s, no bounce), not an ease. A
- *    cubic-bezier here reads noticeably more mechanical.
+ * Motion: each bar has one target height and toggles between 0 and that target.
+ * It never drifts between arbitrary intermediate values. This is also what
+ * makes the arrangement appear to rearrange between states — every bar keeps
+ * its position and width, and only its on/off state changes, so bars appear to
+ * come and go rather than move.
  *
  * The bar set is generated from a fixed seed so server and client produce
- * identical markup — an unseeded source would be a hydration error.
+ * identical markup; an unseeded source would be a hydration error.
  */
 
 /** Mulberry32 — small, fast, deterministic for a given seed. */
@@ -52,33 +49,62 @@ const BAR_COLORS = [
 ] as const;
 
 type Bar = {
-  /** Horizontal position within the field, as a percentage. Fixed across states. */
-  left: number;
-  /** Which row the bar belongs to. */
-  row: number;
   width: number;
   color: string;
-  /** Which edge of its row the bar grows from. */
+  /** Which edge of the row the bar grows from. */
   origin: "top" | "bottom";
-  /** Height as a fraction of the row, one entry per state. */
-  scales: number[];
+  /** Height as a fraction of the row when switched on. */
+  target: number;
+  /** Whether the bar is switched on, per state. */
+  on: boolean[];
+  marginLeft: number;
 };
 
-function generateBars(seed: number, count: number): Bar[] {
-  const random = createRandom(seed);
-  const { rows, minScale, maxScale, widths, stateCount } = patternField;
+type Row = {
+  bars: Bar[];
+  insetLeft: number;
+  insetRight: number;
+};
 
-  return Array.from({ length: count }, () => ({
-    left: random() * 88,
-    row: Math.floor(random() * rows),
-    width: widths[Math.floor(random() * widths.length)],
-    color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
-    origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
-    scales: Array.from(
-      { length: stateCount },
-      () => minScale + random() * (maxScale - minScale),
-    ),
-  }));
+function generateRows(seed: number): Row[] {
+  const random = createRandom(seed);
+  const {
+    rows,
+    barsPerRow,
+    minTarget,
+    maxTarget,
+    onProbability,
+    widths,
+    stateCount,
+    maxBarOffset,
+    maxRowInset,
+  } = patternField;
+
+  return Array.from({ length: rows }, () => {
+    const count =
+      barsPerRow.min + Math.floor(random() * (barsPerRow.max - barsPerRow.min + 1));
+
+    const bars = Array.from({ length: count }, () => {
+      const on = Array.from({ length: stateCount }, () => random() < onProbability);
+      // A bar that is never on would just be dead markup, so guarantee one.
+      if (!on.some(Boolean)) on[Math.floor(random() * stateCount)] = true;
+
+      return {
+        width: widths[Math.floor(random() * widths.length)],
+        color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
+        origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
+        target: minTarget + random() * (maxTarget - minTarget),
+        on,
+        marginLeft: Math.round(random() * maxBarOffset),
+      };
+    });
+
+    return {
+      bars,
+      insetLeft: random() * maxRowInset,
+      insetRight: random() * maxRowInset,
+    };
+  });
 }
 
 type PatternFieldProps = {
@@ -91,9 +117,8 @@ export function PatternField({ side, className }: PatternFieldProps) {
   const reduced = useReducedMotion() ?? false;
   const [state, setState] = useState(0);
 
-  const { rows, count, stateCount, stateInterval, spring } = patternField;
-
-  const bars = useMemo(() => generateBars(patternField.seeds[side], count.desktop), [side, count.desktop]);
+  const { rows, stateCount, stateInterval, spring } = patternField;
+  const rowSet = useMemo(() => generateRows(patternField.seeds[side]), [side]);
 
   // Cycle through the arrangements. Held still under reduced motion.
   useEffect(() => {
@@ -102,35 +127,41 @@ export function PatternField({ side, className }: PatternFieldProps) {
     return () => clearInterval(id);
   }, [reduced, stateCount, stateInterval]);
 
-  const rowHeight = 100 / rows;
-
   return (
     <div
       aria-hidden="true"
       className={cn("pointer-events-none absolute inset-y-0 overflow-hidden", className)}
     >
-      {bars.map((bar, i) => (
-        <motion.span
-          key={i}
-          // Bars past the tablet/mobile budgets are dropped in CSS rather than
-          // by branching on viewport in JS, which would desync SSR markup.
-          data-over-tablet={i >= count.tablet ? "" : undefined}
-          data-over-mobile={i >= count.mobile ? "" : undefined}
-          className="absolute block will-change-transform data-[over-mobile]:hidden tablet:data-[over-mobile]:block tablet:data-[over-tablet]:hidden desktop:data-[over-tablet]:block"
+      {rowSet.map((row, rowIndex) => (
+        <div
+          key={rowIndex}
+          className="flex items-stretch justify-between"
           style={{
-            left: `${bar.left}%`,
-            top: `${bar.row * rowHeight}%`,
-            width: `${bar.width}px`,
-            height: `${rowHeight}%`,
-            background: bar.color,
-            transformOrigin: bar.origin,
+            height: `${100 / rows}%`,
+            paddingLeft: `${row.insetLeft}%`,
+            paddingRight: `${row.insetRight}%`,
           }}
-          // `initial` renders inline during SSR, so the first paint already
-          // shows state 0 and nothing snaps on hydration.
-          initial={{ scaleY: bar.scales[0] }}
-          animate={{ scaleY: bar.scales[state] }}
-          transition={reduced ? { duration: 0 } : spring}
-        />
+        >
+          {row.bars.map((bar, barIndex) => (
+            <motion.span
+              key={barIndex}
+              // Trailing bars are dropped at narrower widths in CSS rather than
+              // by branching in JS, which would desync the SSR markup.
+              className="mh-bar block shrink-0"
+              style={{
+                width: `${bar.width}px`,
+                marginLeft: barIndex === 0 ? 0 : `${bar.marginLeft}px`,
+                background: bar.color,
+                transformOrigin: bar.origin,
+              }}
+              // `initial` renders inline during SSR, so the first paint already
+              // shows state 0 and nothing snaps on hydration.
+              initial={{ scaleY: bar.on[0] ? bar.target : 0 }}
+              animate={{ scaleY: bar.on[state] ? bar.target : 0 }}
+              transition={reduced ? { duration: 0 } : spring}
+            />
+          ))}
+        </div>
       ))}
     </div>
   );
