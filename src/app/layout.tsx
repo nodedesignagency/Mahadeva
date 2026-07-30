@@ -19,10 +19,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang={siteConfig.lang} className={fontVariables}>
       <body className="min-h-dvh antialiased">
-        {/* Word-reveal headings render transparent and are animated in by JS.
-            Without JS they would never become visible, so force them here. */}
+        {/* Reveal headings render at their pre-reveal colour (transparent) and
+            are flipped by JS once the wipe covers them. Without JS they would
+            never become visible, so force the final colour here. */}
         <noscript>
-          <style>{`[data-word-reveal]{color:var(--color-fg)!important}`}</style>
+          <style>{`[data-reveal-word]{color:var(--color-fg)!important}`}</style>
         </noscript>
         <SkipLink />
         <Header />

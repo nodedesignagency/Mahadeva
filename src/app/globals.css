@@ -85,6 +85,31 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Keyframes
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Background pattern bars. scaleY only — a compositor property — so a field of
+ * ~20 bars per side costs no layout work. Each bar carries its own duration and
+ * delay inline, which is what makes the field read as random rather than a
+ * synchronised pulse.
+ */
+@keyframes mh-bar-grow {
+  0% {
+    transform: scaleY(0);
+  }
+  45% {
+    transform: scaleY(1);
+  }
+  75% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0);
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Utilities
  * ------------------------------------------------------------------------- */
 @utility text-balance-display {

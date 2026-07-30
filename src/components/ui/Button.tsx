@@ -8,37 +8,53 @@ import { cn } from "@/lib/cn";
  *
  * Renders a `next/link`, a plain anchor or a real `<button>` depending on the
  * props, so navigation is always a link and actions are always buttons — the
- * accessibility distinction Framer exports usually lose.
+ * accessibility distinction Framer exports lose.
  *
- * Hover motion is CSS, not Framer Motion, so this stays a server component and
- * contributes nothing to the client bundle. Hover effects are gated behind
- * `@media (hover: hover)` via Tailwind's `hover:` on touch-capable devices
- * being sticky — see the `group-hover` usage below paired with `motion-safe`.
+ * The design pairs a rectangular body with an inset square icon box whose
+ * colours invert against the button, so the arrow reads as a cut-out. Hover
+ * motion is CSS, keeping this a server component with no client bundle cost.
  */
 
 const base =
-  "group relative inline-flex items-center justify-center gap-2 rounded-pill font-body " +
-  "text-body-sm font-medium whitespace-nowrap transition-colors duration-[--duration-hover] " +
-  "ease-[--ease-out] disabled:pointer-events-none disabled:opacity-50";
+  "group relative inline-flex items-center justify-between gap-3 rounded-[--radius-button] " +
+  "font-ui uppercase tracking-[0.04em] whitespace-nowrap " +
+  "transition-colors duration-[--duration-hover] ease-[--ease-out] " +
+  "disabled:pointer-events-none disabled:opacity-50";
 
 const variants = {
-  primary: "bg-accent text-accent-fg hover:bg-accent/90",
+  /** White body, dark label, dark icon box. */
+  primary: "bg-fg text-fg-inverse hover:bg-fg/90",
+  /** Dark body with a hairline border, light label, light icon box. */
   secondary: "bg-surface text-fg border border-border hover:bg-surface-hover",
   outline: "border border-border-strong text-fg hover:bg-surface",
-  ghost: "text-fg-muted hover:text-fg",
+  ghost: "text-fg-muted hover:text-fg px-0",
+} as const;
+
+/** Icon box colours, inverted against each variant's body. */
+const iconBoxes = {
+  primary: "bg-fg-inverse text-fg",
+  secondary: "bg-fg text-fg-inverse",
+  outline: "bg-fg text-fg-inverse",
+  ghost: "bg-transparent text-current",
 } as const;
 
 const sizes = {
-  sm: "h-9 px-4",
-  md: "h-11 px-5",
-  lg: "h-13 px-7 text-body-md",
+  sm: "h-10 text-label ps-4 pe-1.5",
+  md: "h-12 text-body-sm ps-5 pe-2",
+  lg: "h-14 text-body-sm ps-6 pe-2",
+} as const;
+
+const iconSizes = {
+  sm: "size-7",
+  md: "size-8",
+  lg: "size-10",
 } as const;
 
 type BaseProps = {
   children: ReactNode;
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
-  /** Appends a trailing arrow that nudges on hover. */
+  /** Renders the inset square icon box with a diagonal arrow. */
   withArrow?: boolean;
   className?: string;
 };
@@ -51,15 +67,26 @@ type ButtonAsLink = BaseProps &
 
 export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
-function Inner({ children, withArrow }: Pick<BaseProps, "children" | "withArrow">) {
+function Inner({
+  children,
+  withArrow,
+  variant,
+  size,
+}: Required<Pick<BaseProps, "children" | "variant" | "size">> & Pick<BaseProps, "withArrow">) {
   return (
     <>
-      {children}
+      <span>{children}</span>
       {withArrow ? (
-        <ArrowUpRight
+        <span
           aria-hidden="true"
-          className="size-4 transition-transform duration-[--duration-hover] ease-[--ease-out] motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
-        />
+          className={cn(
+            "inline-flex shrink-0 items-center justify-center rounded-[calc(var(--radius-button)-2px)]",
+            iconSizes[size],
+            iconBoxes[variant],
+          )}
+        >
+          <ArrowUpRight className="size-4 transition-transform duration-[--duration-hover] ease-[--ease-out] motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" />
+        </span>
       ) : null}
     </>
   );
@@ -69,9 +96,15 @@ export function Button(props: ButtonProps) {
   const { children, variant = "primary", size = "md", withArrow, className } = props;
   const classes = cn(base, variants[variant], sizes[size], className);
 
-  // Strip the presentational props so only real DOM attributes are spread.
+  // Strip presentational props so only real DOM attributes are spread.
   const { children: _, variant: __, size: ___, withArrow: ____, className: _____, ...domProps } =
     props;
+
+  const inner = (
+    <Inner withArrow={withArrow} variant={variant} size={size}>
+      {children}
+    </Inner>
+  );
 
   if ("href" in props && props.href !== undefined) {
     const { href, ...rest } = domProps as { href: string } & Record<string, unknown>;
@@ -86,21 +119,21 @@ export function Button(props: ButtonProps) {
           target={href.startsWith("http") ? "_blank" : undefined}
           {...rest}
         >
-          <Inner withArrow={withArrow}>{children}</Inner>
+          {inner}
         </a>
       );
     }
 
     return (
       <Link href={href} className={classes} {...rest}>
-        <Inner withArrow={withArrow}>{children}</Inner>
+        {inner}
       </Link>
     );
   }
 
   return (
     <button className={classes} {...(domProps as ComponentPropsWithoutRef<"button">)}>
-      <Inner withArrow={withArrow}>{children}</Inner>
+      {inner}
     </button>
   );
 }

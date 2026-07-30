@@ -123,31 +123,38 @@ export function Header() {
           {siteConfig.shortName}
         </Link>
 
-        {/* Desktop navigation. Framer's breakpoint is 1200px, so the mobile
-            overlay covers tablet as well — matching the original. */}
-        <nav aria-label="Main" className="hidden desktop:block">
-          <ul className="flex items-center gap-8">
-            {mainNav.map((item) => {
+        {/* The original shows the full horizontal nav from the tablet
+            breakpoint (810px) up; the overlay is mobile-only. */}
+        <nav aria-label="Main" className="hidden tablet:block">
+          <ul className="flex items-center gap-4">
+            {mainNav.map((item, i) => {
               const active = pathname === item.href;
               return (
-                <li key={item.href}>
+                <li key={item.href} className="flex items-center gap-4">
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "font-ui text-body-sm transition-colors duration-[--duration-hover] ease-[--ease-out]",
+                      "font-ui text-body-sm uppercase tracking-[0.04em] transition-colors duration-[--duration-hover] ease-[--ease-out]",
                       active ? "text-fg" : "text-fg-muted hover:text-fg",
                     )}
                   >
                     {item.label}
                   </Link>
+                  {/* Decorative separator — aria-hidden so it is not announced
+                      between every link. */}
+                  {i < mainNav.length - 1 ? (
+                    <span aria-hidden="true" className="text-fg-subtle">
+                      ·
+                    </span>
+                  ) : null}
                 </li>
               );
             })}
           </ul>
         </nav>
 
-        <div className="hidden desktop:block">
+        <div className="hidden tablet:block">
           <Button href={navCta.href} size="sm">
             {navCta.label}
           </Button>
@@ -160,7 +167,7 @@ export function Header() {
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="desktop:hidden inline-flex size-10 items-center justify-center rounded-pill text-fg"
+          className="tablet:hidden inline-flex size-10 items-center justify-center rounded-pill text-fg"
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
@@ -181,7 +188,7 @@ export function Header() {
                 ? { duration: 0 }
                 : { duration: durations.hover, ease: easings.reveal }
             }
-            className="desktop:hidden absolute inset-x-0 top-header border-b border-border bg-bg outline-none"
+            className="tablet:hidden absolute inset-x-0 top-header border-b border-border bg-bg outline-none"
           >
             <Container className="py-8">
               <nav aria-label="Mobile">
