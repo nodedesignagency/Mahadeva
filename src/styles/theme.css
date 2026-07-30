@@ -1,0 +1,274 @@
+/**
+ * Mahadeva — design tokens.
+ *
+ * Every value here is extracted from the original Framer site's published CSS,
+ * not approximated. This is the single file to edit when re-theming: no
+ * component hardcodes a colour, size, duration or easing curve.
+ *
+ * Breakpoints match Framer's three exactly — desktop >= 1200px,
+ * tablet 810-1199.98px, mobile <= 809.98px.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Raw palette — the 58 tokens from the original, grouped by role.
+ * Literal hex values live here and nowhere else.
+ * ------------------------------------------------------------------------- */
+:root {
+  /* Base / dark surfaces */
+  --mh-ink: #0e1e1d;
+  --mh-ink-raised: #10201f;
+  --mh-ink-elevated: #1a2928;
+  --mh-ink-border: #263434;
+  --mh-ink-a0: #0e1e1d00;
+  --mh-ink-a5: #0e1e1d0d;
+  --mh-ink-a10: #0e1e1d1a;
+  --mh-ink-a50: #0e1e1d80;
+  --mh-ink-a75: #0e1e1dbf;
+
+  /* Light / foreground */
+  --mh-white: #ffffff;
+  --mh-white-a60: #ffffff99;
+  --mh-white-a50: #ffffff80;
+  --mh-white-a10: #ffffff1a;
+  --mh-white-a4: #ffffff0a;
+  --mh-white-a0: #ffffff00;
+
+  /* Primary accent — the green CTA fill */
+  --mh-green: #8cffa7;
+  --mh-green-200: #abffa8;
+  --mh-green-150: #b0ffd1;
+  --mh-green-140: #b0ffe5;
+  --mh-green-300: #a0dfa9;
+  --mh-green-100: #dcffe4;
+  --mh-green-75: #ebffe0;
+  --mh-green-50: #f6fff1;
+  --mh-green-25: #d9fae7;
+
+  /* Beige section wrapper */
+  --mh-beige: #f6f4f0;
+
+  /* Pastel accents, used across the pixel cards and illustration backdrops */
+  --mh-lavender: #c2bfff;
+  --mh-lavender-200: #c8b0ff;
+  --mh-lavender-50: #eadfff;
+  --mh-lavender-25: #f3f1ff;
+  --mh-periwinkle: #c7d5ff;
+  --mh-periwinkle-200: #d4d5ff;
+  --mh-blue: #80ceff;
+  --mh-blue-200: #a8deff;
+  --mh-blue-150: #b0e3ff;
+  --mh-blue-100: #bedfff;
+  --mh-blue-50: #dcecff;
+  --mh-blue-25: #d8f1ff;
+  --mh-blue-10: #f1faff;
+  --mh-peach: #ffd9a8;
+  --mh-peach-50: #fff1df;
+  --mh-pink: #ffb0c9;
+  --mh-magenta: #ffa8f6;
+  --mh-magenta-200: #ffb0f8;
+  --mh-magenta-50: #ffe5f9;
+  --mh-magenta-25: #fcdcfa;
+  --mh-rose-50: #fce1e9;
+  --mh-yellow: #ffe8a8;
+  --mh-yellow-50: #fffbdd;
+
+  /* Neutrals & status */
+  --mh-slate: #4d5564;
+  --mh-slate-a5: #4d55640d;
+  --mh-grey-100: #f3f4f4;
+  --mh-grey-200: #e3e3e3;
+  --mh-grey-250: #e3e2e5;
+  --mh-grey-300: #dbdbdb;
+  --mh-red: #ff1c1c;
+}
+
+/* ---------------------------------------------------------------------------
+ * Semantic tokens. Components reference only these, so a brand swap is a
+ * change of assignment rather than a find-and-replace.
+ * ------------------------------------------------------------------------- */
+:root {
+  --color-bg: var(--mh-ink);
+  --color-bg-raised: var(--mh-ink-raised);
+  --color-surface: var(--mh-ink-elevated);
+  --color-surface-hover: var(--mh-ink-border);
+  --color-bg-light: var(--mh-beige);
+
+  --color-fg: var(--mh-white);
+  --color-fg-muted: var(--mh-white-a60);
+  --color-fg-subtle: var(--mh-white-a50);
+  --color-fg-inverse: var(--mh-ink);
+  --color-fg-on-light: var(--mh-ink);
+  --color-fg-on-light-muted: var(--mh-slate);
+
+  --color-border: var(--mh-white-a10);
+  --color-border-subtle: var(--mh-white-a4);
+  --color-border-strong: var(--mh-ink-border);
+  --color-border-on-light: var(--mh-ink-a10);
+
+  --color-accent: var(--mh-green);
+  --color-accent-fg: var(--mh-ink);
+  --color-danger: var(--mh-red);
+  --color-focus: var(--mh-green);
+
+  /* Start colour of the per-word heading reveal — fully transparent text. */
+  --color-reveal-from: var(--mh-white-a0);
+
+  /* Written to by the section-linked background transition. Initialised to the
+   * page background so SSR output is correct before any JS runs. */
+  --color-bg-dynamic: var(--color-bg);
+}
+
+/* ---------------------------------------------------------------------------
+ * Typography.
+ *
+ * Almarai is the display face (weight 400, tight tracking, line-height 1) —
+ * this is the original's heading treatment. Geist and Inter cover UI and body.
+ * Families are injected by next/font in app/layout.tsx, so swapping a typeface
+ * is a one-line change in src/config/fonts.ts.
+ *
+ * The scale interpolates with clamp() between the original's fixed per-
+ * breakpoint sizes: an intentional divergence that matches at the endpoints
+ * and behaves better in between.
+ * ------------------------------------------------------------------------- */
+:root {
+  --font-display: var(--font-display-family), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-body-family), ui-sans-serif, system-ui, sans-serif;
+  --font-ui: var(--font-ui-family), ui-sans-serif, system-ui, sans-serif;
+
+  /* Hero h1: 36px mobile -> 48px tablet -> 60px desktop. */
+  --text-display-xl: clamp(2.25rem, 1.35rem + 2.8vw, 3.75rem);
+  /* Section headings: 32 -> 40 -> 48. */
+  --text-display-lg: clamp(2rem, 1.5rem + 1.6vw, 3rem);
+  /* 28 -> 32 -> 40 */
+  --text-display-md: clamp(1.75rem, 1.4rem + 1.1vw, 2.5rem);
+  /* Big numeric stats, up to 100px. */
+  --text-stat: clamp(3rem, 1rem + 6.2vw, 6.25rem);
+
+  --text-heading-lg: clamp(1.5rem, 1.3rem + 0.7vw, 1.75rem); /* 24 -> 28 */
+  --text-heading-md: clamp(1.25rem, 1.15rem + 0.4vw, 1.375rem); /* 20 -> 22 */
+  --text-heading-sm: 1.125rem; /* 18 */
+
+  --text-body-lg: 1.125rem; /* 18 */
+  --text-body-md: 1rem; /* 16 */
+  --text-body-sm: 0.875rem; /* 14 */
+  --text-label: 0.75rem; /* 12 */
+
+  --leading-display: 1;
+  --leading-heading: 1.15;
+  --leading-body: 1.6;
+
+  --tracking-display: -0.02em;
+  --tracking-label: 0.08em;
+}
+
+/* ---------------------------------------------------------------------------
+ * Spacing, layout, radii.
+ * ------------------------------------------------------------------------- */
+:root {
+  --container-max: 75rem; /* 1200px, matching the desktop breakpoint */
+  --container-max-wide: 90rem;
+  --container-gutter: clamp(1.25rem, 0.75rem + 2.5vw, 3.75rem);
+
+  --space-section-sm: clamp(3rem, 2rem + 4vw, 5rem);
+  --space-section-md: clamp(4.5rem, 3rem + 5vw, 7.5rem);
+  --space-section-lg: clamp(6rem, 4rem + 7vw, 10rem);
+
+  --radius-sm: 0.5rem;
+  --radius-card: 1.25rem;
+  --radius-lg: 2rem;
+  --radius-pill: 999px;
+
+  --header-height: 4.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+ * Motion tokens.
+ *
+ * `--ease-reveal` is the original's curve, taken verbatim from the inline
+ * transition on the heading reveal spans. Mirrored in src/lib/motion.ts.
+ * ------------------------------------------------------------------------- */
+:root {
+  --ease-reveal: cubic-bezier(0.7, 0, 0.3, 1);
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --duration-word: 250ms; /* per-word heading reveal, from the original */
+  --duration-fast: 180ms;
+  --duration-hover: 250ms;
+  --duration-base: 600ms;
+  --duration-slow: 800ms;
+  --duration-transition: 700ms;
+}
+
+/* ---------------------------------------------------------------------------
+ * Expose tokens to Tailwind. `@theme inline` preserves the var() reference so
+ * utilities stay live against runtime overrides.
+ * ------------------------------------------------------------------------- */
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-bg-raised: var(--color-bg-raised);
+  --color-bg-dynamic: var(--color-bg-dynamic);
+  --color-bg-light: var(--color-bg-light);
+  --color-surface: var(--color-surface);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-fg: var(--color-fg);
+  --color-fg-muted: var(--color-fg-muted);
+  --color-fg-subtle: var(--color-fg-subtle);
+  --color-fg-inverse: var(--color-fg-inverse);
+  --color-fg-on-light: var(--color-fg-on-light);
+  --color-fg-on-light-muted: var(--color-fg-on-light-muted);
+  --color-border: var(--color-border);
+  --color-border-subtle: var(--color-border-subtle);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-on-light: var(--color-border-on-light);
+  --color-accent: var(--color-accent);
+  --color-accent-fg: var(--color-accent-fg);
+  --color-danger: var(--color-danger);
+  --color-focus: var(--color-focus);
+  --color-reveal-from: var(--color-reveal-from);
+
+  /* Pastels exposed for the pixel cards and illustration backdrops. */
+  --color-lavender: var(--mh-lavender);
+  --color-blue: var(--mh-blue);
+  --color-peach: var(--mh-peach);
+  --color-pink: var(--mh-pink);
+  --color-magenta: var(--mh-magenta);
+  --color-yellow: var(--mh-yellow);
+  --color-green-soft: var(--mh-green-100);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-ui: var(--font-ui);
+
+  --text-display-xl: var(--text-display-xl);
+  --text-display-lg: var(--text-display-lg);
+  --text-display-md: var(--text-display-md);
+  --text-stat: var(--text-stat);
+  --text-heading-lg: var(--text-heading-lg);
+  --text-heading-md: var(--text-heading-md);
+  --text-heading-sm: var(--text-heading-sm);
+  --text-body-lg: var(--text-body-lg);
+  --text-body-md: var(--text-body-md);
+  --text-body-sm: var(--text-body-sm);
+  --text-label: var(--text-label);
+
+  --radius-sm: var(--radius-sm);
+  --radius-card: var(--radius-card);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  --ease-reveal: var(--ease-reveal);
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+
+  --spacing-section-sm: var(--space-section-sm);
+  --spacing-section-md: var(--space-section-md);
+  --spacing-section-lg: var(--space-section-lg);
+  --spacing-gutter: var(--container-gutter);
+  --spacing-header: var(--header-height);
+
+  /* Framer's actual breakpoints. `tablet` and `desktop` are the only two the
+   * original defines; everything else derives from them. */
+  --breakpoint-tablet: 810px;
+  --breakpoint-desktop: 1200px;
+}

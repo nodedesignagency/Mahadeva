@@ -1,0 +1,102 @@
+@import "tailwindcss";
+@import "../styles/theme.css";
+
+/* ---------------------------------------------------------------------------
+ * Base layer. Deliberately minimal — everything visual is a token.
+ * ------------------------------------------------------------------------- */
+@layer base {
+  html {
+    /* Anchor links and in-page nav must not land under the fixed header. */
+    scroll-padding-top: var(--header-height);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bg-dynamic);
+    color: var(--color-fg);
+    font-family: var(--font-body);
+    font-size: var(--text-body-md);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* The dynamic background crossfades as sections scroll past. */
+    transition: background-color var(--duration-base) var(--ease-in-out);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-heading);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Framer templates routinely ship with focus rings removed. Keep them, and
+   * make them visible against every surface in the palette. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Only for mouse users who never asked for a ring. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Media never overflows its column. */
+  img,
+  video,
+  svg,
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Numerals in count-up stats must not reflow as they tick. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion. A global backstop: Framer Motion components each honour
+ * useReducedMotion(), but this catches CSS-driven motion (marquee, hovers)
+ * and anything added later that forgets.
+ *
+ * Note this kills *animation*, not *visibility* — every entrance animation is
+ * authored so its resting state is the visible one.
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Utilities
+ * ------------------------------------------------------------------------- */
+@utility text-balance-display {
+  text-wrap: balance;
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-display);
+}
+
+/* Eyebrow / kicker label treatment, used above most section headings. */
+@utility eyebrow {
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+}
