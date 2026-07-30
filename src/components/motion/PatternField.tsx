@@ -1,32 +1,33 @@
 "use client";
 
-import { useMemo } from "react";
-import { useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { patternField } from "@/config/animation";
 import { cn } from "@/lib/cn";
 
 /**
- * The signature background: a field of coloured bars that grow from zero height
- * and loop, clustered toward the edges so the centre stays clear for content.
+ * The signature background: a field of pastel bars that morph between a set of
+ * fixed arrangements.
  *
- * Generated from a seeded PRNG rather than hand-authored states. The original
- * ships five Framer variants per side, but those are just hand-made randomness —
- * a seeded generator reproduces the effect with tunable density and far less
- * data.
+ * This mirrors how the original is authored in Framer. It is *not* a continuous
+ * loop of bars growing from zero — there are N discrete variants
+ * ("Animation State 1..N"), each a fixed arrangement, and Framer springs
+ * between them on a timer. Each bar keeps its column and width; only its height
+ * changes per state, which is what reads as the pattern rearranging itself.
  *
- * The seed must be fixed: this renders on the server and again on the client,
- * and any time- or `Math.random()`-based source would produce different markup
- * on each side, which is a hydration error.
+ * Two details matter for fidelity:
  *
- * Bars animate `scaleY` from a bottom or top origin — a compositor-only
- * property. Animating `height` here would force layout on every frame for every
- * bar.
+ *  - Bars are sized relative to a *row*, not the whole field. The original's
+ *    bars occupy roughly 5–22% of the hero, and treating the full height as the
+ *    range makes them far too tall.
+ *  - The morph is a duration-based spring (2s, no bounce), not an ease. A
+ *    cubic-bezier here reads noticeably more mechanical.
+ *
+ * The bar set is generated from a fixed seed so server and client produce
+ * identical markup — an unseeded source would be a hydration error.
  */
 
-/**
- * Mulberry32 — a small, fast, well-distributed 32-bit PRNG. Deterministic for a
- * given seed, which is the whole point.
- */
+/** Mulberry32 — small, fast, deterministic for a given seed. */
 function createRandom(seed: number) {
   let state = seed >>> 0;
   return function next() {
@@ -48,47 +49,36 @@ const BAR_COLORS = [
   "var(--mh-green-200)",
   "var(--mh-blue-150)",
   "var(--mh-blue-25)",
-  "var(--mh-blue-50)",
 ] as const;
 
 type Bar = {
-  /** Horizontal position within the field, as a percentage. */
+  /** Horizontal position within the field, as a percentage. Fixed across states. */
   left: number;
-  /** Vertical position of the bar's anchored edge, as a percentage. */
-  top: number;
+  /** Which row the bar belongs to. */
+  row: number;
   width: number;
-  height: number;
   color: string;
-  /** Which edge the bar grows from. */
+  /** Which edge of its row the bar grows from. */
   origin: "top" | "bottom";
-  delay: number;
-  duration: number;
+  /** Height as a fraction of the row, one entry per state. */
+  scales: number[];
 };
 
 function generateBars(seed: number, count: number): Bar[] {
   const random = createRandom(seed);
-  const { minHeight, maxHeight, widths, growDuration, stagger, holdDuration } = patternField;
-  const cycle = growDuration + holdDuration;
+  const { rows, minScale, maxScale, widths, stateCount } = patternField;
 
-  return Array.from({ length: count }, (_, i) => {
-    const top = random() * 85;
-    // Clamp so a bar never extends past the bottom of the field. Without this a
-    // tall bar with a low anchor is silently clipped by the overflow, which
-    // reads as a truncated rectangle rather than a deliberate one.
-    const height = Math.min((minHeight + random() * (maxHeight - minHeight)) * 100, 100 - top);
-
-    return {
-      left: random() * 100,
-      top,
-      height,
-      width: widths[Math.floor(random() * widths.length)],
-      color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
-      origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
-      // Spread starts across the cycle so bars ripple rather than pulse together.
-      delay: (i * stagger) % cycle,
-      duration: cycle,
-    };
-  });
+  return Array.from({ length: count }, () => ({
+    left: random() * 88,
+    row: Math.floor(random() * rows),
+    width: widths[Math.floor(random() * widths.length)],
+    color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
+    origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
+    scales: Array.from(
+      { length: stateCount },
+      () => minScale + random() * (maxScale - minScale),
+    ),
+  }));
 }
 
 type PatternFieldProps = {
@@ -99,16 +89,20 @@ type PatternFieldProps = {
 
 export function PatternField({ side, className }: PatternFieldProps) {
   const reduced = useReducedMotion() ?? false;
+  const [state, setState] = useState(0);
 
-  // Generated once per side. `patternField.count.desktop` is used for the markup
-  // and denser bars are hidden by CSS at smaller widths, so the server and
-  // client always agree on the DOM regardless of viewport.
-  const bars = useMemo(
-    () => generateBars(patternField.seeds[side], patternField.count.desktop),
-    [side],
-  );
+  const { rows, count, stateCount, stateInterval, spring } = patternField;
 
-  const { count } = patternField;
+  const bars = useMemo(() => generateBars(patternField.seeds[side], count.desktop), [side, count.desktop]);
+
+  // Cycle through the arrangements. Held still under reduced motion.
+  useEffect(() => {
+    if (reduced) return;
+    const id = setInterval(() => setState((s) => (s + 1) % stateCount), stateInterval);
+    return () => clearInterval(id);
+  }, [reduced, stateCount, stateInterval]);
+
+  const rowHeight = 100 / rows;
 
   return (
     <div
@@ -116,27 +110,26 @@ export function PatternField({ side, className }: PatternFieldProps) {
       className={cn("pointer-events-none absolute inset-y-0 overflow-hidden", className)}
     >
       {bars.map((bar, i) => (
-        <span
+        <motion.span
           key={i}
-          // Bars beyond the tablet/mobile budgets are dropped by CSS rather than
+          // Bars past the tablet/mobile budgets are dropped in CSS rather than
           // by branching on viewport in JS, which would desync SSR markup.
           data-over-tablet={i >= count.tablet ? "" : undefined}
           data-over-mobile={i >= count.mobile ? "" : undefined}
-          className="absolute block will-change-transform data-[over-mobile]:hidden tablet:data-[over-mobile]:block desktop:data-[over-tablet]:block tablet:data-[over-tablet]:hidden"
+          className="absolute block will-change-transform data-[over-mobile]:hidden tablet:data-[over-mobile]:block tablet:data-[over-tablet]:hidden desktop:data-[over-tablet]:block"
           style={{
             left: `${bar.left}%`,
-            top: `${bar.top}%`,
+            top: `${bar.row * rowHeight}%`,
             width: `${bar.width}px`,
-            height: `${bar.height}%`,
+            height: `${rowHeight}%`,
             background: bar.color,
             transformOrigin: bar.origin,
-            // Reduced motion holds the bars at their generated height so the
-            // composition still reads, without any movement.
-            transform: reduced ? "scaleY(1)" : undefined,
-            animation: reduced
-              ? undefined
-              : `mh-bar-grow ${bar.duration}ms ${bar.delay}ms infinite`,
           }}
+          // `initial` renders inline during SSR, so the first paint already
+          // shows state 0 and nothing snaps on hydration.
+          initial={{ scaleY: bar.scales[0] }}
+          animate={{ scaleY: bar.scales[state] }}
+          transition={reduced ? { duration: 0 } : spring}
         />
       ))}
     </div>

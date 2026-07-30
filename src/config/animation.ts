@@ -3,12 +3,6 @@
  *
  * The tunable numbers behind the two signature effects live here so they can be
  * corrected without touching component code.
- *
- * ⚠️ PROVISIONAL VALUES
- * The reveal colours/timings and the bar timings below are placeholders pending
- * the real values from the template owner's Framer project. They are the
- * component defaults from the original `TextRevealVariable`, with the reveal
- * colours swapped to the site palette. Replace them here and nowhere else.
  */
 
 /** Settings for the two-bar heading wipe. Mirrors the original's prop shape. */
@@ -37,7 +31,7 @@ export type TextRevealSettings = {
   overlayVerticalPadding: number;
 };
 
-/** PROVISIONAL — awaiting the owner's Framer values. */
+/** ⚠️ PROVISIONAL — awaiting the owner's exact Framer values. */
 export const heroTextReveal: TextRevealSettings = {
   revealColor: "var(--mh-green)",
   revealColor2: "var(--mh-ink)",
@@ -55,32 +49,56 @@ export const heroTextReveal: TextRevealSettings = {
 /**
  * Background bar-pattern field.
  *
- * Bars grow from zero height to a random target and loop. Heights are animated
- * via `scaleY` rather than `height` so the work stays on the compositor.
+ * The original is not a continuous loop of bars growing from zero. It is a set
+ * of discrete Framer variants ("Animation State 1..N"), each holding a fixed
+ * arrangement, with Framer morphing between them. Reproduced here as: a fixed
+ * set of bars whose heights change per state, animated with a spring.
  *
- * ⚠️ PROVISIONAL — awaiting the owner's timing details.
+ * Verified against the published CSS: in State 1 every bar sits at `height: 1%`,
+ * matching the Framer inspector.
  */
 export const patternField = {
-  /** Milliseconds for one bar to grow to its target height. */
-  growDuration: 1200,
-  /** Milliseconds between consecutive bars starting — creates the ripple. */
-  stagger: 90,
-  /** Milliseconds held at full height before the next cycle re-randomises. */
-  holdDuration: 900,
-  /** Bar heights as a fraction of the field height. */
-  minHeight: 0.08,
-  maxHeight: 1,
-  /** Bar widths in px, picked at random per bar. Matches the Figma values. */
-  widths: [30, 48],
+  /** Number of discrete arrangements cycled through. */
+  stateCount: 4,
+
   /**
-   * Bars per side, by breakpoint. Density drops on smaller screens: the field
-   * is decorative and every bar is an animated element.
+   * Milliseconds each state is held before switching. Taken from the owner's
+   * Framer trigger: On Appear → Delay 2.4s → Set Variant.
    */
-  count: { desktop: 22, tablet: 16, mobile: 10 },
+  stateInterval: 2400,
+
+  /**
+   * Spring for the morph between states. The owner's Framer transition is a
+   * time-based spring: 2s, no delay, no bounce. Framer Motion expresses that as
+   * a duration-based spring with `bounce: 0`.
+   */
+  spring: { type: "spring", duration: 2, bounce: 0 },
+
+  /**
+   * The field is split into horizontal rows, mirroring the `1st`..`7th` groups
+   * in the Framer component. A bar occupies one row and grows within it, which
+   * is what keeps bars short relative to the viewport.
+   */
+  rows: 6,
+
+  /**
+   * Bar height as a fraction of its row, per state. Never a fraction of the
+   * whole field — that was the sizing error in the first pass, which produced
+   * bars up to full viewport height instead of the ~5–22% the original shows.
+   */
+  minScale: 0.15,
+  maxScale: 1,
+
+  /** Bar widths in px, sampled per bar. Matches the Figma fixed widths. */
+  widths: [14, 30, 48, 56],
+
+  /** Bars per side, by breakpoint. */
+  count: { desktop: 20, tablet: 15, mobile: 9 },
+
   /**
    * Fixed PRNG seeds. These MUST stay constant — the field is generated during
-   * render on both server and client, so an unseeded or time-based source would
-   * produce different markup on each side and cause a hydration error.
+   * render on both server and client, so a time- or Math.random-based source
+   * would produce different markup on each side and cause a hydration error.
    */
   seeds: { left: 20260730, right: 19880413 },
 } as const;
