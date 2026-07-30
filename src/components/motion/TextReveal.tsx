@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
  * Two-bar heading wipe — a port of the template's Framer `TextRevealVariable`
  * component, preserving its exact animation sequence.
  *
- * The sequence, per the original:
+ * Per line:
  *
  *   1. Two overlay bars cover the text, both scaleX(0), origin on the leading
  *      edge.
@@ -20,42 +20,80 @@ import { cn } from "@/lib/cn";
  *   5. Both origins flip to the opposite edge.
  *   6. After `pause`, bar 2 sweeps back off (scaleX 1 -> 0), then bar 1.
  *
- * The result reads as two coloured bars sweeping over the heading and away,
- * leaving revealed text behind. Total ≈ 4 × duration + pause + delay.
+ * Total per line ≈ 4 × duration + pause + delay.
  *
- * Kept faithful to the original deliberately: the chained `onfinish` callbacks
- * and the mid-sequence `transform-origin` flip are what give it its character,
- * and re-deriving them declaratively risks visible timing drift.
+ * Each line is its own reveal block with its own bar pair, matching how the
+ * original is composed — the Framer file uses a separate component instance per
+ * line rather than one block spanning the whole heading.
+ *
+ * The 250ms colour transition is hardcoded here exactly as in the original,
+ * including its own easing curve, which is deliberately different from the
+ * overlay easing supplied via settings.
  *
  * Differences from the Framer original, all deliberate:
  *  - `prefers-reduced-motion` skips the wipe and paints the final text.
- *  - The heading carries an `aria-label` and the word spans are `aria-hidden`,
- *    so screen readers announce one heading instead of a stream of fragments.
+ *  - The lines sit inside a single heading element carrying the full text as
+ *    its accessible name, with the visual pieces `aria-hidden`. The original
+ *    marks every line an H1, which would give the page multiple H1s and read as
+ *    a stream of fragments to a screen reader.
  *  - Word text is rendered directly rather than through `dangerouslySetInnerHTML`.
- *  - Animations are cancelled on unmount so a fast route change cannot leave a
- *    callback writing to a detached node.
+ *  - Animations and timers are cancelled on unmount so a fast route change
+ *    cannot leave a callback writing to a detached node.
  */
 
 type TextRevealProps = {
-  text: string;
+  /**
+   * One entry per visual line. Each gets its own bar pair.
+   *
+   * Readonly so `as const` content objects can be passed without a copy.
+   */
+  lines: readonly string[];
   settings: TextRevealSettings;
   as?: "h1" | "h2" | "h3" | "h4" | "p" | "div";
-  /** `onAppear` plays on mount; `inView` waits for the element to be scrolled to. */
-  trigger?: "onAppear" | "inView";
+  /** Extra milliseconds between consecutive lines starting. */
+  lineStagger?: number;
   id?: string;
   className?: string;
+  lineClassName?: string;
 };
 
 export function TextReveal({
-  text,
+  lines,
   settings,
   as: Tag = "h2",
-  trigger = "onAppear",
+  lineStagger = 0,
   id,
   className,
+  lineClassName,
 }: TextRevealProps) {
   const reduced = useReducedMotion() ?? false;
-  const blockRef = useRef<HTMLHeadingElement>(null);
+
+  return (
+    <Tag id={id} aria-label={lines.join(" ")} className={cn("font-display", className)}>
+      {lines.map((line, i) => (
+        <RevealLine
+          key={`${line}-${i}`}
+          text={line}
+          settings={settings}
+          reduced={reduced}
+          extraDelay={i * lineStagger}
+          className={lineClassName}
+        />
+      ))}
+    </Tag>
+  );
+}
+
+type RevealLineProps = {
+  text: string;
+  settings: TextRevealSettings;
+  reduced: boolean;
+  extraDelay: number;
+  className?: string;
+};
+
+function RevealLine({ text, settings, reduced, extraDelay, className }: RevealLineProps) {
+  const blockRef = useRef<HTMLSpanElement>(null);
   const overlayRef = useRef<HTMLSpanElement>(null);
   const overlay2Ref = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
@@ -77,12 +115,13 @@ export function TextReveal({
       direction,
       afterColor,
       overlayVerticalPadding: vPad,
+      trigger,
     } = settings;
 
     const easing = `cubic-bezier(${easeIn},0,${easeOut},1)`;
     const isLeft = direction === "left";
 
-    // Every animation and timer started here, so unmount can cancel all of them.
+    // Everything started here is tracked so unmount can cancel all of it.
     const animations: Animation[] = [];
     const timers: ReturnType<typeof setTimeout>[] = [];
     let cancelled = false;
@@ -100,7 +139,7 @@ export function TextReveal({
       if (cancelled) return;
       hasAnimated.current = true;
 
-      // Size the bars to the text box plus the vertical padding, matching the
+      // Size the bars to the text box plus vertical padding, matching the
       // original's measure-then-position approach.
       const { offsetWidth: width, offsetHeight: height } = block;
       for (const el of [overlay, overlay2]) {
@@ -112,7 +151,7 @@ export function TextReveal({
         el.style.transformOrigin = isLeft ? "left center" : "right center";
       }
 
-      // Flush the reset before animating, so the first frame is scaleX(0).
+      // Flush the reset so the first animated frame starts from scaleX(0).
       void overlay.getBoundingClientRect();
 
       sweep(overlay, 0, 1).onfinish = () => {
@@ -143,6 +182,7 @@ export function TextReveal({
       };
     };
 
+    const start = () => timers.push(setTimeout(run, delay + extraDelay));
     let observer: IntersectionObserver | undefined;
 
     if (trigger === "inView") {
@@ -151,7 +191,7 @@ export function TextReveal({
           for (const entry of entries) {
             if (entry.isIntersecting) {
               observer?.disconnect();
-              timers.push(setTimeout(run, delay));
+              start();
             }
           }
         },
@@ -160,8 +200,7 @@ export function TextReveal({
       observer.observe(block);
     } else {
       // Defer a frame so layout has settled and the measure above is accurate.
-      const frame = requestAnimationFrame(() => timers.push(setTimeout(run, delay)));
-      timers.push(frame as unknown as ReturnType<typeof setTimeout>);
+      requestAnimationFrame(start);
     }
 
     return () => {
@@ -170,24 +209,21 @@ export function TextReveal({
       timers.forEach(clearTimeout);
       animations.forEach((animation) => animation.cancel());
     };
-  }, [reduced, settings, trigger]);
+  }, [reduced, settings, extraDelay]);
 
-  // Reduced motion paints the final state immediately; otherwise words start at
-  // the pre-reveal colour and are flipped once the bars cover them.
+  // Reduced motion paints the final state immediately.
   const initialColor = reduced ? settings.afterColor : settings.beforeColor;
 
   return (
-    <Tag
+    <span
       ref={blockRef}
-      id={id}
-      aria-label={text}
-      className={cn("relative inline-block font-display", className)}
+      aria-hidden="true"
+      className={cn("relative inline-block align-top", className)}
     >
       {text.split(" ").map((word, i, all) => (
         <span
           key={`${word}-${i}`}
           data-reveal-word=""
-          aria-hidden="true"
           style={{ color: initialColor, transition: "color 0.25s cubic-bezier(0.7,0,0.3,1)" }}
         >
           {word}
@@ -195,23 +231,21 @@ export function TextReveal({
         </span>
       ))}
 
-      {/* Bars are aria-hidden decoration; sized and positioned at runtime. */}
+      {/* Decorative bars, sized and positioned at runtime. */}
       {!reduced ? (
         <>
           <span
             ref={overlayRef}
-            aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-[5] scale-x-0"
             style={{ background: settings.revealColor }}
           />
           <span
             ref={overlay2Ref}
-            aria-hidden="true"
             className="pointer-events-none absolute inset-0 z-[6] scale-x-0"
             style={{ background: settings.revealColor2 }}
           />
         </>
       ) : null}
-    </Tag>
+    </span>
   );
 }

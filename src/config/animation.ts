@@ -15,6 +15,10 @@ export type TextRevealSettings = {
   beforeColor: string;
   /** Text colour after the reveal. */
   afterColor: string;
+  /** Selection highlight background. */
+  highlightColor: string;
+  /** Selection highlight text colour. */
+  highlightTextColor: string;
   /** Milliseconds for a single bar sweep. The full sequence runs four of these. */
   duration: number;
   /** Milliseconds held at full cover before the bars sweep back off. */
@@ -29,21 +33,39 @@ export type TextRevealSettings = {
   direction: "left" | "right";
   /** Padding above and below the text that the bars extend to cover, in px. */
   overlayVerticalPadding: number;
+  /** `inView` waits for the block to be scrolled to; `onAppear` plays on mount. */
+  trigger: "inView" | "onAppear";
 };
 
-/** ⚠️ PROVISIONAL — awaiting the owner's exact Framer values. */
+/**
+ * Hero heading reveal — values taken from the owner's Framer inspector.
+ *
+ * Note the easing: the component builds `cubic-bezier(easeIn, 0, easeOut, 1)`,
+ * so 0.3/0.7 gives cubic-bezier(0.3, 0, 0.7, 1) — a symmetric ease-in-out, and
+ * the inverse of the component's own defaults.
+ *
+ * The before/after text colours are confirmed from the published CSS: fully
+ * transparent white before, solid white after.
+ *
+ * ⚠️ `revealColor`/`revealColor2` are the Framer styles "Green 4" and
+ * "Green 11". Those names are not in the published CSS, so the hex values below
+ * are the closest matches in the extracted palette and are worth confirming.
+ */
 export const heroTextReveal: TextRevealSettings = {
-  revealColor: "var(--mh-green)",
-  revealColor2: "var(--mh-ink)",
+  revealColor: "var(--mh-green-100)", // "Green 4" — pale green
+  revealColor2: "var(--mh-ink-border)", // "Green 11" — dark green
   beforeColor: "transparent",
   afterColor: "var(--color-fg)",
-  duration: 700,
-  pause: 0,
-  delay: 0,
-  easeIn: 0.7,
-  easeOut: 0.3,
+  highlightColor: "var(--mh-green-100)",
+  highlightTextColor: "var(--mh-ink-border)",
+  duration: 620,
+  pause: 25,
+  delay: 40,
+  easeIn: 0.3,
+  easeOut: 0.7,
   direction: "left",
-  overlayVerticalPadding: 4,
+  overlayVerticalPadding: 0,
+  trigger: "inView",
 };
 
 /**
@@ -54,16 +76,16 @@ export const heroTextReveal: TextRevealSettings = {
  * arrangement, with Framer morphing between them. Reproduced here as: a fixed
  * set of bars whose heights change per state, animated with a spring.
  *
- * Verified against the published CSS: in State 1 every bar sits at `height: 1%`,
- * matching the Framer inspector.
+ * Confirmed by the owner: only height changes between states — bars keep their
+ * horizontal position and width throughout.
  */
 export const patternField = {
   /** Number of discrete arrangements cycled through. */
   stateCount: 4,
 
   /**
-   * Milliseconds each state is held before switching. Taken from the owner's
-   * Framer trigger: On Appear → Delay 2.4s → Set Variant.
+   * Milliseconds each state is held before switching. From the owner's Framer
+   * trigger: On Appear → Delay 2.4s → Set Variant.
    */
   stateInterval: 2400,
 
@@ -75,17 +97,14 @@ export const patternField = {
   spring: { type: "spring", duration: 2, bounce: 0 },
 
   /**
-   * The field is split into horizontal rows, mirroring the `1st`..`7th` groups
-   * in the Framer component. A bar occupies one row and grows within it, which
-   * is what keeps bars short relative to the viewport.
+   * Horizontal rows the field is split into, matching the `1st`..`7th` groups
+   * in the Framer component (confirmed by the owner as 7). A bar occupies one
+   * row and grows within it, which is what keeps bars short relative to the
+   * viewport rather than spanning it.
    */
-  rows: 6,
+  rows: 7,
 
-  /**
-   * Bar height as a fraction of its row, per state. Never a fraction of the
-   * whole field — that was the sizing error in the first pass, which produced
-   * bars up to full viewport height instead of the ~5–22% the original shows.
-   */
+  /** Bar height as a fraction of its row, per state. */
   minScale: 0.15,
   maxScale: 1,
 

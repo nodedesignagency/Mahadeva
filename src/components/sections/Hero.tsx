@@ -34,10 +34,9 @@ export function Hero({ content }: HeroProps) {
       <Container className="relative z-10 flex flex-col items-center text-center">
         <TextReveal
           as="h1"
-          trigger="onAppear"
-          text={content.heading}
+          lines={content.headingLines}
           settings={heroTextReveal}
-          className="max-w-[16ch] text-display-xl leading-[--leading-display] tracking-[--tracking-display] font-normal"
+          className="flex flex-col items-center text-display-xl leading-[--leading-display] tracking-[--tracking-display] font-normal"
         />
 
         <p className="mt-6 max-w-[46ch] font-body text-body-lg text-fg-muted">

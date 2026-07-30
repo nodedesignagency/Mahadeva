@@ -12,8 +12,14 @@ export type CtaLink = {
 };
 
 export const heroContent = {
-  /** Rendered as the page's single <h1>. */
-  heading: "Custom AI Solutions to Increase Revenue",
+  /**
+   * Rendered as the page's single <h1>, one reveal block per line.
+   *
+   * Line breaks are explicit rather than left to text wrapping: each line is a
+   * separate reveal block with its own sweeping bars, so where the break falls
+   * is a design decision, not a side effect of the container width.
+   */
+  headingLines: ["Custom AI Solutions to", "Increase Revenue"],
   subheading:
     "We build intelligent systems that automate decisions, boost productivity, and drive scalable growth for modern teams.",
   primaryCta: { label: "Get Free Consultation", href: "/contact" } satisfies CtaLink,
