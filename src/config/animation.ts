@@ -117,18 +117,36 @@ export const patternField = {
   maxStagger: 260,
 
   /**
-   * Vertical columns per field, matching the `1st`..`7th` groups in the Framer
-   * component. Columns sit flush against each other with no horizontal gap, so
-   * cells in neighbouring columns can meet and read as one larger block.
+   * The field is a set of flush tracks, each holding a run of cells. Which way
+   * round depends on the breakpoint:
+   *
+   *  - From tablet up, tracks are vertical columns down the left and right
+   *    edges — the `1st`..`7th` groups in the Framer component — and bars grow
+   *    up or down within their slot.
+   *  - On mobile the whole arrangement turns ninety degrees: tracks are
+   *    horizontal rows in a band across the top and bottom, and bars grow left
+   *    or right. There is no room for a side field on a narrow screen.
+   *
+   * The generator is axis-agnostic; only these numbers and the rendering differ by
+   * orientation.
    */
-  columns: 7,
+  vertical: {
+    /** Columns per field. */
+    tracks: 7,
+    /** Cells stacked inside each column, sampled per column. */
+    cellsPerTrack: { min: 5, max: 7 },
+    /** Column widths in px, sampled per column. */
+    thickness: [26, 34, 48, 70],
+  },
 
-  /**
-   * Cells stacked inside each column, sampled per column — the `1`..`7` children
-   * of each group in Framer. Cells fill the column top to bottom with no gap;
-   * each holds one bar that grows within its own slot.
-   */
-  cellsPerColumn: { min: 5, max: 7 },
+  horizontal: {
+    /** Rows per band. */
+    tracks: 3,
+    /** Cells laid along each row, sampled per row. */
+    cellsPerTrack: { min: 4, max: 6 },
+    /** Row heights in px, sampled per row. */
+    thickness: [30, 34, 38],
+  },
 
   /**
    * Relative height weight of a cell, so slots within a column differ. The
@@ -162,17 +180,9 @@ export const patternField = {
   minGap: 0.03,
 
   /**
-   * Column widths in px, sampled per column, measured off the reference
-   * recording. No hairline width: at full viewport height a ~12px column reads
-   * as a stray line rather than a block, which the owner flagged. The spread
-   * still runs narrow to much wider than the rest.
-   */
-  columnWidths: [26, 34, 48, 70],
-
-  /**
    * Fixed PRNG seeds. These MUST stay constant — the field is generated during
    * render on both server and client, so a time- or Math.random-based source
    * would produce different markup on each side and cause a hydration error.
    */
-  seeds: { left: 20260730, right: 19880413 },
+  seeds: { left: 20260730, right: 19880413, top: 40213377, bottom: 91827364 },
 } as const;

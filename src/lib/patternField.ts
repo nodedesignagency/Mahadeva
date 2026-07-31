@@ -59,40 +59,47 @@ export type Cell = {
   end: number;
   target: number;
   color: string;
-  origin: "top" | "bottom";
+  /** Which end of its slot the bar grows from, along the track's axis. */
+  origin: "start" | "end";
   open: boolean[];
   stagger: number;
 };
 
-export type Column = { width: number; cells: Cell[] };
+/**
+ * A track holds a run of cells. It is a column when the field is vertical and a
+ * row when horizontal; `thickness` is its width or its height accordingly.
+ */
+export type Track = { thickness: number; cells: Cell[] };
+
+/** Which way the tracks run, and so which axis the bars grow along. */
+export type Orientation = "vertical" | "horizontal";
+
 type Span = { start: number; end: number };
 
-/** True when two vertical spans touch or overlap, allowing for the gap. */
+/** True when two spans along a track touch or overlap, allowing for the gap. */
 function overlaps(a: Span, b: Span, gap: number) {
   return a.start < b.end + gap && b.start < a.end + gap;
 }
 
-export function generateColumns(seed: number): Column[] {
+export function generateTracks(seed: number, orientation: Orientation): Track[] {
   const random = createRandom(seed);
   const {
-    columns,
-    cellsPerColumn,
     minCellWeight,
     maxCellWeight,
     minTarget,
     maxTarget,
     showProbability,
-    columnWidths,
     stateCount,
     maxStagger,
     minGap,
   } = patternField;
+  const { tracks, cellsPerTrack, thickness } = patternField[orientation];
 
   // 1. Geometry. Fixed for the lifetime of the field.
-  const grid: Column[] = Array.from({ length: columns }, () => {
+  const grid: Track[] = Array.from({ length: tracks }, () => {
     const count =
-      cellsPerColumn.min +
-      Math.floor(random() * (cellsPerColumn.max - cellsPerColumn.min + 1));
+      cellsPerTrack.min +
+      Math.floor(random() * (cellsPerTrack.max - cellsPerTrack.min + 1));
 
     const weights = Array.from(
       { length: count },
@@ -110,13 +117,15 @@ export function generateColumns(seed: number): Column[] {
         end: cursor,
         target: minTarget + random() * (maxTarget - minTarget),
         color: "",
-        origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
+        // Which end of its slot the bar grows from. Rendering maps this to the
+        // right edge for the axis in use.
+        origin: random() > 0.5 ? ("start" as const) : ("end" as const),
         open: Array.from({ length: stateCount }, () => false),
         stagger: Math.round(random() * maxStagger),
       };
     });
 
-    return { width: columnWidths[Math.floor(random() * columnWidths.length)], cells };
+    return { thickness: thickness[Math.floor(random() * thickness.length)], cells };
   });
 
   // 2. Assign each cell a single state to be visible in — its phase.
@@ -129,29 +138,30 @@ export function generateColumns(seed: number): Column[] {
   //    preferring whichever phase is currently least used.
   const phaseUsage: number[] = Array.from({ length: stateCount }, () => 0);
 
-  grid.forEach((column, columnIndex) => {
-    column.cells.forEach((cell, cellIndex) => {
+  grid.forEach((track, trackIndex) => {
+    track.cells.forEach((cell, cellIndex) => {
       if (random() >= showProbability) return;
 
       const span = { start: cell.start, end: cell.end };
       const forbidden = new Set<number>();
 
-      const noteVertical = (neighbour: Cell | undefined) => {
+      const noteAlongTrack = (neighbour: Cell | undefined) => {
         neighbour?.open.forEach((isOpen, state) => {
           if (!isOpen) return;
-          // Same state would stack two bars; the states either side would show
-          // one closing as the other opens, which reads as a bar moving.
+          // Sharing a state would butt two bars together end to end; the states
+          // either side would show one closing as the other opens, which reads
+          // as a single bar sliding along the track.
           forbidden.add(state);
           forbidden.add((state + 1) % stateCount);
           forbidden.add((state - 1 + stateCount) % stateCount);
         });
       };
-      noteVertical(column.cells[cellIndex - 1]);
-      noteVertical(column.cells[cellIndex + 1]);
+      noteAlongTrack(track.cells[cellIndex - 1]);
+      noteAlongTrack(track.cells[cellIndex + 1]);
 
-      // Side by side, only sharing a state matters — bars in different columns
-      // cannot be mistaken for one bar travelling vertically.
-      grid[columnIndex - 1]?.cells.forEach((other) => {
+      // Across tracks only sharing a state matters — bars in different tracks
+      // cannot be mistaken for one bar travelling along a single track.
+      grid[trackIndex - 1]?.cells.forEach((other) => {
         if (!overlaps(span, other, minGap)) return;
         other.open.forEach((isOpen, state) => {
           if (isOpen) forbidden.add(state);
@@ -189,8 +199,8 @@ export function generateColumns(seed: number): Column[] {
   );
   const totalUsage: Record<string, number> = {};
 
-  grid.forEach((column, columnIndex) => {
-    column.cells.forEach((cell, cellIndex) => {
+  grid.forEach((track, trackIndex) => {
+    track.cells.forEach((cell, cellIndex) => {
       const openStates = cell.open
         .map((isOpen, state) => (isOpen ? state : -1))
         .filter((state) => state >= 0);
@@ -204,9 +214,9 @@ export function generateColumns(seed: number): Column[] {
 
       const span = { start: cell.start, end: cell.end };
       const touching = new Set<string>();
-      const above = column.cells[cellIndex - 1];
-      if (above) touching.add(above.color);
-      grid[columnIndex - 1]?.cells.forEach((other) => {
+      const previousInTrack = track.cells[cellIndex - 1];
+      if (previousInTrack) touching.add(previousInTrack.color);
+      grid[trackIndex - 1]?.cells.forEach((other) => {
         if (overlaps(span, other, minGap)) touching.add(other.color);
       });
 

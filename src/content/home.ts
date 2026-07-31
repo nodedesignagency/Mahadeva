@@ -20,6 +20,13 @@ export const heroContent = {
    * is a design decision, not a side effect of the container width.
    */
   headingLines: ["Custom AI Solutions to", "Increase Revenue"],
+
+  /**
+   * The break moves on mobile, where the wider first line no longer fits. Given
+   * explicitly rather than left to wrapping, for the same reason as above: each
+   * line is its own reveal block, so where it breaks is a design decision.
+   */
+  headingLinesMobile: ["Custom AI Solutions", "to Increase Revenue"],
   subheading:
     "We build intelligent systems that automate decisions, boost productivity, and drive scalable growth for modern teams.",
   primaryCta: { label: "Get Free Consultation", href: "/contact" } satisfies CtaLink,

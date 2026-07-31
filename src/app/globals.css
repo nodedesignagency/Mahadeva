@@ -87,18 +87,16 @@
 /* ---------------------------------------------------------------------------
  * Background pattern density
  *
- * Columns have fixed pixel widths, so a narrow viewport cannot fit all seven.
- * Drop trailing columns per breakpoint in CSS rather than by branching on
- * viewport in JS, which would make server and client render different markup.
+ * Columns have fixed pixel widths, so a tablet viewport cannot comfortably fit
+ * all seven beside the content. Trailing columns are dropped in CSS rather than
+ * by branching on viewport width in JS, which would make the server and client
+ * render different markup.
+ *
+ * Mobile needs no rule here: the vertical fields are hidden wholesale below the
+ * tablet breakpoint and replaced by the horizontal bands.
  * ------------------------------------------------------------------------- */
-@media (max-width: 809.98px) {
-  .mh-col:nth-child(n + 4) {
-    display: none;
-  }
-}
-
 @media (min-width: 810px) and (max-width: 1199.98px) {
-  .mh-col:nth-child(n + 6) {
+  .mh-track:nth-child(n + 6) {
     display: none;
   }
 }

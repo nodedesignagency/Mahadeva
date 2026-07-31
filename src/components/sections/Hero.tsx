@@ -9,11 +9,15 @@ import type { heroContent } from "@/content/home";
  * Hero section.
  *
  * Full-viewport height with the content centred on both axes, and the animated
- * bar pattern running down each edge behind it.
+ * bar pattern framing it.
  *
- * This is a server component: the two children that need the client
- * (`TextReveal`, `PatternField`) declare it themselves, so nothing else here
- * ships to the browser.
+ * The pattern reorients at the mobile breakpoint: side columns on tablet and
+ * up, a band across the top and bottom below that. Both sets are in the markup
+ * and CSS picks one, rather than measuring the viewport in JS — a width read
+ * during render would differ between server and client and break hydration.
+ *
+ * This is a server component: the children that need the client declare it
+ * themselves, so nothing else here ships to the browser.
  */
 
 type HeroProps = {
@@ -23,18 +27,25 @@ type HeroProps = {
 export function Hero({ content }: HeroProps) {
   return (
     <section
-      // `100dvh` tracks mobile browser chrome as it hides and shows; the `h-screen`
-      // fallback covers browsers without dynamic viewport units.
+      // `100dvh` tracks mobile browser chrome as it hides and shows; the
+      // `h-screen` fallback covers browsers without dynamic viewport units.
       className="relative flex h-screen min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
     >
-      {/* Decorative background. Sits behind content and ignores pointer events. */}
-      <PatternField side="left" className="left-[3.5%]" />
-      <PatternField side="right" className="right-[3.5%]" />
+      {/* Decorative background. Sits behind the content and ignores pointer events. */}
+      <div className="hidden tablet:contents">
+        <PatternField side="left" orientation="vertical" className="left-[3.5%]" />
+        <PatternField side="right" orientation="vertical" className="right-[3.5%]" />
+      </div>
+      <div className="contents tablet:hidden">
+        <PatternField side="top" orientation="horizontal" className="top-0" />
+        <PatternField side="bottom" orientation="horizontal" className="bottom-0" />
+      </div>
 
       <Container className="relative z-10 flex flex-col items-center text-center">
         <TextReveal
           as="h1"
           lines={content.headingLines}
+          mobileLines={content.headingLinesMobile}
           settings={heroTextReveal}
           className="flex flex-col items-center text-display-xl leading-[--leading-display] tracking-[--tracking-display] font-normal"
         />
@@ -43,7 +54,8 @@ export function Hero({ content }: HeroProps) {
           {content.subheading}
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        {/* Buttons go full width on mobile, matching the reference. */}
+        <div className="mt-10 flex w-full flex-col items-stretch gap-4 tablet:w-auto tablet:flex-row tablet:items-center tablet:justify-center">
           <Button href={content.primaryCta.href} size="lg" withArrow>
             {content.primaryCta.label}
           </Button>

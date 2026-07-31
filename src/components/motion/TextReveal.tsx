@@ -48,6 +48,12 @@ type TextRevealProps = {
    * Readonly so `as const` content objects can be passed without a copy.
    */
   lines: readonly string[];
+  /**
+   * Optional alternative break for mobile, where a long first line may not fit.
+   * Both sets render and CSS shows one: measuring the viewport during render
+   * would differ between server and client and break hydration.
+   */
+  mobileLines?: readonly string[];
   settings: TextRevealSettings;
   as?: "h1" | "h2" | "h3" | "h4" | "p" | "div";
   /** Extra milliseconds between consecutive lines starting. */
@@ -59,6 +65,7 @@ type TextRevealProps = {
 
 export function TextReveal({
   lines,
+  mobileLines,
   settings,
   as: Tag = "h2",
   lineStagger = 0,
@@ -68,18 +75,34 @@ export function TextReveal({
 }: TextRevealProps) {
   const reduced = useReducedMotion() ?? false;
 
+  const renderLines = (source: readonly string[]) =>
+    source.map((line, i) => (
+      <RevealLine
+        key={`${line}-${i}`}
+        text={line}
+        settings={settings}
+        reduced={reduced}
+        extraDelay={i * lineStagger}
+        className={lineClassName}
+      />
+    ));
+
+  // The accessible name comes from `lines`, so the alternative break never
+  // reaches assistive tech — both sets are visual arrangements of one heading.
   return (
     <Tag id={id} aria-label={lines.join(" ")} className={cn("font-display", className)}>
-      {lines.map((line, i) => (
-        <RevealLine
-          key={`${line}-${i}`}
-          text={line}
-          settings={settings}
-          reduced={reduced}
-          extraDelay={i * lineStagger}
-          className={lineClassName}
-        />
-      ))}
+      {mobileLines ? (
+        <>
+          <span className="hidden flex-col items-center tablet:flex">
+            {renderLines(lines)}
+          </span>
+          <span className="flex flex-col items-center tablet:hidden">
+            {renderLines(mobileLines)}
+          </span>
+        </>
+      ) : (
+        renderLines(lines)
+      )}
     </Tag>
   );
 }
