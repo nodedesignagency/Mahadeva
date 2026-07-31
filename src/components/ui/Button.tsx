@@ -25,8 +25,8 @@ const base =
 const variants = {
   /** White body, dark label, dark icon box. */
   primary: "bg-fg text-fg-inverse hover:bg-fg/90",
-  /** Dark body with a hairline border, light label, light icon box. */
-  secondary: "bg-surface text-fg border border-border hover:bg-surface-hover",
+  /** Solid dark body, no border, light label, light icon box. */
+  secondary: "bg-button-secondary text-fg hover:bg-surface",
   outline: "border border-border-strong text-fg hover:bg-surface",
   ghost: "text-fg-muted hover:text-fg px-0",
 } as const;
@@ -84,7 +84,7 @@ function Inner({
         <span
           aria-hidden="true"
           className={cn(
-            "inline-flex shrink-0 items-center justify-center rounded-[calc(var(--radius-button)-2px)]",
+            "inline-flex shrink-0 items-center justify-center rounded-[--radius-icon]",
             iconSizes[size],
             iconBoxes[variant],
           )}

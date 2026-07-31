@@ -107,6 +107,8 @@
 
   --color-accent: var(--mh-green);
   --color-accent-fg: var(--mh-ink);
+  /** Secondary button fill. Solid, with no border. */
+  --color-button-secondary: var(--mh-ink-border);
   --color-danger: var(--mh-red);
   --color-focus: var(--mh-green);
 
@@ -180,7 +182,8 @@
   --space-section-lg: clamp(6rem, 4rem + 7vw, 10rem);
 
   --radius-sm: 0.5rem;
-  --radius-button: 0.375rem;
+  --radius-button: 0.25rem; /* 4px */
+  --radius-icon: 0.125rem; /* 2px, the button's icon box */
   --radius-card: 1.25rem;
   --radius-lg: 2rem;
   --radius-pill: 999px;
@@ -230,6 +233,7 @@
   --color-border-on-light: var(--color-border-on-light);
   --color-accent: var(--color-accent);
   --color-accent-fg: var(--color-accent-fg);
+  --color-button-secondary: var(--color-button-secondary);
   --color-danger: var(--color-danger);
   --color-focus: var(--color-focus);
   --color-reveal-from: var(--color-reveal-from);
@@ -261,6 +265,7 @@
 
   --radius-sm: var(--radius-sm);
   --radius-button: var(--radius-button);
+  --radius-icon: var(--radius-icon);
   --radius-card: var(--radius-card);
   --radius-lg: var(--radius-lg);
   --radius-pill: var(--radius-pill);
