@@ -8,20 +8,28 @@ import { cn } from "@/lib/cn";
 /**
  * The signature background: columns of pastel cells that open and close.
  *
- * Structure mirrors the Framer component exactly. A field is seven vertical
- * columns (`1st`..`7th`) sitting flush against each other with no horizontal
- * gap. Each column stacks five to seven cells (`1`..`7`) top to bottom, again
- * with no gap. Every cell holds one bar that grows within its own slot, so
- * bars in a column share an x position and width — they are vertically
- * aligned, and cells in neighbouring columns can meet to read as one larger
- * block.
+ * Structure mirrors the Framer component. A field is seven vertical columns
+ * (`1st`..`7th`) flush against each other, each stacking five to seven cells
+ * (`1`..`7`) with no gap. Every cell holds one bar that grows within its own
+ * slot, so bars in a column share an x position and width.
  *
- * Motion: each cell has a single target height and toggles between 0 and that
- * target, never drifting through intermediate values. A cell may stay open
- * across consecutive states, so bars arrive, hold, and give way to others; each
- * is guaranteed to change at least once per loop so nothing sits frozen.
+ * Geometry (column widths, cell heights) is fixed. Only which cells are open
+ * changes between states, and each cell toggles between 0 and a single target
+ * height — never drifting through intermediate values.
  *
- * Generated from a fixed seed so server and client produce identical markup —
+ * Spacing is what gives the field its breathing room, and it is enforced when
+ * the states are built rather than left to chance:
+ *
+ *  - No two vertically adjacent cells in a column are open at once, so cells
+ *    cannot stack into one tall block.
+ *  - An open cell's vertical span may not overlap an open cell in the
+ *    neighbouring column, so bars cannot merge side by side.
+ *
+ * Rolling each cell independently produced clusters of touching bars, which
+ * read as heavy and unlike the reference. Density alone cannot fix that — it is
+ * about where open cells land relative to each other.
+ *
+ * Generated from a fixed seed so server and client produce identical markup;
  * an unseeded source would be a hydration error.
  */
 
@@ -50,16 +58,14 @@ const BAR_COLORS = [
 ] as const;
 
 type Cell = {
-  /** Share of the column's height this cell occupies. */
   weight: number;
-  /** How full the cell is when open, as a fraction of its slot. */
+  /** Vertical span within the column, 0–1, used for the spacing checks. */
+  start: number;
+  end: number;
   target: number;
   color: string;
-  /** Which edge of its slot the bar grows from. */
   origin: "top" | "bottom";
-  /** Whether the cell is open, per state. */
   open: boolean[];
-  /** Milliseconds this cell's change is offset by. */
   stagger: number;
 };
 
@@ -67,6 +73,13 @@ type Column = {
   width: number;
   cells: Cell[];
 };
+
+type Span = { start: number; end: number };
+
+/** True when two vertical spans touch or overlap, allowing for the gap. */
+function overlaps(a: Span, b: Span, gap: number) {
+  return a.start < b.end + gap && b.start < a.end + gap;
+}
 
 function generateColumns(seed: number): Column[] {
   const random = createRandom(seed);
@@ -81,38 +94,99 @@ function generateColumns(seed: number): Column[] {
     columnWidths,
     stateCount,
     maxStagger,
+    minGap,
   } = patternField;
 
-  return Array.from({ length: columns }, () => {
+  // 1. Geometry. Fixed for the lifetime of the field.
+  const grid: Column[] = Array.from({ length: columns }, () => {
     const count =
       cellsPerColumn.min +
       Math.floor(random() * (cellsPerColumn.max - cellsPerColumn.min + 1));
 
-    const cells = Array.from({ length: count }, () => {
-      const open = Array.from({ length: stateCount }, () => random() < showProbability);
+    const weights = Array.from(
+      { length: count },
+      () => minCellWeight + random() * (maxCellWeight - minCellWeight),
+    );
+    const total = weights.reduce((a, b) => a + b, 0);
 
-      // A cell identical in every state would never animate. Flip one so every
-      // cell takes part in the loop at least once.
-      if (open.every((v) => v === open[0])) {
-        const i = Math.floor(random() * stateCount);
-        open[i] = !open[i];
-      }
-
+    let cursor = 0;
+    const cells = weights.map((weight) => {
+      const start = cursor;
+      cursor += weight / total;
       return {
-        weight: minCellWeight + random() * (maxCellWeight - minCellWeight),
+        weight,
+        start,
+        end: cursor,
         target: minTarget + random() * (maxTarget - minTarget),
         color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
         origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
-        open,
+        open: Array.from({ length: stateCount }, () => false),
         stagger: Math.round(random() * maxStagger),
       };
     });
 
-    return {
-      width: columnWidths[Math.floor(random() * columnWidths.length)],
-      cells,
-    };
+    return { width: columnWidths[Math.floor(random() * columnWidths.length)], cells };
   });
+
+  // 2. Fill each state, honouring the spacing rules. Walking left to right and
+  //    top to bottom means every decision only needs to look at the column
+  //    already placed and the cell directly above.
+  for (let state = 0; state < stateCount; state += 1) {
+    let previousColumnSpans: Span[] = [];
+
+    for (const column of grid) {
+      const spans: Span[] = [];
+      let previousCellOpen = false;
+
+      column.cells.forEach((cell) => {
+        const span = { start: cell.start, end: cell.end };
+
+        const blockedVertically = previousCellOpen;
+        const blockedHorizontally = previousColumnSpans.some((other) =>
+          overlaps(span, other, minGap),
+        );
+
+        const wants = random() < showProbability;
+        const isOpen = wants && !blockedVertically && !blockedHorizontally;
+
+        cell.open[state] = isOpen;
+        previousCellOpen = isOpen;
+        if (isOpen) spans.push(span);
+      });
+
+      previousColumnSpans = spans;
+    }
+  }
+
+  // 3. A cell identical in every state would never animate. Give it one state
+  //    where it differs, choosing a state in which doing so breaks no rule.
+  for (let columnIndex = 0; columnIndex < grid.length; columnIndex += 1) {
+    const column = grid[columnIndex];
+
+    column.cells.forEach((cell, cellIndex) => {
+      if (!cell.open.every((v) => v === cell.open[0])) return;
+
+      const span = { start: cell.start, end: cell.end };
+
+      for (let state = 0; state < stateCount; state += 1) {
+        const above = column.cells[cellIndex - 1]?.open[state] ?? false;
+        const below = column.cells[cellIndex + 1]?.open[state] ?? false;
+        const neighbourClash = [grid[columnIndex - 1], grid[columnIndex + 1]].some(
+          (neighbour) =>
+            neighbour?.cells.some(
+              (other) => other.open[state] && overlaps(span, other, minGap),
+            ),
+        );
+
+        if (!above && !below && !neighbourClash) {
+          cell.open[state] = !cell.open[state];
+          return;
+        }
+      }
+    });
+  }
+
+  return grid;
 }
 
 type PatternFieldProps = {
@@ -143,7 +217,6 @@ export function PatternField({ side, className }: PatternFieldProps) {
       {columns.map((column, columnIndex) => (
         <div
           key={columnIndex}
-          // Columns are flush: no gap, so neighbouring cells can form one block.
           className="mh-col flex h-full shrink-0 flex-col"
           style={{ width: `${column.width}px` }}
         >
@@ -158,8 +231,6 @@ export function PatternField({ side, className }: PatternFieldProps) {
               <motion.span
                 className="block h-full w-full will-change-transform"
                 style={{ background: cell.color, transformOrigin: cell.origin }}
-                // `initial` renders inline during SSR, so the first paint
-                // already shows state 0 and nothing snaps on hydration.
                 initial={{ scaleY: cell.open[0] ? cell.target : 0 }}
                 animate={{ scaleY: cell.open[state] ? cell.target : 0 }}
                 transition={

@@ -147,10 +147,18 @@ export const patternField = {
   maxTarget: 1,
 
   /**
-   * Chance a cell is open in any given state. The reference is sparse — around
-   * eight to ten bars visible per side out of roughly forty cells.
+   * Chance a cell is *considered* for opening in a state. The spacing rules
+   * reject a good share of those, so the figure that reaches the screen is
+   * lower — tune against the rendered count, not this number.
    */
-  showProbability: 0.18,
+  showProbability: 0.5,
+
+  /**
+   * Minimum vertical gap between two open cells in neighbouring columns, as a
+   * fraction of the field height. Zero would let bars sit edge to edge and read
+   * as one block; a little space keeps each bar its own shape.
+   */
+  minGap: 0.03,
 
   /**
    * Column widths in px, sampled per column, measured off the reference
