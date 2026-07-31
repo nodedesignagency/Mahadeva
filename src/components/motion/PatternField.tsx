@@ -6,22 +6,23 @@ import { patternField } from "@/config/animation";
 import { cn } from "@/lib/cn";
 
 /**
- * The signature background: a field of pastel bars that switch on and off
- * between a set of fixed arrangements.
+ * The signature background: columns of pastel cells that open and close.
  *
- * Structure mirrors the Framer component: seven flush horizontal rows, each
- * holding five to seven bars laid out side by side. Because a row lays its bars
- * out in normal flow rather than at absolute offsets, bars cannot overlap —
- * which an earlier absolute-positioned version did.
+ * Structure mirrors the Framer component exactly. A field is seven vertical
+ * columns (`1st`..`7th`) sitting flush against each other with no horizontal
+ * gap. Each column stacks five to seven cells (`1`..`7`) top to bottom, again
+ * with no gap. Every cell holds one bar that grows within its own slot, so
+ * bars in a column share an x position and width — they are vertically
+ * aligned, and cells in neighbouring columns can meet to read as one larger
+ * block.
  *
- * Motion: each bar has one target height and toggles between 0 and that target.
- * It never drifts between arbitrary intermediate values. This is also what
- * makes the arrangement appear to rearrange between states — every bar keeps
- * its position and width, and only its on/off state changes, so bars appear to
- * come and go rather than move.
+ * Motion: each cell has a single target height and toggles between 0 and that
+ * target, never drifting through intermediate values. A cell may stay open
+ * across consecutive states, so bars arrive, hold, and give way to others; each
+ * is guaranteed to change at least once per loop so nothing sits frozen.
  *
- * The bar set is generated from a fixed seed so server and client produce
- * identical markup; an unseeded source would be a hydration error.
+ * Generated from a fixed seed so server and client produce identical markup —
+ * an unseeded source would be a hydration error.
  */
 
 /** Mulberry32 — small, fast, deterministic for a given seed. */
@@ -36,7 +37,7 @@ function createRandom(seed: number) {
   };
 }
 
-/** The pastel set the bars are drawn from, as theme token references. */
+/** The pastel set the cells are drawn from, as theme token references. */
 const BAR_COLORS = [
   "var(--mh-lavender-50)",
   "var(--mh-lavender)",
@@ -48,63 +49,68 @@ const BAR_COLORS = [
   "var(--mh-blue-25)",
 ] as const;
 
-type Bar = {
-  width: number;
-  color: string;
-  /** Height as a fraction of the row when open. */
+type Cell = {
+  /** Share of the column's height this cell occupies. */
+  weight: number;
+  /** How full the cell is when open, as a fraction of its slot. */
   target: number;
-  /** Which half of the alternation this bar is open on. */
-  phase: 0 | 1;
-  /** Milliseconds this bar's flip is offset by. */
-  stagger: number;
-  marginLeft: number;
-};
-
-type Row = {
-  bars: Bar[];
-  /**
-   * Which edge every bar in this row grows from. Deliberately per row rather
-   * than per bar: mixing anchors inside a row puts some bars against the top
-   * edge and others against the bottom, which reads as two rows instead of one
-   * and made seven rows look like twelve.
-   */
+  color: string;
+  /** Which edge of its slot the bar grows from. */
   origin: "top" | "bottom";
-  insetLeft: number;
-  insetRight: number;
+  /** Whether the cell is open, per state. */
+  open: boolean[];
+  /** Milliseconds this cell's change is offset by. */
+  stagger: number;
 };
 
-function generateRows(seed: number): Row[] {
+type Column = {
+  width: number;
+  cells: Cell[];
+};
+
+function generateColumns(seed: number): Column[] {
   const random = createRandom(seed);
   const {
-    rows,
-    barsPerRow,
+    columns,
+    cellsPerColumn,
+    minCellWeight,
+    maxCellWeight,
     minTarget,
     maxTarget,
-    openFirstProbability,
-    widths,
-    maxBarOffset,
-    maxRowInset,
+    showProbability,
+    columnWidths,
+    stateCount,
     maxStagger,
   } = patternField;
 
-  return Array.from({ length: rows }, () => {
+  return Array.from({ length: columns }, () => {
     const count =
-      barsPerRow.min + Math.floor(random() * (barsPerRow.max - barsPerRow.min + 1));
+      cellsPerColumn.min +
+      Math.floor(random() * (cellsPerColumn.max - cellsPerColumn.min + 1));
 
-    const bars = Array.from({ length: count }, () => ({
-      width: widths[Math.floor(random() * widths.length)],
-      color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
-      target: minTarget + random() * (maxTarget - minTarget),
-      phase: (random() < openFirstProbability ? 0 : 1) as 0 | 1,
-      stagger: Math.round(random() * maxStagger),
-      marginLeft: Math.round(random() * maxBarOffset),
-    }));
+    const cells = Array.from({ length: count }, () => {
+      const open = Array.from({ length: stateCount }, () => random() < showProbability);
+
+      // A cell identical in every state would never animate. Flip one so every
+      // cell takes part in the loop at least once.
+      if (open.every((v) => v === open[0])) {
+        const i = Math.floor(random() * stateCount);
+        open[i] = !open[i];
+      }
+
+      return {
+        weight: minCellWeight + random() * (maxCellWeight - minCellWeight),
+        target: minTarget + random() * (maxTarget - minTarget),
+        color: BAR_COLORS[Math.floor(random() * BAR_COLORS.length)],
+        origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
+        open,
+        stagger: Math.round(random() * maxStagger),
+      };
+    });
 
     return {
-      bars,
-      origin: random() > 0.5 ? ("top" as const) : ("bottom" as const),
-      insetLeft: random() * maxRowInset,
-      insetRight: random() * maxRowInset,
+      width: columnWidths[Math.floor(random() * columnWidths.length)],
+      cells,
     };
   });
 }
@@ -119,8 +125,8 @@ export function PatternField({ side, className }: PatternFieldProps) {
   const reduced = useReducedMotion() ?? false;
   const [state, setState] = useState(0);
 
-  const { rows, stateCount, stateInterval, transition } = patternField;
-  const rowSet = useMemo(() => generateRows(patternField.seeds[side]), [side]);
+  const { stateCount, stateInterval, transition } = patternField;
+  const columns = useMemo(() => generateColumns(patternField.seeds[side]), [side]);
 
   // Cycle through the arrangements. Held still under reduced motion.
   useEffect(() => {
@@ -132,47 +138,38 @@ export function PatternField({ side, className }: PatternFieldProps) {
   return (
     <div
       aria-hidden="true"
-      className={cn("pointer-events-none absolute inset-y-0 overflow-hidden", className)}
+      className={cn("pointer-events-none absolute inset-y-0 flex overflow-hidden", className)}
     >
-      {rowSet.map((row, rowIndex) => (
+      {columns.map((column, columnIndex) => (
         <div
-          key={rowIndex}
-          className="flex items-stretch justify-between"
-          style={{
-            height: `${100 / rows}%`,
-            paddingLeft: `${row.insetLeft}%`,
-            paddingRight: `${row.insetRight}%`,
-          }}
+          key={columnIndex}
+          // Columns are flush: no gap, so neighbouring cells can form one block.
+          className="mh-col flex h-full shrink-0 flex-col"
+          style={{ width: `${column.width}px` }}
         >
-          {row.bars.map((bar, barIndex) => {
-            // Strict alternation: every bar flips on every tick, so no part of
-            // the field ever sits still. Phase decides which half it opens on.
-            const open = (state + bar.phase) % 2 === 0;
-
-            return (
+          {column.cells.map((cell, cellIndex) => (
+            <div
+              key={cellIndex}
+              // The slot holds its height regardless of the bar's scale, so the
+              // stack never reflows as cells open and close.
+              className="w-full"
+              style={{ flex: `${cell.weight} 1 0%` }}
+            >
               <motion.span
-                key={barIndex}
-                // Trailing bars are dropped at narrower widths in CSS rather
-                // than by branching in JS, which would desync the SSR markup.
-                className="mh-bar block shrink-0"
-                style={{
-                  width: `${bar.width}px`,
-                  marginLeft: barIndex === 0 ? 0 : `${bar.marginLeft}px`,
-                  background: bar.color,
-                  transformOrigin: row.origin,
-                }}
+                className="block h-full w-full will-change-transform"
+                style={{ background: cell.color, transformOrigin: cell.origin }}
                 // `initial` renders inline during SSR, so the first paint
                 // already shows state 0 and nothing snaps on hydration.
-                initial={{ scaleY: bar.phase === 0 ? bar.target : 0 }}
-                animate={{ scaleY: open ? bar.target : 0 }}
+                initial={{ scaleY: cell.open[0] ? cell.target : 0 }}
+                animate={{ scaleY: cell.open[state] ? cell.target : 0 }}
                 transition={
                   reduced
                     ? { duration: 0 }
-                    : { ...transition, delay: bar.stagger / 1000 }
+                    : { ...transition, delay: cell.stagger / 1000 }
                 }
               />
-            );
-          })}
+            </div>
+          ))}
         </div>
       ))}
     </div>

@@ -81,12 +81,14 @@ export const heroTextReveal: TextRevealSettings = {
  */
 export const patternField = {
   /**
-   * Two alternating arrangements. Every bar flips on each tick — one set opens
-   * as the other closes — which is what keeps the field continuously in motion.
-   * Assigning on/off randomly per state left some bars on (or off) for several
-   * states running, so parts of the field sat still.
+   * Arrangements cycled through, matching Framer's Animation State 1..5.
+   *
+   * A cell may stay open across two consecutive states, so bars arrive, hold
+   * for a beat, and give way to others — rather than every bar flipping on
+   * every tick, which read as flashing. Each cell is still guaranteed to change
+   * at least once per loop, so nothing sits frozen.
    */
-  stateCount: 2,
+  stateCount: 5,
 
   /**
    * Milliseconds each state is held before switching. From the owner's Framer
@@ -95,60 +97,56 @@ export const patternField = {
   stateInterval: 2400,
 
   /**
-   * Open and close share one symmetric ease, so a bar collapses exactly as it
+   * Open and close share one symmetric ease, so a cell collapses exactly as it
    * grew.
    *
-   * This deliberately is not a spring. A spring approaches its target
-   * asymptotically, so `scaleY` crawls through the last fraction and leaves a
-   * visible hairline before finally vanishing — the trailing line in the
-   * owner's screenshot. A bezier lands on zero cleanly. The curve is the same
-   * 0.3/0.7 pair used by the text reveal.
+   * Deliberately not a spring: a spring approaches its target asymptotically,
+   * so `scaleY` crawls through the last fraction and leaves a hairline before
+   * vanishing. A bezier lands on zero cleanly. Same 0.3/0.7 pair as the text
+   * reveal.
+   *
+   * Kept well under `stateInterval` so a cell finishes moving and visibly rests
+   * before the next state — at 2s it was still animating when the next tick
+   * arrived, leaving the field permanently in motion.
    */
-  transition: { duration: 2, ease: [0.3, 0, 0.7, 1] },
+  transition: { duration: 1.1, ease: [0.3, 0, 0.7, 1] },
 
   /**
-   * Maximum milliseconds a bar's start is offset by. Without it every bar flips
-   * in lockstep and the field blinks; with it, bars come and go in a ripple.
-   * Set to 0 for a perfectly synchronised flip.
+   * Maximum milliseconds a cell's start is offset by, so cells ripple rather
+   * than flipping in lockstep. Set to 0 for a synchronised flip.
    */
-  maxStagger: 420,
+  maxStagger: 260,
 
   /**
-   * Horizontal rows the field is split into, matching the `1st`..`7th` groups
-   * in the Framer component. Rows sit flush with no gap between them.
+   * Vertical columns per field, matching the `1st`..`7th` groups in the Framer
+   * component. Columns sit flush against each other with no horizontal gap, so
+   * cells in neighbouring columns can meet and read as one larger block.
    */
-  rows: 7,
+  columns: 7,
 
   /**
-   * Bars per row, sampled per row. Each row lays its bars out side by side, so
-   * bars can never overlap — an earlier version positioned them at random
-   * offsets, which collided.
+   * Cells stacked inside each column, sampled per column — the `1`..`7` children
+   * of each group in Framer. Cells fill the column top to bottom with no gap;
+   * each holds one bar that grows within its own slot.
    */
-  barsPerRow: { min: 5, max: 7 },
+  cellsPerColumn: { min: 5, max: 7 },
+
+  /** Relative height weight of a cell, so slots within a column differ. */
+  minCellWeight: 0.6,
+  maxCellWeight: 1.8,
 
   /**
-   * Each bar has a single target height, as a fraction of its row, and toggles
-   * between 0 and that target — never drifting between arbitrary values. A bar
-   * whose target is 1 reads as the full-height "100 → 0 → 100" case.
+   * How full a cell's bar is when open, as a fraction of the cell. A value of 1
+   * fills the slot completely, which is the "100 → 0 → 100" case.
    */
-  minTarget: 0.35,
+  minTarget: 0.55,
   maxTarget: 1,
 
-  /**
-   * Chance a bar starts in the open half of the alternation. Bars hold their
-   * position and width throughout — only their open/closed state changes — so
-   * the arrangement appears to rearrange without anything actually moving.
-   */
-  openFirstProbability: 0.5,
+  /** Chance a cell is open in any given state. */
+  showProbability: 0.4,
 
-  /** Bar widths in px, sampled per bar. Matches the Figma fixed widths. */
-  widths: [14, 30, 48, 56],
-
-  /** Extra left margin per bar, in px, to break up the rhythm within a row. */
-  maxBarOffset: 18,
-
-  /** Row inset as a percentage, sampled per row so bars do not line up column-wise. */
-  maxRowInset: 14,
+  /** Column widths in px, sampled per column. Matches the Figma fixed widths. */
+  columnWidths: [14, 30, 48, 56],
 
   /**
    * Fixed PRNG seeds. These MUST stay constant — the field is generated during

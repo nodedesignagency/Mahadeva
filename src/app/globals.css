@@ -87,18 +87,18 @@
 /* ---------------------------------------------------------------------------
  * Background pattern density
  *
- * Bars have fixed pixel widths, so a narrow field cannot fit a full row. Drop
- * the trailing bars per breakpoint in CSS rather than by branching on viewport
- * in JS, which would make the server and client render different markup.
+ * Columns have fixed pixel widths, so a narrow viewport cannot fit all seven.
+ * Drop trailing columns per breakpoint in CSS rather than by branching on
+ * viewport in JS, which would make server and client render different markup.
  * ------------------------------------------------------------------------- */
 @media (max-width: 809.98px) {
-  .mh-bar:nth-child(n + 4) {
+  .mh-col:nth-child(n + 4) {
     display: none;
   }
 }
 
 @media (min-width: 810px) and (max-width: 1199.98px) {
-  .mh-bar:nth-child(n + 6) {
+  .mh-col:nth-child(n + 6) {
     display: none;
   }
 }
