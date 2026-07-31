@@ -4,18 +4,20 @@
  * Pure layout logic, deliberately separate from the component that renders it:
  * it has no React dependency, so the rules below can be exercised directly.
  *
- * Three rules shape the result, all enforced here rather than left to chance —
- * independent random choices produced clustering, colour dominance and a false
- * sense of movement:
+ * Four rules shape the result, all enforced here rather than left to chance —
+ * independent random choices produced clustering, colour dominance, a false
+ * sense of movement, and bars that lingered long enough to read as static:
  *
  *  - Spacing: no two vertically adjacent cells open at once, and an open cell
  *    never comes within a small gap of one in the neighbouring column, so every
  *    bar keeps clear space around it.
- *  - Hand-off: a cell may not open in a state if a vertical neighbour was open
- *    in the state before. Otherwise one closes as the other opens and the eye
- *    reads a single bar sliding up or down and changing colour.
- *  - Colour: dealt from a balanced deck rather than sampled per cell, and never
- *    repeated beside itself, so no colour dominates a state.
+ *  - Rotation: a cell open in one state must close in the next, so no bar holds
+ *    for two beats and the field keeps turning over.
+ *  - Hand-off: a cell may not open where a vertical neighbour was open in the
+ *    state before. Otherwise one closes as the other opens and the eye reads a
+ *    single bar sliding up or down and changing colour.
+ *  - Colour: chosen to minimise repeats among the bars visible *at the same
+ *    time*, rather than merely balancing totals across the whole field.
  *
  * Everything derives from a fixed seed, so the server and the client produce
  * identical markup; an unseeded source would be a hydration error.
@@ -36,9 +38,8 @@ function createRandom(seed: number) {
 }
 
 /**
- * The pastel set, as theme token references. One entry per hue so the deal
- * below spreads them evenly — adding two near-identical greens here would make
- * green twice as likely as any other colour.
+ * The pastel set, as theme token references. One entry per hue so no colour is
+ * structurally more likely than another.
  */
 const BAR_COLORS = [
   "var(--mh-lavender-50)",
@@ -118,119 +119,123 @@ export function generateColumns(seed: number): Column[] {
     return { width: columnWidths[Math.floor(random() * columnWidths.length)], cells };
   });
 
-  /** Cells directly above and below, within the same column. */
-  const verticalNeighbours = (column: Column, index: number) =>
-    [column.cells[index - 1], column.cells[index + 1]].filter(Boolean) as Cell[];
+  // 2. Assign each cell a single state to be visible in — its phase.
+  //
+  //    Deciding open/closed per state independently could not work: with the
+  //    loop wrapping, the first state borders two others rather than one, so it
+  //    was squeezed to near-empty however the passes were ordered. Giving a
+  //    cell one phase makes rotation automatic (it is open for exactly one beat
+  //    of the five) and lets density be spread evenly across states by simply
+  //    preferring whichever phase is currently least used.
+  const phaseUsage: number[] = Array.from({ length: stateCount }, () => 0);
 
-  // 2. Fill each state. Walking columns left to right and cells top to bottom
-  //    means every decision only needs the column already placed, the cell
-  //    directly above, and the previous state.
-  for (let state = 0; state < stateCount; state += 1) {
-    let previousColumnSpans: Span[] = [];
+  grid.forEach((column, columnIndex) => {
+    column.cells.forEach((cell, cellIndex) => {
+      if (random() >= showProbability) return;
 
-    for (const column of grid) {
-      const spans: Span[] = [];
-      let previousCellOpen = false;
+      const span = { start: cell.start, end: cell.end };
+      const forbidden = new Set<number>();
 
-      column.cells.forEach((cell, index) => {
-        const span = { start: cell.start, end: cell.end };
+      const noteVertical = (neighbour: Cell | undefined) => {
+        neighbour?.open.forEach((isOpen, state) => {
+          if (!isOpen) return;
+          // Same state would stack two bars; the states either side would show
+          // one closing as the other opens, which reads as a bar moving.
+          forbidden.add(state);
+          forbidden.add((state + 1) % stateCount);
+          forbidden.add((state - 1 + stateCount) % stateCount);
+        });
+      };
+      noteVertical(column.cells[cellIndex - 1]);
+      noteVertical(column.cells[cellIndex + 1]);
 
-        const blockedVertically = previousCellOpen;
-        const blockedHorizontally = previousColumnSpans.some((other) =>
-          overlaps(span, other, minGap),
-        );
-        // Opening where a neighbour just closed reads as that bar moving.
-        const wouldHandOff =
-          state > 0 &&
-          verticalNeighbours(column, index).some((n) => n.open[state - 1]);
-
-        const isOpen =
-          random() < showProbability &&
-          !blockedVertically &&
-          !blockedHorizontally &&
-          !wouldHandOff;
-
-        cell.open[state] = isOpen;
-        previousCellOpen = isOpen;
-        if (isOpen) spans.push(span);
+      // Side by side, only sharing a state matters — bars in different columns
+      // cannot be mistaken for one bar travelling vertically.
+      grid[columnIndex - 1]?.cells.forEach((other) => {
+        if (!overlaps(span, other, minGap)) return;
+        other.open.forEach((isOpen, state) => {
+          if (isOpen) forbidden.add(state);
+        });
       });
 
-      previousColumnSpans = spans;
-    }
-  }
+      const allowed = Array.from({ length: stateCount }, (_, state) => state).filter(
+        (state) => !forbidden.has(state),
+      );
+      if (allowed.length === 0) return;
 
-  // 3. The loop wraps, so the last state hands off to the first. Close any cell
-  //    in state 0 whose vertical neighbour was open in the final state.
-  grid.forEach((column) => {
-    column.cells.forEach((cell, index) => {
-      if (!cell.open[0]) return;
-      if (verticalNeighbours(column, index).some((n) => n.open[stateCount - 1])) {
-        cell.open[0] = false;
-      }
+      // Least-used phase keeps the states evenly populated; the random offset
+      // stops ties always resolving to the same state.
+      const offset = Math.floor(random() * allowed.length);
+      let phase = allowed[offset];
+      allowed.forEach((candidate) => {
+        if (phaseUsage[candidate] < phaseUsage[phase]) phase = candidate;
+      });
+
+      cell.open[phase] = true;
+      phaseUsage[phase] += 1;
     });
   });
 
-  // 4. A cell identical in every state would never animate. Give it one state
-  //    where it differs, choosing one in which doing so breaks no rule.
+  // 3. Colour.
+  //
+  //    Balancing totals across the field is not enough: what the eye judges is
+  //    the handful of bars on screen together, and those can still repeat a hue
+  //    while the overall counts look even. Each cell takes the colour that is
+  //    least used in the states where it is actually visible, with overall
+  //    usage only breaking ties, so the field stays balanced as well.
+  const stateColorCounts: Record<string, number>[] = Array.from(
+    { length: stateCount },
+    () => ({}),
+  );
+  const totalUsage: Record<string, number> = {};
+
   grid.forEach((column, columnIndex) => {
     column.cells.forEach((cell, cellIndex) => {
-      if (!cell.open.every((v) => v === cell.open[0])) return;
+      const openStates = cell.open
+        .map((isOpen, state) => (isOpen ? state : -1))
+        .filter((state) => state >= 0);
+
+      // Cells closed in every state are never painted, so their colour is
+      // irrelevant and must not skew the balance of the ones that are.
+      if (openStates.length === 0) {
+        cell.color = BAR_COLORS[0];
+        return;
+      }
+
       const span = { start: cell.start, end: cell.end };
+      const touching = new Set<string>();
+      const above = column.cells[cellIndex - 1];
+      if (above) touching.add(above.color);
+      grid[columnIndex - 1]?.cells.forEach((other) => {
+        if (overlaps(span, other, minGap)) touching.add(other.color);
+      });
 
-      for (let state = 0; state < stateCount; state += 1) {
-        const neighbours = verticalNeighbours(column, cellIndex);
-        const previous = (state - 1 + stateCount) % stateCount;
-        const next = (state + 1) % stateCount;
+      let best: string = BAR_COLORS[0];
+      let bestScore = Infinity;
 
-        const clashesNow = neighbours.some((n) => n.open[state]);
-        const handsOff = neighbours.some((n) => n.open[previous] || n.open[next]);
-        const clashesSideways = [grid[columnIndex - 1], grid[columnIndex + 1]].some(
-          (neighbour) =>
-            neighbour?.cells.some(
-              (other) => other.open[state] && overlaps(span, other, minGap),
-            ),
+      for (const color of BAR_COLORS) {
+        // On-screen repeats dominate; touching a same-coloured neighbour is a
+        // lesser penalty; overall usage only breaks ties.
+        const onScreen = openStates.reduce(
+          (sum, state) => sum + (stateColorCounts[state][color] ?? 0),
+          0,
         );
+        const score =
+          onScreen * 1000 + (touching.has(color) ? 100 : 0) + (totalUsage[color] ?? 0);
 
-        if (!clashesNow && !handsOff && !clashesSideways) {
-          cell.open[state] = !cell.open[state];
-          return;
+        if (score < bestScore) {
+          bestScore = score;
+          best = color;
         }
       }
-    });
-  });
 
-  // 5. Colour. Dealt from a deck holding equal counts of every colour, then
-  //    shuffled — sampling per cell let one colour dominate by chance. A card
-  //    is skipped when it matches a touching neighbour, so no colour clumps.
-  const cellCount = grid.reduce((sum, column) => sum + column.cells.length, 0);
-  const deck = Array.from(
-    { length: cellCount },
-    (_, i) => BAR_COLORS[i % BAR_COLORS.length],
-  );
-  for (let i = deck.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-
-  grid.forEach((column, columnIndex) => {
-    column.cells.forEach((cell, cellIndex) => {
-      const span = { start: cell.start, end: cell.end };
-      const taken = new Set<string>();
-
-      const above = column.cells[cellIndex - 1];
-      if (above) taken.add(above.color);
-      grid[columnIndex - 1]?.cells.forEach((other) => {
-        if (overlaps(span, other, minGap)) taken.add(other.color);
+      cell.color = best;
+      totalUsage[best] = (totalUsage[best] ?? 0) + 1;
+      openStates.forEach((state) => {
+        stateColorCounts[state][best] = (stateColorCounts[state][best] ?? 0) + 1;
       });
-
-      // Take the first card that does not repeat a touching neighbour, keeping
-      // the deck's balance intact by swapping rather than discarding.
-      let pick = deck.findIndex((color) => !taken.has(color));
-      if (pick === -1) pick = 0;
-      cell.color = deck.splice(pick, 1)[0];
     });
   });
 
   return grid;
 }
-

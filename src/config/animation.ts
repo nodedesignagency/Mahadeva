@@ -83,10 +83,9 @@ export const patternField = {
   /**
    * Arrangements cycled through, matching Framer's Animation State 1..5.
    *
-   * A cell may stay open across two consecutive states, so bars arrive, hold
-   * for a beat, and give way to others — rather than every bar flipping on
-   * every tick, which read as flashing. Each cell is still guaranteed to change
-   * at least once per loop, so nothing sits frozen.
+   * Each participating cell appears in exactly one of these, so a bar is on
+   * screen for a single beat and the field turns over continuously rather than
+   * holding an arrangement long enough to read as static.
    */
   stateCount: 5,
 
@@ -147,11 +146,13 @@ export const patternField = {
   maxTarget: 1,
 
   /**
-   * Chance a cell is *considered* for opening in a state. The spacing rules
-   * reject a good share of those, so the figure that reaches the screen is
-   * lower — tune against the rendered count, not this number.
+   * Chance a cell takes part at all. Every participating cell is then given one
+   * state to appear in, and the spacing rules reject a good share, so the count
+   * that reaches the screen is far lower — tune against the rendered figure,
+   * not this number. At 1 the field sits around eight bars a side, matching the
+   * reference; lower it to thin the field out.
    */
-  showProbability: 0.5,
+  showProbability: 1,
 
   /**
    * Minimum vertical gap between two open cells in neighbouring columns, as a
