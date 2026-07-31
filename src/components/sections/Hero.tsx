@@ -28,8 +28,8 @@ export function Hero({ content }: HeroProps) {
       className="relative flex h-screen min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
     >
       {/* Decorative background. Sits behind content and ignores pointer events. */}
-      <PatternField side="left" className="left-0" />
-      <PatternField side="right" className="right-0" />
+      <PatternField side="left" className="left-[3.5%]" />
+      <PatternField side="right" className="right-[3.5%]" />
 
       <Container className="relative z-10 flex flex-col items-center text-center">
         <TextReveal

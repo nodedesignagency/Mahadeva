@@ -131,22 +131,32 @@ export const patternField = {
    */
   cellsPerColumn: { min: 5, max: 7 },
 
-  /** Relative height weight of a cell, so slots within a column differ. */
-  minCellWeight: 0.6,
-  maxCellWeight: 1.8,
+  /**
+   * Relative height weight of a cell, so slots within a column differ. The
+   * reference shows cells ranging from roughly 7% to 27% of the field height,
+   * so the spread is wide.
+   */
+  minCellWeight: 0.5,
+  maxCellWeight: 2.2,
 
   /**
-   * How full a cell's bar is when open, as a fraction of the cell. A value of 1
-   * fills the slot completely, which is the "100 → 0 → 100" case.
+   * How full a cell's bar is when open, as a fraction of the cell. Kept near 1:
+   * in the reference a bar fills its slot, and slot heights supply the variety.
    */
-  minTarget: 0.55,
+  minTarget: 0.82,
   maxTarget: 1,
 
-  /** Chance a cell is open in any given state. */
-  showProbability: 0.4,
+  /**
+   * Chance a cell is open in any given state. The reference is sparse — around
+   * eight to ten bars visible per side out of roughly forty cells.
+   */
+  showProbability: 0.18,
 
-  /** Column widths in px, sampled per column. Matches the Figma fixed widths. */
-  columnWidths: [14, 30, 48, 56],
+  /**
+   * Column widths in px, sampled per column, measured off the reference
+   * recording: a mix of hairline columns and one much wider than the rest.
+   */
+  columnWidths: [12, 28, 34, 48, 70],
 
   /**
    * Fixed PRNG seeds. These MUST stay constant — the field is generated during
