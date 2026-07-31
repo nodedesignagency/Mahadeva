@@ -154,9 +154,11 @@ export const patternField = {
 
   /**
    * Column widths in px, sampled per column, measured off the reference
-   * recording: a mix of hairline columns and one much wider than the rest.
+   * recording. No hairline width: at full viewport height a ~12px column reads
+   * as a stray line rather than a block, which the owner flagged. The spread
+   * still runs narrow to much wider than the rest.
    */
-  columnWidths: [12, 28, 34, 48, 70],
+  columnWidths: [26, 34, 48, 70],
 
   /**
    * Fixed PRNG seeds. These MUST stay constant — the field is generated during
