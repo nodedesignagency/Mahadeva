@@ -102,8 +102,8 @@ export default function TokensPage() {
             Outline
           </Button>
           <Button variant="ghost">Ghost button</Button>
-          <Button href="/" size="lg" withArrow>
-            Large
+          <Button href="/" withArrow>
+            Default (44px)
           </Button>
           <Button href="/" size="sm">
             Small

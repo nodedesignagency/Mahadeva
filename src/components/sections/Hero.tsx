@@ -47,19 +47,28 @@ export function Hero({ content }: HeroProps) {
           lines={content.headingLines}
           mobileLines={content.headingLinesMobile}
           settings={heroTextReveal}
-          className="flex flex-col items-center text-display-xl leading-[--leading-display] tracking-[--tracking-display] font-normal"
+          className="flex flex-col items-center gap-[--space-heading-line] text-display-xl leading-[--leading-display] tracking-[--tracking-display] font-normal"
         />
 
-        <p className="mt-6 max-w-[46ch] font-body text-body-lg text-fg-muted">
+        <p className="mt-6 max-w-[52ch] font-body text-body-md text-fg">
           {content.subheading}
         </p>
 
-        {/* Buttons go full width on mobile, matching the reference. */}
+        {/* Fixed 267px from tablet up, full width on mobile. */}
         <div className="mt-10 flex w-full flex-col items-stretch gap-4 tablet:w-auto tablet:flex-row tablet:items-center tablet:justify-center">
-          <Button href={content.primaryCta.href} size="lg" withArrow>
+          <Button
+            href={content.primaryCta.href}
+            withArrow
+            className="w-full tablet:w-[267px]"
+          >
             {content.primaryCta.label}
           </Button>
-          <Button href={content.secondaryCta.href} size="lg" variant="secondary" withArrow>
+          <Button
+            href={content.secondaryCta.href}
+            variant="secondary"
+            withArrow
+            className="w-full tablet:w-[267px]"
+          >
             {content.secondaryCta.label}
           </Button>
         </div>

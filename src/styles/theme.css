@@ -131,8 +131,10 @@
  * and behaves better in between.
  * ------------------------------------------------------------------------- */
 :root {
+  /* Almarai carries both display and body in the original, so both tokens
+   * point at the same loaded family. */
   --font-display: var(--font-display-family), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-body-family), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-display-family), ui-sans-serif, system-ui, sans-serif;
   --font-ui: var(--font-ui-family), ui-sans-serif, system-ui, sans-serif;
 
   /* Hero h1: 36px mobile -> 48px tablet -> 60px desktop. */
@@ -155,7 +157,11 @@
 
   --leading-display: 1;
   --leading-heading: 1.15;
-  --leading-body: 1.6;
+  /* 150%, matching the original's body preset. */
+  --leading-body: 1.5;
+
+  /** Gap between the display heading's lines. */
+  --space-heading-line: 4px;
 
   --tracking-display: -0.02em;
   --tracking-label: 0.08em;

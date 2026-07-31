@@ -1,38 +1,36 @@
 /**
  * Font configuration — the single place to swap typefaces.
  *
- * These are the three families the original Mahadeva template uses, all
- * available on Google Fonts, so no licensing or self-hosting is required:
+ * The original uses two families, both on Google Fonts, so there is no
+ * licensing or self-hosting to arrange:
  *
- *  - Almarai — display face for headings. Weight 400 with -0.02em tracking and
- *    line-height 1 is the original's exact heading treatment.
- *  - Geist   — UI face for buttons, labels and navigation.
- *  - Inter   — body copy.
+ *  - Almarai carries almost everything: headings *and* body copy. Its presets
+ *    account for forty of the site's text styles.
+ *  - Geist covers the remaining UI details, nine styles in all.
+ *
+ * Inter appears in the original's CSS only as Framer's fallback and is never a
+ * primary family, so it is not loaded here — shipping it would cost a font
+ * download for text that never uses it.
  *
  * To swap a family: change the import and the call below, keeping the same
  * `variable` name. Nothing outside this file needs to change.
  *
- * next/font self-hosts these at build time (no request to Google at runtime)
- * and generates size-adjust fallback metrics, so there is no layout shift when
- * the webfont loads.
+ * next/font self-hosts these at build time (no runtime request to Google) and
+ * generates size-adjust fallback metrics, so there is no layout shift when the
+ * webfont loads.
  */
 
-import { Almarai, Geist, Inter } from "next/font/google";
+import { Almarai, Geist } from "next/font/google";
 
-/** Headings and display type. */
+/**
+ * Headings and body copy. One instance serves both roles — `theme.css` points
+ * the display and body tokens at it — so the family is downloaded once.
+ */
 export const displayFont = Almarai({
-  subsets: ["arabic", "latin"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-display-family",
   weight: ["400", "700"],
-});
-
-/** Body copy. */
-export const bodyFont = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-body-family",
-  weight: ["400", "500"],
 });
 
 /** Buttons, labels, navigation. */
@@ -43,4 +41,4 @@ export const uiFont = Geist({
   weight: ["400", "500"],
 });
 
-export const fontVariables = [displayFont.variable, bodyFont.variable, uiFont.variable].join(" ");
+export const fontVariables = [displayFont.variable, uiFont.variable].join(" ");

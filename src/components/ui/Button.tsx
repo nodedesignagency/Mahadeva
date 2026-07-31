@@ -17,7 +17,8 @@ import { cn } from "@/lib/cn";
 
 const base =
   "group relative inline-flex items-center justify-between gap-3 rounded-[--radius-button] " +
-  "font-ui uppercase tracking-[0.04em] whitespace-nowrap " +
+  // Same face and size as body copy, set in caps — the original's button style.
+  "font-body uppercase whitespace-nowrap " +
   "transition-colors duration-[--duration-hover] ease-[--ease-out] " +
   "disabled:pointer-events-none disabled:opacity-50";
 
@@ -38,16 +39,19 @@ const iconBoxes = {
   ghost: "bg-transparent text-current",
 } as const;
 
+/**
+ * Sizes follow the original's measurements: a 44px body with 12px of padding
+ * on the label side and 4px on the other three, which is exactly the margin
+ * around the 36px icon box.
+ */
 const sizes = {
-  sm: "h-10 text-label ps-4 pe-1.5",
-  md: "h-12 text-body-sm ps-5 pe-2",
-  lg: "h-14 text-body-sm ps-6 pe-2",
+  sm: "h-9 text-body-sm ps-3 pe-1",
+  md: "h-11 text-body-md ps-3 pe-1",
 } as const;
 
 const iconSizes = {
   sm: "size-7",
-  md: "size-8",
-  lg: "size-10",
+  md: "size-9",
 } as const;
 
 type BaseProps = {
