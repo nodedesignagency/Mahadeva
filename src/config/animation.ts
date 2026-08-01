@@ -95,19 +95,35 @@ export const heroTextReveal: TextRevealSettings = {
  * the note there before changing `duration`: the two are a matched pair.
  */
 export const buttonSweep = {
-  /** Milliseconds. The spring's settle time, not a chosen tempo. */
-  duration: 2000,
+  /**
+   * Milliseconds for one bar's travel — the spring's settle time.
+   *
+   * The easing in theme.css is the spring's shape normalised across this
+   * duration, so changing this number stretches the same spring in time rather
+   * than distorting it: the result is exactly a softer spring of identical
+   * damping ratio. At 2500 that is stiffness 192 / damping 80, against the
+   * 300 / 100 the Framer file specifies — the same curve, 25% slower, because
+   * the original read as hurried on screen. 90% of the travel now lands at
+   * 943ms rather than 754ms.
+   *
+   * Only a change to the curve's *shape* needs the easing regenerated.
+   */
+  duration: 2500,
 
   /**
    * Top bar first. `overhang` is added to the button's own width to park the
    * bar off the left edge; at the original's 267px that reproduces Framer's
    * -270/-370/-470/-570 exactly.
+   *
+   * The delays step by 75ms rather than Framer's 50ms. At 50ms against a
+   * ~950ms travel the four bars overlapped enough to arrive as one mass; the
+   * wider step lets them read as four, which is the point of staggering them.
    */
   bars: [
-    { overhang: 3, delayIn: 200, delayOut: 50 },
-    { overhang: 103, delayIn: 150, delayOut: 100 },
-    { overhang: 203, delayIn: 100, delayOut: 150 },
-    { overhang: 303, delayIn: 50, delayOut: 200 },
+    { overhang: 3, delayIn: 300, delayOut: 75 },
+    { overhang: 103, delayIn: 225, delayOut: 150 },
+    { overhang: 203, delayIn: 150, delayOut: 225 },
+    { overhang: 303, delayIn: 75, delayOut: 300 },
   ],
 
   /**
@@ -116,7 +132,7 @@ export const buttonSweep = {
    * these delays are ours, timed so the label turns once the sweep has reached
    * the middle of the button rather than before it.
    */
-  label: { duration: 250, delayIn: 200, delayOut: 150 },
+  label: { duration: 310, delayIn: 250, delayOut: 190 },
 } as const;
 
 /**

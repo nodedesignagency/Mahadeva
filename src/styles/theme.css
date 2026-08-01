@@ -222,10 +222,11 @@
    * A cubic-bezier cannot express this: the two exponentials differ in rate by
    * a factor of 31, giving a shape with no four-point equivalent.
    *
-   * Paired with --duration-button-sweep: the stops are normalised so the curve
-   * reaches 1 at exactly 2000ms, which is where the spring has settled to
-   * within 1.2px. Change one and the other stops being the same spring —
-   * regenerate rather than tweaking by eye. */
+   * The stops are the spring's shape, normalised to reach 1 at the end of
+   * --duration-button-sweep. Changing that duration therefore stretches the
+   * same spring in time rather than distorting it — the result is exactly a
+   * softer spring with an identical damping ratio, so it still never
+   * overshoots. Only a change to the shape itself needs these regenerated. */
   --ease-button-spring: linear(
     0 0%, 0.0032 0.3%, 0.015 0.6%, 0.0338 1%, 0.0605 1.5%, 0.102 2.3%,
     0.1425 3%, 0.194 4%, 0.2425 5%, 0.2991 6.3%, 0.3515 7.5%, 0.4092 9%,
@@ -233,7 +234,7 @@
     0.7679 24%, 0.8193 28%, 0.8637 32.5%, 0.9006 37.5%, 0.9321 43.5%,
     0.9553 50%, 0.9727 57.5%, 0.9847 66%, 0.9928 76%, 0.9975 87.5%, 1 100%
   );
-  --duration-button-sweep: 2000ms;
+  --duration-button-sweep: 2500ms;
 }
 
 /* ---------------------------------------------------------------------------
