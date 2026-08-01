@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint && node scripts/check-arbitrary-vars.mjs"
+    "lint": "eslint && node scripts/check-arbitrary-vars.mjs",
+    "preview": "next build && node scripts/build-preview.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
