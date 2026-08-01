@@ -51,6 +51,11 @@ const mime = (f) =>
   f.endsWith(".woff2") ? "font/woff2"
   : f.endsWith(".ico") ? "image/x-icon"
   : f.endsWith(".svg") ? "image/svg+xml"
+  : f.endsWith(".png") ? "image/png"
+  : /\.jpe?g$/.test(f) ? "image/jpeg"
+  : f.endsWith(".webp") ? "image/webp"
+  : f.endsWith(".avif") ? "image/avif"
+  : f.endsWith(".gif") ? "image/gif"
   : "application/octet-stream";
 const dataUri = (u) => `data:${mime(u)};base64,${read(u).toString("base64")}`;
 
@@ -94,6 +99,65 @@ html = html.replace(/<script[^>]*src="(\/_next\/[^"]+)"[^>]*><\/script>/g, (_m, 
 html = html.replace(/href="\/favicon\.ico\?([^"]+)"/g, (_m, f) =>
   `href="${dataUri("/_next/static/media/" + f)}"`,
 );
+
+/**
+ * Artwork.
+ *
+ * Two shapes reach the page and both break in a file with no server behind it:
+ * SVGs are referenced straight as `/_next/static/media/…`, while everything the
+ * Image component optimises becomes `/_next/image?url=…&w=…&q=…`, an endpoint
+ * only `next start` answers. Neither is inlined by the passes above, so every
+ * asset 404s in the bundle while working perfectly on the real site.
+ *
+ * `srcset` goes first. Its entries differ only by width, so once each resolves
+ * to the same data URI they are megabytes of duplicate base64 — the hero mark
+ * alone is 437KB before encoding.
+ */
+const media = path.join(ROOT, "static/media");
+const artwork = new Map(
+  fs
+    .readdirSync(media)
+    .filter((f) => /\.(png|jpe?g|svg|gif|webp|avif)$/i.test(f))
+    .map((f) => ["/_next/static/media/" + f, dataUri("/_next/static/media/" + f)]),
+);
+
+html = html.replace(/\s(?:srcset|imagesrcset)="[^"]*"/gi, "");
+
+// The optimiser URL carries the real file percent-encoded in its `url` param.
+const throughOptimiser = /\/_next\/image\?url=([^"&]+)(?:&amp;|&)[^"]*/g;
+const resolve = (raw) => artwork.get(decodeURIComponent(raw));
+html = html.replace(throughOptimiser, (whole, enc) => resolve(enc) ?? whole);
+for (const [file, uri] of artwork) html = html.split(file).join(uri);
+
+/**
+ * The server-rendered `src` is only half of it: these are client components, so
+ * React re-renders and writes the optimiser URL back over the inlined one.
+ * This resolves any that appear afterwards, and keeps watching, since the strip
+ * mounts its images after hydration.
+ */
+const artworkShim = `
+<script>
+(function(){
+  var MAP=${JSON.stringify(Object.fromEntries(artwork))};
+  function fix(img){
+    var s=img.getAttribute("src")||"";
+    if(s.indexOf("data:")===0)return;
+    var m=s.match(/\\/_next\\/image\\?url=([^&]+)/);
+    var key=m?decodeURIComponent(m[1]):s;
+    if(MAP[key]){img.removeAttribute("srcset");img.setAttribute("src",MAP[key]);}
+  }
+  function sweep(){
+    var imgs=document.getElementsByTagName("img");
+    for(var i=0;i<imgs.length;i++)fix(imgs[i]);
+  }
+  sweep();
+  new MutationObserver(sweep).observe(document.documentElement,
+    {subtree:true,childList:true,attributes:true,attributeFilter:["src","srcset"]});
+  document.addEventListener("DOMContentLoaded",sweep);
+  window.addEventListener("load",sweep);
+})();
+</script>`;
+html = html.replace(/<head([^>]*)>/, (m) => m + artworkShim);
 
 // See note 3.
 const already = new Set([...html.matchAll(/var a="(\/_next\/[^"]+)"/g)].map((m) => m[1]));

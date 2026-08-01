@@ -81,6 +81,25 @@ export const sectionTextReveal = {
   ...heroTextReveal,
 
   /**
+   * These sections sit on the white wrappers, so the text resolves to ink.
+   * Inheriting the hero's `afterColor` painted white on white and the
+   * statement finished its reveal invisible.
+   */
+  afterColor: "var(--color-fg-on-light)",
+
+  /**
+   * From the owner's Reveal Blocks Item panel: 260ms per sweep, 25ms held at
+   * full cover, no lead-in delay. Quicker per bar than the hero, which is what
+   * lets a five-line statement stay one movement rather than a queue.
+   *
+   * The panel truncates the two bezier values, so the easing stays the hero's
+   * 0.3 / 0.7 — worth confirming against Framer.
+   */
+  duration: 260,
+  pause: 25,
+  delay: 0,
+
+  /**
    * Milliseconds each line waits behind the one above it, so a multi-line
    * statement resolves top to bottom instead of every line wiping at once.
    * Short on purpose: long enough to read as a sequence, well under the 620ms
