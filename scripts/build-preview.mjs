@@ -73,75 +73,6 @@ const scriptTag = (url) => {
   return `<script>${prelude}\n${js}\n</script>`;
 };
 
-/**
- * Hold entrance animations until the page is actually on screen.
- *
- * The heading reveal is `trigger: "inView"`, so it starts the moment the
- * IntersectionObserver reports the block visible — which here is during load,
- * while a megabyte of inlined bundle is still being parsed and the frame has
- * not been shown yet. The sequence is over ~3s later, so by the time anyone is
- * looking the heading has already settled and the animation reads as missing.
- *
- * Rather than change the app, the preview defers the first IntersectionObserver
- * notification until load, webfonts and a short beat have all passed. The
- * animation is the real one, on the real trigger, just released once there is
- * someone to see it. Injected ahead of every app script so the patched
- * constructor is the one they capture.
- */
-const gate = `<script>
-(function(){
-  var IO=window.IntersectionObserver;
-  if(!IO)return;
-  var open=false,waiting=[];
-  function release(){ if(open)return; open=true;
-    for(var i=0;i<waiting.length;i++)waiting[i]();
-    waiting.length=0; }
-  // Two frames of a visible, laid-out document, so release lands after a real
-  // paint rather than merely after load.
-  function painted(then){
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
-      if(document.visibilityState==="hidden"){
-        document.addEventListener("visibilitychange",function once(){
-          if(document.visibilityState!=="hidden"){
-            document.removeEventListener("visibilitychange",once);painted(then);
-          }
-        });
-        return;
-      }
-      then();
-    })});
-  }
-  function arm(){
-    var fonts=(document.fonts&&document.fonts.ready)||Promise.resolve();
-    function go(){painted(function(){setTimeout(release,500)})}
-    fonts.then(go,go);
-  }
-  if(document.readyState==="complete")arm();
-  else window.addEventListener("load",arm);
-
-  // When this runs inside an embedding shell the local load event fires long
-  // before the frame is put on screen, so the sequence would still be over by
-  // the time anyone sees it. The shell's handshake is a much better signal for
-  // "this is about to be shown"; wait a beat past it when one arrives.
-  window.addEventListener("message",function(e){
-    var d=e&&e.data;
-    if(d&&typeof d==="object"&&d.__frame_init)setTimeout(release,700);
-  });
-
-  // Never strand the page if none of the above ever settles.
-  setTimeout(release,8000);
-  function Patched(cb,opts){
-    return new IO(function(entries,obs){
-      if(open)return cb(entries,obs);
-      waiting.push(function(){cb(entries,obs)});
-    },opts);
-  }
-  Patched.prototype=IO.prototype;
-  window.IntersectionObserver=Patched;
-})();
-</script>`;
-html = html.replace(/<head([^>]*)>/, (m) => m + gate);
-
 // Stylesheets, with fonts folded in.
 html = html.replace(
   /<link[^>]+rel="stylesheet"[^>]*href="(\/_next\/[^"]+)"[^>]*>/g,
@@ -173,24 +104,136 @@ const extra = fs
   .filter((u) => !already.has(u));
 html = html.replace("</body>", extra.map(scriptTag).join("\n") + "</body>");
 
-/**
- * Preview-only replay control.
- *
- * The heading reveal runs once on mount and is over ~2.9s in. A preview that
- * takes a moment to load and hydrate has usually finished animating before
- * anyone is looking at it, which reads as "the animation is broken" when it is
- * in fact correct. Reloading replays every entrance from the top.
- *
- * Deliberately not part of the app — it is injected here so nothing
- * preview-specific reaches the real build.
- */
+// Preview-only. Injected here so nothing preview-specific reaches the build.
 // Built entirely from script: React's root is <body> (or the host container),
 // and it removes children it did not render, so markup placed here statically
 // is wiped the moment the app hydrates. Creating the node afterwards and
 // re-attaching it if it disappears is what actually survives.
+//
+// The replay re-runs the heading reveal on the DOM the app already rendered,
+// rather than reloading. That matters: the reveal fires on `inView`, which in
+// a preview is satisfied during load — while a megabyte of inlined bundle is
+// still parsing and before the frame is on screen. It is over ~2.9s later, so
+// the heading has settled before there is anyone to watch it, and the
+// animation reads as missing. Trying to delay the app's own trigger to catch
+// the viewer was guesswork about load timing; replaying it once the page is
+// demonstrably visible is not.
+//
+// The sequence below mirrors TextRevealVariable, same as the component:
+// bar one sweeps across, bar two follows behind it, the words flip to their
+// after-colour while covered, both origins flip to the far edge, then bar two
+// retreats and bar one after it. Timings mirror `heroTextReveal` in
+// src/config/animation.ts.
 const replay = `
 <script>
 (function(){
+  var D=620,PAUSE=25,DELAY=40,EASE="cubic-bezier(0.3,0,0.7,1)";
+
+  function lines(){
+    var out=[],seen=[];
+    var words=document.querySelectorAll("[data-reveal-word]");
+    for(var i=0;i<words.length;i++){
+      var parent=words[i].parentElement;
+      if(!parent||seen.indexOf(parent)>-1)continue;
+      seen.push(parent);
+      // Both the desktop and mobile line sets are in the DOM; CSS shows one.
+      if(parent.offsetParent===null)continue;
+      out.push(parent);
+    }
+    return out;
+  }
+
+  function barsOf(line){
+    var out=[];
+    for(var i=0;i<line.children.length;i++){
+      var el=line.children[i];
+      if(getComputedStyle(el).position==="absolute")out.push(el);
+    }
+    return out;
+  }
+
+  function sweep(el,from,to){
+    return el.animate(
+      [{transform:"scaleX("+from+")"},{transform:"scaleX("+to+")"}],
+      {duration:D,fill:"forwards",easing:EASE}
+    );
+  }
+
+  function playLine(line){
+    var words=line.querySelectorAll("[data-reveal-word]");
+    var bars=barsOf(line);
+    if(bars.length<2||!words.length)return;
+    var b1=bars[0],b2=bars[1];
+
+    // The component writes the after-colour onto each word inline once the
+    // bars cover it, so after a completed run that inline value is the colour
+    // to return to. Before one, fall back to the inherited colour.
+    var after=words[0].style.color;
+    if(!after||after==="transparent")after=getComputedStyle(line).color;
+
+    for(var i=0;i<bars.length;i++){
+      var running=bars[i].getAnimations?bars[i].getAnimations():[];
+      for(var j=0;j<running.length;j++)running[j].cancel();
+      bars[i].style.transformOrigin="left center";
+      bars[i].style.transform="scaleX(0)";
+    }
+    // Back to hidden without riding the 250ms colour transition.
+    for(var k=0;k<words.length;k++){
+      var w=words[k],t=w.style.transition;
+      w.style.transition="none";
+      w.style.color="transparent";
+      void w.offsetWidth;
+      w.style.transition=t||"";
+    }
+    void b1.getBoundingClientRect();
+
+    setTimeout(function(){
+      sweep(b1,0,1).onfinish=function(){
+        sweep(b2,0,1).onfinish=function(){
+          for(var n=0;n<words.length;n++)words[n].style.color=after;
+          b1.style.transformOrigin="right center";
+          b2.style.transformOrigin="right center";
+          setTimeout(function(){
+            sweep(b2,1,0).onfinish=function(){sweep(b1,1,0)};
+          },PAUSE);
+        };
+      };
+    },DELAY);
+  }
+
+  // True while any bar is mid-sweep. A fill:forwards animation that has landed
+  // reports "finished", so this only catches a sequence actually in flight.
+  function busy(){
+    var all=lines();
+    for(var i=0;i<all.length;i++){
+      var bars=barsOf(all[i]);
+      for(var j=0;j<bars.length;j++){
+        var running=bars[j].getAnimations?bars[j].getAnimations():[];
+        for(var k=0;k<running.length;k++)
+          if(running[k].playState==="running")return true;
+      }
+    }
+    return false;
+  }
+
+  var last=0;
+  // Waits for the app's own run rather than cutting across it — restarting
+  // mid-sweep snaps the bar back to the left edge and reads as a glitch.
+  // The button forces, since a deliberate press should never be ignored.
+  function play(force,tries){
+    tries=tries||0;
+    if(!force&&busy()&&tries<15){
+      setTimeout(function(){play(force,tries+1)},400);
+      return;
+    }
+    var now=Date.now();
+    if(!force&&now-last<2500)return;
+    var all=lines();
+    if(!all.length)return;
+    last=now;
+    for(var i=0;i<all.length;i++)playLine(all[i]);
+  }
+
   var CSS="#mh-replay{position:fixed;right:1rem;bottom:1rem;z-index:2147483647;"
    +"font:500 13px/1 var(--font-ui,system-ui);letter-spacing:.02em;"
    +"display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.1rem;"
@@ -208,12 +251,41 @@ const replay = `
     }
     var b=document.createElement("button");
     b.id="mh-replay";b.type="button";b.textContent="\\u21bb Replay reveal";
-    b.addEventListener("click",function(){location.reload()});
+    b.addEventListener("click",function(){play(true)});
     document.body.appendChild(b);
   }
-  function boot(){ mount(); setInterval(mount,500); }
+
+  // Two frames on a visible document, so this lands after a real paint.
+  function painted(then){
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      if(document.visibilityState==="hidden"){
+        document.addEventListener("visibilitychange",function once(){
+          if(document.visibilityState!=="hidden"){
+            document.removeEventListener("visibilitychange",once);painted(then);
+          }
+        });
+        return;
+      }
+      then();
+    })});
+  }
+
+  function boot(){
+    mount();
+    setInterval(mount,500);
+    var fonts=(document.fonts&&document.fonts.ready)||Promise.resolve();
+    function go(){painted(function(){setTimeout(function(){play(false)},900)})}
+    fonts.then(go,go);
+  }
   if(document.readyState==="complete")boot();
   else window.addEventListener("load",boot);
+
+  // Inside an embedding shell the local load event can precede the frame being
+  // shown by seconds. Its handshake is the better cue; replay again on it.
+  window.addEventListener("message",function(e){
+    var d=e&&e.data;
+    if(d&&typeof d==="object"&&d.__frame_init)setTimeout(function(){play(false)},900);
+  });
 })();
 </script>`;
 

@@ -237,6 +237,10 @@ function RevealLine({ text, settings, reduced, extraDelay, className }: RevealLi
   // Reduced motion paints the final state immediately.
   const initialColor = reduced ? settings.afterColor : settings.beforeColor;
 
+  // The edge the bars grow from, matched to the resting state below so the
+  // first animated frame does not jump.
+  const leadingEdge = settings.direction === "left" ? "left center" : "right center";
+
   return (
     <span
       ref={blockRef}
@@ -254,18 +258,35 @@ function RevealLine({ text, settings, reduced, extraDelay, className }: RevealLi
         </span>
       ))}
 
-      {/* Decorative bars, sized and positioned at runtime. */}
+      {/* Decorative bars, sized and positioned at runtime.
+       *
+       * The collapsed start state is an inline `transform`, deliberately not
+       * Tailwind's `scale-x-0`. In v4 that utility compiles to the standalone
+       * `scale` property, which multiplies with `transform` rather than being
+       * overridden by it — so the bars stayed pinned at zero width for the
+       * whole sequence, the animation ran against a permanently invisible
+       * element, and the heading appeared to jump straight from hidden to
+       * revealed with no wipe. Whatever sets the resting state has to be the
+       * same property the animation drives. */}
       {!reduced ? (
         <>
           <span
             ref={overlayRef}
-            className="pointer-events-none absolute inset-0 z-[5] scale-x-0"
-            style={{ background: settings.revealColor }}
+            className="pointer-events-none absolute inset-0 z-[5]"
+            style={{
+              background: settings.revealColor,
+              transform: "scaleX(0)",
+              transformOrigin: leadingEdge,
+            }}
           />
           <span
             ref={overlay2Ref}
-            className="pointer-events-none absolute inset-0 z-[6] scale-x-0"
-            style={{ background: settings.revealColor2 }}
+            className="pointer-events-none absolute inset-0 z-[6]"
+            style={{
+              background: settings.revealColor2,
+              transform: "scaleX(0)",
+              transformOrigin: leadingEdge,
+            }}
           />
         </>
       ) : null}
