@@ -171,6 +171,17 @@
   line-height: var(--leading-display);
 }
 
+/* A horizontal scroll strip whose bar is not part of the design. Scrolling
+ * stays available to pointer, touch and keyboard — only the bar is hidden. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Eyebrow / kicker label treatment, used above most section headings. */
 @utility eyebrow {
   font-size: var(--text-label);

@@ -30,7 +30,9 @@ export const displayFont = Almarai({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-display-family",
-  weight: ["400", "700"],
+  // 300 carries the feature-card body copy, the one place the original sets
+  // Almarai lighter than regular.
+  weight: ["300", "400", "700"],
 });
 
 /** Buttons, labels, navigation. */

@@ -1,5 +1,7 @@
 import { Hero } from "@/components/sections/Hero";
-import { heroContent } from "@/content/home";
+import { About } from "@/components/sections/About";
+import { Features } from "@/components/sections/Features";
+import { aboutContent, featuresContent, heroContent } from "@/content/home";
 
 /**
  * Home page.
@@ -9,5 +11,11 @@ import { heroContent } from "@/content/home";
  * Testimonials -> Before/After -> Pricing -> FAQ -> CTA.
  */
 export default function HomePage() {
-  return <Hero content={heroContent} />;
+  return (
+    <>
+      <Hero content={heroContent} />
+      <About content={aboutContent} />
+      <Features content={featuresContent} />
+    </>
+  );
 }

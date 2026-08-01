@@ -37,3 +37,50 @@ export const aboutContent = {
   eyebrow: "AI First Agency",
   body: "Mahadeva helps ambitious brands transform AI into practical systems that automate work, boost efficiency, and drive measurable growth across teams.",
 } as const;
+
+/**
+ * The feature strip.
+ *
+ * The original repeats "Revenue Optimization" and "Workflow Automation" at the
+ * two ends so the row reads as a continuing band rather than a closed set of
+ * four — the duplicates are the design, not an oversight. Order is the reading
+ * order, so the repeats sit at the edges where they bleed out of frame.
+ */
+export const featuresContent = {
+  heading: "Everything You Need to Scale With AI",
+  cards: [
+    {
+      title: "Revenue Optimization",
+      body: "Use AI systems designed to increase conversions and overall productivity.",
+      image: "revenue",
+    },
+    {
+      title: "Revenue Optimization",
+      body: "Use AI systems designed to increase conversions and overall productivity.",
+      image: "revenue",
+    },
+    {
+      title: "Custom AI Agents",
+      body: "Create tailored AI agents built around your workflows and team productivity.",
+      image: "agents",
+    },
+    {
+      title: "Data Intelligence",
+      body: "Turn operational data into insights that improve decisions and business automation.",
+      image: "data",
+    },
+    {
+      title: "Workflow Automation",
+      body: "Automate repetitive workflows to save time and improve daily productivity.",
+      image: "workflow",
+    },
+    {
+      title: "Workflow Automation",
+      body: "Automate repetitive workflows to save time and improve daily productivity.",
+      image: "workflow",
+    },
+  ],
+} as const;
+
+/** Keys the feature cards use to pick their artwork. */
+export type FeatureImage = (typeof featuresContent.cards)[number]["image"];
