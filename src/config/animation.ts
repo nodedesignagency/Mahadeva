@@ -69,6 +69,57 @@ export const heroTextReveal: TextRevealSettings = {
 };
 
 /**
+ * Button hover sweep.
+ *
+ * The original button is four stacked rectangles parked off the left edge,
+ * clipped by the button. On hover they slide in one after another and together
+ * form a solid accent fill; on leave they slide back out. The stagger is what
+ * makes it read as a sweep rather than a fill.
+ *
+ * From the owner's Framer file:
+ *
+ *  - Four rectangles, each 11px tall in a 44px button — quarters, so they are
+ *    expressed here as percentages and survive a resized or full-width button.
+ *  - Resting X positions -270, -370, -470, -570 against a 267px-wide button.
+ *    Stored as the overhang *past* the button's own width, so the offsets hold
+ *    at any width: on mobile the button is full-bleed and a literal -270 would
+ *    leave a sliver of the first bar on screen.
+ *  - Delays step by 0.05s, and reverse on leave: entering, the bottom bar leads
+ *    and the fill builds upward; leaving, the top bar goes first.
+ *  - Transition: physics spring, mass 1, stiffness 300, damping 100.
+ *
+ * That spring has a damping ratio of 2.89 — overdamped, so it never overshoots
+ * and its exact solution is a sum of two decaying exponentials. `--ease-button-
+ * spring` in theme.css is that solution sampled as a CSS `linear()` easing,
+ * which is why this is plain CSS and the button stays a server component. See
+ * the note there before changing `duration`: the two are a matched pair.
+ */
+export const buttonSweep = {
+  /** Milliseconds. The spring's settle time, not a chosen tempo. */
+  duration: 2000,
+
+  /**
+   * Top bar first. `overhang` is added to the button's own width to park the
+   * bar off the left edge; at the original's 267px that reproduces Framer's
+   * -270/-370/-470/-570 exactly.
+   */
+  bars: [
+    { overhang: 3, delayIn: 200, delayOut: 50 },
+    { overhang: 103, delayIn: 150, delayOut: 100 },
+    { overhang: 203, delayIn: 100, delayOut: 150 },
+    { overhang: 303, delayIn: 50, delayOut: 200 },
+  ],
+
+  /**
+   * The secondary button's label flips from light to dark as the accent
+   * arrives underneath it. Framer handles this as part of the variant change;
+   * these delays are ours, timed so the label turns once the sweep has reached
+   * the middle of the button rather than before it.
+   */
+  label: { duration: 250, delayIn: 200, delayOut: 150 },
+} as const;
+
+/**
  * Background bar-pattern field.
  *
  * The original is not a continuous loop of bars growing from zero. It is a set

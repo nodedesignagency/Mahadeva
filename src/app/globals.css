@@ -102,6 +102,67 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Button hover sweep
+ *
+ * Four accent bars parked off the left edge that slide in staggered on hover
+ * and slide back out on leave, reproducing the original's rectangle stack. The
+ * per-bar numbers — travel distance and the two delays — arrive as custom
+ * properties from `buttonSweep` in src/config/animation.ts.
+ *
+ * The delay lives on the rule rather than in the shorthand so the two
+ * directions can differ: the resting rule carries the leave delay, the hover
+ * rule overrides it with the enter delay. That asymmetry is the effect — the
+ * stack fills bottom-up and empties top-down.
+ *
+ * Only `transform` animates, so the whole thing stays on the compositor.
+ *
+ * `:focus-visible` is included for parity: Framer's hover variant leaves
+ * keyboard users with a button that never reacts.
+ * ------------------------------------------------------------------------- */
+.mh-sweep {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-accent);
+  transform: translate3d(var(--mh-sweep-from), 0, 0);
+  transition: transform var(--duration-button-sweep) var(--ease-button-spring);
+  transition-delay: var(--mh-sweep-delay-out);
+}
+
+/* Hover is gated on a real pointer, matching how Tailwind compiles its own
+ * `group-hover:` utilities. Without it a tap on a touch device leaves `:hover`
+ * stuck and the button keeps its fill after the finger lifts. Focus is handled
+ * separately, outside the query, so keyboard users on a touch-capable laptop
+ * still get the state. */
+@media (hover: hover) {
+  .group:hover .mh-sweep {
+    transform: translate3d(0, 0, 0);
+    transition-delay: var(--mh-sweep-delay-in);
+  }
+
+  .group:hover .mh-sweep-label {
+    transition-delay: var(--mh-label-delay-in);
+  }
+}
+
+.group:focus-visible .mh-sweep {
+  transform: translate3d(0, 0, 0);
+  transition-delay: var(--mh-sweep-delay-in);
+}
+
+/* The label rides above the sweep and flips colour as the accent passes under
+ * it. Only the variants that need it get the custom properties. */
+.mh-sweep-label {
+  position: relative;
+  transition: color var(--mh-label-duration) var(--ease-out)
+    var(--mh-label-delay-out);
+}
+
+.group:focus-visible .mh-sweep-label {
+  transition-delay: var(--mh-label-delay-in);
+}
+
+/* ---------------------------------------------------------------------------
  * Utilities
  * ------------------------------------------------------------------------- */
 @utility text-balance-display {

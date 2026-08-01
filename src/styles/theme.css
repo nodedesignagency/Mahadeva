@@ -208,6 +208,32 @@
   --duration-base: 600ms;
   --duration-slow: 800ms;
   --duration-transition: 700ms;
+
+  /* The button hover sweep's spring, from the original: physics-based, mass 1,
+   * stiffness 300, damping 100. Damping ratio 2.89 — overdamped, so it never
+   * overshoots and the closed-form solution is
+   *
+   *   x(t) = 1.0330·e^(-3.0958t) − 0.0330·e^(-96.9042t)
+   *
+   * sampled below as progress (1 − x) on a grid that is dense early, where the
+   * fast second term lives, and sparse through the tail. Deviation from the
+   * true curve stays under a pixel across the longest bar's 570px of travel.
+   *
+   * A cubic-bezier cannot express this: the two exponentials differ in rate by
+   * a factor of 31, giving a shape with no four-point equivalent.
+   *
+   * Paired with --duration-button-sweep: the stops are normalised so the curve
+   * reaches 1 at exactly 2000ms, which is where the spring has settled to
+   * within 1.2px. Change one and the other stops being the same spring —
+   * regenerate rather than tweaking by eye. */
+  --ease-button-spring: linear(
+    0 0%, 0.0032 0.3%, 0.015 0.6%, 0.0338 1%, 0.0605 1.5%, 0.102 2.3%,
+    0.1425 3%, 0.194 4%, 0.2425 5%, 0.2991 6.3%, 0.3515 7.5%, 0.4092 9%,
+    0.4701 10.8%, 0.532 12.8%, 0.5932 15%, 0.6518 17.5%, 0.7112 20.5%,
+    0.7679 24%, 0.8193 28%, 0.8637 32.5%, 0.9006 37.5%, 0.9321 43.5%,
+    0.9553 50%, 0.9727 57.5%, 0.9847 66%, 0.9928 76%, 0.9975 87.5%, 1 100%
+  );
+  --duration-button-sweep: 2000ms;
 }
 
 /* ---------------------------------------------------------------------------
@@ -273,6 +299,7 @@
   --ease-reveal: var(--ease-reveal);
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
+  --ease-button-spring: var(--ease-button-spring);
 
   --spacing-section-sm: var(--space-section-sm);
   --spacing-section-md: var(--space-section-md);
