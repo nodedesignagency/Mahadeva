@@ -110,14 +110,11 @@ html = html.replace("</body>", extra.map(scriptTag).join("\n") + "</body>");
 // is wiped the moment the app hydrates. Creating the node afterwards and
 // re-attaching it if it disappears is what actually survives.
 //
-// The replay re-runs the heading reveal on the DOM the app already rendered,
-// rather than reloading. That matters: the reveal fires on `inView`, which in
-// a preview is satisfied during load — while a megabyte of inlined bundle is
-// still parsing and before the frame is on screen. It is over ~2.9s later, so
-// the heading has settled before there is anyone to watch it, and the
-// animation reads as missing. Trying to delay the app's own trigger to catch
-// the viewer was guesswork about load timing; replaying it once the page is
-// demonstrably visible is not.
+// The replay re-runs the heading reveal on the DOM the app already rendered
+// rather than reloading, so watching it again costs nothing and does not
+// restart the pattern field. On-demand only — the app plays its own entrance
+// on load, and triggering a second pass automatically just ran the sequence
+// twice.
 //
 // The sequence below mirrors TextRevealVariable, same as the component:
 // bar one sweeps across, bar two follows behind it, the words flip to their
@@ -255,37 +252,15 @@ const replay = `
     document.body.appendChild(b);
   }
 
-  // Two frames on a visible document, so this lands after a real paint.
-  function painted(then){
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
-      if(document.visibilityState==="hidden"){
-        document.addEventListener("visibilitychange",function once(){
-          if(document.visibilityState!=="hidden"){
-            document.removeEventListener("visibilitychange",once);painted(then);
-          }
-        });
-        return;
-      }
-      then();
-    })});
-  }
-
+  // No auto-trigger: the app plays its own entrance on load, and replaying it
+  // afterwards just ran the whole sequence twice. The button is for watching
+  // it again on demand.
   function boot(){
     mount();
     setInterval(mount,500);
-    var fonts=(document.fonts&&document.fonts.ready)||Promise.resolve();
-    function go(){painted(function(){setTimeout(function(){play(false)},900)})}
-    fonts.then(go,go);
   }
   if(document.readyState==="complete")boot();
   else window.addEventListener("load",boot);
-
-  // Inside an embedding shell the local load event can precede the frame being
-  // shown by seconds. Its handshake is the better cue; replay again on it.
-  window.addEventListener("message",function(e){
-    var d=e&&e.data;
-    if(d&&typeof d==="object"&&d.__frame_init)setTimeout(function(){play(false)},900);
-  });
 })();
 </script>`;
 
