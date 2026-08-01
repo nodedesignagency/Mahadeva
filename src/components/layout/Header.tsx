@@ -10,7 +10,6 @@ import { siteConfig } from "@/config/site.config";
 import { durations, easings, stagger } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
-import { cn } from "@/lib/cn";
 
 /**
  * Site header.
@@ -117,19 +116,21 @@ export function Header() {
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={cn(
-                      "font-ui text-body-sm uppercase tracking-[0.04em] transition-colors duration-(--duration-hover) ease-(--ease-out)",
-                      active ? "text-fg" : "text-fg-muted hover:text-fg",
-                    )}
+                    // Every link is pure white, active or not. The current page
+                    // is still conveyed by aria-current, which is what actually
+                    // carries that meaning.
+                    className="font-ui text-body-sm text-fg uppercase tracking-[0.04em]"
                   >
                     {item.label}
                   </Link>
-                  {/* Decorative separator — aria-hidden so it is not announced
-                      between every link. */}
+                  {/* Decorative separator — a 2px square with square corners,
+                      not a middot, so it holds its shape at every size.
+                      aria-hidden so it is not announced between every link. */}
                   {i < mainNav.length - 1 ? (
-                    <span aria-hidden="true" className="text-fg-subtle">
-                      ·
-                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="size-0.5 shrink-0 rounded-none bg-fg-subtle"
+                    />
                   ) : null}
                 </li>
               );
@@ -138,12 +139,11 @@ export function Header() {
         </nav>
 
         <div className="hidden tablet:block">
-          {/* Outlined, not solid: over the hero the header is transparent, and a
-              filled white CTA reads as a second primary action competing with
-              the hero's own.
-              The variant's own `border-strong` is an opaque dark green, which
-              disappears against the hero. Over a dark ground the visible
-              hairline is the white-alpha border. */}
+          {/* Outlined, not solid: a filled white CTA up here reads as a second
+              primary action competing with the hero's own. The variant's
+              `border-strong` is an opaque dark green that disappears against
+              this surface, so it uses the same white-10% hairline as the
+              header's own bottom border. */}
           <Button
             href={navCta.href}
             size="nav"

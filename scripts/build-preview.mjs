@@ -96,14 +96,40 @@ const gate = `<script>
   function release(){ if(open)return; open=true;
     for(var i=0;i<waiting.length;i++)waiting[i]();
     waiting.length=0; }
+  // Two frames of a visible, laid-out document, so release lands after a real
+  // paint rather than merely after load.
+  function painted(then){
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      if(document.visibilityState==="hidden"){
+        document.addEventListener("visibilitychange",function once(){
+          if(document.visibilityState!=="hidden"){
+            document.removeEventListener("visibilitychange",once);painted(then);
+          }
+        });
+        return;
+      }
+      then();
+    })});
+  }
   function arm(){
     var fonts=(document.fonts&&document.fonts.ready)||Promise.resolve();
-    fonts.then(function(){setTimeout(release,400)},function(){setTimeout(release,400)});
-    // Never strand the page if load or fonts never settle.
-    setTimeout(release,6000);
+    function go(){painted(function(){setTimeout(release,500)})}
+    fonts.then(go,go);
   }
   if(document.readyState==="complete")arm();
   else window.addEventListener("load",arm);
+
+  // When this runs inside an embedding shell the local load event fires long
+  // before the frame is put on screen, so the sequence would still be over by
+  // the time anyone sees it. The shell's handshake is a much better signal for
+  // "this is about to be shown"; wait a beat past it when one arrives.
+  window.addEventListener("message",function(e){
+    var d=e&&e.data;
+    if(d&&typeof d==="object"&&d.__frame_init)setTimeout(release,700);
+  });
+
+  // Never strand the page if none of the above ever settles.
+  setTimeout(release,8000);
   function Patched(cb,opts){
     return new IO(function(entries,obs){
       if(open)return cb(entries,obs);
