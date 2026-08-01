@@ -104,6 +104,52 @@ const extra = fs
   .filter((u) => !already.has(u));
 html = html.replace("</body>", extra.map(scriptTag).join("\n") + "</body>");
 
+/**
+ * Preview-only replay control.
+ *
+ * The heading reveal runs once on mount and is over ~2.9s in. A preview that
+ * takes a moment to load and hydrate has usually finished animating before
+ * anyone is looking at it, which reads as "the animation is broken" when it is
+ * in fact correct. Reloading replays every entrance from the top.
+ *
+ * Deliberately not part of the app — it is injected here so nothing
+ * preview-specific reaches the real build.
+ */
+// Built entirely from script: React's root is <body> (or the host container),
+// and it removes children it did not render, so markup placed here statically
+// is wiped the moment the app hydrates. Creating the node afterwards and
+// re-attaching it if it disappears is what actually survives.
+const replay = `
+<script>
+(function(){
+  var CSS="#mh-replay{position:fixed;right:1rem;bottom:1rem;z-index:2147483647;"
+   +"font:500 13px/1 var(--font-ui,system-ui);letter-spacing:.02em;"
+   +"display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.1rem;"
+   +"border:0;border-radius:999px;cursor:pointer;"
+   +"background:var(--mh-green,#8cffa7);color:var(--mh-ink,#0e1e1d);"
+   +"box-shadow:0 2px 12px rgb(0 0 0 / .35)}"
+   +"#mh-replay:focus-visible{outline:2px solid #fff;outline-offset:3px}"
+   +"@media print{#mh-replay{display:none}}";
+  function mount(){
+    if(document.getElementById("mh-replay"))return;
+    if(!document.getElementById("mh-replay-css")){
+      var st=document.createElement("style");
+      st.id="mh-replay-css";st.textContent=CSS;
+      document.head.appendChild(st);
+    }
+    var b=document.createElement("button");
+    b.id="mh-replay";b.type="button";b.textContent="\\u21bb Replay reveal";
+    b.addEventListener("click",function(){location.reload()});
+    document.body.appendChild(b);
+  }
+  function boot(){ mount(); setInterval(mount,500); }
+  if(document.readyState==="complete")boot();
+  else window.addEventListener("load",boot);
+})();
+</script>`;
+
+html = html.replace("</body>", replay + "</body>");
+
 const out = process.argv[2] ?? "preview.html";
 fs.writeFileSync(out, html);
 console.log(

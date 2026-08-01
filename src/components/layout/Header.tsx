@@ -155,7 +155,18 @@ export function Header() {
         </nav>
 
         <div className="hidden tablet:block">
-          <Button href={navCta.href} size="sm">
+          {/* Outlined, not solid: over the hero the header is transparent, and a
+              filled white CTA reads as a second primary action competing with
+              the hero's own.
+              The variant's own `border-strong` is an opaque dark green, which
+              disappears against the hero. Over a dark ground the visible
+              hairline is the white-alpha border. */}
+          <Button
+            href={navCta.href}
+            size="sm"
+            variant="outline"
+            className="border-border"
+          >
             {navCta.label}
           </Button>
         </div>
@@ -219,7 +230,7 @@ export function Header() {
                   ))}
                 </ul>
               </nav>
-              <Button href={navCta.href} className="mt-6 w-full">
+              <Button href={navCta.href} variant="outline" className="mt-6 w-full">
                 {navCta.label}
               </Button>
             </Container>
