@@ -19,10 +19,10 @@ import { buttonSweep } from "@/config/animation";
  */
 
 const base =
-  "group relative inline-flex items-center justify-between gap-3 rounded-[--radius-button] " +
+  "group relative inline-flex items-center justify-between gap-3 rounded-(--radius-button) " +
   // Same face and size as body copy, set in caps — the original's button style.
   "font-body uppercase whitespace-nowrap " +
-  "transition-colors duration-[--duration-hover] ease-[--ease-out] " +
+  "transition-colors duration-(--duration-hover) ease-(--ease-out) " +
   "disabled:pointer-events-none disabled:opacity-50";
 
 const variants = {
@@ -130,7 +130,7 @@ function Inner({
           className={cn(
             // `relative` lifts the icon box out of the sweep's stacking order,
             // so the bars pass behind it rather than over it.
-            "relative inline-flex shrink-0 items-center justify-center rounded-[--radius-icon]",
+            "relative inline-flex shrink-0 items-center justify-center rounded-(--radius-icon)",
             iconSizes[size],
             iconBoxes[variant],
           )}
@@ -156,7 +156,7 @@ function Sweep() {
   return (
     <span
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden rounded-[--radius-button]"
+      className="pointer-events-none absolute inset-0 overflow-hidden rounded-(--radius-button)"
     >
       {buttonSweep.bars.map((bar, i) => (
         <span

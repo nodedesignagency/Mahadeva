@@ -93,10 +93,10 @@ export function TextReveal({
     <Tag id={id} aria-label={lines.join(" ")} className={cn("font-display", className)}>
       {mobileLines ? (
         <>
-          <span className="hidden flex-col items-center gap-[--space-heading-line] tablet:flex">
+          <span className="hidden flex-col items-center gap-(--space-heading-line) tablet:flex">
             {renderLines(lines)}
           </span>
-          <span className="flex flex-col items-center gap-[--space-heading-line] tablet:hidden">
+          <span className="flex flex-col items-center gap-(--space-heading-line) tablet:hidden">
             {renderLines(mobileLines)}
           </span>
         </>

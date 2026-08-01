@@ -47,7 +47,7 @@ export function Hero({ content }: HeroProps) {
           lines={content.headingLines}
           mobileLines={content.headingLinesMobile}
           settings={heroTextReveal}
-          className="flex flex-col items-center gap-[--space-heading-line] text-display-xl leading-[--leading-display] tracking-[--tracking-display] font-normal"
+          className="flex flex-col items-center gap-(--space-heading-line) text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
 
         <p className="mt-6 max-w-[52ch] font-body text-body-md text-fg">

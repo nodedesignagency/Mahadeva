@@ -109,7 +109,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 h-header transition-colors duration-[--duration-hover] ease-[--ease-out]",
+        "fixed inset-x-0 top-0 z-50 h-header transition-colors duration-(--duration-hover) ease-(--ease-out)",
         scrolled || open
           ? "bg-bg/90 border-b border-border backdrop-blur-md"
           : "bg-transparent border-b border-transparent",
@@ -118,7 +118,7 @@ export function Header() {
       <Container className="flex h-full items-center justify-between gap-6">
         <Link
           href="/"
-          className="font-display text-heading-md tracking-[--tracking-display] text-fg"
+          className="font-display text-heading-md tracking-(--tracking-display) text-fg"
         >
           {siteConfig.shortName}
         </Link>
@@ -135,7 +135,7 @@ export function Header() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "font-ui text-body-sm uppercase tracking-[0.04em] transition-colors duration-[--duration-hover] ease-[--ease-out]",
+                      "font-ui text-body-sm uppercase tracking-[0.04em] transition-colors duration-(--duration-hover) ease-(--ease-out)",
                       active ? "text-fg" : "text-fg-muted hover:text-fg",
                     )}
                   >

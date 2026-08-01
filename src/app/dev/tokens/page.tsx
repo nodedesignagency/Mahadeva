@@ -130,7 +130,7 @@ export default function TokensPage() {
           {["Strategy", "Agents", "Automation", "Support"].map((label) => (
             <StaggerItem
               key={label}
-              className="rounded-card border border-border bg-surface p-6 transition-colors duration-[--duration-hover] hover:bg-surface-hover"
+              className="rounded-card border border-border bg-surface p-6 transition-colors duration-(--duration-hover) hover:bg-surface-hover"
             >
               <Text tone="default">{label}</Text>
               <Text size="sm" className="mt-2">
