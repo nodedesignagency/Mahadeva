@@ -60,10 +60,23 @@ export function PatternField({ side, orientation, className }: PatternFieldProps
         <div
           key={trackIndex}
           className={cn(
-            "mh-track flex shrink-0",
-            isVertical ? "h-full flex-col" : "w-full flex-row",
+            "mh-track flex",
+            isVertical ? "h-full flex-col" : "w-full shrink-0 flex-row",
           )}
-          style={isVertical ? { width: track.thickness } : { height: track.thickness }}
+          // Vertical columns divide the field proportionally rather than taking
+          // fixed pixel widths, so a field set to a percentage of the viewport
+          // narrows its columns with it instead of holding its size and
+          // crowding the centred content on a smaller screen. `thickness` is
+          // read as a ratio here; at a desktop width the result lands within a
+          // few pixels of the original fixed values.
+          //
+          // Horizontal rows keep fixed heights — vertical space is not what
+          // runs out on a narrow screen.
+          style={
+            isVertical
+              ? { flex: `${track.thickness} 1 0%` }
+              : { height: track.thickness }
+          }
         >
           {track.cells.map((cell, cellIndex) => {
             // The spacing rules leave some cells closed in every state. They

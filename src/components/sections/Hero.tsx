@@ -32,12 +32,30 @@ export function Hero({ content }: HeroProps) {
       className="relative flex h-screen min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
     >
       {/* Decorative background. Sits behind the content and ignores pointer events. */}
+      {/* Each side field is 20% of the viewport, as in the original, so its
+          columns narrow with the screen and leave the centred content its own
+          room. At a fixed width they held their size and crept inward on a
+          smaller laptop.
+
+          Both start below the header rather than running the full height: the
+          header is opaque, so a full-height field is simply cut off at its
+          edge, and a bar caught halfway reads as clipped rather than placed.
+          `top-*` alone would drop `inset-y-0` wholesale in the class merge and
+          take `bottom` with it, so both edges are stated. */}
       <div className="hidden tablet:contents">
-        <PatternField side="left" orientation="vertical" className="left-[3.5%]" />
-        <PatternField side="right" orientation="vertical" className="right-[3.5%]" />
+        <PatternField
+          side="left"
+          orientation="vertical"
+          className="top-header bottom-0 left-[3.5%] w-[20%]"
+        />
+        <PatternField
+          side="right"
+          orientation="vertical"
+          className="top-header bottom-0 right-[3.5%] w-[20%]"
+        />
       </div>
       <div className="contents tablet:hidden">
-        <PatternField side="top" orientation="horizontal" className="top-0" />
+        <PatternField side="top" orientation="horizontal" className="top-header" />
         <PatternField side="bottom" orientation="horizontal" className="bottom-0" />
       </div>
 

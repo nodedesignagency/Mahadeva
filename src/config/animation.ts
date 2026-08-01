@@ -186,7 +186,13 @@ export const patternField = {
     tracks: 7,
     /** Cells stacked inside each column, sampled per column. */
     cellsPerTrack: { min: 5, max: 7 },
-    /** Column widths in px, sampled per column. */
+    /**
+     * Relative column widths, sampled per column. Read as ratios, not pixels:
+     * the field is a percentage of the viewport and divides itself between its
+     * columns in these proportions, so they narrow with the screen. At a
+     * desktop width they land within a few pixels of these numbers, which is
+     * where they came from.
+     */
     thickness: [26, 34, 48, 70],
   },
 
