@@ -15,39 +15,22 @@ import { cn } from "@/lib/cn";
 /**
  * Site header.
  *
- * Matches the original's `Header change trigger` behaviour: transparent over
- * the hero, then a solid background with a hairline border once scrolled.
+ * Opaque at every scroll position. The original fades a background in on
+ * scroll, but the hero's pattern field animates directly behind this strip and
+ * bars passing under the wordmark and links made both hard to read, so the
+ * header keeps its own surface throughout.
  *
  * The mobile overlay implements the accessibility the original omits — focus is
  * trapped while open, Escape closes it, background scroll is locked, and the
  * toggle exposes aria-expanded/aria-controls.
  */
 
-const SCROLL_THRESHOLD = 24;
-
 export function Header() {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const reduced = useReducedMotion() ?? false;
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-
-  // Scroll state. `passive` keeps this off the scrolling critical path.
-  //
-  // The initial read is deferred to an animation frame rather than run
-  // synchronously in the effect: setting state synchronously here would trigger
-  // a cascading re-render before paint, and the value is only needed once the
-  // browser has settled the restored scroll position anyway.
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
-    const frame = requestAnimationFrame(onScroll);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
 
   // Close the overlay on navigation, otherwise it stays open over the new page.
   //
@@ -108,12 +91,12 @@ export function Header() {
 
   return (
     <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 h-header transition-colors duration-(--duration-hover) ease-(--ease-out)",
-        scrolled || open
-          ? "bg-bg/90 border-b border-border backdrop-blur-md"
-          : "bg-transparent border-b border-transparent",
-      )}
+      // Opaque at every scroll position, not transparent over the hero: the
+      // pattern field animates directly behind this strip, and bars sliding
+      // under the wordmark and nav links made both hard to read. The fill gives
+      // the nav its own surface and clips the field at the header's edge.
+      // `--color-border` is white at 10%, the hairline that separates them.
+      className="fixed inset-x-0 top-0 z-50 h-header border-b border-border bg-bg"
     >
       <Container className="flex h-full items-center justify-between gap-6">
         <Link
@@ -163,7 +146,7 @@ export function Header() {
               hairline is the white-alpha border. */}
           <Button
             href={navCta.href}
-            size="sm"
+            size="nav"
             variant="outline"
             className="border-border"
           >

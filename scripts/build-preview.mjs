@@ -73,6 +73,49 @@ const scriptTag = (url) => {
   return `<script>${prelude}\n${js}\n</script>`;
 };
 
+/**
+ * Hold entrance animations until the page is actually on screen.
+ *
+ * The heading reveal is `trigger: "inView"`, so it starts the moment the
+ * IntersectionObserver reports the block visible — which here is during load,
+ * while a megabyte of inlined bundle is still being parsed and the frame has
+ * not been shown yet. The sequence is over ~3s later, so by the time anyone is
+ * looking the heading has already settled and the animation reads as missing.
+ *
+ * Rather than change the app, the preview defers the first IntersectionObserver
+ * notification until load, webfonts and a short beat have all passed. The
+ * animation is the real one, on the real trigger, just released once there is
+ * someone to see it. Injected ahead of every app script so the patched
+ * constructor is the one they capture.
+ */
+const gate = `<script>
+(function(){
+  var IO=window.IntersectionObserver;
+  if(!IO)return;
+  var open=false,waiting=[];
+  function release(){ if(open)return; open=true;
+    for(var i=0;i<waiting.length;i++)waiting[i]();
+    waiting.length=0; }
+  function arm(){
+    var fonts=(document.fonts&&document.fonts.ready)||Promise.resolve();
+    fonts.then(function(){setTimeout(release,400)},function(){setTimeout(release,400)});
+    // Never strand the page if load or fonts never settle.
+    setTimeout(release,6000);
+  }
+  if(document.readyState==="complete")arm();
+  else window.addEventListener("load",arm);
+  function Patched(cb,opts){
+    return new IO(function(entries,obs){
+      if(open)return cb(entries,obs);
+      waiting.push(function(){cb(entries,obs)});
+    },opts);
+  }
+  Patched.prototype=IO.prototype;
+  window.IntersectionObserver=Patched;
+})();
+</script>`;
+html = html.replace(/<head([^>]*)>/, (m) => m + gate);
+
 // Stylesheets, with fonts folded in.
 html = html.replace(
   /<link[^>]+rel="stylesheet"[^>]*href="(\/_next\/[^"]+)"[^>]*>/g,

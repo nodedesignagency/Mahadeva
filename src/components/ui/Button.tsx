@@ -72,11 +72,18 @@ const iconBoxes = {
  * around the 36px icon box.
  */
 const sizes = {
+  /**
+   * The header CTA: 33px tall with 12px of padding on the sides and 8px top
+   * and bottom, to the owner's measurement. Symmetric, unlike the hero sizes —
+   * it carries no icon box, so there is no narrow side to trim for.
+   */
+  nav: "h-[33px] text-body-sm px-3 py-2",
   sm: "h-9 text-body-sm ps-3 pe-1",
   md: "h-11 text-body-md ps-3 pe-1",
 } as const;
 
 const iconSizes = {
+  nav: "size-6",
   sm: "size-7",
   md: "size-9",
 } as const;
