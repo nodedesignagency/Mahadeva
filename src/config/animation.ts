@@ -69,6 +69,27 @@ export const heroTextReveal: TextRevealSettings = {
 };
 
 /**
+ * Section headings.
+ *
+ * The same bars and timings as the hero — it is one effect used throughout, not
+ * a second one that happens to look similar. What differs is that these are
+ * scrolled to rather than landed on, so `trigger: "inView"` is doing real work
+ * here: each block waits until it is 20% visible, then plays once and never
+ * again.
+ */
+export const sectionTextReveal = {
+  ...heroTextReveal,
+
+  /**
+   * Milliseconds each line waits behind the one above it, so a multi-line
+   * statement resolves top to bottom instead of every line wiping at once.
+   * Short on purpose: long enough to read as a sequence, well under the 620ms
+   * of a single bar sweep so the lines still feel like one movement.
+   */
+  lineStagger: 180,
+} as const;
+
+/**
  * Button hover sweep.
  *
  * The original button is four stacked rectangles parked off the left edge,

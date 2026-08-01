@@ -35,7 +35,39 @@ export const heroContent = {
 
 export const aboutContent = {
   eyebrow: "AI First Agency",
-  body: "Mahadeva helps ambitious brands transform AI into practical systems that automate work, boost efficiency, and drive measurable growth across teams.",
+
+  /**
+   * One entry per visual line, as in the hero and for the same reason: each
+   * line is its own reveal block with its own bars, so where the statement
+   * breaks is a design decision rather than a side effect of the container
+   * width. Breaks follow the owner's desktop layout.
+   *
+   * Joined with spaces these read as the original sentence, which is what
+   * reaches assistive tech.
+   */
+  bodyLines: [
+    "Mahadeva helps ambitious brands",
+    "transform AI into practical systems",
+    "that automate work, boost efficiency,",
+    "and drive measurable growth",
+    "across teams.",
+  ],
+
+  /**
+   * The desktop breaks are far too wide for a phone, so the statement is
+   * re-broken rather than left to wrap — a wrapped block would put one bar
+   * across two visual lines and lose the line-by-line reveal entirely.
+   */
+  bodyLinesMobile: [
+    "Mahadeva helps",
+    "ambitious brands",
+    "transform AI into",
+    "practical systems",
+    "that automate work,",
+    "boost efficiency, and",
+    "drive measurable",
+    "growth across teams.",
+  ],
 } as const;
 
 /**
@@ -47,7 +79,8 @@ export const aboutContent = {
  * order, so the repeats sit at the edges where they bleed out of frame.
  */
 export const featuresContent = {
-  heading: "Everything You Need to Scale With AI",
+  /** One line at every breakpoint — short enough that it never needs a break. */
+  headingLines: ["Everything You Need to Scale With AI"],
   cards: [
     {
       title: "Revenue Optimization",

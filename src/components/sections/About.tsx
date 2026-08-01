@@ -4,6 +4,8 @@ import ornamentLeft from "@/assets/badge-ornament-left.svg";
 import ornamentRight from "@/assets/badge-ornament-right.svg";
 import mark from "@/assets/hero-mahadeva.png";
 import { Container } from "@/components/layout/Container";
+import { TextReveal } from "@/components/motion/TextReveal";
+import { sectionTextReveal } from "@/config/animation";
 import type { aboutContent } from "@/content/home";
 
 /**
@@ -32,9 +34,14 @@ export function About({ content }: AboutProps) {
           <Image src={ornamentRight} alt="" aria-hidden className="h-8 w-auto" />
         </p>
 
-        <h2 className="max-w-[55ch] text-center text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal">
-          {content.body}
-        </h2>
+        <TextReveal
+          as="h2"
+          lines={content.bodyLines}
+          mobileLines={content.bodyLinesMobile}
+          settings={sectionTextReveal}
+          lineStagger={sectionTextReveal.lineStagger}
+          className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+        />
 
         {/* Decorative: the statement above already names the brand. */}
         <Image

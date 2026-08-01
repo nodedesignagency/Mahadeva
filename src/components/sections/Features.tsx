@@ -8,6 +8,8 @@ import data from "@/assets/card-data-intelligence.png";
 import revenue from "@/assets/card-revenue-optimization.png";
 import workflow from "@/assets/card-workflow-automation.png";
 import { Container } from "@/components/layout/Container";
+import { TextReveal } from "@/components/motion/TextReveal";
+import { sectionTextReveal } from "@/config/animation";
 import type { FeatureImage, featuresContent } from "@/content/home";
 
 /**
@@ -48,9 +50,13 @@ export function Features({ content }: FeaturesProps) {
   return (
     <section className="bg-bg-white text-fg-on-light">
       <Container className="flex flex-col items-center justify-center gap-15 overflow-clip py-section-lg">
-        <h2 className="max-w-[36ch] text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal">
-          {content.heading}
-        </h2>
+        <TextReveal
+          as="h2"
+          lines={content.headingLines}
+          settings={sectionTextReveal}
+          lineStagger={sectionTextReveal.lineStagger}
+          className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+        />
 
         <div
           ref={scroller}
