@@ -128,22 +128,23 @@ export const smoothScroll = {
  * Framer drives this with Scroll Speed at 130%: the mark travels 1.3x the page,
  * so it climbs past the statement above it instead of sitting still under it.
  *
- * Expressed here as a drift in each direction rather than a speed, because that
- * is what a scroll-linked transform needs. The two are the same statement: over
- * a full traverse the mark covers a viewport plus its own height, and outrunning
- * that by 30% comes to roughly the mark's own height in total — half of it in
- * each direction. At the mark's 385px in a ~900px viewport that is ~192px each
- * way, which is what 50% resolves to.
+ * Converted to a total climb, which is what a scroll-linked transform needs.
+ * Outrunning the page by 30% across a traverse of one viewport plus the
+ * section's height — 900 + 1100 here — comes to 600px, and the mark is 467
+ * tall, so 600/467 is a shade over 128%.
+ *
+ * That lands where the original does: the mark rests 220px below the statement,
+ * so by the time the section is centred it has climbed ~300px and overlaps the
+ * last lines by ~80px, with the whole statement still on screen.
+ *
+ * Measured against the section rather than the mark, since the mark hangs far
+ * below its section and its own box would enter the viewport far too late.
  */
 export const markParallax = {
-  /** Per the Framer panel. Kept for the derivation above. */
+  /** Per the Framer panel. The climb below is derived from it. */
   speed: 1.3,
-  /**
-   * Offset at each end of the traverse, as a share of the mark's height.
-   * Proportional, so the drift scales down with the mark on smaller screens
-   * without needing a second number.
-   */
-  drift: "50%",
+  /** Total climb over a full traverse, as a share of the mark's height. */
+  drift: "128%",
 } as const;
 
 /**

@@ -27,8 +27,12 @@ type AboutProps = {
 
 export function About({ content }: AboutProps) {
   return (
-    <section className="relative bg-bg-white px-10 pt-20 pb-30 text-fg-on-light">
-      <Container className="flex min-h-screen flex-col items-center justify-center gap-10 px-0">
+        // `sticky` makes this its own stacking context, so the mark's z-index
+    // cannot lift it out on its own. The layer goes on the section: above the
+    // hero it slides over, and above whatever follows, so the mark stays on top
+    // of the next section's heading wherever the two overlap.
+    <section className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-30 text-fg-on-light">
+      <Container className="relative flex min-h-screen flex-col items-center justify-center gap-10 px-0">
         <p className="flex items-center justify-center gap-2 text-body-md">
           <Image src={ornamentLeft} alt="" aria-hidden className="h-8 w-auto" />
           {content.eyebrow}
@@ -52,15 +56,15 @@ export function About({ content }: AboutProps) {
          * overwrite, so the mark stays centred as it climbs. */}
         <Parallax
           drift={markParallax.drift}
-          className="lg:absolute lg:-bottom-24 lg:left-1/2 lg:-translate-x-1/2"
+          className="z-20 lg:absolute lg:-bottom-[431px] lg:left-1/2 lg:-translate-x-1/2"
         >
           <Image
             src={mark}
             alt=""
             aria-hidden
             priority
-            sizes="(min-width: 1024px) 311px, (min-width: 640px) 260px, 200px"
-            className="h-auto w-[200px] object-cover sm:w-[260px] lg:h-[385px] lg:w-[311px]"
+            sizes="(min-width: 1024px) 376px, (min-width: 640px) 260px, 200px"
+            className="h-auto w-[200px] object-cover sm:w-[260px] lg:h-[467px] lg:w-[376px]"
           />
         </Parallax>
       </Container>

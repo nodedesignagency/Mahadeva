@@ -29,7 +29,7 @@ export function Hero({ content }: HeroProps) {
     <section
       // `100dvh` tracks mobile browser chrome as it hides and shows; the
       // `h-screen` fallback covers browsers without dynamic viewport units.
-      className="relative flex h-screen min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
+      className="sticky top-0 flex h-screen min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
     >
       {/* Decorative background. Sits behind the content and ignores pointer events. */}
       {/* Each side field is 20% of the viewport, as in the original, so its
