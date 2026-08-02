@@ -171,6 +171,43 @@
   line-height: var(--leading-display);
 }
 
+/* ---------------------------------------------------------------------------
+ * Feature marquee
+ *
+ * The row holds the cards twice and slides left by exactly one copy, so the
+ * moment it loops the second copy sits where the first began and the seam is
+ * invisible. Distance and duration arrive as custom properties, derived from
+ * the card count so adding a card changes how long a lap takes, never how fast
+ * it travels.
+ * ------------------------------------------------------------------------- */
+@keyframes mh-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-1 * var(--mh-marquee-cycle)), 0, 0);
+  }
+}
+
+.mh-marquee {
+  animation: mh-marquee var(--mh-marquee-duration) linear infinite;
+  will-change: transform;
+}
+
+/* The global backstop clamps every animation to 0.01ms, which would leave the
+ * row parked a full copy to the left rather than stopped. Stop it properly and
+ * hand scrolling back to the reader. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .mh-marquee-frame {
+    overflow-x: auto !important;
+  }
+}
+
 /* A horizontal scroll strip whose bar is not part of the design. Scrolling
  * stays available to pointer, touch and keyboard — only the bar is hidden. */
 @utility no-scrollbar {

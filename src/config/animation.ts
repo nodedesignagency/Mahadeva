@@ -109,6 +109,19 @@ export const sectionTextReveal = {
 } as const;
 
 /**
+ * Feature strip marquee.
+ *
+ * Expressed as a rate rather than a duration on purpose: the row renders the
+ * card set twice and slides by one copy, so a fixed duration would silently
+ * speed the row up every time a card is added. Deriving the duration from this
+ * keeps the travel constant however many cards there are.
+ */
+export const featureMarquee = {
+  /** Pixels per second the row travels, leftwards. Half the original's rate. */
+  speed: 50,
+} as const;
+
+/**
  * Button hover sweep.
  *
  * The original button is four stacked rectangles parked off the left edge,

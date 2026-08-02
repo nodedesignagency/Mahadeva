@@ -1,35 +1,50 @@
-"use client";
+import type { CSSProperties } from "react";
+import type { StaticImageData } from "next/image";
 
-import Image, { type StaticImageData } from "next/image";
-import { useEffect, useRef } from "react";
-
-import agents from "@/assets/card-custom-ai-agents.png";
-import data from "@/assets/card-data-intelligence.png";
-import revenue from "@/assets/card-revenue-optimization.png";
-import workflow from "@/assets/card-workflow-automation.png";
+// The filenames carried over from the export do not describe what is in them:
+// card-custom-ai-agents is the lightning bolt, card-data-intelligence is the
+// robot, card-workflow-automation is the database. Imported under what each
+// picture actually is, so the map below reads true.
+import lightning from "@/assets/card-custom-ai-agents.png";
+import robot from "@/assets/card-data-intelligence.png";
+import coin from "@/assets/card-revenue-optimization.png";
+import database from "@/assets/card-workflow-automation.png";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { sectionTextReveal } from "@/config/animation";
+import { FeatureCard } from "@/components/ui/FeatureCard";
+import { featureMarquee, sectionTextReveal } from "@/config/animation";
 import type { FeatureImage, featuresContent } from "@/content/home";
 
 /**
- * Feature strip — a horizontally scrollable row of cards.
+ * Feature strip — the cards travelling left on a continuous marquee.
  *
- * Wider than the frame by design: cards bleed off both edges so the row reads
- * as continuing rather than ending. That only works where there is room for the
- * bleed to look deliberate, so below desktop the row starts at the first card
- * instead of centred. Either way it stays scrollable by pointer, touch and
- * keyboard — only the scrollbar itself is hidden.
+ * The set is rendered twice and the track slides by exactly one copy, so the
+ * loop point lands with the second copy where the first started and there is no
+ * seam. That is the whole trick; everything else is arithmetic.
  *
- * Artwork is keyed from content rather than imported there, so the content
- * module stays free of bundler imports and remains plain data.
+ * A server component: the marquee is CSS, and the only client work on the page
+ * is the heading reveal, which declares itself.
  */
 
-const artwork: Record<FeatureImage, StaticImageData> = {
-  revenue,
-  agents,
-  data,
-  workflow,
+/**
+ * Card geometry, in px, matching the tile in FeatureCard and the `gap-5`
+ * below. The travel distance is derived from these rather than measured, so
+ * the markup is identical on the server and the client and the row is already
+ * moving on the first frame.
+ */
+const CARD_WIDTH = 265;
+const CARD_GAP = 20;
+
+/**
+ * Card key to picture. `integrations` (puzzle) and `improvement` (arrows) are
+ * still to come and are absent on purpose — those two cards render a
+ * placeholder until the files land.
+ */
+const artwork: Partial<Record<FeatureImage, StaticImageData>> = {
+  agents: robot,
+  data: database,
+  workflow: lightning,
+  revenue: coin,
 };
 
 type FeaturesProps = {
@@ -37,19 +52,25 @@ type FeaturesProps = {
 };
 
 export function Features({ content }: FeaturesProps) {
-  const scroller = useRef<HTMLDivElement>(null);
+  // One lap is exactly one copy of the set, including the gap that follows its
+  // last card — which is why the track and each copy share the same gap.
+  const cycle = content.cards.length * (CARD_WIDTH + CARD_GAP);
+  const duration = Math.round((cycle / featureMarquee.speed) * 1000);
 
-  useEffect(() => {
-    const el = scroller.current;
-    if (!el) return;
-    // Matches the `lg:` breakpoint the bleed is designed around.
-    if (!window.matchMedia("(min-width: 1024px)").matches) return;
-    el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-  }, []);
+  const cards = content.cards.map((card, i) => (
+    <li key={`${card.title}-${i}`}>
+      <FeatureCard
+        title={card.title}
+        body={card.body}
+        tone={card.tone}
+        image={artwork[card.image]}
+      />
+    </li>
+  ));
 
   return (
     <section className="bg-bg-white text-fg-on-light">
-      <Container className="flex flex-col items-center justify-center gap-15 overflow-clip py-section-lg">
+      <Container className="flex flex-col items-center justify-center gap-15 py-section-lg">
         <TextReveal
           as="h2"
           lines={content.headingLines}
@@ -57,39 +78,29 @@ export function Features({ content }: FeaturesProps) {
           lineStagger={sectionTextReveal.lineStagger}
           className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
+      </Container>
 
+      {/* Full-bleed: the row runs edge to edge, so it sits outside the
+          container's gutters rather than inside them. */}
+      <div className="mh-marquee-frame no-scrollbar w-full overflow-hidden">
         <div
-          ref={scroller}
-          className="no-scrollbar w-full overflow-x-auto overscroll-x-contain"
+          className="mh-marquee flex w-max items-center gap-5"
+          style={
+            {
+              "--mh-marquee-cycle": `${cycle}px`,
+              "--mh-marquee-duration": `${duration}ms`,
+            } as CSSProperties
+          }
         >
-          <ul className="flex w-max items-center gap-5">
-            {content.cards.map((card, i) => (
-              <li
-                // The repeated titles are deliberate, so position is what makes
-                // each entry distinct.
-                key={`${card.title}-${i}`}
-                className="relative h-[400px] w-[265px] shrink-0 overflow-clip bg-card"
-              >
-                <h3 className="absolute top-[29px] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-body-md tracking-(--tracking-display) whitespace-nowrap uppercase">
-                  {card.title}
-                </h3>
-
-                <Image
-                  src={artwork[card.image]}
-                  alt=""
-                  aria-hidden
-                  sizes="260px"
-                  className="absolute top-[calc(50%-28px)] left-1/2 size-[260px] -translate-x-1/2 -translate-y-1/2 object-cover"
-                />
-
-                <p className="absolute bottom-5 left-1/2 w-[225px] -translate-x-1/2 text-center text-body-md leading-(--leading-card) font-light">
-                  {card.body}
-                </p>
-              </li>
-            ))}
+          <ul className="flex items-center gap-5">{cards}</ul>
+          {/* The second copy exists to make the loop seamless. It is the same
+              six cards, so it is hidden from assistive tech — the set should be
+              announced once. */}
+          <ul aria-hidden="true" className="flex items-center gap-5">
+            {cards}
           </ul>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

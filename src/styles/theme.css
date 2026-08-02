@@ -94,8 +94,17 @@
   --color-bg-light: var(--mh-beige);
   /** The original alternates dark sections with white and beige wrappers. */
   --color-bg-white: var(--mh-white);
-  /** Feature card fill — the palest blue in the palette. */
-  --color-card: var(--mh-blue-10);
+  /**
+   * Feature card fills. One per card, cycling through the palette's pastels —
+   * the tint is what distinguishes a card, so they are named by role and
+   * assigned in content rather than picked in the component.
+   */
+  --color-card-blue: var(--mh-blue-10);
+  --color-card-magenta: var(--mh-magenta-25);
+  --color-card-green: var(--mh-green-50);
+  --color-card-rose: var(--mh-rose-50);
+  --color-card-lavender: var(--mh-lavender-25);
+  --color-card-peach: var(--mh-peach-50);
 
   --color-fg: var(--mh-white);
   --color-fg-muted: var(--mh-white-a60);
@@ -253,7 +262,12 @@
   --color-bg-dynamic: var(--color-bg-dynamic);
   --color-bg-light: var(--color-bg-light);
   --color-bg-white: var(--color-bg-white);
-  --color-card: var(--color-card);
+  --color-card-blue: var(--color-card-blue);
+  --color-card-magenta: var(--color-card-magenta);
+  --color-card-green: var(--color-card-green);
+  --color-card-rose: var(--color-card-rose);
+  --color-card-lavender: var(--color-card-lavender);
+  --color-card-peach: var(--color-card-peach);
   --color-surface: var(--color-surface);
   --color-surface-hover: var(--color-surface-hover);
   --color-fg: var(--color-fg);

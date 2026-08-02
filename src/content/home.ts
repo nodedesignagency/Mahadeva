@@ -71,49 +71,66 @@ export const aboutContent = {
 } as const;
 
 /**
- * The feature strip.
+ * The feature strip — six cards travelling left on a continuous marquee.
  *
- * The original repeats "Revenue Optimization" and "Workflow Automation" at the
- * two ends so the row reads as a continuing band rather than a closed set of
- * four — the duplicates are the design, not an oversight. Order is the reading
- * order, so the repeats sit at the edges where they bleed out of frame.
+ * The set is listed once here. The row renders it twice so the loop has
+ * somewhere to hand off to, which is a rendering concern rather than content.
  */
 export const featuresContent = {
-  /** One line at every breakpoint — short enough that it never needs a break. */
-  headingLines: ["Everything You Need to Scale With AI"],
+  /** Broken after "to", matching the owner's desktop layout. */
+  headingLines: ["Everything You Need to", "Scale With AI"],
+
+  /**
+   * Six cards, each with its own pastel. Order is the reading order and the
+   * order they pass through the marquee.
+   *
+   * `image` names the artwork rather than importing it — content stays plain
+   * data with no bundler imports, and a card whose art has not landed yet is
+   * simply a key the artwork map does not answer, which the card renders as a
+   * placeholder instead of failing.
+   */
   cards: [
     {
-      title: "Revenue Optimization",
-      body: "Use AI systems designed to increase conversions and overall productivity.",
-      image: "revenue",
-    },
-    {
-      title: "Revenue Optimization",
-      body: "Use AI systems designed to increase conversions and overall productivity.",
-      image: "revenue",
-    },
-    {
       title: "Custom AI Agents",
-      body: "Create tailored AI agents built around your workflows and team productivity.",
+      body: "Create tailored AI agents built around your workflows and team productivity goals.",
       image: "agents",
+      tone: "blue",
     },
     {
       title: "Data Intelligence",
       body: "Turn operational data into insights that improve decisions and business automation.",
       image: "data",
+      tone: "magenta",
     },
     {
       title: "Workflow Automation",
-      body: "Automate repetitive workflows to save time and improve daily productivity.",
+      body: "Automate repetitive workflows to save time and improve daily team productivity.",
       image: "workflow",
+      tone: "green",
     },
     {
-      title: "Workflow Automation",
-      body: "Automate repetitive workflows to save time and improve daily productivity.",
-      image: "workflow",
+      title: "Smart Integrations",
+      body: "Connect AI seamlessly with your tools to streamline team workflows and productivity.",
+      image: "integrations",
+      tone: "rose",
+    },
+    {
+      title: "Continuous Improvement",
+      body: "Deploy AI that learns over time to improve operational efficiency and productivity.",
+      image: "improvement",
+      tone: "lavender",
+    },
+    {
+      title: "Revenue Optimization",
+      body: "Use AI systems designed to increase conversions and overall business productivity.",
+      image: "revenue",
+      tone: "peach",
     },
   ],
 } as const;
 
 /** Keys the feature cards use to pick their artwork. */
 export type FeatureImage = (typeof featuresContent.cards)[number]["image"];
+
+/** Which pastel a card is filled with. */
+export type FeatureTone = (typeof featuresContent.cards)[number]["tone"];
