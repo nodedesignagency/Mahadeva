@@ -27,8 +27,8 @@ type AboutProps = {
 
 export function About({ content }: AboutProps) {
   return (
-    <section className="relative bg-bg-white text-fg-on-light">
-      <Container className="flex flex-col items-center justify-center gap-10 py-section-lg lg:min-h-[50rem]">
+    <section className="relative bg-bg-white px-10 pt-20 pb-30 text-fg-on-light">
+      <Container className="flex min-h-screen flex-col items-center justify-center gap-10 px-0">
         <p className="flex items-center justify-center gap-2 text-body-md">
           <Image src={ornamentLeft} alt="" aria-hidden className="h-8 w-auto" />
           {content.eyebrow}
@@ -41,7 +41,7 @@ export function About({ content }: AboutProps) {
           mobileLines={content.bodyLinesMobile}
           settings={sectionTextReveal}
           lineStagger={sectionTextReveal.lineStagger}
-          className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+          className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
 
         {/* Decorative: the statement above already names the brand.
@@ -52,7 +52,6 @@ export function About({ content }: AboutProps) {
          * overwrite, so the mark stays centred as it climbs. */}
         <Parallax
           drift={markParallax.drift}
-          minWidth={markParallax.minWidth}
           className="lg:absolute lg:-bottom-24 lg:left-1/2 lg:-translate-x-1/2"
         >
           <Image

@@ -155,10 +155,14 @@
   --font-body: var(--font-display-family), ui-sans-serif, system-ui, sans-serif;
   --font-ui: var(--font-ui-family), ui-sans-serif, system-ui, sans-serif;
 
-  /* Hero h1: 36px mobile -> 48px tablet -> 60px desktop. */
-  --text-display-xl: clamp(2.25rem, 1.35rem + 2.8vw, 3.75rem);
-  /* Section headings: 32 -> 40 -> 48. */
-  --text-display-lg: clamp(2rem, 1.5rem + 1.6vw, 3rem);
+  /* Hero h1 and the About statement: 36px mobile -> 48px tablet -> 60px
+   * desktop. The interpolation is solved so it lands exactly on 48 at the
+   * tablet breakpoint and exactly on 60 at the desktop one, rather than
+   * drifting past them — the previous curve only reached 60px at ~1371px, so
+   * a 1200px desktop got 55px where the design asks for 60. */
+  --text-display-xl: clamp(2.25rem, 1.442rem + 3.077vw, 3.75rem);
+  /* Every other section heading: 32 -> 40 -> 48, solved the same way. */
+  --text-display-lg: clamp(2rem, 1.461rem + 2.051vw, 3rem);
   /* 28 -> 32 -> 40 */
   --text-display-md: clamp(1.75rem, 1.4rem + 1.1vw, 2.5rem);
   /* Big numeric stats, up to 100px. */

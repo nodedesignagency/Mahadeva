@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "../styles/theme.css";
+/* Required by the smooth-scroll runtime: it drives native window scroll, and
+ * these rules keep the document sized so it can. */
+@import "lenis/dist/lenis.css";
 
 /* ---------------------------------------------------------------------------
  * Base layer. Deliberately minimal — everything visual is a token.

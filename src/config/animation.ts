@@ -109,6 +109,20 @@ export const sectionTextReveal = {
 } as const;
 
 /**
+ * Site-wide smooth scrolling.
+ *
+ * The original runs its Smooth Scroll component at intensity 10. Expressed here
+ * as Lenis's `lerp` — the share of the remaining distance the page closes each
+ * frame — which is the same 0-1 quantity on a different scale.
+ *
+ * Lower is heavier: at 0.1 the page keeps easing for a beat after the wheel
+ * stops, which is the weight the original has.
+ */
+export const smoothScroll = {
+  lerp: 0.1,
+} as const;
+
+/**
  * The About section's 3D mark.
  *
  * Framer drives this with Scroll Speed at 130%: the mark travels 1.3x the page,
@@ -124,13 +138,12 @@ export const sectionTextReveal = {
 export const markParallax = {
   /** Per the Framer panel. Kept for the derivation above. */
   speed: 1.3,
-  /** Offset at each end of the traverse, as a share of the mark's height. */
-  drift: "50%",
   /**
-   * Below this the mark sits in the normal flow rather than hanging off the
-   * block, and drifting it would run it into the statement.
+   * Offset at each end of the traverse, as a share of the mark's height.
+   * Proportional, so the drift scales down with the mark on smaller screens
+   * without needing a second number.
    */
-  minWidth: 1024,
+  drift: "50%",
 } as const;
 
 /**

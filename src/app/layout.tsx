@@ -4,6 +4,7 @@ import { baseMetadata, organizationSchema } from "@/config/seo";
 import { siteConfig } from "@/config/site.config";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import "./globals.css";
 
 export const metadata: Metadata = baseMetadata;
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <noscript>
           <style>{`[data-reveal-word]{color:var(--color-fg)!important}`}</style>
         </noscript>
+        <SmoothScroll />
         <SkipLink />
         <Header />
         {/* Footer lands here once its section is built. */}

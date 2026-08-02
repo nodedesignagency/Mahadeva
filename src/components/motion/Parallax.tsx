@@ -15,36 +15,34 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
  * 130% works out to roughly half the element's height in each direction over a
  * full traverse of the viewport — see `markParallax` for that arithmetic.
  *
- * Two things deliberately do not move: a reader who asked for reduced motion,
- * and any breakpoint below `minWidth`, where the mark sits in the flow and
- * drifting it would push it into the text.
+ * Runs at every breakpoint — the element is sized down on smaller screens
+ * rather than pinned, which is what keeps the drift from crowding the content
+ * around it. The one reader who gets no movement is the one who asked for none.
  */
 
 type ParallaxProps = {
   children: ReactNode;
   /** Offset at each end of the traverse, as a percentage of the element. */
   drift: string;
-  /** Below this viewport width the element stays put. */
-  minWidth: number;
   className?: string;
 };
 
-export function Parallax({ children, drift, minWidth, className }: ParallaxProps) {
+export function Parallax({ children, drift, className }: ParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
 
-  // Starts off so the server's markup and the first client render agree; the
-  // effect turns it on where it applies.
+  // Off for the server's markup and the first client render, so they agree.
+  // Without it the element paints at one end of its drift and then jumps to
+  // wherever the scroll position actually puts it.
+  //
+  // Turned on a frame later rather than synchronously: the scroll position has
+  // settled by then, and setting state straight from an effect would cascade a
+  // render before the browser has painted anything.
   const [enabled, setEnabled] = useState(false);
-
   useEffect(() => {
-    if (reduced) return;
-    const query = window.matchMedia(`(min-width: ${minWidth}px)`);
-    const sync = () => setEnabled(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, [reduced, minWidth]);
+    const frame = requestAnimationFrame(() => setEnabled(!reduced));
+    return () => cancelAnimationFrame(frame);
+  }, [reduced]);
 
   // Measured from the element entering the viewport to it leaving, so the
   // midpoint of the drift is the midpoint of its journey across the screen.
