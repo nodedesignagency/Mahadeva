@@ -63,12 +63,15 @@
   --mh-blue-10: #f1faff;
   --mh-peach: #ffd9a8;
   --mh-peach-50: #fff1df;
+  --mh-peach-10: #fff8f2;
   --mh-pink: #ffb0c9;
   --mh-magenta: #ffa8f6;
   --mh-magenta-200: #ffb0f8;
   --mh-magenta-50: #ffe5f9;
   --mh-magenta-25: #fcdcfa;
+  --mh-magenta-10: #fef2ff;
   --mh-rose-50: #fce1e9;
+  --mh-rose-10: #fff2f2;
   --mh-yellow: #ffe8a8;
   --mh-yellow-50: #fffbdd;
 
@@ -100,11 +103,11 @@
    * assigned in content rather than picked in the component.
    */
   --color-card-blue: var(--mh-blue-10);
-  --color-card-magenta: var(--mh-magenta-25);
+  --color-card-magenta: var(--mh-magenta-10);
   --color-card-green: var(--mh-green-50);
-  --color-card-rose: var(--mh-rose-50);
+  --color-card-rose: var(--mh-rose-10);
   --color-card-lavender: var(--mh-lavender-25);
-  --color-card-peach: var(--mh-peach-50);
+  --color-card-peach: var(--mh-peach-10);
 
   --color-fg: var(--mh-white);
   --color-fg-muted: var(--mh-white-a60);

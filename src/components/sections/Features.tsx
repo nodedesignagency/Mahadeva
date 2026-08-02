@@ -69,8 +69,10 @@ export function Features({ content }: FeaturesProps) {
   ));
 
   return (
-    <section className="bg-bg-white text-fg-on-light">
-      <Container className="flex flex-col items-center justify-center gap-15 py-section-lg">
+    // 80px top and bottom, 40px either side, to the owner's measurement — a
+    // fixed gutter here rather than the container's fluid one.
+    <section className="bg-bg-white py-20 text-fg-on-light">
+      <Container className="flex flex-col items-center justify-center px-10">
         <TextReveal
           as="h2"
           lines={content.headingLines}
@@ -80,9 +82,10 @@ export function Features({ content }: FeaturesProps) {
         />
       </Container>
 
-      {/* Full-bleed: the row runs edge to edge, so it sits outside the
-          container's gutters rather than inside them. */}
-      <div className="mh-marquee-frame no-scrollbar w-full overflow-hidden">
+      {/* 40px below the heading on a phone, 60px from tablet up. Full-bleed:
+          the row runs edge to edge, so it sits outside the container's gutter
+          rather than inside it. */}
+      <div className="mh-marquee-frame no-scrollbar mt-10 w-full overflow-hidden tablet:mt-15">
         <div
           className="mh-marquee flex w-max items-center gap-5"
           style={

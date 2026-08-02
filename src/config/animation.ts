@@ -109,6 +109,31 @@ export const sectionTextReveal = {
 } as const;
 
 /**
+ * The About section's 3D mark.
+ *
+ * Framer drives this with Scroll Speed at 130%: the mark travels 1.3x the page,
+ * so it climbs past the statement above it instead of sitting still under it.
+ *
+ * Expressed here as a drift in each direction rather than a speed, because that
+ * is what a scroll-linked transform needs. The two are the same statement: over
+ * a full traverse the mark covers a viewport plus its own height, and outrunning
+ * that by 30% comes to roughly the mark's own height in total — half of it in
+ * each direction. At the mark's 385px in a ~900px viewport that is ~192px each
+ * way, which is what 50% resolves to.
+ */
+export const markParallax = {
+  /** Per the Framer panel. Kept for the derivation above. */
+  speed: 1.3,
+  /** Offset at each end of the traverse, as a share of the mark's height. */
+  drift: "50%",
+  /**
+   * Below this the mark sits in the normal flow rather than hanging off the
+   * block, and drifting it would run it into the statement.
+   */
+  minWidth: 1024,
+} as const;
+
+/**
  * Feature strip marquee.
  *
  * Expressed as a rate rather than a duration on purpose: the row renders the

@@ -4,8 +4,9 @@ import ornamentLeft from "@/assets/badge-ornament-left.svg";
 import ornamentRight from "@/assets/badge-ornament-right.svg";
 import mark from "@/assets/hero-mahadeva.png";
 import { Container } from "@/components/layout/Container";
+import { Parallax } from "@/components/motion/Parallax";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { sectionTextReveal } from "@/config/animation";
+import { markParallax, sectionTextReveal } from "@/config/animation";
 import type { aboutContent } from "@/content/home";
 
 /**
@@ -43,15 +44,26 @@ export function About({ content }: AboutProps) {
           className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
 
-        {/* Decorative: the statement above already names the brand. */}
-        <Image
-          src={mark}
-          alt=""
-          aria-hidden
-          priority
-          sizes="(min-width: 1024px) 311px, (min-width: 640px) 260px, 200px"
-          className="h-auto w-[200px] object-cover sm:w-[260px] lg:absolute lg:-bottom-24 lg:left-1/2 lg:h-[385px] lg:w-[311px] lg:-translate-x-1/2"
-        />
+        {/* Decorative: the statement above already names the brand.
+         *
+         * Positioning lives on the wrapper so the parallax has something of its
+         * own to transform. Tailwind centres it with the `translate` property
+         * while the drift writes `transform`; the two compose rather than
+         * overwrite, so the mark stays centred as it climbs. */}
+        <Parallax
+          drift={markParallax.drift}
+          minWidth={markParallax.minWidth}
+          className="lg:absolute lg:-bottom-24 lg:left-1/2 lg:-translate-x-1/2"
+        >
+          <Image
+            src={mark}
+            alt=""
+            aria-hidden
+            priority
+            sizes="(min-width: 1024px) 311px, (min-width: 640px) 260px, 200px"
+            className="h-auto w-[200px] object-cover sm:w-[260px] lg:h-[385px] lg:w-[311px]"
+          />
+        </Parallax>
       </Container>
     </section>
   );
