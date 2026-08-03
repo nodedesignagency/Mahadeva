@@ -40,7 +40,7 @@ function PlanHeader({ name, tone, icon }: { name: string; tone: PlanTone; icon: 
   const Icon = icons[icon];
   return (
     <header
-      className={cn("flex items-center justify-between px-6 py-4", tones[tone].strip)}
+      className={cn("flex items-center justify-between px-4 py-3", tones[tone].strip)}
     >
       <p className="font-body text-body-md text-fg-on-light">{name}</p>
       <Icon aria-hidden="true" className="size-5 text-fg-on-light" />
@@ -86,13 +86,16 @@ export function Pricing({ content }: PricingProps) {
           {content.subheading}
         </p>
 
-        <div className="mt-15 grid gap-5 desktop:grid-cols-2">
+        <div className="mt-15 grid gap-3 desktop:grid-cols-2">
           {content.plans.map((plan) => (
             <article key={plan.name} className="flex flex-col">
               <PlanHeader name={plan.name} tone={plan.tone} icon={plan.icon} />
               <div
                 className={cn(
-                  "grid flex-1 border bg-bg-white p-6 max-tablet:gap-8 tablet:grid-cols-2 tablet:p-10",
+                  // The reference holds the body at ~21rem, which is where the
+                  // air between the pitch and the bottom-anchored button comes
+                  // from — the columns alone would collapse it.
+                  "grid flex-1 border bg-bg-white p-6 max-tablet:gap-8 tablet:min-h-[21rem] tablet:grid-cols-2",
                   tones[plan.tone].border,
                 )}
               >
@@ -106,7 +109,7 @@ export function Pricing({ content }: PricingProps) {
                       {plan.price.period}
                     </span>
                   </p>
-                  <p className="mt-6 font-body text-body-md leading-[1.5]">{plan.body}</p>
+                  <p className="mt-5 font-body text-body-md leading-[1.5]">{plan.body}</p>
                   <Button
                     href={plan.cta.href}
                     variant="secondary"
@@ -117,7 +120,7 @@ export function Pricing({ content }: PricingProps) {
                   </Button>
                 </div>
 
-                <div className="flex flex-col gap-5 border-border-on-light tablet:border-l tablet:pl-6">
+                <div className="flex flex-col gap-6 border-border-on-light tablet:border-l tablet:pl-6">
                   <IncludesTitle>{plan.includesTitle}</IncludesTitle>
                   <ul className="flex flex-col gap-4">
                     {plan.includes.map((item) => (
@@ -130,7 +133,7 @@ export function Pricing({ content }: PricingProps) {
           ))}
         </div>
 
-        <article className="mt-5 flex flex-col">
+        <article className="mt-4 flex flex-col">
           <PlanHeader
             name={content.enterprise.name}
             tone={content.enterprise.tone}
@@ -138,12 +141,12 @@ export function Pricing({ content }: PricingProps) {
           />
           <div
             className={cn(
-              "grid flex-1 border bg-bg-white p-6 max-tablet:gap-8 tablet:grid-cols-2 tablet:p-10",
+              "grid flex-1 border bg-bg-white p-6 max-tablet:gap-8 tablet:grid-cols-2",
               tones[content.enterprise.tone].border,
             )}
           >
             <div className="flex flex-col tablet:pr-6">
-              <p className="font-display text-display-md">{content.enterprise.title}</p>
+              <p className="font-display text-display-xl leading-none">{content.enterprise.title}</p>
               <p className="mt-6 max-w-[52ch] font-body text-body-md leading-[1.5]">
                 {content.enterprise.body}
               </p>
@@ -157,7 +160,7 @@ export function Pricing({ content }: PricingProps) {
               </Button>
             </div>
 
-            <div className="flex flex-col gap-5 border-border-on-light tablet:border-l tablet:pl-6">
+            <div className="flex flex-col gap-6 border-border-on-light tablet:border-l tablet:pl-6">
               <IncludesTitle>{content.enterprise.includesTitle}</IncludesTitle>
               {/* Two columns read down, exactly the owner's order. */}
               <div className="grid gap-4 tablet:grid-cols-2 tablet:gap-x-8">
