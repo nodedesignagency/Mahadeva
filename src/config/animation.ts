@@ -369,7 +369,7 @@ export const caseHover = {
   rects: [
     { w: 92, h: 92, left: 0, top: 0, dx: -100, dy: 0 },
     { w: 40, h: 40, left: 92, top: 92, dx: -192, dy: 0 },
-    { w: 40, h: 40, left: 0, top: 132, dx: -100, dy: 0 },
+    { w: 92, h: 40, left: 0, top: 132, dx: -100, dy: 0 },
     { w: 32, h: 140, right: 0, top: 0, dx: 0, dy: -160 },
     { w: 40, h: 40, left: 0, bottom: 0, dx: 0, dy: 100 },
     { w: 40, h: 40, left: 40, bottom: 40, dx: 0, dy: 220 },
