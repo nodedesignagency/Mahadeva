@@ -30,25 +30,44 @@ const tones: Record<CaseTone, string> = {
  * hugs, so it enters travelling inward. Delivered as a custom property because
  * an inline `translate` would outrank the hover rule that clears it.
  */
-const departures: Record<string, string> = {
-  left: "-101% 0",
-  right: "101% 0",
-  top: "0 -101%",
-  bottom: "0 101%",
-};
-
-function blockPosition(block: (typeof caseHover.blocks)[number]): CSSProperties {
-  const size = { width: `${block.w}%`, height: `${block.h}%` };
-  switch (block.edge) {
+/**
+ * Where a rectangle waits before the pointer arrives: fully outside the edge
+ * it enters from, however far that is from where it lands.
+ *
+ * Expressed as a percentage of the rectangle's own size, because that is what
+ * `translate` percentages resolve against. A block sitting 91px in and 37px
+ * wide has to travel 128px to clear the left edge, which is 346% of itself —
+ * translating a flat -100% would have left it halfway across the frame, still
+ * in plain sight.
+ */
+function departure(rect: (typeof caseHover.rects)[number]): string {
+  const { height } = caseHover.reference;
+  switch (rect.from) {
     case "left":
-      return { ...size, left: 0, top: `${block.y}%` };
-    case "right":
-      return { ...size, right: 0, top: `${block.y}%` };
+      return `${(-(rect.x + rect.w) / rect.w) * 100}% 0`;
     case "top":
-      return { ...size, top: 0, left: `${block.x}%` };
+      return `0 ${(-(rect.y + rect.h) / rect.h) * 100}%`;
     default:
-      return { ...size, bottom: 0, left: `${block.x}%` };
+      return `0 ${((height - rect.y) / rect.h) * 100}%`;
   }
+}
+
+/**
+ * A rectangle's box, as percentages of the reference artwork half.
+ *
+ * Framer positions these in the pixels of a fixed 560x552 frame. Ours is a
+ * grid column that changes width with the viewport, so the figures are
+ * converted here — the arrangement then holds at every size rather than only
+ * being correct at one.
+ */
+function rectBox(rect: (typeof caseHover.rects)[number]): CSSProperties {
+  const { width, height } = caseHover.reference;
+  return {
+    left: `${(rect.x / width) * 100}%`,
+    top: `${(rect.y / height) * 100}%`,
+    width: `${(rect.w / width) * 100}%`,
+    height: `${(rect.h / height) * 100}%`,
+  };
 }
 
 /**
@@ -146,7 +165,18 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
           </dl>
         </div>
 
-        <div className="relative min-h-[18rem] overflow-clip bg-bg-light">
+        {/* The artwork half, and the whole of the hover. `aspect-[560/552]` is
+            the Framer frame's proportion, which is what makes the rectangles'
+            pixel positions convertible to percentages at all. */}
+        <div
+          className="relative aspect-[560/552] overflow-clip bg-bg-light"
+          style={
+            {
+              "--mh-case-duration": `${caseHover.duration}ms`,
+              "--mh-case-scale": caseHover.imageScale,
+            } as CSSProperties
+          }
+        >
           {study.image?.url ? (
             // Not next/image: the URL is already sized and format-negotiated by
             // Sanity's pipeline, so routing it through the optimiser would be a
@@ -155,32 +185,24 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             <img
               src={study.image.url}
               alt={study.image.alt}
-              className="size-full object-cover object-left-top"
+              className="mh-case-cover size-full object-cover object-left-top"
               loading="lazy"
             />
           ) : (
-            <div className="flex size-full items-center justify-center p-7">
+            <div className="mh-case-cover flex size-full items-center justify-center p-7">
               <p className="font-body text-body-sm text-fg-on-light/40">Screenshot to come</p>
             </div>
           )}
 
-          {/* Decorative, and confined to this half — the blocks belong to the
-              artwork, not to the reading matter beside it. Above the link
+          {/* Decorative, and confined to this half — the rectangles belong to
+              the artwork, not to the reading matter beside it. Above the link
               surface so nothing clips them. */}
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-30">
-            {caseHover.blocks.map((block, i) => (
+            {caseHover.rects.map((rect, i) => (
               <span
                 key={i}
                 className="mh-case-block"
-                style={
-                  {
-                    ...blockPosition(block),
-                    "--mh-case-from": departures[block.edge],
-                    "--mh-case-duration": `${caseHover.duration}ms`,
-                    "--mh-case-delay-in": `${block.delay}ms`,
-                    "--mh-case-delay-out": `${caseHover.exitDelay}ms`,
-                  } as CSSProperties
-                }
+                style={{ ...rectBox(rect), "--mh-case-from": departure(rect) } as CSSProperties}
               />
             ))}
           </div>

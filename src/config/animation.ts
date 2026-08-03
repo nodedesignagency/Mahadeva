@@ -340,18 +340,37 @@ export const mobileNav = {
  * clustering two or three arrivals and leaving a gap reads as scatter.
  */
 export const caseHover = {
-  duration: 520,
-  /** Added to every block's delay on the way out, so leaving feels unhurried. */
-  exitDelay: 40,
-  blocks: [
-    { edge: "left", x: 0, y: 34, w: 7, h: 11, delay: 0 },
-    { edge: "left", x: 0, y: 62, w: 5, h: 7, delay: 120 },
-    { edge: "top", x: 30, y: 0, w: 12, h: 4.5, delay: 60 },
-    { edge: "top", x: 66, y: 0, w: 7, h: 6, delay: 180 },
-    { edge: "right", x: 0, y: 22, w: 6, h: 9, delay: 40 },
-    { edge: "right", x: 0, y: 55, w: 9, h: 5.5, delay: 150 },
-    { edge: "bottom", x: 22, y: 0, w: 10, h: 5, delay: 90 },
-    { edge: "bottom", x: 48, y: 0, w: 6, h: 8, delay: 210 },
+  /** From the owner's transition panel: bezier 0.8, 0, 0.2, 1 over 0.7s. */
+  duration: 700,
+
+  /** The cover image grows behind the blocks. */
+  imageScale: 1.05,
+
+  /**
+   * The artwork half is 560x552 in the Framer file. Rectangles are given in
+   * those pixels and converted to percentages when rendered, so the whole
+   * arrangement scales with the card instead of only being right at one width.
+   */
+  reference: { width: 560, height: 552 },
+
+  /**
+   * Each rectangle enters from the side its group is anchored to: the pair at
+   * the top left slide in from the left, those at the bottom left rise from
+   * the bottom, and the top right ones drop from the top.
+   *
+   * Positions are read off the owner's hover screenshot rather than taken from
+   * the file, so they are close but not exact — the directions, sizes and
+   * timing are what carry the effect, and each rectangle is four numbers to
+   * correct if any of them sit wrong.
+   */
+  rects: [
+    { from: "left", x: 0, y: 104, w: 91, h: 76 },
+    { from: "left", x: 91, y: 104, w: 37, h: 38 },
+    { from: "left", x: 0, y: 180, w: 46, h: 34 },
+    { from: "top", x: 507, y: 0, w: 30, h: 152 },
+    { from: "top", x: 537, y: 0, w: 23, h: 96 },
+    { from: "bottom", x: 40, y: 470, w: 38, h: 82 },
+    { from: "bottom", x: 78, y: 508, w: 34, h: 44 },
   ],
 } as const;
 

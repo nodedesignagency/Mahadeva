@@ -273,6 +273,11 @@
    * rule backs up a hair before it draws. */
   --ease-border-reveal: cubic-bezier(0.85, -0.02, 0.31, 0.96);
 
+  /* Case study card hover, from the owner's transition panel. Same shape as
+   * the header's scroll flip; its own token because the two are unrelated and
+   * retuning one should not move the other. */
+  --ease-case-hover: cubic-bezier(0.8, 0, 0.2, 1);
+
   --duration-word: 250ms; /* per-word heading reveal, from the original */
   --duration-fast: 180ms;
   --duration-hover: 250ms;

@@ -360,13 +360,23 @@
   position: absolute;
   background-color: var(--mh-case-shape);
   translate: var(--mh-case-from);
-  transition: translate var(--mh-case-duration) var(--ease-out) var(--mh-case-delay-out);
+  transition: translate var(--mh-case-duration) var(--ease-case-hover);
+}
+
+/* The cover image grows behind the blocks, on the same curve and duration, so
+ * the two read as one gesture. `scale` rather than `transform` keeps it clear
+ * of anything else that might want the transform property later. */
+.mh-case-cover {
+  transition: scale var(--mh-case-duration) var(--ease-case-hover);
 }
 
 @media (hover: hover) {
   .group:hover .mh-case-block {
     translate: 0 0;
-    transition-delay: var(--mh-case-delay-in);
+  }
+
+  .group:hover .mh-case-cover {
+    scale: var(--mh-case-scale);
   }
 }
 
