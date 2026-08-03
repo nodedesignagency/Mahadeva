@@ -99,7 +99,7 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             and the gap between them absorbs whatever the artwork's height
             leaves over. */}
         <div className={cn("flex flex-col justify-between gap-16 p-7", tones[study.tone])}>
-          <div>
+          <div className="flex flex-col gap-7">
             <div className="flex items-start justify-between gap-4">
               {study.logo?.url ? (
                 // Fitted inside 138x32 rather than filling it: client marks are
@@ -122,14 +122,20 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
               </span>
             </div>
 
-            <h3 className="mt-8 font-display text-heading-lg text-fg-on-light">
+            {/* `text-wrap` overrides the `balance` the base stylesheet puts on
+                every heading. Balancing evens the lines out by pulling words
+                down early, which is exactly what stops the title reaching the
+                panel's edge. */}
+            <h3 className="font-display text-heading-lg text-wrap text-fg-on-light">
               {study.title}
             </h3>
 
-            <p className="mt-6 font-body text-body-md text-fg-on-light/80">{study.summary}</p>
+            <p className="font-body text-body-md leading-[1.5] text-fg-on-light/80">
+              {study.summary}
+            </p>
           </div>
 
-          <dl className="grid grid-cols-2 gap-x-8">
+          <dl className="grid grid-cols-2 gap-x-5">
             {columns.map((column, i) => (
               <div key={i} className="flex flex-col gap-10 border-l border-fg-on-light/15 pl-6">
                 {column.map((stat) => (
