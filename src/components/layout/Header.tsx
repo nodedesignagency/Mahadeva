@@ -10,14 +10,18 @@ import { siteConfig } from "@/config/site.config";
 import { durations, easings, stagger } from "@/lib/motion";
 import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
+import { cn } from "@/lib/cn";
+
+/** Where the header flips from its dark surface to its light one. */
+const SCROLL_THRESHOLD = 350;
 
 /**
  * Site header.
  *
- * Opaque at every scroll position. The original fades a background in on
- * scroll, but the hero's pattern field animates directly behind this strip and
- * bars passing under the wordmark and links made both hard to read, so the
- * header keeps its own surface throughout.
+ * Opaque at every scroll position — the hero's pattern field animates directly
+ * behind this strip, and bars passing under the wordmark made both hard to
+ * read — but which surface it wears depends on scroll. Dark over the hero,
+ * light once past the threshold, with everything inside inverting to match.
  *
  * The mobile overlay implements the accessibility the original omits — focus is
  * trapped while open, Escape closes it, background scroll is locked, and the
@@ -26,10 +30,25 @@ import { Container } from "./Container";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const reduced = useReducedMotion() ?? false;
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+
+  // `passive` keeps this off the scrolling critical path. The initial read is
+  // deferred a frame rather than run in the effect body, so a restored scroll
+  // position is already settled and the state change cannot cascade a render
+  // before first paint.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
+    const frame = requestAnimationFrame(onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   // Close the overlay on navigation, otherwise it stays open over the new page.
   //
@@ -90,17 +109,20 @@ export function Header() {
 
   return (
     <header
-      // Opaque at every scroll position, not transparent over the hero: the
-      // pattern field animates directly behind this strip, and bars sliding
-      // under the wordmark and nav links made both hard to read. The fill gives
-      // the nav its own surface and clips the field at the header's edge.
-      // `--color-border` is white at 10%, the hairline that separates them.
-      className="fixed inset-x-0 top-0 z-50 h-header border-b border-border bg-bg"
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 h-header border-b",
+        "transition-colors duration-(--duration-hover) ease-(--ease-out)",
+        // Each surface carries its own hairline: white at 10% on the dark one,
+        // ink at 10% on the light one.
+        scrolled
+          ? "border-border-on-light bg-bg-white text-fg-on-light"
+          : "border-border bg-bg text-fg",
+      )}
     >
       <Container className="flex h-full items-center justify-between gap-6">
         <Link
           href="/"
-          className="font-display text-heading-md tracking-(--tracking-display) text-fg"
+          className="font-display text-heading-md tracking-(--tracking-display) text-current"
         >
           {siteConfig.shortName}
         </Link>
@@ -119,7 +141,7 @@ export function Header() {
                     // Every link is pure white, active or not. The current page
                     // is still conveyed by aria-current, which is what actually
                     // carries that meaning.
-                    className="font-ui text-body-sm text-fg uppercase tracking-[0.04em]"
+                    className="font-ui text-body-sm text-current uppercase tracking-[0.04em]"
                   >
                     {item.label}
                   </Link>
@@ -129,7 +151,7 @@ export function Header() {
                   {i < mainNav.length - 1 ? (
                     <span
                       aria-hidden="true"
-                      className="size-0.5 shrink-0 rounded-none bg-fg-subtle"
+                      className="size-0.5 shrink-0 rounded-none bg-current"
                     />
                   ) : null}
                 </li>
@@ -148,7 +170,10 @@ export function Header() {
             href={navCta.href}
             size="nav"
             variant="outline"
-            className="border-border"
+            className={cn(
+              "text-current",
+              scrolled ? "border-border-on-light" : "border-border",
+            )}
           >
             {navCta.label}
           </Button>
@@ -161,7 +186,7 @@ export function Header() {
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="tablet:hidden inline-flex size-10 items-center justify-center rounded-pill text-fg"
+          className="tablet:hidden inline-flex size-10 items-center justify-center rounded-pill text-current"
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>

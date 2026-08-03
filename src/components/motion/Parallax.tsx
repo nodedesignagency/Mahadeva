@@ -21,12 +21,34 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 
 type ParallaxProps = {
   children: ReactNode;
-  /** Offset at each end of the traverse, as a percentage of the element. */
+  /** Total climb over the tracked range, as a percentage of this element. */
   drift: string;
+  /**
+   * Which ancestor's journey drives the drift. Defaults to the section.
+   *
+   * A pinned element cannot drive its own: `sticky` holds it still against the
+   * viewport, so its measured position stops changing and the drift freezes
+   * exactly when it should be moving. Anything inside a pinned section has to
+   * track something that is still travelling — the stack around it.
+   */
+  trackSelector?: string;
+  /**
+   * `traverse` runs from the tracked element entering the viewport to it
+   * leaving. `top` runs from its top reaching the top of the viewport to its
+   * bottom doing the same — the right range for a stack, which begins at the
+   * top of the page and so is already part-way through a traverse at rest.
+   */
+  range?: "traverse" | "top";
   className?: string;
 };
 
-export function Parallax({ children, drift, className }: ParallaxProps) {
+export function Parallax({
+  children,
+  drift,
+  trackSelector = "section",
+  range = "traverse",
+  className,
+}: ParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
 
@@ -50,16 +72,16 @@ export function Parallax({ children, drift, className }: ParallaxProps) {
   // render before the browser has painted anything.
   const [enabled, setEnabled] = useState(false);
   useEffect(() => {
-    track.current = ref.current?.closest("section") ?? ref.current;
+    track.current = ref.current?.closest(trackSelector) ?? ref.current;
     const frame = requestAnimationFrame(() => setEnabled(!reduced));
     return () => cancelAnimationFrame(frame);
-  }, [reduced]);
+  }, [reduced, trackSelector]);
 
   // Measured from the element entering the viewport to it leaving, so the
   // midpoint of the drift is the midpoint of its journey across the screen.
   const { scrollYProgress } = useScroll({
     target: track,
-    offset: ["start end", "end start"],
+    offset: range === "top" ? ["start start", "end start"] : ["start end", "end start"],
   });
   // Starts where the layout puts it and accumulates upward, rather than
   // swinging symmetrically about its resting place. That is what "scroll

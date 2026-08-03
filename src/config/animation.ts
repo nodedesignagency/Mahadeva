@@ -123,6 +123,24 @@ export const smoothScroll = {
 } as const;
 
 /**
+ * The hero's contents.
+ *
+ * Scroll Speed 120% on the whole section: as the stack scrolls, the hero's
+ * heading and buttons creep upward instead of sitting rigid while About slides
+ * over them. Subtle by design — 20% against the mark's 30%.
+ *
+ * Tracked against the stack rather than the hero itself. The hero is pinned, so
+ * its own measured position never changes and a drift keyed to it would sit
+ * still for exactly the stretch it is meant to move.
+ */
+export const heroParallax = {
+  /** Per the Framer panel. The climb below is derived from it. */
+  speed: 1.2,
+  /** Total climb across the stack, as a share of the hero content's height. */
+  drift: "146%",
+} as const;
+
+/**
  * The About section's 3D mark.
  *
  * Framer drives this with Scroll Speed at 130%: the mark travels 1.3x the page,

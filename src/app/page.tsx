@@ -16,7 +16,7 @@ export default function HomePage() {
       {/* Hero and About share one stack: both stick to the top, so About rides
           up over the pinned hero rather than pushing it off. The stack's height
           is what decides how long each stays pinned. */}
-      <div>
+      <div data-scroll-stack>
         <Hero content={heroContent} />
         <About content={aboutContent} />
       </div>
