@@ -121,7 +121,7 @@ export function Header() {
         // Each surface carries its own hairline and its own pair of link
         // colours, which the links mix between on hover.
         scrolled
-          ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light)] [--mh-nav-ink:var(--color-fg-on-light)]"
+          ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)]"
           : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)]",
       )}
     >

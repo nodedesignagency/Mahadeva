@@ -22,6 +22,7 @@
   --mh-ink-a0: #0e1e1d00;
   --mh-ink-a5: #0e1e1d0d;
   --mh-ink-a10: #0e1e1d1a;
+  --mh-ink-a75: #0e1e1dbf;
   --mh-ink-a50: #0e1e1d80;
   --mh-ink-a75: #0e1e1dbf;
 
@@ -115,6 +116,10 @@
   --color-fg-inverse: var(--mh-ink);
   --color-fg-on-light: var(--mh-ink);
   --color-fg-on-light-muted: var(--mh-slate);
+  /* Nav link hover on the white header. The dark surface hovers to the accent
+   * green, which on white measures about 1.6:1; this is the light surface's
+   * counterpart — the same ink the links already wear, softened to 75%. */
+  --color-fg-on-light-hover: var(--mh-ink-a75);
 
   --color-border: var(--mh-white-a10);
   --color-border-subtle: var(--mh-white-a4);
@@ -236,7 +241,12 @@
    * and steep through the middle, so the crossover where the surface and the
    * labels are both mid-tone passes in a fraction of that second. */
   --ease-nav-flip: cubic-bezier(0.8, 0, 0.2, 1);
-  --duration-nav-flip: 1000ms;
+  /* The owner's panel says 1s, which read as sluggish once it was on screen —
+   * long enough that you watch the surface change rather than register that it
+   * did. Same curve, shorter: enough that the swap is clearly eased, not so
+   * much that it becomes an event. Also shrinks the crossover where surface
+   * and labels are both mid-tone, which scales with the duration. */
+  --duration-nav-flip: 400ms;
 
   --duration-word: 250ms; /* per-word heading reveal, from the original */
   --duration-fast: 180ms;
@@ -297,6 +307,7 @@
   --color-fg-inverse: var(--color-fg-inverse);
   --color-fg-on-light: var(--color-fg-on-light);
   --color-fg-on-light-muted: var(--color-fg-on-light-muted);
+  --color-fg-on-light-hover: var(--color-fg-on-light-hover);
   --color-border: var(--color-border);
   --color-border-subtle: var(--color-border-subtle);
   --color-border-strong: var(--color-border-strong);
