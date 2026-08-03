@@ -175,6 +175,65 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Nav links
+ *
+ * Two problems with doing this the obvious way, both visible on screen.
+ *
+ * `text-decoration` is not animatable, so an underline set on hover pops into
+ * place while the colour is still easing — the rule arrives before the colour
+ * it belongs to. The rule is a pseudo-element here, so it can slide up from
+ * `--mh-nav-rule-offset` below its resting place and fade in on the same curve
+ * as the colour. They move as one.
+ *
+ * And a colour transition fires on *any* colour change, including the header
+ * swapping surfaces on scroll. That crossfaded the labels from white to ink
+ * across 0.4s while the background crossfaded underneath them, and halfway
+ * through both were the same mid-grey and the nav read as empty. So the
+ * transition is on a registered number, not on `color`: hovering eases the
+ * mix, while a surface swap changes the endpoints and lands instantly.
+ * ------------------------------------------------------------------------- */
+@property --mh-nav-hover {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.mh-nav-link {
+  --mh-nav-rule-offset: 9px;
+  position: relative;
+  color: color-mix(
+    in srgb,
+    var(--mh-nav-accent) calc(var(--mh-nav-hover) * 100%),
+    var(--mh-nav-ink)
+  );
+  transition: --mh-nav-hover var(--duration-nav-hover) var(--ease-nav-hover);
+}
+
+.mh-nav-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(-1 * var(--mh-nav-rule-offset));
+  border-bottom: 1px dotted currentColor;
+  opacity: 0;
+  transform: translateY(var(--mh-nav-rule-offset));
+  transition:
+    opacity var(--duration-nav-hover) var(--ease-nav-hover),
+    transform var(--duration-nav-hover) var(--ease-nav-hover);
+}
+
+.mh-nav-link:hover,
+.mh-nav-link:focus-visible {
+  --mh-nav-hover: 1;
+}
+
+.mh-nav-link:hover::after,
+.mh-nav-link:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------------
  * Feature marquee
  *
  * The row holds the cards twice and slides left by exactly one copy, so the

@@ -111,12 +111,18 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 h-header border-b",
-        "transition-colors duration-(--duration-hover) ease-(--ease-out)",
-        // Each surface carries its own hairline: white at 10% on the dark one,
-        // ink at 10% on the light one.
+        // Nothing here transitions, and that is the point. Easing the surface
+        // and the labels together took both through mid-grey at once and the
+        // nav read as empty; easing only the surface left dark labels sitting
+        // on the dark green it had not finished leaving. Either way there is a
+        // frame where the two disagree. Swapping the whole strip at once is the
+        // only version with no such frame, and at this speed a crossfade was
+        // never legible as one anyway.
+        // Each surface carries its own hairline and its own pair of link
+        // colours, which the links mix between on hover.
         scrolled
-          ? "border-border-on-light bg-bg-white text-fg-on-light"
-          : "border-border bg-bg text-fg",
+          ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light)] [--mh-nav-ink:var(--color-fg-on-light)]"
+          : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)]",
       )}
     >
       <Container className="flex h-full items-center justify-between gap-6">
@@ -142,18 +148,9 @@ export function Header() {
                     // current page is still conveyed by aria-current, which is
                     // what actually carries that meaning.
                     //
-                    // On hover the label turns accent green and gains a dotted
-                    // rule 9px below it. Only the colour eases — text-decoration
-                    // is not an animatable property, so the rule appears at
-                    // once, which is what the original does too.
-                    className={cn(
-                      "font-ui text-body-sm text-current uppercase tracking-[0.04em]",
-                      "transition-colors duration-(--duration-nav-hover) ease-(--ease-nav-hover)",
-                      "hover:underline hover:decoration-dotted hover:underline-offset-[9px]",
-                      scrolled
-                        ? "hover:decoration-current"
-                        : "hover:text-accent hover:decoration-accent",
-                    )}
+                    // Colour and rule are both in `.mh-nav-link`; the header
+                    // supplies the two endpoints it mixes between.
+                    className="mh-nav-link font-ui text-body-sm uppercase tracking-[0.04em]"
                   >
                     {item.label}
                   </Link>
@@ -187,7 +184,9 @@ export function Header() {
             variant="outline"
             className={cn(
               "text-current hover:bg-transparent hover:opacity-50",
-              "transition-[opacity,border-color] duration-(--duration-hover) ease-(--ease-out)",
+              // Opacity only — the hairline swaps with the surface it belongs
+              // to, so easing it would leave it a step behind the flip.
+              "transition-opacity duration-(--duration-hover) ease-(--ease-out)",
               scrolled ? "border-border-on-light" : "border-border",
             )}
           >
