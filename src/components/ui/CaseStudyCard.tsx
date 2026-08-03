@@ -41,14 +41,14 @@ function rectBox(rect: (typeof caseHover.rects)[number]): CSSProperties {
 }
 
 /**
- * One figure. The value is Geist — every number on the site is, whatever the
- * surrounding copy is set in — and the label is the body face above it.
+ * One figure. Both halves are Geist Light — the label as well as the value,
+ * which is the one place on the card where the body face gives way entirely.
  */
 function Stat({ stat }: { stat: CaseStat }) {
   return (
     <div className="flex flex-col gap-2">
-      <dt className="font-body text-body-sm text-fg-on-light/70">{stat.label}</dt>
-      <dd className="font-ui text-heading-lg font-normal text-fg-on-light">{stat.value}</dd>
+      <dt className="font-ui text-body-sm font-light text-fg-on-light/70">{stat.label}</dt>
+      <dd className="font-ui text-heading-lg font-light text-fg-on-light">{stat.value}</dd>
     </div>
   );
 }
@@ -126,7 +126,7 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
 
           <dl className="grid grid-cols-2 gap-x-5">
             {columns.map((column, i) => (
-              <div key={i} className="flex flex-col gap-10 border-l border-fg-on-light/15 pl-6">
+              <div key={i} className="flex flex-col gap-10 border-l border-fg-on-light/15 pl-4">
                 {column.map((stat) => (
                   <Stat key={stat.label} stat={stat} />
                 ))}
