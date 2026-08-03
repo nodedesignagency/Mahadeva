@@ -119,6 +119,15 @@
   --color-stat-blue: var(--mh-blue-25);
   --color-stat-magenta: var(--mh-magenta-50);
 
+  /* Tech stack tiles. The same family of tints as the statistics, plus the
+   * two the checkerboard needs to get through six without repeating. */
+  --color-tool-rose: var(--mh-rose-50);
+  --color-tool-green: var(--mh-green-100);
+  --color-tool-magenta: var(--mh-magenta-50);
+  --color-tool-peach: var(--mh-peach-50);
+  --color-tool-blue: var(--mh-blue-25);
+  --color-tool-lavender: var(--mh-lavender-50);
+
   /* Case study panels. A full step stronger than the feature-card tints: those
    * sit six-across on a dark field where a saturated fill would shout, these
    * are one big panel per card carrying the whole left half. */
@@ -333,6 +342,12 @@
   --color-stat-green: var(--color-stat-green);
   --color-stat-blue: var(--color-stat-blue);
   --color-stat-magenta: var(--color-stat-magenta);
+  --color-tool-rose: var(--color-tool-rose);
+  --color-tool-green: var(--color-tool-green);
+  --color-tool-magenta: var(--color-tool-magenta);
+  --color-tool-peach: var(--color-tool-peach);
+  --color-tool-blue: var(--color-tool-blue);
+  --color-tool-lavender: var(--color-tool-lavender);
   --color-case-sky: var(--color-case-sky);
   --color-case-lavender: var(--color-case-lavender);
   --color-case-peach: var(--color-case-peach);

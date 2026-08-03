@@ -201,3 +201,28 @@ export const trustContent = {
 
 /** Which pastel a statistic panel is filled with. */
 export type TrustTone = (typeof trustContent.stats)[number]["tone"];
+
+/**
+ * Tech stack — "Our Automation Tools & Technology Stack".
+ *
+ * Six tools laid out as a checkerboard. Order is the layout: the section fills
+ * alternating cells in sequence, so moving an entry here moves its tile.
+ *
+ * ⚠️ Three of the names are read from the marks in the owner's screenshot and
+ * are worth confirming — OpenAI, Zapier and Python are unmistakable, the other
+ * three less so.
+ */
+export const techStackContent = {
+  headingLines: ["Our Automation Tools &", "Technology Stack"],
+  tools: [
+    { name: "n8n", tone: "rose" },
+    { name: "OpenAI", tone: "green" },
+    { name: "Make", tone: "magenta" },
+    { name: "Zapier", tone: "peach" },
+    { name: "Airtable", tone: "blue" },
+    { name: "Python", tone: "lavender" },
+  ],
+} as const;
+
+/** Which pastel a tech stack tile is filled with. */
+export type ToolTone = (typeof techStackContent.tools)[number]["tone"];
