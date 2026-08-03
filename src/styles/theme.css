@@ -248,6 +248,11 @@
    * and labels are both mid-tone, which scales with the duration. */
   --duration-nav-flip: 400ms;
 
+  /* The hairline between mobile nav links, from the owner's BorderReveal
+   * component. The negative first control point is deliberate and legal: the
+   * rule backs up a hair before it draws. */
+  --ease-border-reveal: cubic-bezier(0.85, -0.02, 0.31, 0.96);
+
   --duration-word: 250ms; /* per-word heading reveal, from the original */
   --duration-fast: 180ms;
   --duration-hover: 250ms;
@@ -356,6 +361,7 @@
   --ease-in-out: var(--ease-in-out);
   --ease-nav-hover: var(--ease-nav-hover);
   --ease-nav-flip: var(--ease-nav-flip);
+  --ease-border-reveal: var(--ease-border-reveal);
   --ease-button-spring: var(--ease-button-spring);
 
   --spacing-section-sm: var(--space-section-sm);

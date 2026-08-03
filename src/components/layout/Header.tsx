@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { Menu, X } from "lucide-react";
 import { mainNav, navCta } from "@/config/navigation";
 import { siteConfig } from "@/config/site.config";
-import { durations, easings, stagger } from "@/lib/motion";
+import { mobileNav } from "@/config/animation";
 import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
 import { cn } from "@/lib/cn";
@@ -32,7 +31,6 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const reduced = useReducedMotion() ?? false;
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
@@ -133,9 +131,9 @@ export function Header() {
           {siteConfig.shortName}
         </Link>
 
-        {/* The original shows the full horizontal nav from the tablet
-            breakpoint (810px) up; the overlay is mobile-only. */}
-        <nav aria-label="Main" className="hidden tablet:block">
+        {/* Desktop only. Tablet is narrow enough that six labels plus the CTA
+            crowd the strip, so it takes the overlay too. */}
+        <nav aria-label="Main" className="hidden desktop:block">
           <ul className="flex items-center gap-4">
             {mainNav.map((item, i) => {
               const active = pathname === item.href;
@@ -169,7 +167,9 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="hidden tablet:block">
+        {/* Present at every width, including alongside the hamburger and while
+            the overlay is open — the original keeps it on screen throughout. */}
+        <div className="ml-auto desktop:ml-0">
           {/* Outlined, not solid: a filled white CTA up here reads as a second
               primary action competing with the hero's own. The variant's
               `border-strong` is an opaque dark green that disappears against
@@ -194,6 +194,10 @@ export function Header() {
           </Button>
         </div>
 
+        {/* Two bars rather than three, as in the original, folding into the
+            close mark. Drawn here instead of taken from the icon set so the
+            same two elements can become the X — an icon swap cannot animate
+            between two separate glyphs. */}
         <button
           ref={toggleRef}
           type="button"
@@ -201,65 +205,84 @@ export function Header() {
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? "Close menu" : "Open menu"}
-          className="tablet:hidden inline-flex size-10 items-center justify-center rounded-pill text-current"
+          className={cn(
+            "desktop:hidden inline-flex size-[33px] shrink-0 items-center justify-center",
+            "rounded-(--radius-button) border text-current",
+            "transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-50",
+            scrolled ? "border-border-on-light" : "border-border",
+          )}
         >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">
+            <span className="mh-burger-bar" />
+            <span className="mh-burger-bar" />
+          </span>
         </button>
       </Container>
 
-      <AnimatePresence>
-        {open ? (
-          <motion.div
-            id="mobile-nav"
-            ref={panelRef}
-            tabIndex={-1}
-            onKeyDown={onPanelKeyDown}
-            initial={{ opacity: 0, y: reduced ? 0 : -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: reduced ? 0 : -12 }}
-            transition={
-              reduced
-                ? { duration: 0 }
-                : { duration: durations.hover, ease: easings.reveal }
-            }
-            className="tablet:hidden absolute inset-x-0 top-header border-b border-border bg-bg outline-none"
-          >
-            <Container className="py-8">
-              <nav aria-label="Mobile">
-                <ul className="flex flex-col gap-1">
-                  {mainNav.map((item, i) => (
-                    <motion.li
-                      key={item.href}
-                      initial={{ opacity: 0, y: reduced ? 0 : 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={
-                        reduced
-                          ? { duration: 0 }
-                          : {
-                              duration: durations.hover,
-                              ease: easings.reveal,
-                              delay: i * stagger.tight,
-                            }
+      {/* The panel stays mounted and is hidden by state rather than unmounted.
+          Its links and rules animate from CSS, and CSS needs both ends of a
+          transition to be in the document — mounting on open would put every
+          element straight into its finished state with nothing to move from.
+          `inert` keeps the hidden copy out of the tab order and off the
+          accessibility tree, which is what unmounting was doing for us. */}
+      <div
+        id="mobile-nav"
+        ref={panelRef}
+        tabIndex={-1}
+        onKeyDown={onPanelKeyDown}
+        data-open={open}
+        inert={!open}
+        className={cn(
+          "desktop:hidden fixed inset-x-0 top-header bottom-0 bg-bg outline-none",
+          // The fill arrives whole, as a variant swap rather than a fade — a
+          // panel easing to opaque shows the page sliding behind the links
+          // while they are still travelling.
+          open ? "visible" : "invisible",
+        )}
+      >
+        <Container className="h-full overflow-y-auto py-8">
+          <nav aria-label="Mobile">
+            <ul className="flex flex-col">
+              {mainNav.map((item, i) => (
+                <li key={item.href} className="overflow-hidden">
+                  {/* The travelling element is the label itself, sized to its
+                      own text — in the Framer file each link layer is width-
+                      fit, so its offset is one label's width, not one row's.
+                      Moving the row instead started ABOUT some 390px out and
+                      the panel sat empty while it caught up. */}
+                  <Link
+                    href={item.href}
+                    aria-current={pathname === item.href ? "page" : undefined}
+                    className="mh-nav-item inline-block py-5 font-display text-heading-lg uppercase text-fg"
+                    style={
+                      {
+                        "--mh-nav-item-from": mobileNav.linkOffset,
+                        "--mh-nav-item-duration": `${mobileNav.linkDuration}ms`,
+                        "--mh-nav-item-delay": `${i * mobileNav.linkStagger}ms`,
+                      } as CSSProperties
+                    }
+                  >
+                    {item.label}
+                  </Link>
+
+                  {i < mainNav.length - 1 ? (
+                    <span
+                      aria-hidden="true"
+                      className="mh-nav-rule"
+                      style={
+                        {
+                          "--mh-nav-rule-duration": `${mobileNav.rule.duration}ms`,
+                          "--mh-nav-rule-delay": `${mobileNav.rule.delay}ms`,
+                        } as CSSProperties
                       }
-                    >
-                      <Link
-                        href={item.href}
-                        aria-current={pathname === item.href ? "page" : undefined}
-                        className="block py-3 font-display text-heading-lg text-fg"
-                      >
-                        {item.label}
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
-              </nav>
-              <Button href={navCta.href} variant="outline" className="mt-6 w-full">
-                {navCta.label}
-              </Button>
-            </Container>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+                    />
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </Container>
+      </div>
     </header>
   );
 }

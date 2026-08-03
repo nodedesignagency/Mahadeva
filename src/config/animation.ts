@@ -246,6 +246,44 @@ export const buttonSweep = {
 } as const;
 
 /**
+ * Mobile / tablet navigation overlay.
+ *
+ * Two animations run when the panel opens. The links travel in from the left
+ * on the same spring as the button sweep — the Framer file specifies stiffness
+ * 300, damping 100, mass 1 for both — and the hairline between each pair of
+ * links draws itself left to right.
+ *
+ * Both are CSS: the links get `--ease-button-spring` (see the note in
+ * theme.css — that easing *is* this spring), the rules get their own bezier.
+ * Only the open/closed state is React's.
+ */
+export const mobileNav = {
+  /**
+   * Milliseconds for one link's travel. The spring's own settle time at the
+   * specified constants, so the links move at the physics the file asks for
+   * rather than the deliberately slackened 2500ms the buttons use. It is
+   * overdamped, so this reads much faster than the number suggests: 90% of the
+   * distance is covered in the first 830ms and the rest is sub-pixel.
+   */
+  linkDuration: 2200,
+
+  /** Framer's per-link delay step, applied top to bottom. */
+  linkStagger: 50,
+
+  /** How far left of its resting place a link starts. */
+  linkOffset: "-100%",
+
+  /**
+   * The hairline between links, from the owner's BorderReveal component: a
+   * 1px rule whose width goes 0 to 100%, custom bezier, 1s, 200ms delay. Every
+   * rule uses the same delay — the component triggers on visibility, and they
+   * all become visible in the same frame — so they draw together beneath the
+   * links arriving above them.
+   */
+  rule: { duration: 1000, delay: 200 },
+} as const;
+
+/**
  * Background bar-pattern field.
  *
  * The original is not a continuous loop of bars growing from zero. It is a set

@@ -242,6 +242,79 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Mobile / tablet nav overlay
+ *
+ * Both animations here are CSS driven off a single `data-open` attribute on
+ * the panel, rather than per-element JS. The panel is only mounted while open,
+ * so the closed state exists purely as these declarations' starting point and
+ * the attribute flips on the frame after mount to give them something to
+ * transition from.
+ *
+ * Numbers come from `mobileNav` in src/config/animation.ts, arriving as custom
+ * properties. `--mh-nav-item` is the item's index, set inline, so the stagger
+ * is arithmetic in CSS rather than a delay computed per link in JS.
+ * ------------------------------------------------------------------------- */
+/* Position only, no fade. The row is clipped to the panel's width, so a link
+ * outside its own row is already invisible — fading it as well would make it
+ * materialise in place rather than arrive from somewhere. */
+.mh-nav-item {
+  transform: translate3d(var(--mh-nav-item-from), 0, 0);
+  transition: transform var(--mh-nav-item-duration) var(--ease-button-spring)
+    var(--mh-nav-item-delay);
+}
+
+[data-open="true"] .mh-nav-item {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+/* The hairline under each link. A wrapper clipped to the row's width holds a
+ * bar that grows from zero — the same construction as the owner's BorderReveal,
+ * which animates `width` rather than a transform so the rule's end stays sharp
+ * instead of being scaled from a 1px sliver. */
+.mh-nav-rule {
+  display: block;
+  width: 0;
+  height: 1px;
+  background-color: var(--color-border);
+  transition: width var(--mh-nav-rule-duration) var(--ease-border-reveal)
+    var(--mh-nav-rule-delay);
+}
+
+[data-open="true"] .mh-nav-rule {
+  width: 100%;
+}
+
+/* Two bars, not three. They cross into an X when the panel opens: the halves
+ * meet in the middle first, then rotate, so it reads as one mark folding
+ * rather than two lines swapping places. */
+.mh-burger-bar {
+  display: block;
+  height: 1.5px;
+  width: 100%;
+  background-color: currentColor;
+  transition:
+    translate var(--duration-hover) var(--ease-out),
+    rotate var(--duration-hover) var(--ease-out) var(--duration-hover);
+}
+
+[aria-expanded="true"] .mh-burger-bar {
+  transition:
+    translate var(--duration-hover) var(--ease-out),
+    rotate var(--duration-hover) var(--ease-out) var(--duration-hover);
+}
+
+[aria-expanded="true"] .mh-burger-bar:first-child {
+  translate: 0 3.25px;
+  rotate: 45deg;
+}
+
+[aria-expanded="true"] .mh-burger-bar:last-child {
+  translate: 0 -3.25px;
+  rotate: -45deg;
+}
+
+/* ---------------------------------------------------------------------------
  * Feature marquee
  *
  * The row holds the cards twice and slides left by exactly one copy, so the
