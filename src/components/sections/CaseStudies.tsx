@@ -29,7 +29,7 @@ type CaseStudiesProps = {
 
 export function CaseStudies({ content, studies }: CaseStudiesProps) {
   return (
-    <section className="bg-bg py-20 tablet:py-30">
+    <section data-bg="green" className="py-20 tablet:py-30">
       <Container>
         <div className="flex flex-col gap-8 tablet:flex-row tablet:items-end tablet:justify-between">
           <div>

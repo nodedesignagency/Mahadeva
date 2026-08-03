@@ -27,11 +27,19 @@ type AboutProps = {
 
 export function About({ content }: AboutProps) {
   return (
-        // `sticky` makes this its own stacking context, so the mark's z-index
+    // `sticky` makes this its own stacking context, so the mark's z-index
     // cannot lift it out on its own. The layer goes on the section: above the
     // hero it slides over, and above whatever follows, so the mark stays on top
     // of the next section's heading wherever the two overlap.
-    <section className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-30 text-fg-on-light">
+    //
+    // It also keeps its own fill, unlike the sections below it: pinned over the
+    // hero, a transparent panel would show the hero through it the whole time
+    // it is riding up. It still declares the surface, so the page background is
+    // already white by the time it takes over.
+    <section
+      data-bg="white"
+      className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-30 text-fg-on-light"
+    >
       <Container className="relative flex min-h-screen flex-col items-center justify-center gap-10 px-0">
         <p className="flex items-center justify-center gap-2 text-body-md">
           <Image src={ornamentLeft} alt="" aria-hidden className="h-8 w-auto" />

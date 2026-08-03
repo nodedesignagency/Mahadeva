@@ -28,6 +28,7 @@ type HeroProps = {
 export function Hero({ content }: HeroProps) {
   return (
     <section
+      data-bg="green"
       // `100dvh` tracks mobile browser chrome as it hides and shows; the
       // `h-screen` fallback covers browsers without dynamic viewport units.
       className="sticky top-0 flex h-screen min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"

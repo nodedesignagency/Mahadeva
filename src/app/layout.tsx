@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site.config";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
+import { BackgroundTransition } from "@/components/motion/BackgroundTransition";
 import "./globals.css";
 
 export const metadata: Metadata = baseMetadata;
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <style>{`[data-reveal-word]{color:var(--color-fg)!important}`}</style>
         </noscript>
         <SmoothScroll />
+        <BackgroundTransition />
         <SkipLink />
         <Header />
         {/* Footer lands here once its section is built. */}
