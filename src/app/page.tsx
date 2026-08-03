@@ -4,10 +4,12 @@ import { Features } from "@/components/sections/Features";
 import { CaseStudies } from "@/components/sections/CaseStudies";
 import { Trust } from "@/components/sections/Trust";
 import { TechStack } from "@/components/sections/TechStack";
+import { Pricing } from "@/components/sections/Pricing";
 import {
   aboutContent,
   featuresContent,
   heroContent,
+  pricingContent,
   techStackContent,
   trustContent,
 } from "@/content/home";
@@ -37,6 +39,7 @@ export default async function HomePage() {
       <CaseStudies content={caseStudiesContent} studies={studies} />
       <Trust content={trustContent} />
       <TechStack content={techStackContent} />
+      <Pricing content={pricingContent} />
     </>
   );
 }

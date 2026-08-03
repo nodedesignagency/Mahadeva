@@ -128,6 +128,13 @@
   --color-tool-blue: var(--mh-blue-25);
   --color-tool-lavender: var(--mh-lavender-50);
 
+  /* Pricing plan cards: the header strip's fill, which is also the card's
+   * border. Deeper tints than the stats — each strip is a label, not a
+   * field. */
+  --color-plan-sky: var(--mh-blue-150);
+  --color-plan-lavender: var(--mh-lavender-50);
+  --color-plan-peach: var(--mh-peach);
+
   /* Case study panels. A full step stronger than the feature-card tints: those
    * sit six-across on a dark field where a saturated fill would shout, these
    * are one big panel per card carrying the whole left half. */
@@ -356,6 +363,9 @@
   --color-tool-peach: var(--color-tool-peach);
   --color-tool-blue: var(--color-tool-blue);
   --color-tool-lavender: var(--color-tool-lavender);
+  --color-plan-sky: var(--color-plan-sky);
+  --color-plan-lavender: var(--color-plan-lavender);
+  --color-plan-peach: var(--color-plan-peach);
   --color-case-sky: var(--color-case-sky);
   --color-case-lavender: var(--color-case-lavender);
   --color-case-peach: var(--color-case-peach);
