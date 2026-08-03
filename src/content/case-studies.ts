@@ -35,6 +35,11 @@ export type CaseStudy = {
   stats: [CaseStat, CaseStat, CaseStat, CaseStat];
   tone: CaseTone;
   /**
+   * Client mark, drawn at 138x32 and fitted inside that box. Absent until the
+   * file exists, in which case the card sets the client's name instead.
+   */
+  logo?: { url: string; alt: string };
+  /**
    * Product screenshot. Absent until the picture exists — the card reserves
    * the space rather than collapsing, so a missing image is obvious.
    */

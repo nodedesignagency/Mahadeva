@@ -1,19 +1,21 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { caseHover } from "@/config/animation";
-import type { CaseStudy, CaseTone } from "@/content/case-studies";
+import type { CaseStat, CaseStudy, CaseTone } from "@/content/case-studies";
 import { cn } from "@/lib/cn";
 
 /**
  * One case study.
  *
- * Two halves: a tinted panel carrying the words and the numbers, and the
- * product shot beside it. On a phone they stack, panel first — the stats are
- * the argument the card is making, and a screenshot at phone width is barely
- * legible anyway.
+ * Two halves with distinct jobs. The left panel is the argument — mark, year,
+ * headline, summary, and the four figures — and holds no decoration. The right
+ * half is the picture, and it is also where the hover blocks live, so the
+ * motion happens against the artwork rather than across the reading matter.
  *
- * A server component. The hover is CSS, so nothing here reaches the browser as
- * JavaScript.
+ * On a phone they stack, panel first: the numbers are the point, and a product
+ * screenshot at that width is barely legible anyway.
+ *
+ * A server component. The hover is CSS, so nothing here ships as JavaScript.
  */
 
 /** Fills come from theme.css; the card never names a colour itself. */
@@ -24,8 +26,9 @@ const tones: Record<CaseTone, string> = {
 };
 
 /**
- * Where each hover block starts, per edge: parked one full step outside the
- * side it hugs, so it enters travelling inward.
+ * Where each hover block starts: parked one full step outside the side it
+ * hugs, so it enters travelling inward. Delivered as a custom property because
+ * an inline `translate` would outrank the hover rule that clears it.
  */
 const departures: Record<string, string> = {
   left: "-101% 0",
@@ -48,6 +51,19 @@ function blockPosition(block: (typeof caseHover.blocks)[number]): CSSProperties 
   }
 }
 
+/**
+ * One figure. The value is Geist — every number on the site is, whatever the
+ * surrounding copy is set in — and the label is the body face above it.
+ */
+function Stat({ stat }: { stat: CaseStat }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <dt className="font-body text-body-sm text-fg-on-light/70">{stat.label}</dt>
+      <dd className="font-ui text-heading-lg font-normal text-fg-on-light">{stat.value}</dd>
+    </div>
+  );
+}
+
 type CaseStudyCardProps = {
   study: CaseStudy;
   className?: string;
@@ -56,14 +72,21 @@ type CaseStudyCardProps = {
 };
 
 export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
+  // Down the columns, not across: each column carries one rule down its left
+  // edge, so the pairs that share a rule have to be siblings.
+  const columns = [
+    [study.stats[0], study.stats[2]],
+    [study.stats[1], study.stats[3]],
+  ];
+
   return (
     <article
       style={style}
       className={cn("group relative overflow-clip bg-bg-white", className)}
     >
-      {/* The whole card is one link. It sits above the content but below the
-          hover blocks, and carries the accessible name — the inner heading is
-          left as plain text so a screen reader announces one link, not two. */}
+      {/* The whole card is one link. It carries the accessible name, and the
+          heading inside stays plain text so a screen reader announces one link
+          rather than two. */}
       <Link
         href={`/case-study/${study.slug}`}
         className="absolute inset-0 z-20"
@@ -71,43 +94,53 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
       />
 
       <div className="grid lg:grid-cols-2">
-        <div className={cn("flex flex-col p-10", tones[study.tone])}>
-          <div className="flex items-start justify-between gap-4">
-            <p className="font-display text-heading-md text-fg-on-light">{study.client}</p>
-            <span className="border border-fg-on-light/20 px-2 py-1 font-body text-body-sm text-fg-on-light">
-              {study.year}
-            </span>
+        {/* `justify-between` is what separates the two groups: everything that
+            introduces the study sits at the top, the figures sit at the foot,
+            and the gap between them absorbs whatever the artwork's height
+            leaves over. */}
+        <div className={cn("flex flex-col justify-between gap-16 p-7", tones[study.tone])}>
+          <div>
+            <div className="flex items-start justify-between gap-4">
+              {study.logo?.url ? (
+                // Fitted inside 138x32 rather than filling it: client marks are
+                // every shape, and `contain` keeps each one whole and aligned
+                // to the same left edge.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={study.logo.url}
+                  alt={study.logo.alt}
+                  className="h-8 w-[138px] object-contain object-left"
+                />
+              ) : (
+                <p className="flex h-8 items-center font-display text-heading-md text-fg-on-light">
+                  {study.client}
+                </p>
+              )}
+
+              <span className="border border-fg-on-light/20 px-2 py-1 font-ui text-[1rem] font-light text-fg-on-light">
+                {study.year}
+              </span>
+            </div>
+
+            <h3 className="mt-8 font-display text-heading-lg text-fg-on-light">
+              {study.title}
+            </h3>
+
+            <p className="mt-6 font-body text-body-md text-fg-on-light/80">{study.summary}</p>
           </div>
 
-          <h3 className="mt-8 max-w-[20ch] font-display text-heading-lg text-fg-on-light">
-            {study.title}
-          </h3>
-
-          <p className="mt-6 max-w-[46ch] font-body text-body-md text-fg-on-light/80">
-            {study.summary}
-          </p>
-
-          {/* Pushed to the foot so the numbers line up across a row of cards
-              whose titles wrap to different depths. */}
-          <dl className="mt-auto grid grid-cols-2 gap-x-8 gap-y-8 pt-16">
-            {study.stats.map((stat, i) => (
-              <div
-                key={stat.label}
-                className={cn(
-                  "flex flex-col gap-2",
-                  // Rules between the columns and rows, not around the grid.
-                  i % 2 === 1 && "border-l border-fg-on-light/15 pl-8",
-                  i > 1 && "border-t border-fg-on-light/15 pt-8",
-                )}
-              >
-                <dt className="font-body text-body-sm text-fg-on-light/70">{stat.label}</dt>
-                <dd className="font-display text-heading-lg text-fg-on-light">{stat.value}</dd>
+          <dl className="grid grid-cols-2 gap-x-8">
+            {columns.map((column, i) => (
+              <div key={i} className="flex flex-col gap-10 border-l border-fg-on-light/15 pl-6">
+                {column.map((stat) => (
+                  <Stat key={stat.label} stat={stat} />
+                ))}
               </div>
             ))}
           </dl>
         </div>
 
-        <div className="relative min-h-[18rem] bg-bg-light">
+        <div className="relative min-h-[18rem] overflow-clip bg-bg-light">
           {study.image?.url ? (
             // Not next/image: the URL is already sized and format-negotiated by
             // Sanity's pipeline, so routing it through the optimiser would be a
@@ -120,33 +153,32 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
               loading="lazy"
             />
           ) : (
-            <div className="flex size-full items-center justify-center p-10">
-              <p className="font-body text-body-sm text-fg-on-light/40">
-                Screenshot to come
-              </p>
+            <div className="flex size-full items-center justify-center p-7">
+              <p className="font-body text-body-sm text-fg-on-light/40">Screenshot to come</p>
             </div>
           )}
-        </div>
-      </div>
 
-      {/* Decorative, and above everything including the link surface so the
-          blocks are not clipped behind the artwork. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-30">
-        {caseHover.blocks.map((block, i) => (
-          <span
-            key={i}
-            className="mh-case-block"
-            style={
-              {
-                ...blockPosition(block),
-                "--mh-case-from": departures[block.edge],
-                "--mh-case-duration": `${caseHover.duration}ms`,
-                "--mh-case-delay-in": `${block.delay}ms`,
-                "--mh-case-delay-out": `${caseHover.exitDelay}ms`,
-              } as CSSProperties
-            }
-          />
-        ))}
+          {/* Decorative, and confined to this half — the blocks belong to the
+              artwork, not to the reading matter beside it. Above the link
+              surface so nothing clips them. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-30">
+            {caseHover.blocks.map((block, i) => (
+              <span
+                key={i}
+                className="mh-case-block"
+                style={
+                  {
+                    ...blockPosition(block),
+                    "--mh-case-from": departures[block.edge],
+                    "--mh-case-duration": `${caseHover.duration}ms`,
+                    "--mh-case-delay-in": `${block.delay}ms`,
+                    "--mh-case-delay-out": `${caseHover.exitDelay}ms`,
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </article>
   );

@@ -332,8 +332,9 @@ export const mobileNav = {
  * so the card looks assembled from its own border rather than sprinkled.
  *
  * `edge` is where it comes from and which side it hugs. `x`/`y` place it along
- * that side, `w`/`h` size it — all percentages of the card, so the arrangement
- * holds at every width instead of drifting as the card grows.
+ * that side, `w`/`h` size it — all percentages of the artwork half they live
+ * in, so the arrangement holds at every width instead of drifting as the card
+ * grows.
  *
  * Delays are deliberately uneven. An even stagger reads as a mechanical sweep;
  * clustering two or three arrivals and leaving a gap reads as scatter.
@@ -343,14 +344,14 @@ export const caseHover = {
   /** Added to every block's delay on the way out, so leaving feels unhurried. */
   exitDelay: 40,
   blocks: [
-    { edge: "left", x: 0, y: 34, w: 3.5, h: 11, delay: 0 },
-    { edge: "left", x: 0, y: 62, w: 2.5, h: 7, delay: 120 },
-    { edge: "top", x: 39, y: 0, w: 6, h: 4.5, delay: 60 },
-    { edge: "top", x: 74, y: 0, w: 3.5, h: 6, delay: 180 },
-    { edge: "right", x: 0, y: 22, w: 3, h: 9, delay: 40 },
-    { edge: "right", x: 0, y: 55, w: 4.5, h: 5.5, delay: 150 },
-    { edge: "bottom", x: 33, y: 0, w: 5, h: 5, delay: 90 },
-    { edge: "bottom", x: 46, y: 0, w: 3, h: 8, delay: 210 },
+    { edge: "left", x: 0, y: 34, w: 7, h: 11, delay: 0 },
+    { edge: "left", x: 0, y: 62, w: 5, h: 7, delay: 120 },
+    { edge: "top", x: 30, y: 0, w: 12, h: 4.5, delay: 60 },
+    { edge: "top", x: 66, y: 0, w: 7, h: 6, delay: 180 },
+    { edge: "right", x: 0, y: 22, w: 6, h: 9, delay: 40 },
+    { edge: "right", x: 0, y: 55, w: 9, h: 5.5, delay: 150 },
+    { edge: "bottom", x: 22, y: 0, w: 10, h: 5, delay: 90 },
+    { edge: "bottom", x: 48, y: 0, w: 6, h: 8, delay: 210 },
   ],
 } as const;
 

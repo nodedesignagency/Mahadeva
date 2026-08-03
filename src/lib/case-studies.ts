@@ -23,6 +23,7 @@ const CASE_STUDIES = groq`
     summary,
     stats[]{ label, value },
     tone,
+    logo,
     image
   }
 `;
@@ -30,9 +31,19 @@ const CASE_STUDIES = groq`
 /** Width of the artwork half at the largest layout, doubled for 2x screens. */
 const IMAGE_WIDTH = 1120;
 
-type SanityCaseStudy = Omit<CaseStudy, "image"> & {
-  image?: SanityImage & { alt?: string };
+/** The logo box is 138 wide; ask for twice that so it stays crisp. */
+const LOGO_WIDTH = 276;
+
+type SanityAsset = SanityImage & { alt?: string };
+
+type SanityCaseStudy = Omit<CaseStudy, "image" | "logo"> & {
+  logo?: SanityAsset;
+  image?: SanityAsset;
 };
+
+function resolve(asset: SanityAsset, width: number, crop: boolean) {
+  return { url: imageUrl(asset, width, crop) ?? "", alt: asset.alt ?? "" };
+}
 
 export async function getCaseStudies(): Promise<CaseStudy[]> {
   // No project configured yet — a fresh clone, before setup. The demo entries
@@ -52,12 +63,9 @@ export async function getCaseStudies(): Promise<CaseStudy[]> {
 
     return documents.map((doc) => ({
       ...doc,
-      image: doc.image
-        ? {
-            url: imageUrl(doc.image, IMAGE_WIDTH) ?? "",
-            alt: doc.image.alt ?? "",
-          }
-        : undefined,
+      // `contain`, not `cover`, so the logo must not be cropped to its box.
+      logo: doc.logo ? resolve(doc.logo, LOGO_WIDTH, false) : undefined,
+      image: doc.image ? resolve(doc.image, IMAGE_WIDTH, true) : undefined,
     }));
   } catch (error) {
     // A misconfigured project ID or a CORS rule that was never added should not

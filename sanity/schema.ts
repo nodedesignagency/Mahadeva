@@ -45,6 +45,22 @@ const caseStudy = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "logo",
+      title: "Client logo",
+      type: "image",
+      description:
+        "Drawn at 138×32 and fitted inside that box, so any shape stays whole. A transparent PNG or an SVG works best. Without one the card sets the client name as text.",
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative text",
+          type: "string",
+          description: "Usually just the company name.",
+          validation: (rule) => rule.required(),
+        }),
+      ],
+    }),
+    defineField({
       name: "year",
       title: "Year",
       type: "string",

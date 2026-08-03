@@ -25,10 +25,18 @@ const builder = sanityClient ? imageUrlBuilder(sanityClient) : null;
  *
  * Goes through the asset pipeline rather than serving the original: editors
  * upload whatever came out of their screenshot tool, and this is what stops a
- * 4MB PNG reaching the page. `fit: "crop"` honours the hotspot the editor set
- * in the Studio, so cropping follows their intent instead of the centre.
+ * 4MB PNG reaching the page.
+ *
+ * `crop` honours the hotspot the editor set in the Studio, so a screenshot is
+ * trimmed to their intent rather than to its centre. Logos pass `false` — they
+ * are fitted whole into their box, and cropping one would cut the mark.
  */
-export function imageUrl(source: SanityImage, width: number): string | null {
+export function imageUrl(
+  source: SanityImage,
+  width: number,
+  crop = true,
+): string | null {
   if (!builder) return null;
-  return builder.image(source).width(width).fit("crop").auto("format").url();
+  const image = builder.image(source).width(width).auto("format");
+  return (crop ? image.fit("crop") : image.fit("max")).url();
 }

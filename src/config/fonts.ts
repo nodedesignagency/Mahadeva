@@ -35,12 +35,17 @@ export const displayFont = Almarai({
   weight: ["300", "400", "700"],
 });
 
-/** Buttons, labels, navigation. */
+/**
+ * Buttons, labels, navigation — and every number on the site. Figures are set
+ * in Geist throughout, at whatever weight and size the context calls for.
+ *
+ * 300 is the case study year chip.
+ */
 export const uiFont = Geist({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-ui-family",
-  weight: ["400", "500"],
+  weight: ["300", "400", "500"],
 });
 
 export const fontVariables = [displayFont.variable, uiFont.variable].join(" ");
