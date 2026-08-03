@@ -113,7 +113,34 @@ export function BackgroundTransition() {
 
     sections.forEach((section) => observer.observe(section));
 
+    // TEMPORARY diagnostics for the preview artifact: a live readout of the
+    // geometry this environment actually reports. Removed once the host's
+    // behaviour is understood.
+    const hud = document.createElement("div");
+    hud.setAttribute("style",
+      "position:fixed;left:8px;bottom:8px;z-index:99999;background:#000c;color:#0f0;" +
+      "font:10px/1.5 monospace;padding:6px 8px;pointer-events:none;white-space:pre;max-width:420px");
+    backdrop.after(hud);
+    let hits = 0;
+    const origCb = () => {};
+    const tick = () => {
+      const rows = sections
+        .map((s, i) => `${i}:${s.dataset.bg}=${Math.round(visible.get(s) ?? -1)}`)
+        .join(" ");
+      hud.textContent =
+        `scrollY=${Math.round(window.scrollY)} innerH=${window.innerHeight} ` +
+        `docH=${document.documentElement.scrollHeight}\n` +
+        `hits=${hits} cleared=${cleared} cur=${current || "-"}\n${rows}`;
+    };
+    const hudInterval = window.setInterval(tick, 400);
+    const bump = new IntersectionObserver((es) => { hits += es.length; tick(); }, { threshold: thresholds });
+    sections.forEach((s) => bump.observe(s));
+    void origCb;
+
     return () => {
+      window.clearInterval(hudInterval);
+      bump.disconnect();
+      hud.remove();
       observer.disconnect();
       if (cleared) {
         painted.forEach((section) => {
