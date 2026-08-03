@@ -274,11 +274,13 @@ export const mobileNav = {
   linkOffset: "-100%",
 
   /**
-   * The dark fill crossfades rather than appearing whole — in the owner's
-   * screen recording the hero heading is still visible through the panel while
-   * the first links are already sliding in.
+   * How long the header takes to grow from its closed height to the full
+   * viewport. This is the whole "opening" gesture — there is no separate
+   * panel sliding or fading in over the page, the strip itself becomes the
+   * screen. It is also why the hero heading is still visible partway through
+   * the owner's recording: the header simply has not reached it yet.
    */
-  fillDuration: 400,
+  openDuration: 500,
 
   /**
    * The hairline between links, from the owner's BorderReveal component: a

@@ -107,8 +107,16 @@ export function Header() {
 
   return (
     <header
+      style={
+        { "--mh-nav-open-duration": `${mobileNav.openDuration}ms` } as CSSProperties
+      }
       className={cn(
-        "fixed inset-x-0 top-0 z-50 h-header border-b",
+        "mh-nav-shell fixed inset-x-0 top-0 z-50 border-b",
+        // Opening grows the strip itself into the screen rather than sliding a
+        // panel over it. The bottom hairline travels down with it, which is
+        // why the line under the wordmark is simply gone once open — it is at
+        // the foot of the viewport, not under the row.
+        open ? "h-[100dvh]" : "h-header",
         // The whole strip crossfades as one, on the original's own curve: the
         // surface, the hairline, the wordmark and CTA (`text-current`), and
         // both endpoints the links mix between. Everything is listed because
@@ -123,7 +131,7 @@ export function Header() {
           : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)]",
       )}
     >
-      <Container className="flex h-full items-center justify-between gap-6">
+      <Container className="flex h-header items-center justify-between gap-6">
         <Link
           href="/"
           className="font-display text-heading-md tracking-(--tracking-display) text-current"
@@ -220,11 +228,13 @@ export function Header() {
         </div>
       </Container>
 
-      {/* The panel stays mounted and is hidden by state rather than unmounted.
-          Its links and rules animate from CSS, and CSS needs both ends of a
-          transition to be in the document — mounting on open would put every
-          element straight into its finished state with nothing to move from.
-          `inert` keeps the hidden copy out of the tab order and off the
+      {/* An ordinary child of the header, not an overlay: it is already in
+          place below the row and the growing strip uncovers it.
+
+          It stays mounted rather than being rendered on open — CSS needs both
+          ends of a transition in the document, and mounting on open would put
+          every link straight into its finished state with nothing to move
+          from. `inert` keeps the hidden copy out of the tab order and off the
           accessibility tree, which is what unmounting was doing for us. */}
       <div
         id="mobile-nav"
@@ -233,16 +243,16 @@ export function Header() {
         onKeyDown={onPanelKeyDown}
         data-open={open}
         inert={!open}
-        style={
-          { "--mh-nav-fill-duration": `${mobileNav.fillDuration}ms` } as CSSProperties
-        }
-        className="mh-nav-panel desktop:hidden fixed inset-x-0 top-header bottom-0 bg-bg outline-none"
+        className="desktop:hidden outline-none"
       >
-        <Container className="h-full overflow-y-auto py-8">
+        <Container className="py-8">
           <nav aria-label="Mobile">
             <ul className="flex flex-col">
               {mainNav.map((item, i) => (
-                <li key={item.href} className="overflow-hidden">
+                // No clipping on the row: a link arriving from the left is
+                // meant to be seen crossing the margin, and the header clips
+                // it at the screen edge instead.
+                <li key={item.href}>
                   {/* The travelling element is the label itself, sized to its
                       own text — in the Framer file each link layer is width-
                       fit, so its offset is one label's width, not one row's.

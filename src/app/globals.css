@@ -254,21 +254,17 @@
  * properties. `--mh-nav-item` is the item's index, set inline, so the stagger
  * is arithmetic in CSS rather than a delay computed per link in JS.
  * ------------------------------------------------------------------------- */
-/* The fill crossfades, and on the way out it must outlast the links leaving —
- * hence visibility switching at the end of the fade rather than immediately,
- * which is what `transition-behavior: allow-discrete` buys us. */
-.mh-nav-panel {
-  visibility: hidden;
-  opacity: 0;
-  transition:
-    opacity var(--mh-nav-fill-duration) var(--ease-out),
-    visibility var(--mh-nav-fill-duration);
-  transition-behavior: allow-discrete;
-}
-
-.mh-nav-panel[data-open="true"] {
-  visibility: visible;
-  opacity: 1;
+/* Opening is the header growing to fill the screen. The links and rules are
+ * already inside it and are revealed as it passes them, which is why the page
+ * behind stays visible until the edge reaches it.
+ *
+ * `overflow: clip` rather than `hidden`: the two behave identically for the
+ * closed strip, but `clip` does not create a scroll container, so it cannot
+ * be scrolled programmatically and — with `overflow-clip-margin` below —
+ * still lets the links show outside their own rows. */
+.mh-nav-shell {
+  overflow: clip;
+  transition: height var(--mh-nav-open-duration) var(--ease-out);
 }
 
 /* Position only, no fade. The row is clipped to the panel's width, so a link
@@ -297,7 +293,7 @@
   display: block;
   width: 0;
   height: 1px;
-  background-color: var(--color-border);
+  background-color: var(--color-fg);
   transition: width var(--mh-nav-rule-exit-duration) var(--ease-out);
 }
 
