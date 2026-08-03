@@ -109,6 +109,20 @@ export const sectionTextReveal = {
 } as const;
 
 /**
+ * The same section reveal, for headings on the dark surface.
+ *
+ * `sectionTextReveal` resolves to ink because the sections that came first sit
+ * on white. Reusing it on a dark section finishes the sweep with dark text on
+ * dark ground — the reveal plays correctly and leaves nothing visible, which is
+ * a hard bug to see and an easy one to cause. Naming the two cases separately
+ * makes the choice explicit at each call site.
+ */
+export const sectionTextRevealOnDark = {
+  ...sectionTextReveal,
+  afterColor: "var(--color-fg)",
+} as const;
+
+/**
  * Site-wide smooth scrolling.
  *
  * The original runs its Smooth Scroll component at intensity 10. Expressed here
@@ -308,6 +322,36 @@ export const mobileNav = {
    * shorter fade rather than the entrance run backwards.
    */
   rule: { duration: 1000, delay: 200, exitDuration: 150 },
+} as const;
+
+/**
+ * Case study card hover.
+ *
+ * Blocks slide in from the four edges and sit over the card while the pointer
+ * is on it, then retreat. Each one enters from the edge it is parked against,
+ * so the card looks assembled from its own border rather than sprinkled.
+ *
+ * `edge` is where it comes from and which side it hugs. `x`/`y` place it along
+ * that side, `w`/`h` size it — all percentages of the card, so the arrangement
+ * holds at every width instead of drifting as the card grows.
+ *
+ * Delays are deliberately uneven. An even stagger reads as a mechanical sweep;
+ * clustering two or three arrivals and leaving a gap reads as scatter.
+ */
+export const caseHover = {
+  duration: 520,
+  /** Added to every block's delay on the way out, so leaving feels unhurried. */
+  exitDelay: 40,
+  blocks: [
+    { edge: "left", x: 0, y: 34, w: 3.5, h: 11, delay: 0 },
+    { edge: "left", x: 0, y: 62, w: 2.5, h: 7, delay: 120 },
+    { edge: "top", x: 39, y: 0, w: 6, h: 4.5, delay: 60 },
+    { edge: "top", x: 74, y: 0, w: 3.5, h: 6, delay: 180 },
+    { edge: "right", x: 0, y: 22, w: 3, h: 9, delay: 40 },
+    { edge: "right", x: 0, y: 55, w: 4.5, h: 5.5, delay: 150 },
+    { edge: "bottom", x: 33, y: 0, w: 5, h: 5, delay: 90 },
+    { edge: "bottom", x: 46, y: 0, w: 3, h: 8, delay: 210 },
+  ],
 } as const;
 
 /**

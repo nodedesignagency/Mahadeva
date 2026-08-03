@@ -1,0 +1,139 @@
+import {
+  defineArrayMember,
+  defineField,
+  defineType,
+  type SchemaTypeDefinition,
+} from "sanity";
+
+/**
+ * Content model.
+ *
+ * This is the whole schema, and it is code — the Studio builds its editing UI
+ * from this file at runtime. A buyer pointing the app at their own empty Sanity
+ * project gets these exact fields with no copying, no importing and nothing to
+ * keep in sync. Only the documents themselves travel separately, via the seed.
+ *
+ * Field names match `CaseStudy` in src/content/case-studies.ts one for one, so
+ * the query in src/lib/sanity/queries.ts is a projection rather than a
+ * translation layer.
+ */
+
+const caseStudy = defineType({
+  name: "caseStudy",
+  title: "Case Study",
+  type: "document",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      description: "The headline on the card, e.g. “AI Agent Website Built for Automation Startups”.",
+      validation: (rule) => rule.required().max(90),
+    }),
+    defineField({
+      name: "slug",
+      title: "URL",
+      type: "slug",
+      description: "Generated from the title. This becomes /case-study/your-slug.",
+      options: { source: "title", maxLength: 64 },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "client",
+      title: "Client name",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "year",
+      title: "Year",
+      type: "string",
+      description: "Shown in the chip at the top right of the card.",
+      validation: (rule) => rule.required().regex(/^\d{4}$/, { name: "four digits" }),
+    }),
+    defineField({
+      name: "summary",
+      title: "Summary",
+      type: "text",
+      rows: 3,
+      description: "Two lines on the card. Keep it under ~140 characters or it will push the stats down.",
+      validation: (rule) => rule.required().max(200),
+    }),
+    defineField({
+      name: "stats",
+      title: "Stats",
+      type: "array",
+      description: "Exactly four. They are laid out in a 2x2 grid — fewer leaves a gap, more will not fit.",
+      of: [
+        defineArrayMember({
+          name: "stat",
+          type: "object",
+          fields: [
+            defineField({ name: "label", type: "string", validation: (rule) => rule.required() }),
+            defineField({
+              name: "value",
+              type: "string",
+              description: "Short, e.g. “13.2x”, “42%”, “$80K+”.",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: { title: "value", subtitle: "label" },
+          },
+        }),
+      ],
+      validation: (rule) => rule.required().length(4),
+    }),
+    defineField({
+      name: "tone",
+      title: "Panel colour",
+      type: "string",
+      description: "The tint behind the text half of the card.",
+      options: {
+        list: [
+          { title: "Sky", value: "sky" },
+          { title: "Lavender", value: "lavender" },
+          { title: "Peach", value: "peach" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "sky",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "image",
+      title: "Screenshot",
+      type: "image",
+      description: "The product shot filling the right half. Drag the hotspot to choose what stays visible when it crops.",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Alternative text",
+          type: "string",
+          description: "Describes the image for screen readers and when it fails to load.",
+          validation: (rule) => rule.required(),
+        }),
+      ],
+    }),
+    defineField({
+      name: "order",
+      title: "Order",
+      type: "number",
+      description: "Lowest first. Only the first three appear on the home page.",
+      initialValue: 0,
+    }),
+  ],
+  orderings: [
+    {
+      title: "Display order",
+      name: "displayOrder",
+      by: [{ field: "order", direction: "asc" }],
+    },
+  ],
+  preview: {
+    select: { title: "title", subtitle: "client", media: "image" },
+  },
+});
+
+export const schemaTypes: SchemaTypeDefinition[] = [caseStudy];

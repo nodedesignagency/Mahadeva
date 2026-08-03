@@ -342,6 +342,35 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Case study card hover
+ *
+ * Blocks parked just outside the card's four edges, sliding in on hover. Each
+ * is positioned against its own edge and translated out along the axis it will
+ * travel, so the offset never has to be computed from its size in JS.
+ *
+ * Gated on a real pointer, like the button sweep: on a touch device `:hover`
+ * sticks after a tap and the blocks would stay put. Nothing here carries
+ * meaning, so there is no keyboard equivalent to provide — the card's link is
+ * focusable in its own right.
+ * ------------------------------------------------------------------------- */
+/* The parked position arrives as a custom property rather than as an inline
+ * `translate`. An inline declaration outranks every stylesheet rule, so setting
+ * it directly meant the hover rule below could never take effect. */
+.mh-case-block {
+  position: absolute;
+  background-color: var(--mh-case-shape);
+  translate: var(--mh-case-from);
+  transition: translate var(--mh-case-duration) var(--ease-out) var(--mh-case-delay-out);
+}
+
+@media (hover: hover) {
+  .group:hover .mh-case-block {
+    translate: 0 0;
+    transition-delay: var(--mh-case-delay-in);
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Feature marquee
  *
  * The row holds the cards twice and slides left by exactly one copy, so the

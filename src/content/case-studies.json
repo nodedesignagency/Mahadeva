@@ -1,0 +1,80 @@
+[
+  {
+    "slug": "ragnarok-ai",
+    "client": "Ragnarok AI",
+    "year": "2023",
+    "title": "AI Agent Website Built for Automation Startups",
+    "summary": "AI-driven automation systems improved engagement and conversion clarity for a SaaS company, reducing friction.",
+    "stats": [
+      {
+        "label": "Demo Click Growth",
+        "value": "13.2x"
+      },
+      {
+        "label": "Higher Engagement",
+        "value": "42%"
+      },
+      {
+        "label": "Pipeline Influence",
+        "value": "$80K+"
+      },
+      {
+        "label": "Qualified Leads",
+        "value": "77%"
+      }
+    ],
+    "tone": "sky"
+  },
+  {
+    "slug": "northwind-labs",
+    "client": "Northwind Labs",
+    "year": "2024",
+    "title": "Lead Qualification Rebuilt Around a Scoring Model",
+    "summary": "Automated scoring cut wasted sales time and doubled recurring revenue for a mid-market SaaS team.",
+    "stats": [
+      {
+        "label": "Conversion Lift",
+        "value": "40%"
+      },
+      {
+        "label": "Time Saved",
+        "value": "18h/wk"
+      },
+      {
+        "label": "Recurring Revenue",
+        "value": "2.1x"
+      },
+      {
+        "label": "Response Time",
+        "value": "-64%"
+      }
+    ],
+    "tone": "lavender"
+  },
+  {
+    "slug": "atlas-logistics",
+    "client": "Atlas Logistics",
+    "year": "2024",
+    "title": "Forecasting Agents for a Freight Network",
+    "summary": "Demand forecasting and route planning agents trimmed empty miles and steadied delivery windows across the fleet.",
+    "stats": [
+      {
+        "label": "Empty Miles",
+        "value": "-31%"
+      },
+      {
+        "label": "On-Time Rate",
+        "value": "96%"
+      },
+      {
+        "label": "Fuel Saved",
+        "value": "$210K"
+      },
+      {
+        "label": "Planning Effort",
+        "value": "-58%"
+      }
+    ],
+    "tone": "peach"
+  }
+]

@@ -112,6 +112,20 @@
   --color-card-lavender: var(--mh-lavender-25);
   --color-card-peach: var(--mh-peach-10);
 
+  /* Case study panels. A full step stronger than the feature-card tints: those
+   * sit six-across on a dark field where a saturated fill would shout, these
+   * are one big panel per card carrying the whole left half. */
+  --color-case-sky: var(--mh-blue-100);
+  --color-case-lavender: var(--mh-lavender-50);
+  --color-case-peach: var(--mh-peach-50);
+
+  /* The hover blocks. Full strength, not the panel tint — a block the same
+   * colour as the surface it lands on is an invisible block, and half of them
+   * land on the panel. */
+  --color-case-shape-sky: var(--mh-blue);
+  --color-case-shape-lavender: var(--mh-lavender);
+  --color-case-shape-peach: var(--mh-peach);
+
   --color-fg: var(--mh-white);
   --color-fg-muted: var(--mh-white-a60);
   --color-fg-subtle: var(--mh-white-a50);
@@ -310,6 +324,9 @@
   --color-card-rose: var(--color-card-rose);
   --color-card-lavender: var(--color-card-lavender);
   --color-card-peach: var(--color-card-peach);
+  --color-case-sky: var(--color-case-sky);
+  --color-case-lavender: var(--color-case-lavender);
+  --color-case-peach: var(--color-case-peach);
   --color-surface: var(--color-surface);
   --color-surface-hover: var(--color-surface-hover);
   --color-fg: var(--color-fg);

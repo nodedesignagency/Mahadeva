@@ -1,7 +1,10 @@
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Features } from "@/components/sections/Features";
+import { CaseStudies } from "@/components/sections/CaseStudies";
 import { aboutContent, featuresContent, heroContent } from "@/content/home";
+import { caseStudiesContent } from "@/content/case-studies";
+import { getCaseStudies } from "@/lib/case-studies";
 
 /**
  * Home page.
@@ -10,7 +13,9 @@ import { aboutContent, featuresContent, heroContent } from "@/content/home";
  * Hero -> About -> Features -> Case Studies -> Stats -> Tech Stack ->
  * Testimonials -> Before/After -> Pricing -> FAQ -> CTA.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  const studies = await getCaseStudies();
+
   return (
     <>
       {/* Hero and About share one stack: both stick to the top, so About rides
@@ -21,6 +26,7 @@ export default function HomePage() {
         <About content={aboutContent} />
       </div>
       <Features content={featuresContent} />
+      <CaseStudies content={caseStudiesContent} studies={studies} />
     </>
   );
 }
