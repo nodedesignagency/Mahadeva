@@ -5,29 +5,34 @@ import { useEffect, useRef } from "react";
 /**
  * Section-linked page background.
  *
- * Sections declare the surface they want with `data-bg`, and a backdrop
- * behind the page crossfades to it as each takes over the viewport — a dark
+ * Sections declare the surface they want with `data-bg`, and the page's
+ * background crossfades to it as each takes over the viewport — a dark
  * section arriving is a transition rather than an edge scrolling past. This
  * is the owner's Framer "Changing Background" component: Section in View,
  * centre viewport, Replay on.
  *
- * The owning section is *the one with the most visible pixels*, measured from
- * IntersectionObserver entries. For stacked sections that is exactly the
- * midline handover — the switch lands when the incoming section covers more
- * of the viewport than the outgoing one — but unlike any formulation built on
- * `scrollY`/`innerHeight`, it also works where this page actually runs:
+ * Two decisions here were bought with debugging in the preview artifact, and
+ * both are load-bearing:
  *
- *  - In the preview artifact the host frame may own scrolling entirely, so
- *    `window.scrollY` never changes and scroll events never fire. Observer
- *    geometry is computed against the top-level *visible* viewport across
- *    frame boundaries, so entries keep arriving no matter who scrolls.
- *  - `rootMargin` is the one part of the API ignored for cross-origin
- *    embeds — an earlier version leaned on it and silently died — so none is
- *    used: plain thresholds only.
+ * WHAT DECIDES: the section with the most visible pixels, measured from
+ * IntersectionObserver entries with plain thresholds. For stacked sections
+ * that is exactly the midline handover. Nothing reads `scrollY`,
+ * `innerHeight` or `rootMargin` — the artifact host owns scrolling, where
+ * scroll events may never fire inside this document and `rootMargin` is
+ * ignored cross-origin, while observer geometry keeps arriving computed
+ * against the top-level visible viewport.
+ *
+ * WHAT PAINTS: `body`, via inline style. A dedicated backdrop element on a
+ * negative z-index proved correct in every local check and invisible in the
+ * embed — the host's wrapping suppressed its paint layer while the body's
+ * background remained demonstrably visible the whole time. The body canvas
+ * is the bottom-most layer by specification; it cannot be occluded from
+ * below, and an inline style outranks the host's own body styling. The fade
+ * is the `transition` already on `body` in globals.css.
  *
  * Progressive by construction: sections paint their own fills in CSS, and
- * this effect clears them only inside the first observer callback — proof the
- * machinery is actually delivering — handing them back on unmount. If the
+ * this effect clears them only inside the first observer callback — proof
+ * the machinery is delivering — handing everything back on unmount. If the
  * script never runs, the page is the hard-edged version, never light text
  * stranded on the wrong surface.
  */
@@ -50,18 +55,21 @@ const variants: Record<string, string> = {
 const thresholds = Array.from({ length: 21 }, (_, i) => i / 20);
 
 export function BackgroundTransition() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const backdrop = ref.current;
-    if (!backdrop) return;
+    const marker = ref.current;
+    if (!marker) return;
 
     // Queried from this component's own root rather than `document`: a host
     // can isolate the page's tree where `document.querySelectorAll` sees
     // nothing.
-    const rootNode = backdrop.getRootNode() as ParentNode;
+    const rootNode = marker.getRootNode() as ParentNode;
     const sections = [...rootNode.querySelectorAll<HTMLElement>("[data-bg]")];
     if (sections.length === 0) return;
+
+    const body = marker.ownerDocument.body;
+    const rootStyle = marker.ownerDocument.documentElement.style;
 
     // `data-bg-keep` opts a section out of the takeover — About is pinned
     // over the hero, and transparency there would show the hero through it —
@@ -105,7 +113,9 @@ export function BackgroundTransition() {
         const value = variants[active?.dataset.bg ?? ""];
         if (value && value !== current) {
           current = value;
-          backdrop.style.backgroundColor = value;
+          body.style.backgroundColor = value;
+          // Kept in step for anything else reading the token.
+          rootStyle.setProperty("--color-bg-dynamic", value);
         }
       },
       { threshold: thresholds },
@@ -113,52 +123,19 @@ export function BackgroundTransition() {
 
     sections.forEach((section) => observer.observe(section));
 
-    // TEMPORARY diagnostics for the preview artifact: a live readout of the
-    // geometry this environment actually reports. Removed once the host's
-    // behaviour is understood.
-    const hud = document.createElement("div");
-    hud.setAttribute("style",
-      "position:fixed;left:8px;bottom:8px;z-index:99999;background:#000c;color:#0f0;" +
-      "font:10px/1.5 monospace;padding:6px 8px;pointer-events:none;white-space:pre;max-width:420px");
-    backdrop.after(hud);
-    let hits = 0;
-    const origCb = () => {};
-    const tick = () => {
-      const rows = sections
-        .map((s, i) => `${i}:${s.dataset.bg}=${Math.round(visible.get(s) ?? -1)}`)
-        .join(" ");
-      hud.textContent =
-        `scrollY=${Math.round(window.scrollY)} innerH=${window.innerHeight} ` +
-        `docH=${document.documentElement.scrollHeight}\n` +
-        `hits=${hits} cleared=${cleared} cur=${current || "-"}\n${rows}`;
-    };
-    const hudInterval = window.setInterval(tick, 400);
-    const bump = new IntersectionObserver((es) => { hits += es.length; tick(); }, { threshold: thresholds });
-    sections.forEach((s) => bump.observe(s));
-    void origCb;
-
     return () => {
-      window.clearInterval(hudInterval);
-      bump.disconnect();
-      hud.remove();
       observer.disconnect();
       if (cleared) {
         painted.forEach((section) => {
           section.style.backgroundColor = "";
         });
+        body.style.backgroundColor = "";
+        rootStyle.removeProperty("--color-bg-dynamic");
       }
     };
   }, []);
 
-  return (
-    // The page's backdrop: behind everything, ignoring the pointer, starting
-    // on the same dark the body paints so there is no flash before the first
-    // entries land. The fade is this transition; reduced motion collapses it
-    // via the global backstop.
-    <div
-      ref={ref}
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 bg-bg-dynamic transition-[background-color] duration-(--duration-base) ease-(--ease-in-out)"
-    />
-  );
+  // Nothing visual — an inert marker whose only job is locating the tree
+  // this component was mounted into.
+  return <span ref={ref} hidden aria-hidden="true" />;
 }
