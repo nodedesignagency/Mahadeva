@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { sectionTextReveal } from "@/config/animation";
+import { sectionTextRevealDynamic } from "@/config/animation";
 import type { ToolTone, techStackContent } from "@/content/home";
 import { cn } from "@/lib/cn";
 
@@ -55,8 +55,8 @@ export function TechStack({ content }: TechStackProps) {
         <TextReveal
           as="h2"
           lines={content.headingLines}
-          settings={sectionTextReveal}
-          lineStagger={sectionTextReveal.lineStagger}
+          settings={sectionTextRevealDynamic}
+          lineStagger={sectionTextRevealDynamic.lineStagger}
           className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
 

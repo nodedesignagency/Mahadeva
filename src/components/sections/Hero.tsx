@@ -27,11 +27,18 @@ type HeroProps = {
 
 export function Hero({ content }: HeroProps) {
   return (
+    // The hero paints its own dark fill and opts out of the fill takeover, so
+    // the changing layer behind it can already be white — the owner's Framer
+    // setup: the Changing Background component's first variant is White, and
+    // the intro covers it with its own surfaces. The first change anyone sees
+    // is therefore white turning green at the case studies, "starting from
+    // the 4th section". Its data-bg is that White base, not its own colour.
     <section
-      data-bg="green"
+      data-bg="white"
+      data-bg-keep=""
       // `100dvh` tracks mobile browser chrome as it hides and shows; the
       // `h-screen` fallback covers browsers without dynamic viewport units.
-      className="sticky top-0 flex h-screen min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
+      className="sticky top-0 flex h-screen bg-bg min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
     >
       {/* Decorative background. Sits behind the content and ignores pointer events. */}
       {/* Each side field is 20% of the viewport, as in the original, so its

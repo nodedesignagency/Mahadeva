@@ -3,7 +3,7 @@ import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { Button } from "@/components/ui/Button";
 import { CaseStudyCard } from "@/components/ui/CaseStudyCard";
-import { sectionTextRevealOnDark } from "@/config/animation";
+import { sectionTextRevealDynamic } from "@/config/animation";
 import type { CaseStudy, caseStudiesContent } from "@/content/case-studies";
 
 /**
@@ -36,10 +36,10 @@ export function CaseStudies({ content, studies }: CaseStudiesProps) {
             <TextReveal
               as="h2"
               lines={content.headingLines}
-              settings={sectionTextRevealOnDark}
+              settings={sectionTextRevealDynamic}
               className="flex flex-col gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
             />
-            <p className="mt-6 max-w-[46ch] font-body text-body-md text-fg-muted">
+            <p className="text-ink-dynamic-muted mt-6 max-w-[46ch] font-body text-body-md">
               {content.subheading}
             </p>
           </div>

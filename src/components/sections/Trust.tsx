@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { featureMarquee, sectionTextReveal } from "@/config/animation";
+import { featureMarquee, sectionTextRevealDynamic } from "@/config/animation";
 import type { TrustTone, trustContent } from "@/content/home";
 import { cn } from "@/lib/cn";
 
@@ -51,7 +51,7 @@ export function Trust({ content }: TrustProps) {
     >
       {/* Placeholder until the files land: the name at the mark's height, so
           the row's rhythm and spacing are already right when they arrive. */}
-      <span className="truncate font-ui text-body-sm font-light text-fg-on-light/35">
+      <span className="text-ink-dynamic truncate font-ui text-body-sm font-light opacity-35">
         {logo.name}
       </span>
     </li>
@@ -64,10 +64,10 @@ export function Trust({ content }: TrustProps) {
           <TextReveal
             as="h2"
             lines={content.headingLines}
-            settings={sectionTextReveal}
+            settings={sectionTextRevealDynamic}
             className="flex flex-col gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
-          <p className="max-w-[42ch] font-body text-body-md leading-[1.5] text-fg-on-light tablet:pt-2">
+          <p className="text-ink-dynamic max-w-[42ch] font-body text-body-md leading-[1.5] tablet:pt-2">
             {content.subheading}
           </p>
         </div>
@@ -102,7 +102,7 @@ export function Trust({ content }: TrustProps) {
         </ul>
 
         <div className="mt-15 flex flex-col gap-8 tablet:flex-row tablet:items-center tablet:gap-16">
-          <p className="max-w-[24ch] shrink-0 font-body text-body-sm leading-[1.5] text-fg-on-light">
+          <p className="text-ink-dynamic max-w-[24ch] shrink-0 font-body text-body-sm leading-[1.5]">
             {content.logosCaption}
           </p>
 

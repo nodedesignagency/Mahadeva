@@ -428,6 +428,23 @@
   }
 }
 
+/* Text that lives in the changing-background zone: its colour follows the
+ * surface, fading on the same clock as the background so the two arrive
+ * together. Only for text sitting directly on the page — anything inside a
+ * tinted panel or card keeps a fixed ink, because its own surface never
+ * changes. */
+@utility text-ink-dynamic {
+  color: var(--color-fg-dynamic);
+  transition: color var(--duration-base) var(--ease-in-out);
+}
+
+/* The muted step of the same ink, derived rather than stored so the pair can
+ * never drift apart. */
+@utility text-ink-dynamic-muted {
+  color: color-mix(in srgb, var(--color-fg-dynamic) 60%, transparent);
+  transition: color var(--duration-base) var(--ease-in-out);
+}
+
 /* Eyebrow / kicker label treatment, used above most section headings. */
 @utility eyebrow {
   font-size: var(--text-label);

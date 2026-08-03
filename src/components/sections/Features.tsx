@@ -12,7 +12,7 @@ import database from "@/assets/card-workflow-automation.png";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { FeatureCard } from "@/components/ui/FeatureCard";
-import { featureMarquee, sectionTextReveal } from "@/config/animation";
+import { featureMarquee, sectionTextRevealDynamic } from "@/config/animation";
 import type { FeatureImage, featuresContent } from "@/content/home";
 
 /**
@@ -76,8 +76,8 @@ export function Features({ content }: FeaturesProps) {
         <TextReveal
           as="h2"
           lines={content.headingLines}
-          settings={sectionTextReveal}
-          lineStagger={sectionTextReveal.lineStagger}
+          settings={sectionTextRevealDynamic}
+          lineStagger={sectionTextRevealDynamic.lineStagger}
           className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
       </Container>

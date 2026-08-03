@@ -109,17 +109,24 @@ export const sectionTextReveal = {
 } as const;
 
 /**
- * The same section reveal, for headings on the dark surface.
+ * The section reveal for headings in the changing-background zone.
  *
- * `sectionTextReveal` resolves to ink because the sections that came first sit
- * on white. Reusing it on a dark section finishes the sweep with dark text on
- * dark ground — the reveal plays correctly and leaves nothing visible, which is
- * a hard bug to see and an easy one to cause. Naming the two cases separately
- * makes the choice explicit at each call site.
+ * These headings sit directly on the page, whose surface crossfades between
+ * dark and white as sections take over — so no fixed `afterColor` can be
+ * right for the heading's whole time on screen. The reveal finishes into the
+ * live ink token the background transition drives, and the words re-colour in
+ * step with the surface arriving underneath them.
+ *
+ * This replaces the original's hack of stacking an animated copy and a
+ * static copy of every heading in opposite colours and trading them on
+ * scroll: one element, its colour travelling with the background.
+ *
+ * `sectionTextReveal` (fixed ink) remains for headings on sections that keep
+ * their own painted fill, like the About statement.
  */
-export const sectionTextRevealOnDark = {
+export const sectionTextRevealDynamic = {
   ...sectionTextReveal,
-  afterColor: "var(--color-fg)",
+  afterColor: "var(--color-fg-dynamic)",
 } as const;
 
 /**

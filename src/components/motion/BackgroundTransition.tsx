@@ -42,10 +42,10 @@ import { useEffect, useRef } from "react";
  * names it uses for them. "Green" is the dark surface — the whole palette is
  * built on that green, so it is the page's colour rather than a section's.
  */
-const variants: Record<string, string> = {
-  white: "var(--color-bg-white)",
-  green: "var(--color-bg)",
-  beige: "var(--color-bg-light)",
+const variants: Record<string, { bg: string; ink: string }> = {
+  white: { bg: "var(--color-bg-white)", ink: "var(--color-fg-on-light)" },
+  green: { bg: "var(--color-bg)", ink: "var(--color-fg)" },
+  beige: { bg: "var(--color-bg-light)", ink: "var(--color-fg-on-light)" },
 };
 
 /**
@@ -111,11 +111,14 @@ export function BackgroundTransition() {
         }
 
         const value = variants[active?.dataset.bg ?? ""];
-        if (value && value !== current) {
-          current = value;
-          body.style.backgroundColor = value;
-          // Kept in step for anything else reading the token.
-          rootStyle.setProperty("--color-bg-dynamic", value);
+        if (value && value.bg !== current) {
+          current = value.bg;
+          body.style.backgroundColor = value.bg;
+          // The surface and its contrasting ink move as one write, so text
+          // bound to the ink token fades on the same clock as the background
+          // beneath it.
+          rootStyle.setProperty("--color-bg-dynamic", value.bg);
+          rootStyle.setProperty("--color-fg-dynamic", value.ink);
         }
       },
       { threshold: thresholds },
@@ -131,6 +134,7 @@ export function BackgroundTransition() {
         });
         body.style.backgroundColor = "";
         rootStyle.removeProperty("--color-bg-dynamic");
+        rootStyle.removeProperty("--color-fg-dynamic");
       }
     };
   }, []);

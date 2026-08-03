@@ -165,6 +165,14 @@
   /* Written to by the section-linked background transition. Initialised to the
    * page background so SSR output is correct before any JS runs. */
   --color-bg-dynamic: var(--color-bg);
+
+  /* The ink that contrasts whatever --color-bg-dynamic currently is, written
+   * by the same component in the same breath. Text in the changing-background
+   * zone takes its colour from this one token, which is the original's
+   * animated/static two-copy swap collapsed into a single element: instead of
+   * two headings in two colours traded on scroll, one heading whose colour
+   * travels with the surface underneath it. */
+  --color-fg-dynamic: var(--color-fg);
 }
 
 /* ---------------------------------------------------------------------------
