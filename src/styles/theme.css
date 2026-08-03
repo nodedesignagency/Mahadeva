@@ -230,6 +230,14 @@
   --ease-nav-hover: cubic-bezier(0.44, 0, 0.56, 1);
   --duration-nav-hover: 400ms;
 
+  /* The header's scroll flip, from the owner's Framer transition panel: Ease
+   * Custom at bezier 0.8, 0, 0.2, 1 over 1s, applied to the whole nav. The
+   * curve is what makes a full second work — it is almost flat at both ends
+   * and steep through the middle, so the crossover where the surface and the
+   * labels are both mid-tone passes in a fraction of that second. */
+  --ease-nav-flip: cubic-bezier(0.8, 0, 0.2, 1);
+  --duration-nav-flip: 1000ms;
+
   --duration-word: 250ms; /* per-word heading reveal, from the original */
   --duration-fast: 180ms;
   --duration-hover: 250ms;
@@ -336,6 +344,7 @@
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
   --ease-nav-hover: var(--ease-nav-hover);
+  --ease-nav-flip: var(--ease-nav-flip);
   --ease-button-spring: var(--ease-button-spring);
 
   --spacing-section-sm: var(--space-section-sm);

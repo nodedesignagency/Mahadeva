@@ -177,20 +177,21 @@
 /* ---------------------------------------------------------------------------
  * Nav links
  *
- * Two problems with doing this the obvious way, both visible on screen.
+ * A link's colour is a mix between two endpoints — its resting ink and its
+ * hover accent — both supplied by the header, which carries a different pair
+ * on each surface. Hovering eases the mix; scrolling past the threshold eases
+ * the endpoints. Two independent animations on one declaration.
  *
- * `text-decoration` is not animatable, so an underline set on hover pops into
- * place while the colour is still easing — the rule arrives before the colour
- * it belongs to. The rule is a pseudo-element here, so it can slide up from
- * `--mh-nav-rule-offset` below its resting place and fade in on the same curve
- * as the colour. They move as one.
+ * That is why `--mh-nav-hover` is a registered number rather than a straight
+ * `color` transition: a `color` transition fires on *any* colour change, so a
+ * surface swap would run at hover speed and drag the rule along with it.
  *
- * And a colour transition fires on *any* colour change, including the header
- * swapping surfaces on scroll. That crossfaded the labels from white to ink
- * across 0.4s while the background crossfaded underneath them, and halfway
- * through both were the same mid-grey and the nav read as empty. So the
- * transition is on a registered number, not on `color`: hovering eases the
- * mix, while a surface swap changes the endpoints and lands instantly.
+ * The endpoints are registered too, so the header can ease them across the
+ * flip on its own curve. An unregistered custom property is a string as far as
+ * the animation engine is concerned and would jump.
+ *
+ * `text-decoration` is not animatable, so the rule is a pseudo-element and
+ * simply fades with the colour.
  * ------------------------------------------------------------------------- */
 @property --mh-nav-hover {
   syntax: "<number>";
@@ -198,8 +199,19 @@
   initial-value: 0;
 }
 
+@property --mh-nav-ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --mh-nav-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8cffa7;
+}
+
 .mh-nav-link {
-  --mh-nav-rule-offset: 9px;
   position: relative;
   color: color-mix(
     in srgb,
@@ -213,13 +225,10 @@
   content: "";
   position: absolute;
   inset-inline: 0;
-  bottom: calc(-1 * var(--mh-nav-rule-offset));
+  bottom: -9px;
   border-bottom: 1px dotted currentColor;
   opacity: 0;
-  transform: translateY(var(--mh-nav-rule-offset));
-  transition:
-    opacity var(--duration-nav-hover) var(--ease-nav-hover),
-    transform var(--duration-nav-hover) var(--ease-nav-hover);
+  transition: opacity var(--duration-nav-hover) var(--ease-nav-hover);
 }
 
 .mh-nav-link:hover,
@@ -230,7 +239,6 @@
 .mh-nav-link:hover::after,
 .mh-nav-link:focus-visible::after {
   opacity: 1;
-  transform: translateY(0);
 }
 
 /* ---------------------------------------------------------------------------

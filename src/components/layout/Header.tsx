@@ -111,13 +111,13 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 h-header border-b",
-        // Nothing here transitions, and that is the point. Easing the surface
-        // and the labels together took both through mid-grey at once and the
-        // nav read as empty; easing only the surface left dark labels sitting
-        // on the dark green it had not finished leaving. Either way there is a
-        // frame where the two disagree. Swapping the whole strip at once is the
-        // only version with no such frame, and at this speed a crossfade was
-        // never legible as one anyway.
+        // The whole strip crossfades as one, on the original's own curve: the
+        // surface, the hairline, the wordmark and CTA (`text-current`), and
+        // both endpoints the links mix between. Everything is listed because
+        // anything left out lands on a different frame from the rest, which is
+        // what made the labels vanish mid-flip when only the surface eased.
+        "transition-[background-color,border-color,color,--mh-nav-ink,--mh-nav-accent]",
+        "duration-(--duration-nav-flip) ease-(--ease-nav-flip)",
         // Each surface carries its own hairline and its own pair of link
         // colours, which the links mix between on hover.
         scrolled
