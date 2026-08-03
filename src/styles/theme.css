@@ -224,6 +224,12 @@
   --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
+  /* Nav link hover, from the owner's Framer transition panel: Ease In Out at
+   * bezier 0.44, 0, 0.56, 1 over 0.4s. Gentler either end than --ease-in-out,
+   * which is why it is its own token rather than a reuse. */
+  --ease-nav-hover: cubic-bezier(0.44, 0, 0.56, 1);
+  --duration-nav-hover: 400ms;
+
   --duration-word: 250ms; /* per-word heading reveal, from the original */
   --duration-fast: 180ms;
   --duration-hover: 250ms;
@@ -329,6 +335,7 @@
   --ease-reveal: var(--ease-reveal);
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
+  --ease-nav-hover: var(--ease-nav-hover);
   --ease-button-spring: var(--ease-button-spring);
 
   --spacing-section-sm: var(--space-section-sm);

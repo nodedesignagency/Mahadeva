@@ -138,10 +138,22 @@ export function Header() {
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    // Every link is pure white, active or not. The current page
-                    // is still conveyed by aria-current, which is what actually
-                    // carries that meaning.
-                    className="font-ui text-body-sm text-current uppercase tracking-[0.04em]"
+                    // Every link takes the header's colour, active or not. The
+                    // current page is still conveyed by aria-current, which is
+                    // what actually carries that meaning.
+                    //
+                    // On hover the label turns accent green and gains a dotted
+                    // rule 9px below it. Only the colour eases — text-decoration
+                    // is not an animatable property, so the rule appears at
+                    // once, which is what the original does too.
+                    className={cn(
+                      "font-ui text-body-sm text-current uppercase tracking-[0.04em]",
+                      "transition-colors duration-(--duration-nav-hover) ease-(--ease-nav-hover)",
+                      "hover:underline hover:decoration-dotted hover:underline-offset-[9px]",
+                      scrolled
+                        ? "hover:decoration-current"
+                        : "hover:text-accent hover:decoration-accent",
+                    )}
                   >
                     {item.label}
                   </Link>
@@ -164,14 +176,18 @@ export function Header() {
           {/* Outlined, not solid: a filled white CTA up here reads as a second
               primary action competing with the hero's own. The variant's
               `border-strong` is an opaque dark green that disappears against
-              this surface, so it uses the same white-10% hairline as the
-              header's own bottom border. */}
+              this surface, so the hairline comes from whichever surface the
+              header is wearing.
+              Hover is a straight fade to 50%, on both surfaces. The variant's
+              own hover fills the button with the dark elevated surface, which
+              on the white header swallowed the label entirely. */}
           <Button
             href={navCta.href}
             size="nav"
             variant="outline"
             className={cn(
-              "text-current",
+              "text-current hover:bg-transparent hover:opacity-50",
+              "transition-[opacity,border-color] duration-(--duration-hover) ease-(--ease-out)",
               scrolled ? "border-border-on-light" : "border-border",
             )}
           >
