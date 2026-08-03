@@ -262,9 +262,22 @@
  * closed strip, but `clip` does not create a scroll container, so it cannot
  * be scrolled programmatically and — with `overflow-clip-margin` below —
  * still lets the links show outside their own rows. */
+/* Every transition the header runs is declared here, together, because it has
+ * to be: this rule is unlayered and so outranks anything Tailwind emits into
+ * `@layer utilities`. A `transition` shorthand for the height alone silently
+ * replaced the surface-flip list and the scroll change went instant.
+ *
+ * Two groups, two durations, one curve. The surface swap is the short one; the
+ * height is the owner's full second. */
 .mh-nav-shell {
   overflow: clip;
-  transition: height var(--mh-nav-open-duration) var(--ease-nav-flip);
+  transition:
+    background-color var(--duration-nav-flip) var(--ease-nav-flip),
+    border-color var(--duration-nav-flip) var(--ease-nav-flip),
+    color var(--duration-nav-flip) var(--ease-nav-flip),
+    --mh-nav-ink var(--duration-nav-flip) var(--ease-nav-flip),
+    --mh-nav-accent var(--duration-nav-flip) var(--ease-nav-flip),
+    height var(--mh-nav-open-duration) var(--ease-nav-flip);
 }
 
 /* Position only, no fade. The row is clipped to the panel's width, so a link

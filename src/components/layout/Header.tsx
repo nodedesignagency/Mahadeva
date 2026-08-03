@@ -119,13 +119,12 @@ export function Header() {
         // The hairline is dropped once open: it has travelled to the foot of
         // the viewport, where it reads as a stray line rather than an edge.
         open ? "h-[100dvh] border-transparent" : "h-header",
-        // The whole strip crossfades as one, on the original's own curve: the
-        // surface, the hairline, the wordmark and CTA (`text-current`), and
-        // both endpoints the links mix between. Everything is listed because
-        // anything left out lands on a different frame from the rest, which is
-        // what made the labels vanish mid-flip when only the surface eased.
-        "transition-[background-color,border-color,color,--mh-nav-ink,--mh-nav-accent]",
-        "duration-(--duration-nav-flip) ease-(--ease-nav-flip)",
+        // The strip crossfades as one — surface, hairline, wordmark and CTA
+        // (`text-current`), and both endpoints the links mix between. That
+        // list lives in `.mh-nav-shell` alongside the open/close height, not
+        // here: an unlayered `transition` there beats a utility here, so
+        // splitting them across the two meant one quietly deleted the other.
+        //
         // Each surface carries its own hairline and its own pair of link
         // colours, which the links mix between on hover.
         scrolled
