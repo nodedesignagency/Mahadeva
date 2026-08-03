@@ -112,6 +112,13 @@
   --color-card-lavender: var(--mh-lavender-25);
   --color-card-peach: var(--mh-peach-10);
 
+  /* Trust statistics panels. Deeper than the feature-card tints — these are
+   * four large blocks on white, where a 10% tint would read as off-white. */
+  --color-stat-peach: var(--mh-peach-50);
+  --color-stat-green: var(--mh-green-100);
+  --color-stat-blue: var(--mh-blue-25);
+  --color-stat-magenta: var(--mh-magenta-50);
+
   /* Case study panels. A full step stronger than the feature-card tints: those
    * sit six-across on a dark field where a saturated fill would shout, these
    * are one big panel per card carrying the whole left half. */
@@ -322,6 +329,10 @@
   --color-card-rose: var(--color-card-rose);
   --color-card-lavender: var(--color-card-lavender);
   --color-card-peach: var(--color-card-peach);
+  --color-stat-peach: var(--color-stat-peach);
+  --color-stat-green: var(--color-stat-green);
+  --color-stat-blue: var(--color-stat-blue);
+  --color-stat-magenta: var(--color-stat-magenta);
   --color-case-sky: var(--color-case-sky);
   --color-case-lavender: var(--color-case-lavender);
   --color-case-peach: var(--color-case-peach);

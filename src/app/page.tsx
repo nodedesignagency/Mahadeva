@@ -2,7 +2,8 @@ import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Features } from "@/components/sections/Features";
 import { CaseStudies } from "@/components/sections/CaseStudies";
-import { aboutContent, featuresContent, heroContent } from "@/content/home";
+import { Trust } from "@/components/sections/Trust";
+import { aboutContent, featuresContent, heroContent, trustContent } from "@/content/home";
 import { caseStudiesContent } from "@/content/case-studies";
 import { getCaseStudies } from "@/lib/case-studies";
 
@@ -27,6 +28,7 @@ export default async function HomePage() {
       </div>
       <Features content={featuresContent} />
       <CaseStudies content={caseStudiesContent} studies={studies} />
+      <Trust content={trustContent} />
     </>
   );
 }
