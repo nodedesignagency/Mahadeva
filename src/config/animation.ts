@@ -265,7 +265,7 @@ export const mobileNav = {
    * overdamped, so this reads much faster than the number suggests: 90% of the
    * distance is covered in the first 830ms and the rest is sub-pixel.
    */
-  linkDuration: 2200,
+  linkDuration: 2000,
 
   /** Framer's per-link delay step, applied top to bottom. */
   linkStagger: 50,
@@ -274,13 +274,24 @@ export const mobileNav = {
   linkOffset: "-100%",
 
   /**
+   * The dark fill crossfades rather than appearing whole — in the owner's
+   * screen recording the hero heading is still visible through the panel while
+   * the first links are already sliding in.
+   */
+  fillDuration: 400,
+
+  /**
    * The hairline between links, from the owner's BorderReveal component: a
    * 1px rule whose width goes 0 to 100%, custom bezier, 1s, 200ms delay. Every
    * rule uses the same delay — the component triggers on visibility, and they
    * all become visible in the same frame — so they draw together beneath the
    * links arriving above them.
+   *
+   * They do not un-draw. Closing the panel in the recording clears every rule
+   * at once while the links are still walking out, so the exit is its own much
+   * shorter fade rather than the entrance run backwards.
    */
-  rule: { duration: 1000, delay: 200 },
+  rule: { duration: 1000, delay: 200, exitDuration: 150 },
 } as const;
 
 /**

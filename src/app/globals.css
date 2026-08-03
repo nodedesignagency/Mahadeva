@@ -254,6 +254,23 @@
  * properties. `--mh-nav-item` is the item's index, set inline, so the stagger
  * is arithmetic in CSS rather than a delay computed per link in JS.
  * ------------------------------------------------------------------------- */
+/* The fill crossfades, and on the way out it must outlast the links leaving —
+ * hence visibility switching at the end of the fade rather than immediately,
+ * which is what `transition-behavior: allow-discrete` buys us. */
+.mh-nav-panel {
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity var(--mh-nav-fill-duration) var(--ease-out),
+    visibility var(--mh-nav-fill-duration);
+  transition-behavior: allow-discrete;
+}
+
+.mh-nav-panel[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+}
+
 /* Position only, no fade. The row is clipped to the panel's width, so a link
  * outside its own row is already invisible — fading it as well would make it
  * materialise in place rather than arrive from somewhere. */
@@ -272,22 +289,28 @@
  * bar that grows from zero — the same construction as the owner's BorderReveal,
  * which animates `width` rather than a transform so the rule's end stays sharp
  * instead of being scaled from a 1px sliver. */
+/* The resting declaration is the *exit*: closing clears every rule at once
+ * while the links are still walking out. The entrance — the owner's
+ * BorderReveal timing — is the one under `[data-open]`, so each direction
+ * keeps its own duration instead of one being the other reversed. */
 .mh-nav-rule {
   display: block;
   width: 0;
   height: 1px;
   background-color: var(--color-border);
-  transition: width var(--mh-nav-rule-duration) var(--ease-border-reveal)
-    var(--mh-nav-rule-delay);
+  transition: width var(--mh-nav-rule-exit-duration) var(--ease-out);
 }
 
 [data-open="true"] .mh-nav-rule {
   width: 100%;
+  transition: width var(--mh-nav-rule-duration) var(--ease-border-reveal)
+    var(--mh-nav-rule-delay);
 }
 
-/* Two bars, not three. They cross into an X when the panel opens: the halves
- * meet in the middle first, then rotate, so it reads as one mark folding
- * rather than two lines swapping places. */
+/* Two bars, not three, crossing into the close mark. Both properties run at
+ * once over a single duration: staging the slide ahead of the rotation drew
+ * the eye to an intermediate single-bar shape that is not part of either
+ * state, and read as two separate moves rather than one mark folding. */
 .mh-burger-bar {
   display: block;
   height: 1.5px;
@@ -295,13 +318,7 @@
   background-color: currentColor;
   transition:
     translate var(--duration-hover) var(--ease-out),
-    rotate var(--duration-hover) var(--ease-out) var(--duration-hover);
-}
-
-[aria-expanded="true"] .mh-burger-bar {
-  transition:
-    translate var(--duration-hover) var(--ease-out),
-    rotate var(--duration-hover) var(--ease-out) var(--duration-hover);
+    rotate var(--duration-hover) var(--ease-out);
 }
 
 [aria-expanded="true"] .mh-burger-bar:first-child {

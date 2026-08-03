@@ -25,7 +25,6 @@ export const mainNav: NavItem[] = [
   { label: "Pricing", href: "/pricing" },
   { label: "Careers", href: "/careers" },
   { label: "Blogs", href: "/blogs" },
-  { label: "Sign Up", href: "/sign-up" },
 ];
 
 /** Header call-to-action. */

@@ -168,8 +168,9 @@ export function Header() {
         </nav>
 
         {/* Present at every width, including alongside the hamburger and while
-            the overlay is open — the original keeps it on screen throughout. */}
-        <div className="ml-auto desktop:ml-0">
+            the overlay is open — the original keeps it on screen throughout.
+            The pair sits 6px apart, tighter than the header's own gap. */}
+        <div className="ml-auto flex items-center gap-1.5 desktop:ml-0">
           {/* Outlined, not solid: a filled white CTA up here reads as a second
               primary action competing with the hero's own. The variant's
               `border-strong` is an opaque dark green that disappears against
@@ -192,31 +193,31 @@ export function Header() {
           >
             {navCta.label}
           </Button>
-        </div>
 
-        {/* Two bars rather than three, as in the original, folding into the
-            close mark. Drawn here instead of taken from the icon set so the
-            same two elements can become the X — an icon swap cannot animate
-            between two separate glyphs. */}
-        <button
-          ref={toggleRef}
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          aria-label={open ? "Close menu" : "Open menu"}
-          className={cn(
-            "desktop:hidden inline-flex size-[33px] shrink-0 items-center justify-center",
-            "rounded-(--radius-button) border text-current",
-            "transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-50",
-            scrolled ? "border-border-on-light" : "border-border",
-          )}
-        >
-          <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">
-            <span className="mh-burger-bar" />
-            <span className="mh-burger-bar" />
-          </span>
-        </button>
+          {/* Two bars rather than three, as in the original, folding into the
+              close mark. Drawn here instead of taken from the icon set so the
+              same two elements can become the X — an icon swap cannot animate
+              between two separate glyphs. */}
+          <button
+            ref={toggleRef}
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label={open ? "Close menu" : "Open menu"}
+            className={cn(
+              "desktop:hidden inline-flex size-[33px] shrink-0 items-center justify-center",
+              "rounded-(--radius-button) border text-current",
+              "transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-50",
+              scrolled ? "border-border-on-light" : "border-border",
+            )}
+          >
+            <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">
+              <span className="mh-burger-bar" />
+              <span className="mh-burger-bar" />
+            </span>
+          </button>
+        </div>
       </Container>
 
       {/* The panel stays mounted and is hidden by state rather than unmounted.
@@ -232,13 +233,10 @@ export function Header() {
         onKeyDown={onPanelKeyDown}
         data-open={open}
         inert={!open}
-        className={cn(
-          "desktop:hidden fixed inset-x-0 top-header bottom-0 bg-bg outline-none",
-          // The fill arrives whole, as a variant swap rather than a fade — a
-          // panel easing to opaque shows the page sliding behind the links
-          // while they are still travelling.
-          open ? "visible" : "invisible",
-        )}
+        style={
+          { "--mh-nav-fill-duration": `${mobileNav.fillDuration}ms` } as CSSProperties
+        }
+        className="mh-nav-panel desktop:hidden fixed inset-x-0 top-header bottom-0 bg-bg outline-none"
       >
         <Container className="h-full overflow-y-auto py-8">
           <nav aria-label="Mobile">
@@ -273,6 +271,7 @@ export function Header() {
                         {
                           "--mh-nav-rule-duration": `${mobileNav.rule.duration}ms`,
                           "--mh-nav-rule-delay": `${mobileNav.rule.delay}ms`,
+                          "--mh-nav-rule-exit-duration": `${mobileNav.rule.exitDuration}ms`,
                         } as CSSProperties
                       }
                     />
