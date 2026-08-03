@@ -145,12 +145,8 @@ export type FeatureTone = (typeof featuresContent.cards)[number]["tone"];
  */
 export const trustContent = {
   headingLines: ["Why Top Companies Trust Us"],
-  /**
-   * On a phone the single line wraps, and a wrapped reveal line sweeps its
-   * bars across the whole block rather than the words. An explicit break
-   * keeps each line shrink-wrapped, as in the hero.
-   */
-  headingLinesMobile: ["Why Top Companies", "Trust Us"],
+  /** The owner tightens the heading on a phone rather than wrapping it. */
+  headingLinesMobile: ["Why We\u2019re Trusted"],
   subheading:
     "We design AI solutions that automate work, improve performance, and drive business impact.",
   stats: [
@@ -214,18 +210,17 @@ export type TrustTone = (typeof trustContent.stats)[number]["tone"];
  * Six tools laid out as a checkerboard. Order is the layout: the section fills
  * alternating cells in sequence, so moving an entry here moves its tile.
  *
- * ⚠️ Three of the names are read from the marks in the owner's screenshot and
- * are worth confirming — OpenAI, Zapier and Python are unmistakable, the other
- * three less so.
+ * Names confirmed against the owner's mobile strip: the starburst is the
+ * Claude Code mark and the cube is Airtable's.
  */
 export const techStackContent = {
   headingLines: ["Our Automation Tools &", "Technology Stack"],
   tools: [
-    { name: "n8n", tone: "rose" },
+    { name: "Claude Code", tone: "rose" },
     { name: "OpenAI", tone: "green" },
-    { name: "Make", tone: "magenta" },
+    { name: "Airtable", tone: "magenta" },
     { name: "Zapier", tone: "peach" },
-    { name: "Airtable", tone: "blue" },
+    { name: "Make", tone: "blue" },
     { name: "Python", tone: "lavender" },
   ],
 } as const;

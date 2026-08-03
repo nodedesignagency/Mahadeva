@@ -73,12 +73,18 @@ export function Trust({ content }: TrustProps) {
           </p>
         </div>
 
-        {/* `items-stretch` is what aligns the feet: every cell is as tall as
-            the tallest, and the descending top margin eats into each panel from
-            above rather than pushing it down the page. */}
-        <ul className="mt-15 grid gap-0 tablet:grid-cols-2 desktop:grid-cols-4">
+        {/* The staircase is desktop-only, where four columns give it room —
+            each cell is as tall as the tallest and the descending top margin
+            eats into a panel from above, so the feet stay flush. Tablet is a
+            plain two-by-two with gutters, a phone a single stack, matching
+            the original's variants. */}
+        <ul className="mt-15 grid grid-cols-1 gap-6 tablet:grid-cols-2 desktop:grid-cols-4 desktop:gap-0">
           {content.stats.map((stat, i) => (
-            <li key={stat.label} style={{ marginTop: i * STEP }}>
+            <li
+              key={stat.label}
+              style={{ "--stat-step": `${i * STEP}px` } as CSSProperties}
+              className="desktop:mt-(--stat-step)"
+            >
               <div className={cn("flex h-full flex-col p-6", tones[stat.tone])}>
                 <p className="eyebrow text-fg-on-light">{stat.label}</p>
 
