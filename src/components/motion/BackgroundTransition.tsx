@@ -6,26 +6,30 @@ import { useEffect, useRef } from "react";
  * Section-linked page background.
  *
  * Sections declare the surface they want with `data-bg`, and a backdrop
- * behind the page crossfades to it as each takes over the viewport — so a
- * dark section arriving is a transition rather than an edge scrolling past.
- * The handover point is the viewport's middle, in both directions, matching
- * the owner's Framer component: Section in View, centre viewport, Replay on.
+ * behind the page crossfades to it as each takes over the viewport — a dark
+ * section arriving is a transition rather than an edge scrolling past. This
+ * is the owner's Framer "Changing Background" component: Section in View,
+ * centre viewport, Replay on.
  *
- * Progressive by construction. Every section still paints its own fill in
- * CSS; this effect *takes the fills over* at runtime, clearing them only once
- * it is actually running, and hands them back on unmount. If this script
- * never executes — or cannot find the sections — the page is simply the
- * hard-edged version, never white text on the wrong surface. An earlier
- * version inverted that dependency and the preview embed, where the page runs
- * inside a host it does not own, shipped broken.
+ * The owning section is *the one with the most visible pixels*, measured from
+ * IntersectionObserver entries. For stacked sections that is exactly the
+ * midline handover — the switch lands when the incoming section covers more
+ * of the viewport than the outgoing one — but unlike any formulation built on
+ * `scrollY`/`innerHeight`, it also works where this page actually runs:
  *
- * Two more embed lessons are load-bearing here:
- *  - Sections are queried from this component's own root node, not
- *    `document` — a host can isolate the page's DOM tree where
- *    `document.querySelectorAll` sees nothing.
- *  - The colour is painted on an element this component renders, not on
- *    `body` — a host owns `body`, and a stylesheet rule for it may never
- *    reach ours.
+ *  - In the preview artifact the host frame may own scrolling entirely, so
+ *    `window.scrollY` never changes and scroll events never fire. Observer
+ *    geometry is computed against the top-level *visible* viewport across
+ *    frame boundaries, so entries keep arriving no matter who scrolls.
+ *  - `rootMargin` is the one part of the API ignored for cross-origin
+ *    embeds — an earlier version leaned on it and silently died — so none is
+ *    used: plain thresholds only.
+ *
+ * Progressive by construction: sections paint their own fills in CSS, and
+ * this effect clears them only inside the first observer callback — proof the
+ * machinery is actually delivering — handing them back on unmount. If the
+ * script never runs, the page is the hard-edged version, never light text
+ * stranded on the wrong surface.
  */
 
 /**
@@ -39,6 +43,12 @@ const variants: Record<string, string> = {
   beige: "var(--color-bg-light)",
 };
 
+/**
+ * Callback whenever a section's visible share crosses 5% of its own height —
+ * fine enough that the handover lands within a few dozen pixels of exact.
+ */
+const thresholds = Array.from({ length: 21 }, (_, i) => i / 20);
+
 export function BackgroundTransition() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -46,63 +56,78 @@ export function BackgroundTransition() {
     const backdrop = ref.current;
     if (!backdrop) return;
 
+    // Queried from this component's own root rather than `document`: a host
+    // can isolate the page's tree where `document.querySelectorAll` sees
+    // nothing.
     const rootNode = backdrop.getRootNode() as ParentNode;
     const sections = [...rootNode.querySelectorAll<HTMLElement>("[data-bg]")];
     if (sections.length === 0) return;
 
-    // Take over the painting. `data-bg-keep` opts a section out — About is
-    // pinned over the hero, and transparent there would show the hero through
-    // it — while still letting it act as a handover trigger.
+    // `data-bg-keep` opts a section out of the takeover — About is pinned
+    // over the hero, and transparency there would show the hero through it —
+    // while still letting it compete for the handover.
     const painted = sections.filter((section) => !("bgKeep" in section.dataset));
-    painted.forEach((section) => {
-      section.style.backgroundColor = "transparent";
-    });
-
+    let cleared = false;
     let current = "";
-    let frame = 0;
 
-    // The lowest section whose top is above the midline owns the background.
-    // Recomputed from the elements on every pass, so a resize, a font swap or
-    // a late-loading image cannot leave it stale.
-    const sync = () => {
-      frame = 0;
-      const middle = window.innerHeight / 2;
-      let active: HTMLElement | null = null;
-      for (const section of sections) {
-        if (section.getBoundingClientRect().top <= middle) active = section;
-      }
-      const value = variants[active?.dataset.bg ?? ""];
-      if (value && value !== current) {
-        current = value;
-        backdrop.style.backgroundColor = value;
-      }
-    };
+    /** Visible pixels per section, updated from whichever entries arrive. */
+    const visible = new Map<Element, number>();
 
-    // Coalesce to one read per frame — scroll events can arrive faster than
-    // paints, and measuring between them buys nothing.
-    const schedule = () => {
-      if (frame === 0) frame = requestAnimationFrame(sync);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!cleared) {
+          cleared = true;
+          painted.forEach((section) => {
+            section.style.backgroundColor = "transparent";
+          });
+        }
 
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule, { passive: true });
-    sync();
+        for (const entry of entries) {
+          visible.set(
+            entry.target,
+            entry.isIntersecting ? entry.intersectionRect.height : 0,
+          );
+        }
+
+        // Most visible pixels wins; ties go to the later section, so during
+        // the sticky stack the panel riding *over* the pinned hero owns the
+        // surface once it covers as much as the hero does.
+        let active: HTMLElement | null = null;
+        let most = 0;
+        for (const section of sections) {
+          const pixels = visible.get(section) ?? 0;
+          if (pixels >= most && pixels > 0) {
+            most = pixels;
+            active = section;
+          }
+        }
+
+        const value = variants[active?.dataset.bg ?? ""];
+        if (value && value !== current) {
+          current = value;
+          backdrop.style.backgroundColor = value;
+        }
+      },
+      { threshold: thresholds },
+    );
+
+    sections.forEach((section) => observer.observe(section));
 
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      painted.forEach((section) => {
-        section.style.backgroundColor = "";
-      });
+      observer.disconnect();
+      if (cleared) {
+        painted.forEach((section) => {
+          section.style.backgroundColor = "";
+        });
+      }
     };
   }, []);
 
   return (
     // The page's backdrop: behind everything, ignoring the pointer, starting
     // on the same dark the body paints so there is no flash before the first
-    // sync. The fade is this transition; reduced motion collapses it via the
-    // global backstop.
+    // entries land. The fade is this transition; reduced motion collapses it
+    // via the global backstop.
     <div
       ref={ref}
       aria-hidden="true"
