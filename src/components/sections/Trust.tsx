@@ -64,8 +64,9 @@ export function Trust({ content }: TrustProps) {
           <TextReveal
             as="h2"
             lines={content.headingLines}
+            mobileLines={content.headingLinesMobile}
             settings={sectionTextRevealDynamic}
-            className="flex flex-col gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+            className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
           <p className="text-ink-dynamic max-w-[42ch] font-body text-body-md leading-[1.5] tablet:pt-2">
             {content.subheading}

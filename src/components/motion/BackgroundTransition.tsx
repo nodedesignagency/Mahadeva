@@ -100,10 +100,22 @@ export function BackgroundTransition() {
         // Most visible pixels wins; ties go to the later section, so during
         // the sticky stack the panel riding *over* the pinned hero owns the
         // surface once it covers as much as the hero does.
+        //
+        // Dark sections carry a handicap: their pixels count at two thirds,
+        // so the dark surface owns the page only while a dark section clearly
+        // dominates the viewport. That pulls both handovers of a dark section
+        // toward its own edges — arriving, the page stays light a beat
+        // longer; leaving, it turns light a beat sooner — which is where the
+        // owner's Framer version lands them, and it means a fast fling out of
+        // a dark section has already settled back to white by the time the
+        // scroll stops. The light half of each crossfade also happens mostly
+        // over the dark section's own ground, which is what keeps it subtle.
         let active: HTMLElement | null = null;
         let most = 0;
         for (const section of sections) {
-          const pixels = visible.get(section) ?? 0;
+          const pixels =
+            (visible.get(section) ?? 0) *
+            (section.dataset.bg === "green" ? 2 / 3 : 1);
           if (pixels >= most && pixels > 0) {
             most = pixels;
             active = section;

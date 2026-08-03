@@ -145,6 +145,12 @@ export type FeatureTone = (typeof featuresContent.cards)[number]["tone"];
  */
 export const trustContent = {
   headingLines: ["Why Top Companies Trust Us"],
+  /**
+   * On a phone the single line wraps, and a wrapped reveal line sweeps its
+   * bars across the whole block rather than the words. An explicit break
+   * keeps each line shrink-wrapped, as in the hero.
+   */
+  headingLinesMobile: ["Why Top Companies", "Trust Us"],
   subheading:
     "We design AI solutions that automate work, improve performance, and drive business impact.",
   stats: [
