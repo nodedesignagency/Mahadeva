@@ -22,7 +22,6 @@
   --mh-ink-a0: #0e1e1d00;
   --mh-ink-a5: #0e1e1d0d;
   --mh-ink-a10: #0e1e1d1a;
-  --mh-ink-a75: #0e1e1dbf;
   --mh-ink-a50: #0e1e1d80;
   --mh-ink-a75: #0e1e1dbf;
 
@@ -33,6 +32,9 @@
   --mh-white-a10: #ffffff1a;
   --mh-white-a4: #ffffff0a;
   --mh-white-a0: #ffffff00;
+  /* The rule between mobile nav links on the white header. Opaque rather than
+   * a tint of ink, so it does not shift with whatever is behind it. */
+  --mh-mist: #e3e2e5;
 
   /* Primary accent — the green CTA fill */
   --mh-green: #8cffa7;
@@ -125,6 +127,7 @@
   --color-border-subtle: var(--mh-white-a4);
   --color-border-strong: var(--mh-ink-border);
   --color-border-on-light: var(--mh-ink-a10);
+  --color-border-nav-on-light: var(--mh-mist);
 
   --color-accent: var(--mh-green);
   --color-accent-fg: var(--mh-ink);
@@ -176,6 +179,9 @@
   --text-heading-lg: clamp(1.5rem, 1.3rem + 0.7vw, 1.75rem); /* 24 -> 28 */
   --text-heading-md: clamp(1.25rem, 1.15rem + 0.4vw, 1.375rem); /* 20 -> 22 */
   --text-heading-sm: 1.125rem; /* 18 */
+  /* Mobile nav links. Flat 24 at every width the overlay appears at, rather
+   * than heading-lg's clamp, which would reach 27 on a tablet. */
+  --text-nav-mobile: 1.5rem; /* 24 */
 
   --text-body-lg: 1.125rem; /* 18 */
   --text-body-md: 1rem; /* 16 */
@@ -317,6 +323,7 @@
   --color-border-subtle: var(--color-border-subtle);
   --color-border-strong: var(--color-border-strong);
   --color-border-on-light: var(--color-border-on-light);
+  --color-border-nav-on-light: var(--color-border-nav-on-light);
   --color-accent: var(--color-accent);
   --color-accent-fg: var(--color-accent-fg);
   --color-button-secondary: var(--color-button-secondary);
@@ -344,6 +351,7 @@
   --text-heading-lg: var(--text-heading-lg);
   --text-heading-md: var(--text-heading-md);
   --text-heading-sm: var(--text-heading-sm);
+  --text-nav-mobile: var(--text-nav-mobile);
   --text-body-lg: var(--text-body-lg);
   --text-body-md: var(--text-body-md);
   --text-body-sm: var(--text-body-sm);

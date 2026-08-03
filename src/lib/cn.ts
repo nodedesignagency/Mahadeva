@@ -26,6 +26,7 @@ const fontSizes = [
   "heading-lg",
   "heading-md",
   "heading-sm",
+  "nav-mobile",
   "body-lg",
   "body-md",
   "body-sm",

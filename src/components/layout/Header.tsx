@@ -116,7 +116,9 @@ export function Header() {
         // panel over it. The bottom hairline travels down with it, which is
         // why the line under the wordmark is simply gone once open — it is at
         // the foot of the viewport, not under the row.
-        open ? "h-[100dvh]" : "h-header",
+        // The hairline is dropped once open: it has travelled to the foot of
+        // the viewport, where it reads as a stray line rather than an edge.
+        open ? "h-[100dvh] border-transparent" : "h-header",
         // The whole strip crossfades as one, on the original's own curve: the
         // surface, the hairline, the wordmark and CTA (`text-current`), and
         // both endpoints the links mix between. Everything is listed because
@@ -127,8 +129,8 @@ export function Header() {
         // Each surface carries its own hairline and its own pair of link
         // colours, which the links mix between on hover.
         scrolled
-          ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)]"
-          : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)]",
+          ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)] [--mh-nav-rule-color:var(--color-border-nav-on-light)]"
+          : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)] [--mh-nav-rule-color:var(--color-fg)]",
       )}
     >
       <Container className="flex h-header items-center justify-between gap-6">
@@ -261,7 +263,10 @@ export function Header() {
                   <Link
                     href={item.href}
                     aria-current={pathname === item.href ? "page" : undefined}
-                    className="mh-nav-item inline-block py-5 font-display text-heading-lg uppercase text-fg"
+                    // `text-current`, not a fixed colour: the overlay lives
+                    // inside the header, so it wears whichever surface the
+                    // header is on when it opens.
+                    className="mh-nav-item inline-block py-5 font-display text-nav-mobile uppercase text-current"
                     style={
                       {
                         "--mh-nav-item-from": `${

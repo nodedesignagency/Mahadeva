@@ -293,7 +293,8 @@
   display: block;
   width: 0;
   height: 1px;
-  background-color: var(--color-fg);
+  /* Supplied by the header, which carries a different one per surface. */
+  background-color: var(--mh-nav-rule-color);
   transition: width var(--mh-nav-rule-exit-duration) var(--ease-out);
 }
 
