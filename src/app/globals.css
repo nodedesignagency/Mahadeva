@@ -264,7 +264,7 @@
  * still lets the links show outside their own rows. */
 .mh-nav-shell {
   overflow: clip;
-  transition: height var(--mh-nav-open-duration) var(--ease-out);
+  transition: height var(--mh-nav-open-duration) var(--ease-nav-flip);
 }
 
 /* Position only, no fade. The row is clipped to the panel's width, so a link

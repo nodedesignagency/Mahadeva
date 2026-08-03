@@ -264,7 +264,9 @@ export function Header() {
                     className="mh-nav-item inline-block py-5 font-display text-heading-lg uppercase text-fg"
                     style={
                       {
-                        "--mh-nav-item-from": mobileNav.linkOffset,
+                        "--mh-nav-item-from": `${
+                          mobileNav.linkOffsetStart + i * mobileNav.linkOffsetStep
+                        }px`,
                         "--mh-nav-item-duration": `${mobileNav.linkDuration}ms`,
                         "--mh-nav-item-delay": `${i * mobileNav.linkStagger}ms`,
                       } as CSSProperties

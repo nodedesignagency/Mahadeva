@@ -270,8 +270,17 @@ export const mobileNav = {
   /** Framer's per-link delay step, applied top to bottom. */
   linkStagger: 50,
 
-  /** How far left of its resting place a link starts. */
-  linkOffset: "-100%",
+  /**
+   * Where each link starts, in pixels left of its resting place: -130 for the
+   * first, stepping 10 further out down the list. Taken from the Framer file.
+   *
+   * The staggered delay alone was not enough to read as one-by-one — every
+   * link covered the same distance, so they moved as a block that happened to
+   * start at slightly different moments. Giving the lower ones further to
+   * travel spreads out their *arrivals*, which is the part the eye follows.
+   */
+  linkOffsetStart: -130,
+  linkOffsetStep: -10,
 
   /**
    * How long the header takes to grow from its closed height to the full
@@ -279,8 +288,13 @@ export const mobileNav = {
    * panel sliding or fading in over the page, the strip itself becomes the
    * screen. It is also why the hero heading is still visible partway through
    * the owner's recording: the header simply has not reached it yet.
+   *
+   * 1s on bezier 0.8, 0, 0.2, 1, from the owner's transition panel. Long, but
+   * that curve spends most of it barely moving at either end and crosses the
+   * screen in the middle third, so it reads as a fast sweep with a soft start
+   * and a soft landing rather than a slow one.
    */
-  openDuration: 500,
+  openDuration: 1000,
 
   /**
    * The hairline between links, from the owner's BorderReveal component: a
