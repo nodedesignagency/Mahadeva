@@ -1,30 +1,31 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Section-linked page background.
  *
- * Sections do not paint their own fill. They declare which one they want with
- * `data-bg`, and the page background crossfades to it as each takes over the
- * viewport — so a dark section arriving is a transition rather than an edge
- * scrolling past.
+ * Sections declare the surface they want with `data-bg`, and a backdrop
+ * behind the page crossfades to it as each takes over the viewport — so a
+ * dark section arriving is a transition rather than an edge scrolling past.
+ * The handover point is the viewport's middle, in both directions, matching
+ * the owner's Framer component: Section in View, centre viewport, Replay on.
  *
- * The handover point is the viewport's middle, in both directions: a section
- * owns the background from the moment its top passes the halfway line until
- * the next section's top does. That matches the owner's Framer component —
- * Section in View, centre of the viewport, Replay on.
+ * Progressive by construction. Every section still paints its own fill in
+ * CSS; this effect *takes the fills over* at runtime, clearing them only once
+ * it is actually running, and hands them back on unmount. If this script
+ * never executes — or cannot find the sections — the page is simply the
+ * hard-edged version, never white text on the wrong surface. An earlier
+ * version inverted that dependency and the preview embed, where the page runs
+ * inside a host it does not own, shipped broken.
  *
- * Driven by a scroll listener rather than an IntersectionObserver. The
- * observer version encoded the midline in `rootMargin`, and browsers ignore
- * `rootMargin` for cross-origin embedded documents — precisely where the
- * preview artifact runs — so the background silently stuck on its first
- * value. A rAF-throttled read of six element positions per scrolled frame is
- * well under any budget, and it behaves identically everywhere.
- *
- * The fade itself is the `transition` on `body` in globals.css. This component
- * only ever writes a colour; how it arrives is CSS, and reduced motion is
- * already handled there.
+ * Two more embed lessons are load-bearing here:
+ *  - Sections are queried from this component's own root node, not
+ *    `document` — a host can isolate the page's DOM tree where
+ *    `document.querySelectorAll` sees nothing.
+ *  - The colour is painted on an element this component renders, not on
+ *    `body` — a host owns `body`, and a stylesheet rule for it may never
+ *    reach ours.
  */
 
 /**
@@ -39,17 +40,30 @@ const variants: Record<string, string> = {
 };
 
 export function BackgroundTransition() {
+  const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const sections = [...document.querySelectorAll<HTMLElement>("[data-bg]")];
+    const backdrop = ref.current;
+    if (!backdrop) return;
+
+    const rootNode = backdrop.getRootNode() as ParentNode;
+    const sections = [...rootNode.querySelectorAll<HTMLElement>("[data-bg]")];
     if (sections.length === 0) return;
 
-    const root = document.documentElement;
-    let current: string | null = null;
+    // Take over the painting. `data-bg-keep` opts a section out — About is
+    // pinned over the hero, and transparent there would show the hero through
+    // it — while still letting it act as a handover trigger.
+    const painted = sections.filter((section) => !("bgKeep" in section.dataset));
+    painted.forEach((section) => {
+      section.style.backgroundColor = "transparent";
+    });
+
+    let current = "";
     let frame = 0;
 
-    // The lowest section whose top is above the midline is the one in charge.
+    // The lowest section whose top is above the midline owns the background.
     // Recomputed from the elements on every pass, so a resize, a font swap or
-    // an image loading late cannot leave it stale.
+    // a late-loading image cannot leave it stale.
     const sync = () => {
       frame = 0;
       const middle = window.innerHeight / 2;
@@ -60,7 +74,7 @@ export function BackgroundTransition() {
       const value = variants[active?.dataset.bg ?? ""];
       if (value && value !== current) {
         current = value;
-        root.style.setProperty("--color-bg-dynamic", value);
+        backdrop.style.backgroundColor = value;
       }
     };
 
@@ -78,8 +92,21 @@ export function BackgroundTransition() {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+      painted.forEach((section) => {
+        section.style.backgroundColor = "";
+      });
     };
   }, []);
 
-  return null;
+  return (
+    // The page's backdrop: behind everything, ignoring the pointer, starting
+    // on the same dark the body paints so there is no flash before the first
+    // sync. The fade is this transition; reduced motion collapses it via the
+    // global backstop.
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10 bg-bg-dynamic transition-[background-color] duration-(--duration-base) ease-(--ease-in-out)"
+    />
+  );
 }

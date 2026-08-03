@@ -50,7 +50,7 @@ type TechStackProps = {
 
 export function TechStack({ content }: TechStackProps) {
   return (
-    <section data-bg="white" className="py-20 text-fg-on-light">
+    <section data-bg="white" className="bg-bg-white py-20 text-fg-on-light">
       <Container className="px-10">
         <TextReveal
           as="h2"

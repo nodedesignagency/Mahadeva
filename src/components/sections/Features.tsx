@@ -71,7 +71,7 @@ export function Features({ content }: FeaturesProps) {
   return (
     // 80px top and bottom, 40px either side, to the owner's measurement — a
     // fixed gutter here rather than the container's fluid one.
-    <section data-bg="white" className="py-20 text-fg-on-light">
+    <section data-bg="white" className="bg-bg-white py-20 text-fg-on-light">
       <Container className="flex flex-col items-center justify-center px-10">
         <TextReveal
           as="h2"

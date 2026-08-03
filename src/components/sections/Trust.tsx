@@ -58,7 +58,7 @@ export function Trust({ content }: TrustProps) {
   ));
 
   return (
-    <section data-bg="white" className="py-20 text-fg-on-light">
+    <section data-bg="white" className="bg-bg-white py-20 text-fg-on-light">
       <Container className="px-10">
         <div className="flex flex-col gap-8 tablet:flex-row tablet:items-start tablet:justify-between">
           <TextReveal

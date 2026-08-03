@@ -38,6 +38,7 @@ export function About({ content }: AboutProps) {
     // already white by the time it takes over.
     <section
       data-bg="white"
+      data-bg-keep=""
       className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-30 text-fg-on-light"
     >
       <Container className="relative flex min-h-screen flex-col items-center justify-center gap-10 px-0">
