@@ -347,30 +347,33 @@ export const caseHover = {
   imageScale: 1.05,
 
   /**
-   * The artwork half is 560x552 in the Framer file. Rectangles are given in
-   * those pixels and converted to percentages when rendered, so the whole
-   * arrangement scales with the card instead of only being right at one width.
+   * The artwork half is 560x552 in the Framer file, and the rectangles are
+   * placed in its pixels. Kept as pixels rather than converted to percentages:
+   * this is a fixed arrangement in the original, and the reference is used
+   * only for the half's aspect ratio.
    */
   reference: { width: 560, height: 552 },
 
   /**
-   * Each rectangle enters from the side its group is anchored to: the pair at
-   * the top left slide in from the left, those at the bottom left rise from
-   * the bottom, and the top right ones drop from the top.
+   * The seven rectangles, from the owner's Framer layers.
    *
-   * Positions are read off the owner's hover screenshot rather than taken from
-   * the file, so they are close but not exact — the directions, sizes and
-   * timing are what carry the effect, and each rectangle is four numbers to
-   * correct if any of them sit wrong.
+   * Each is given at its *hovered* position — the edges it is anchored to and
+   * the offsets from them — plus `dx`/`dy`, how far from there it waits at
+   * rest. Written that way because it is what the browser animates: the
+   * element is laid out where it ends up, and `translate` carries it to and
+   * from the outside. Animating `left`/`top` would relayout every frame.
+   *
+   * The three at the top left arrive from the left, the tall one at the top
+   * right drops from above, and the three along the bottom rise from below.
    */
   rects: [
-    { from: "left", x: 0, y: 104, w: 91, h: 76 },
-    { from: "left", x: 91, y: 104, w: 37, h: 38 },
-    { from: "left", x: 0, y: 180, w: 46, h: 34 },
-    { from: "top", x: 507, y: 0, w: 30, h: 152 },
-    { from: "top", x: 537, y: 0, w: 23, h: 96 },
-    { from: "bottom", x: 40, y: 470, w: 38, h: 82 },
-    { from: "bottom", x: 78, y: 508, w: 34, h: 44 },
+    { w: 92, h: 92, left: 0, top: 0, dx: -100, dy: 0 },
+    { w: 40, h: 40, left: 92, top: 92, dx: -192, dy: 0 },
+    { w: 40, h: 40, left: 0, top: 132, dx: -100, dy: 0 },
+    { w: 32, h: 140, right: 0, top: 0, dx: 0, dy: -160 },
+    { w: 40, h: 40, left: 0, bottom: 0, dx: 0, dy: 100 },
+    { w: 40, h: 40, left: 40, bottom: 40, dx: 0, dy: 220 },
+    { w: 40, h: 40, left: 80, bottom: 0, dx: 0, dy: 100 },
   ],
 } as const;
 

@@ -54,12 +54,10 @@ export function CaseStudies({ content, studies }: CaseStudiesProps) {
             <CaseStudyCard
               key={study.slug}
               study={study}
-              // The blocks are tinted from the panel they belong to, so each
-              // card's hover reads as part of that card rather than a house
-              // colour applied over the top.
-              style={
-                { "--mh-case-shape": `var(--color-case-shape-${study.tone})` } as CSSProperties
-              }
+              // The rectangles are the panel's own colour, so a card's hover
+              // reads as that card's tint arriving over the artwork rather
+              // than a second, louder shade laid on top.
+              style={{ "--mh-case-shape": `var(--color-case-${study.tone})` } as CSSProperties}
             />
           ))}
         </div>

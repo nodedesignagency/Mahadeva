@@ -119,13 +119,6 @@
   --color-case-lavender: var(--mh-lavender-50);
   --color-case-peach: var(--mh-peach-50);
 
-  /* The hover blocks. Full strength, not the panel tint — a block the same
-   * colour as the surface it lands on is an invisible block, and half of them
-   * land on the panel. */
-  --color-case-shape-sky: var(--mh-blue);
-  --color-case-shape-lavender: var(--mh-lavender);
-  --color-case-shape-peach: var(--mh-peach);
-
   --color-fg: var(--mh-white);
   --color-fg-muted: var(--mh-white-a60);
   --color-fg-subtle: var(--mh-white-a50);

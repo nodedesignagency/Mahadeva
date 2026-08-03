@@ -26,48 +26,18 @@ const tones: Record<CaseTone, string> = {
 };
 
 /**
- * Where each hover block starts: parked one full step outside the side it
- * hugs, so it enters travelling inward. Delivered as a custom property because
- * an inline `translate` would outrank the hover rule that clears it.
- */
-/**
- * Where a rectangle waits before the pointer arrives: fully outside the edge
- * it enters from, however far that is from where it lands.
- *
- * Expressed as a percentage of the rectangle's own size, because that is what
- * `translate` percentages resolve against. A block sitting 91px in and 37px
- * wide has to travel 128px to clear the left edge, which is 346% of itself —
- * translating a flat -100% would have left it halfway across the frame, still
- * in plain sight.
- */
-function departure(rect: (typeof caseHover.rects)[number]): string {
-  const { height } = caseHover.reference;
-  switch (rect.from) {
-    case "left":
-      return `${(-(rect.x + rect.w) / rect.w) * 100}% 0`;
-    case "top":
-      return `0 ${(-(rect.y + rect.h) / rect.h) * 100}%`;
-    default:
-      return `0 ${((height - rect.y) / rect.h) * 100}%`;
-  }
-}
-
-/**
- * A rectangle's box, as percentages of the reference artwork half.
- *
- * Framer positions these in the pixels of a fixed 560x552 frame. Ours is a
- * grid column that changes width with the viewport, so the figures are
- * converted here — the arrangement then holds at every size rather than only
- * being correct at one.
+ * A rectangle's laid-out box: its hovered position, in the pixels of the
+ * Framer frame. Each is anchored to the edges the original anchors it to, so
+ * one pinned right stays pinned right as the card changes width. It waits at
+ * `dx`/`dy` from here, carried there by `translate`.
  */
 function rectBox(rect: (typeof caseHover.rects)[number]): CSSProperties {
-  const { width, height } = caseHover.reference;
-  return {
-    left: `${(rect.x / width) * 100}%`,
-    top: `${(rect.y / height) * 100}%`,
-    width: `${(rect.w / width) * 100}%`,
-    height: `${(rect.h / height) * 100}%`,
-  };
+  const box: CSSProperties = { width: rect.w, height: rect.h };
+  if ("left" in rect) box.left = rect.left;
+  if ("right" in rect) box.right = rect.right;
+  if ("top" in rect) box.top = rect.top;
+  if ("bottom" in rect) box.bottom = rect.bottom;
+  return box;
 }
 
 /**
@@ -202,7 +172,12 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
               <span
                 key={i}
                 className="mh-case-block"
-                style={{ ...rectBox(rect), "--mh-case-from": departure(rect) } as CSSProperties}
+                style={
+                  {
+                    ...rectBox(rect),
+                    "--mh-case-from": `${rect.dx}px ${rect.dy}px`,
+                  } as CSSProperties
+                }
               />
             ))}
           </div>
