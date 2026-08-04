@@ -216,6 +216,50 @@ export const statCounter = {
 } as const;
 
 /**
+ * Tech stack tile hover.
+ *
+ * Three things move together: a checkerboard closes in on the tile's head and
+ * foot, the mark settles from oversized to its true size, and the name fades
+ * up under it.
+ *
+ * The board is given in tenths of the tile rather than pixels — the tiles are
+ * squares that change size across breakpoints, and a cell has to stay square
+ * with them. `cells` lists the filled ones as [row, column]; the arrangement
+ * is the same at both ends, turned through half a turn, which is what makes
+ * the two bands read as one pattern interrupted by the middle rather than as
+ * two decorations.
+ */
+export const toolHover = {
+  /** Shared with the other two hovers: bezier 0.8, 0, 0.2, 1 over 0.7s. */
+  duration: 700,
+
+  /** The mark waits at this scale inside its fixed 56px box. */
+  markRestScale: 1.4,
+
+  /** Cells across and down, so one cell is a tenth of the tile. */
+  grid: 10,
+
+  cells: [
+    [0, 0],
+    [0, 2],
+    [0, 7],
+    [0, 9],
+    [1, 1],
+    [1, 3],
+    [1, 6],
+    [1, 8],
+    [8, 1],
+    [8, 3],
+    [8, 6],
+    [8, 8],
+    [9, 0],
+    [9, 2],
+    [9, 7],
+    [9, 9],
+  ],
+} as const;
+
+/**
  * Trust statistic hover.
  *
  * The same gesture as the case study cards — blocks in a deeper step of the

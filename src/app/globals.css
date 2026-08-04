@@ -401,6 +401,56 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Tech stack tile hover
+ *
+ * The whole effect is inverted relative to the other two: what the tile shows
+ * without a pointer — mark at true size, name legible, no board — is the
+ * *hovered* state. The resting state is declared inside the hover query, so a
+ * touch device, which can never leave it, is given the finished tile instead
+ * of an oversized mark and an invisible name.
+ * ------------------------------------------------------------------------- */
+.mh-tool-block {
+  position: absolute;
+  display: none;
+  background-color: var(--mh-tool-shape);
+  transition: translate var(--mh-tool-duration) var(--ease-case-hover);
+}
+
+.mh-tool-mark,
+.mh-tool-label {
+  transition:
+    scale var(--mh-tool-duration) var(--ease-case-hover),
+    opacity var(--mh-tool-duration) var(--ease-case-hover);
+}
+
+@media (hover: hover) {
+  .mh-tool-block {
+    display: block;
+    translate: var(--mh-tool-from);
+  }
+
+  .mh-tool-mark {
+    scale: var(--mh-tool-rest-scale);
+  }
+
+  .mh-tool-label {
+    opacity: 0;
+  }
+
+  .group:hover .mh-tool-block {
+    translate: 0 0;
+  }
+
+  .group:hover .mh-tool-mark {
+    scale: 1;
+  }
+
+  .group:hover .mh-tool-label {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Feature marquee
  *
  * The row holds the cards twice and slides left by exactly one copy, so the

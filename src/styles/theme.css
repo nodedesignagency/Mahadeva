@@ -74,6 +74,9 @@
   --mh-magenta-25: #fcdcfa;
   --mh-magenta-10: #fef2ff;
   --mh-rose-50: #fce1e9;
+  /* Added for the tech stack hover, which needs a step deeper than the tile
+   * it draws on. The same distance from -50 as the other families' -200. */
+  --mh-rose-200: #f8bcc9;
   --mh-rose-10: #fff2f2;
   --mh-yellow: #ffe8a8;
   --mh-yellow-50: #fffbdd;
@@ -135,6 +138,15 @@
   --color-tool-peach: var(--mh-peach-50);
   --color-tool-blue: var(--mh-blue-25);
   --color-tool-lavender: var(--mh-lavender-50);
+
+  /* The checkerboard that slides in on hover: one step deeper than the tile,
+   * the same relationship the trust panels' blocks have to theirs. */
+  --color-tool-shape-rose: var(--mh-rose-200);
+  --color-tool-shape-green: var(--mh-green-200);
+  --color-tool-shape-magenta: var(--mh-magenta-200);
+  --color-tool-shape-peach: var(--mh-peach);
+  --color-tool-shape-blue: var(--mh-blue-200);
+  --color-tool-shape-lavender: var(--mh-lavender-200);
 
   /* Pricing plan cards: the header strip's fill, which is also the card's
    * border. Deeper tints than the stats — each strip is a label, not a
@@ -384,6 +396,12 @@
   --color-tool-peach: var(--color-tool-peach);
   --color-tool-blue: var(--color-tool-blue);
   --color-tool-lavender: var(--color-tool-lavender);
+  --color-tool-shape-rose: var(--color-tool-shape-rose);
+  --color-tool-shape-green: var(--color-tool-shape-green);
+  --color-tool-shape-magenta: var(--color-tool-shape-magenta);
+  --color-tool-shape-peach: var(--color-tool-shape-peach);
+  --color-tool-shape-blue: var(--color-tool-shape-blue);
+  --color-tool-shape-lavender: var(--color-tool-shape-lavender);
   --color-plan-sky: var(--color-plan-sky);
   --color-plan-lavender: var(--color-plan-lavender);
   --color-plan-peach: var(--color-plan-peach);

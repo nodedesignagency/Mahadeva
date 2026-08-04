@@ -218,13 +218,21 @@ export type TrustTone = (typeof trustContent.stats)[number]["tone"];
  */
 export const techStackContent = {
   headingLines: ["Our Automation Tools &", "Technology Stack"],
+  /**
+   * `mark` is a file in `public/uploads/logos`. Served from there rather than
+   * imported from `src/assets`: they are square marks drawn at a fixed 56px,
+   * so there is nothing for the optimiser to size differently per breakpoint.
+   *
+   * LangChain takes the slot the mobile strip labelled Make — that is the mark
+   * the owner supplied, and the name follows the artwork.
+   */
   tools: [
-    { name: "Claude Code", tone: "rose" },
-    { name: "OpenAI", tone: "green" },
-    { name: "Airtable", tone: "magenta" },
-    { name: "Zapier", tone: "peach" },
-    { name: "Make", tone: "blue" },
-    { name: "Python", tone: "lavender" },
+    { name: "Claude Code", tone: "rose", mark: "claude.avif" },
+    { name: "OpenAI", tone: "green", mark: "chatgpt.avif" },
+    { name: "Airtable", tone: "magenta", mark: "airtable.avif" },
+    { name: "Zapier", tone: "peach", mark: "zapier.avif" },
+    { name: "LangChain", tone: "blue", mark: "langchain.avif" },
+    { name: "Python", tone: "lavender", mark: "python.avif" },
   ],
 } as const;
 
