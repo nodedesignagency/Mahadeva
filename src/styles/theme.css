@@ -158,6 +158,8 @@
   --color-border-strong: var(--mh-ink-border);
   --color-border-on-light: var(--mh-ink-a10);
   --color-border-nav-on-light: var(--mh-mist);
+  /* Neutral block standing in for photography until the file lands. */
+  --color-placeholder: var(--mh-grey-200);
 
   --color-accent: var(--mh-green);
   --color-accent-fg: var(--mh-ink);
@@ -383,6 +385,7 @@
   --color-border-strong: var(--color-border-strong);
   --color-border-on-light: var(--color-border-on-light);
   --color-border-nav-on-light: var(--color-border-nav-on-light);
+  --color-placeholder: var(--color-placeholder);
   --color-accent: var(--color-accent);
   --color-accent-fg: var(--color-accent-fg);
   --color-button-secondary: var(--color-button-secondary);
