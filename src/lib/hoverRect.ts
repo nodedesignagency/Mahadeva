@@ -14,20 +14,32 @@ import type { CSSProperties } from "react";
  * with a `calc()` rather than a transform, since `translate` is spoken for.
  */
 export type HoverRect = {
-  w: number;
+  /** Omit to let opposing anchors set the width — a bar that spans a gap. */
+  w?: number;
   h: number;
   left?: number | string;
   right?: number | string;
   top?: number | string;
   bottom?: number | string;
-  /** Resting offset from the hovered position, in px. */
-  dx: number;
-  dy: number;
+  /**
+   * Resting offset from the hovered position: a number of pixels, or any CSS
+   * length. A rectangle whose width comes from its anchors has to be carried
+   * out by its own size, which only `%` can express.
+   */
+  dx: number | string;
+  dy: number | string;
 };
+
+/** The resting offset as a `translate` pair. */
+export function hoverRectFrom(rect: HoverRect): string {
+  const length = (value: number | string) => (typeof value === "number" ? `${value}px` : value);
+  return `${length(rect.dx)} ${length(rect.dy)}`;
+}
 
 /** A rectangle's laid-out box. Only the edges it names are anchored. */
 export function hoverRectBox(rect: HoverRect): CSSProperties {
-  const box: CSSProperties = { width: rect.w, height: rect.h };
+  const box: CSSProperties = { height: rect.h };
+  if (rect.w !== undefined) box.width = rect.w;
   if (rect.left !== undefined) box.left = rect.left;
   if (rect.right !== undefined) box.right = rect.right;
   if (rect.top !== undefined) box.top = rect.top;

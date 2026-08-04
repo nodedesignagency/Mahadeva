@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { caseHover } from "@/config/animation";
 import type { CaseStat, CaseStudy, CaseTone } from "@/content/case-studies";
 import { cn } from "@/lib/cn";
-import { hoverRectBox } from "@/lib/hoverRect";
+import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
 
 /**
  * One case study.
@@ -161,7 +161,7 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
                 style={
                   {
                     ...hoverRectBox(rect),
-                    "--mh-case-from": `${rect.dx}px ${rect.dy}px`,
+                    "--mh-case-from": hoverRectFrom(rect),
                   } as CSSProperties
                 }
               />

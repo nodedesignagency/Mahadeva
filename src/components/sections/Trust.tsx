@@ -5,7 +5,7 @@ import { StatCounter } from "@/components/ui/StatCounter";
 import { featureMarquee, sectionTextRevealDynamic, statHover } from "@/config/animation";
 import type { TrustTone, trustContent } from "@/content/home";
 import { cn } from "@/lib/cn";
-import { hoverRectBox } from "@/lib/hoverRect";
+import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
 
 /**
  * Trust section — "Why Top Companies Trust Us".
@@ -110,7 +110,7 @@ export function Trust({ content }: TrustProps) {
                       style={
                         {
                           ...hoverRectBox(rect),
-                          "--mh-stat-from": `${rect.dx}px ${rect.dy}px`,
+                          "--mh-stat-from": hoverRectFrom(rect),
                         } as CSSProperties
                       }
                     />
