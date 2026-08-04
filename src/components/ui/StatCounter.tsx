@@ -28,6 +28,10 @@ import { easings, viewport } from "@/lib/motion";
  *
  * Reduced motion keeps state 1 — the figure is the content, so it stays
  * present and correct rather than being animated or withheld.
+ *
+ * The figure is Geist Regular. The owner's Framer file names the style Medium
+ * but renders it at Regular, and the reference shot is the target — at 100px
+ * the difference between the two is plain.
  */
 
 /**
@@ -70,7 +74,7 @@ export function StatCounter({ value, prefix, unit }: StatCounterProps) {
   }, [counting, inView, value]);
 
   return (
-    <p ref={ref} className="flex items-baseline font-ui font-medium text-fg-on-light">
+    <p ref={ref} className="flex items-baseline font-ui font-normal text-fg-on-light">
       {prefix ? <span className="text-stat-affix">{prefix}</span> : null}
       {/* Proportional figures, not tabular. Geist's tabular set is a different
           drawing — wider, squarer, and its 1 carries a full foot — so it reads

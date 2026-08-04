@@ -87,9 +87,14 @@ export function Trust({ content }: TrustProps) {
               className="desktop:mt-(--stat-step)"
             >
               <div className={cn("flex h-full flex-col p-6", tones[stat.tone])}>
-                {/* Label and figure are one stack 24px apart, per the owner. */}
+                {/* Label and figure are one stack 24px apart, per the owner.
+                    The label is set in caps, at its own tracking — this is the
+                    original's casing, not the widened eyebrow used above the
+                    section headings. */}
                 <div className="flex flex-col gap-6">
-                  <p className="font-body text-body-md text-fg-on-light">{stat.label}</p>
+                  <p className="font-body text-body-md uppercase text-fg-on-light">
+                    {stat.label}
+                  </p>
                   <StatCounter value={stat.value} prefix={stat.prefix} unit={stat.unit} />
                 </div>
 
