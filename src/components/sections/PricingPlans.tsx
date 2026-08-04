@@ -112,12 +112,12 @@ export function PricingPlans({ content }: PricingPlansProps) {
                       on default leading each build a different line box, and
                       the baselines drift apart. */}
                   <p className="flex items-baseline font-ui leading-[1em] text-fg-on-light">
-                    <span className="text-[1.5rem] font-normal tracking-[-0.03em]">$</span>
+                    <span className="text-[1.5rem] font-normal tracking-normal">$</span>
                     <NumberFlow
                       value={yearly ? plan.price.yearly : plan.price.monthly}
                       // The library animates each digit itself; it needs the
                       // plain number, and formats and rolls from there.
-                      className="text-[2.25rem] font-light tracking-[-0.03em] leading-[1em]"
+                      className="text-[2.25rem] font-light tracking-normal leading-[1em]"
                     />
                     <span className="ml-1 font-body text-[1rem] font-normal leading-[1em] text-fg-on-light-muted">
                       {plan.price.period}
@@ -135,7 +135,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
                 </Button>
               </div>
 
-              <div className="flex flex-col gap-6 border-border-on-light tablet:border-l tablet:pl-6">
+              <div className="flex flex-col gap-5 border-border-on-light tablet:border-l tablet:pl-6">
                 <IncludesTitle>{plan.includesTitle}</IncludesTitle>
                 <ul className="flex flex-col gap-4">
                   {plan.includes.map((item) => (
@@ -158,7 +158,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
           <div className="flex flex-col tablet:pr-6">
             <div className="flex flex-col gap-7">
               {/* Geist Light 36, matching the figures it stands in for. */}
-              <p className="font-ui text-[2.25rem] font-light tracking-[-0.03em] leading-[1em] text-fg-on-light">
+              <p className="font-ui text-[2.25rem] font-light tracking-normal leading-[1em] text-fg-on-light">
                 {content.enterprise.title}
               </p>
               <p className="max-w-[52ch] font-body text-[1rem] leading-[1.5]">
@@ -175,7 +175,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
             </Button>
           </div>
 
-          <div className="flex flex-col gap-6 border-border-on-light tablet:border-l tablet:pl-6">
+          <div className="flex flex-col gap-5 border-border-on-light tablet:border-l tablet:pl-6">
             <IncludesTitle>{content.enterprise.includesTitle}</IncludesTitle>
             {/* Two columns read down, exactly the owner's order. */}
             <div className="grid gap-4 tablet:grid-cols-2 tablet:gap-x-8">

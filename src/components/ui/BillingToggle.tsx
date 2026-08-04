@@ -37,7 +37,7 @@ export function BillingToggle({ yearly, onChange, labels }: BillingToggleProps) 
         aria-checked={yearly}
         aria-label={`Billing period: ${yearly ? labels.yearly : labels.monthly}`}
         onClick={() => onChange(!yearly)}
-        className="mh-toggle-track relative h-9 w-[4.25rem] shrink-0 rounded-pill transition-colors duration-(--duration-base) ease-(--ease-in-out)"
+        className="mh-toggle-track relative h-9 w-[4.25rem] shrink-0 rounded-[5px] transition-colors duration-(--duration-base) ease-(--ease-in-out)"
         style={{
           backgroundColor: yearly ? "var(--color-bg)" : "var(--color-track)",
         }}
@@ -58,8 +58,8 @@ export function BillingToggle({ yearly, onChange, labels }: BillingToggleProps) 
 
         <span
           aria-hidden="true"
-          className="mh-toggle-knob absolute top-1/2 size-7 -translate-y-1/2 rounded-full bg-bg-white transition-[left] duration-(--duration-base) ease-(--ease-in-out)"
-          style={{ left: yearly ? "calc(100% - 1.9rem)" : "0.25rem" }}
+          className="mh-toggle-knob absolute top-1/2 size-7 -translate-y-1/2 rounded-[4px] bg-bg-white transition-[left] duration-(--duration-base) ease-(--ease-in-out)"
+          style={{ left: yearly ? "calc(100% - 2rem)" : "0.25rem" }}
         />
       </button>
 
