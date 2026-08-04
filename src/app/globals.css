@@ -62,10 +62,6 @@
     height: auto;
   }
 
-  /* Numerals in count-up stats must not reflow as they tick. */
-  .tabular {
-    font-variant-numeric: tabular-nums;
-  }
 }
 
 /* ---------------------------------------------------------------------------

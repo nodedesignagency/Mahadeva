@@ -72,9 +72,14 @@ export function StatCounter({ value, prefix, unit }: StatCounterProps) {
   return (
     <p ref={ref} className="flex items-baseline font-ui font-medium text-fg-on-light">
       {prefix ? <span className="text-stat-affix">{prefix}</span> : null}
-      {/* Fixed locale rather than the browser's, so the server's text and the
+      {/* Proportional figures, not tabular. Geist's tabular set is a different
+          drawing — wider, squarer, and its 1 carries a full foot — so it reads
+          as another typeface altogether at 100px. It would hold the unit still
+          while the count runs; the design wins over the wobble.
+
+          Fixed locale rather than the browser's, so the server's text and the
           client's first frame group digits the same way. */}
-      <span className="text-stat leading-none tabular-nums">
+      <span className="text-stat leading-none">
         {(counting ? shown : value).toLocaleString("en-US")}
       </span>
       <span className="text-stat-affix uppercase">{unit}</span>
