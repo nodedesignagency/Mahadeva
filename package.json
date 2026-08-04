@@ -11,6 +11,7 @@
     "seed": "node scripts/seed-sanity.mjs"
   },
   "dependencies": {
+    "@number-flow/react": "^0.6.2",
     "@sanity/client": "^7.26.0",
     "@sanity/image-url": "^2.1.1",
     "clsx": "^2.1.1",

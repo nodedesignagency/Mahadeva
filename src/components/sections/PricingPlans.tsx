@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Building2, CircleCheck, Rocket, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { NumberFlow } from "@/components/motion/NumberFlow";
+import NumberFlow from "@number-flow/react";
 import { BillingToggle } from "@/components/ui/BillingToggle";
 import { Button } from "@/components/ui/Button";
 import type { PlanIcon, PlanTone, pricingContent } from "@/content/home";
@@ -16,8 +16,13 @@ import { cn } from "@/lib/cn";
  * toggle and every price; the section around it stays a server component.
  *
  * Card geometry to the owner's spec: a fixed 368px body on desktop and a 3px
- * border in the plan's own colour. The figures roll when the period changes,
- * after the Framer University number component the original uses.
+ * border in the plan's own colour.
+ *
+ * The figures roll on `@number-flow/react` — the library behind the component
+ * the original uses. Worth taking over hand-rolling it: the digit columns are
+ * measured against the real font rather than assumed to be one em, so the
+ * numbers sit on the same baseline as the currency mark beside them, which a
+ * hand-built `overflow: hidden` column cannot do.
  */
 
 /** Strip fill and border come from theme.css, keyed by the plan's tone. */
@@ -102,11 +107,19 @@ export function PricingPlans({ content }: PricingPlansProps) {
               <div className="flex flex-col tablet:pr-6">
                 <div className="flex flex-col gap-7">
                   {/* $ is Geist regular 24, the figure Geist Light 36, and
-                      /month Almarai 16 — three faces on one baseline. */}
-                  <p className="flex items-baseline font-ui text-fg-on-light">
+                      /month Almarai 16 — three faces on one baseline, which
+                      is why every part carries `leading-[1em]`: mixed sizes
+                      on default leading each build a different line box, and
+                      the baselines drift apart. */}
+                  <p className="flex items-baseline font-ui leading-[1em] text-fg-on-light">
                     <span className="text-[1.5rem] font-normal tracking-[-0.03em]">$</span>
-                    <NumberFlow value={yearly ? plan.price.yearly : plan.price.monthly} className="text-[2.25rem] font-light tracking-[-0.03em]" />
-                    <span className="ml-1 font-body text-[1rem] font-normal text-fg-on-light-muted">
+                    <NumberFlow
+                      value={yearly ? plan.price.yearly : plan.price.monthly}
+                      // The library animates each digit itself; it needs the
+                      // plain number, and formats and rolls from there.
+                      className="text-[2.25rem] font-light tracking-[-0.03em] leading-[1em]"
+                    />
+                    <span className="ml-1 font-body text-[1rem] font-normal leading-[1em] text-fg-on-light-muted">
                       {plan.price.period}
                     </span>
                   </p>
@@ -145,7 +158,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
           <div className="flex flex-col tablet:pr-6">
             <div className="flex flex-col gap-7">
               {/* Geist Light 36, matching the figures it stands in for. */}
-              <p className="font-ui text-[2.25rem] font-light tracking-[-0.03em] leading-none text-fg-on-light">
+              <p className="font-ui text-[2.25rem] font-light tracking-[-0.03em] leading-[1em] text-fg-on-light">
                 {content.enterprise.title}
               </p>
               <p className="max-w-[52ch] font-body text-[1rem] leading-[1.5]">
