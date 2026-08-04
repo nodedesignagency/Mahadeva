@@ -2,9 +2,10 @@ import type { CSSProperties } from "react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { StatCounter } from "@/components/ui/StatCounter";
-import { featureMarquee, sectionTextRevealDynamic } from "@/config/animation";
+import { featureMarquee, sectionTextRevealDynamic, statHover } from "@/config/animation";
 import type { TrustTone, trustContent } from "@/content/home";
 import { cn } from "@/lib/cn";
+import { hoverRectBox } from "@/lib/hoverRect";
 
 /**
  * Trust section — "Why Top Companies Trust Us".
@@ -86,22 +87,53 @@ export function Trust({ content }: TrustProps) {
               style={{ "--stat-step": `${i * STEP}px` } as CSSProperties}
               className="desktop:mt-(--stat-step)"
             >
-              <div className={cn("flex h-full flex-col p-6", tones[stat.tone])}>
-                {/* Label and figure are one stack 24px apart, per the owner.
-                    The label is set in caps, at its own tracking — this is the
-                    original's casing, not the widened eyebrow used above the
-                    section headings. */}
-                <div className="flex flex-col gap-6">
-                  <p className="font-body text-body-md uppercase text-fg-on-light">
-                    {stat.label}
-                  </p>
-                  <StatCounter value={stat.value} prefix={stat.prefix} unit={stat.unit} />
+              <div
+                style={
+                  {
+                    "--mh-stat-shape": `var(--color-stat-shape-${stat.tone})`,
+                    "--mh-stat-duration": `${statHover.duration}ms`,
+                  } as CSSProperties
+                }
+                className={cn(
+                  "group relative flex h-full flex-col overflow-clip p-6",
+                  tones[stat.tone],
+                )}
+              >
+                {/* Decorative: the blocks that slide in on hover, each panel
+                    with its own arrangement. Behind the text, so a block can
+                    pass under the figure without taking it with it. */}
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+                  {statHover.rects[stat.tone].map((rect, r) => (
+                    <span
+                      key={r}
+                      className="mh-stat-block"
+                      style={
+                        {
+                          ...hoverRectBox(rect),
+                          "--mh-stat-from": `${rect.dx}px ${rect.dy}px`,
+                        } as CSSProperties
+                      }
+                    />
+                  ))}
                 </div>
 
-                {/* Pushed to the foot, which is the line all four share. */}
-                <p className="mt-auto pt-16 font-body text-body-md leading-[1.5] text-fg-on-light">
-                  {stat.body}
-                </p>
+                <div className="relative flex h-full flex-col">
+                  {/* Label and figure are one stack 24px apart, per the owner.
+                      The label is set in caps, at its own tracking — this is
+                      the original's casing, not the widened eyebrow used above
+                      the section headings. */}
+                  <div className="flex flex-col gap-6">
+                    <p className="font-body text-body-md uppercase text-fg-on-light">
+                      {stat.label}
+                    </p>
+                    <StatCounter value={stat.value} prefix={stat.prefix} unit={stat.unit} />
+                  </div>
+
+                  {/* Pushed to the foot, which is the line all four share. */}
+                  <p className="mt-auto pt-16 font-body text-body-md leading-[1.5] text-fg-on-light">
+                    {stat.body}
+                  </p>
+                </div>
               </div>
             </li>
           ))}

@@ -377,6 +377,30 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Trust statistic hover
+ *
+ * The same mechanism as the case cards, on four panels that each have their
+ * own arrangement of blocks. Separate class and custom properties rather than
+ * reusing the case ones: the two live in different sections and should be
+ * retunable apart, even while they share a curve today.
+ *
+ * The blocks sit behind the panel's text, so the figure stays legible with a
+ * block passing under it.
+ * ------------------------------------------------------------------------- */
+.mh-stat-block {
+  position: absolute;
+  background-color: var(--mh-stat-shape);
+  translate: var(--mh-stat-from);
+  transition: translate var(--mh-stat-duration) var(--ease-case-hover);
+}
+
+@media (hover: hover) {
+  .group:hover .mh-stat-block {
+    translate: 0 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Feature marquee
  *
  * The row holds the cards twice and slides left by exactly one copy, so the

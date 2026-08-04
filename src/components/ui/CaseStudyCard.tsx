@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { caseHover } from "@/config/animation";
 import type { CaseStat, CaseStudy, CaseTone } from "@/content/case-studies";
 import { cn } from "@/lib/cn";
+import { hoverRectBox } from "@/lib/hoverRect";
 
 /**
  * One case study.
@@ -24,21 +25,6 @@ const tones: Record<CaseTone, string> = {
   lavender: "bg-case-lavender",
   peach: "bg-case-peach",
 };
-
-/**
- * A rectangle's laid-out box: its hovered position, in the pixels of the
- * Framer frame. Each is anchored to the edges the original anchors it to, so
- * one pinned right stays pinned right as the card changes width. It waits at
- * `dx`/`dy` from here, carried there by `translate`.
- */
-function rectBox(rect: (typeof caseHover.rects)[number]): CSSProperties {
-  const box: CSSProperties = { width: rect.w, height: rect.h };
-  if ("left" in rect) box.left = rect.left;
-  if ("right" in rect) box.right = rect.right;
-  if ("top" in rect) box.top = rect.top;
-  if ("bottom" in rect) box.bottom = rect.bottom;
-  return box;
-}
 
 /**
  * One figure. Both halves are Geist Light — the label as well as the value,
@@ -174,7 +160,7 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
                 className="mh-case-block"
                 style={
                   {
-                    ...rectBox(rect),
+                    ...hoverRectBox(rect),
                     "--mh-case-from": `${rect.dx}px ${rect.dy}px`,
                   } as CSSProperties
                 }

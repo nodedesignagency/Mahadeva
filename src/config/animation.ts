@@ -216,6 +216,58 @@ export const statCounter = {
 } as const;
 
 /**
+ * Trust statistic hover.
+ *
+ * The same gesture as the case study cards — blocks in a deeper step of the
+ * panel's own pastel slide in from outside and sit flush against its edges —
+ * but each of the four panels has its own arrangement, so the row does not
+ * read as one effect applied four times.
+ *
+ * Rectangles are given at their hovered position with `dx`/`dy` back to where
+ * they wait; see `lib/hoverRect`. Sizes and offsets are the owner's, in the
+ * pixels of a panel roughly 300 wide. Each block is anchored to the edges it
+ * settles against, so the arrangement holds as the panel changes width.
+ */
+export const statHover = {
+  /** Shared with the case cards: bezier 0.8, 0, 0.2, 1 over 0.7s. */
+  duration: 700,
+
+  rects: {
+    /** Corner to corner: a square into the top right, a bar into the foot. */
+    peach: [
+      { w: 70, h: 70, right: 0, top: 0, dx: 70, dy: -70 },
+      { w: 140, h: 70, left: 0, bottom: 0, dx: -140, dy: 70 },
+    ],
+    /** Three edges at once — left, foot, and the corner between them. */
+    green: [
+      { w: 30, h: 80, left: 0, top: "calc(50% - 40px)", dx: -60, dy: 0 },
+      { w: 112, h: 30, left: "calc(50% - 56px)", bottom: 0, dx: 0, dy: 60 },
+      { w: 30, h: 30, right: 0, bottom: 0, dx: 60, dy: 0 },
+    ],
+    /**
+     * A pair dropping into the head and a stepped trio rising into the foot —
+     * the checkerboard the case cards use, mirrored to the other corner.
+     */
+    blue: [
+      { w: 30, h: 60, left: 0, top: 0, dx: 0, dy: -60 },
+      { w: 30, h: 60, left: 60, top: 0, dx: 0, dy: -60 },
+      { w: 30, h: 30, right: 60, bottom: 0, dx: 0, dy: 60 },
+      { w: 30, h: 30, right: 30, bottom: 30, dx: 0, dy: 90 },
+      { w: 30, h: 30, right: 0, bottom: 0, dx: 0, dy: 60 },
+    ],
+    /**
+     * The heaviest of the four: two tall blocks close over the head from
+     * above, and a bar runs out from behind the left one, under the figure.
+     */
+    magenta: [
+      { w: 50, h: 120, left: 0, top: 0, dx: 0, dy: -120 },
+      { w: 85, h: 120, right: 0, top: 0, dx: 0, dy: -120 },
+      { w: 130, h: 40, left: 50, top: 120, dx: -180, dy: 0 },
+    ],
+  },
+} as const;
+
+/**
  * Button hover sweep.
  *
  * The original button is four stacked rectangles parked off the left edge,
