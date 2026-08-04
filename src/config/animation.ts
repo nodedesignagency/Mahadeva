@@ -236,6 +236,15 @@ export const toolHover = {
   /** The mark waits at this scale inside its fixed 56px box. */
   markRestScale: 1.4,
 
+  /**
+   * How far the mark rises on hover, in px, to make room for the name.
+   *
+   * The name is out of the tile's flow — hung below the mark rather than
+   * stacked under it — so that at rest the mark sits dead centre. Reserving
+   * space for a name nobody can see puts the mark visibly high in the tile.
+   */
+  markRise: 28,
+
   /** Cells across and down, so one cell is a tenth of the tile. */
   grid: 10,
 

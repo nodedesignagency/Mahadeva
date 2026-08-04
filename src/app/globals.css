@@ -416,6 +416,13 @@
   transition: translate var(--mh-tool-duration) var(--ease-case-hover);
 }
 
+/* The mark's box is centred in the tile at rest and rises to make room for
+ * the name, which hangs below it and out of the flow. `translate` rather than
+ * a transform, so the label's own centring transform is left alone. */
+.mh-tool-stack {
+  transition: translate var(--mh-tool-duration) var(--ease-case-hover);
+}
+
 .mh-tool-mark,
 .mh-tool-label {
   transition:
@@ -439,6 +446,10 @@
 
   .group:hover .mh-tool-block {
     translate: 0 0;
+  }
+
+  .group:hover .mh-tool-stack {
+    translate: 0 calc(-1 * var(--mh-tool-rise));
   }
 
   .group:hover .mh-tool-mark {

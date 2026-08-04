@@ -119,6 +119,7 @@ export function TechStack({ content }: TechStackProps) {
                   "--mh-tool-shape": `var(--color-tool-shape-${tool.tone})`,
                   "--mh-tool-duration": `${toolHover.duration}ms`,
                   "--mh-tool-rest-scale": toolHover.markRestScale,
+                  "--mh-tool-rise": `${toolHover.markRise}px`,
                 } as CSSProperties
               }
               className={cn(
@@ -133,21 +134,22 @@ export function TechStack({ content }: TechStackProps) {
                 ))}
               </div>
 
-              <div className="relative flex flex-col items-center gap-6">
-                {/* The box is a fixed 56 and the mark scales inside it, so the
-                    name below does not move as the mark settles. */}
-                <div className="flex size-14 items-center justify-center">
-                  <Image
-                    src={marks[tool.mark]}
-                    alt=""
-                    className="mh-tool-mark size-14 object-contain"
-                  />
-                </div>
+              {/* A fixed 56 box, centred in the tile, with the mark scaling
+                  inside it — so nothing moves as the mark settles. The whole
+                  box rises on hover to make room for the name. */}
+              <div className="mh-tool-stack relative flex size-14 items-center justify-center">
+                <Image
+                  src={marks[tool.mark]}
+                  alt=""
+                  className="mh-tool-mark size-14 object-contain"
+                />
 
                 {/* The name rides in the pill the original puts under each
-                    mark. Present at rest and merely transparent, so it is
-                    read out either way and the tile's layout never shifts. */}
-                <span className="mh-tool-label bg-bg-white/70 px-3 py-1 text-center font-ui text-body-sm font-light tracking-(--tracking-label) uppercase text-fg-on-light">
+                    mark, hung below the box rather than stacked under it: in
+                    the flow it would reserve space at rest and leave the mark
+                    sitting high. Present and merely transparent, so it is read
+                    out whether or not it is on screen. */}
+                <span className="mh-tool-label absolute top-full left-1/2 mt-6 -translate-x-1/2 bg-bg-white/70 px-3 py-1 text-center font-ui text-body-sm font-light tracking-(--tracking-label) whitespace-nowrap uppercase text-fg-on-light">
                   {tool.name}
                 </span>
               </div>
