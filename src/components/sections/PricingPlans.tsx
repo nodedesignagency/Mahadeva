@@ -59,10 +59,14 @@ function Feature({ children }: { children: string }) {
   );
 }
 
-/** The "PLAN INCLUDES:" label: Geist Light 16 in the owner's grey. */
+/**
+ * The "PLAN INCLUDES:" label: Geist Light 16 in the owner's grey. Tracking is
+ * normal, not the widened label tracking used elsewhere — uppercase here is
+ * the original's casing, not a spaced-out eyebrow.
+ */
 function IncludesTitle({ children }: { children: string }) {
   return (
-    <p className="font-ui text-[1rem] font-light tracking-(--tracking-label) uppercase text-fg-label">
+    <p className="font-ui text-[1rem] font-light tracking-normal uppercase text-fg-label">
       {children}
     </p>
   );
@@ -137,7 +141,8 @@ export function PricingPlans({ content }: PricingPlansProps) {
 
               <div className="flex flex-col gap-5 border-border-on-light tablet:border-l tablet:pl-6">
                 <IncludesTitle>{plan.includesTitle}</IncludesTitle>
-                <ul className="flex flex-col gap-4">
+                {/* 20px between entries, per the original's stack. */}
+                <ul className="flex flex-col gap-5">
                   {plan.includes.map((item) => (
                     <Feature key={item}>{item}</Feature>
                   ))}
@@ -178,9 +183,9 @@ export function PricingPlans({ content }: PricingPlansProps) {
           <div className="flex flex-col gap-5 border-border-on-light tablet:border-l tablet:pl-6">
             <IncludesTitle>{content.enterprise.includesTitle}</IncludesTitle>
             {/* Two columns read down, exactly the owner's order. */}
-            <div className="grid gap-4 tablet:grid-cols-2 tablet:gap-x-8">
+            <div className="grid gap-5 tablet:grid-cols-2 tablet:gap-x-8">
               {content.enterprise.includes.map((column, i) => (
-                <ul key={i} className="flex flex-col gap-4">
+                <ul key={i} className="flex flex-col gap-5">
                   {column.map((item) => (
                     <Feature key={item}>{item}</Feature>
                   ))}

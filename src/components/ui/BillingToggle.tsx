@@ -11,7 +11,8 @@
  * The depth is the design: the track is carved into the surface and the knob
  * sits proudly on it. Both are shadow pairs in globals.css — a border would
  * draw a line where the original has a lip. Off the track is grey; on it is
- * the site's dark green.
+ * the site's dark green, and the mark in the empty half switches from ring to
+ * bar with it.
  */
 
 type BillingToggleProps = {
@@ -42,17 +43,22 @@ export function BillingToggle({ yearly, onChange, labels }: BillingToggleProps) 
           backgroundColor: yearly ? "var(--color-bg)" : "var(--color-track)",
         }}
       >
-        {/* The ring the original shows in the track's empty half — the mark
-            the knob is travelling toward. */}
+        {/* The mark the original shows in the track's empty half — the point
+            the knob is travelling toward. It is the power pair: a ring while
+            off, a bar once on. The bar is 2px, so its `left` is the ring's
+            offset plus half the difference in width, keeping both centred on
+            the same spot as the shape changes. */}
         <span
           aria-hidden="true"
-          className="absolute top-1/2 size-3 -translate-y-1/2 rounded-full border-2 transition-all duration-(--duration-base) ease-(--ease-in-out)"
+          className="absolute top-1/2 h-3 -translate-y-1/2 rounded-full transition-all duration-(--duration-base) ease-(--ease-in-out)"
           style={{
-            left: yearly ? "0.75rem" : "auto",
+            left: yearly ? "calc(0.75rem + 5px)" : "auto",
             right: yearly ? "auto" : "0.75rem",
-            borderColor: yearly
+            width: yearly ? "2px" : "0.75rem",
+            border: yearly ? "0" : "2px solid var(--color-bg-white)",
+            backgroundColor: yearly
               ? "color-mix(in srgb, var(--color-fg) 60%, transparent)"
-              : "var(--color-bg-white)",
+              : "transparent",
           }}
         />
 
