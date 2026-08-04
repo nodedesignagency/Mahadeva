@@ -239,12 +239,15 @@ export const pricingContent = {
   headingLines: ["Flexible Plans for Every", "Growth Stage"],
   subheading:
     "Mahadeva helps ambitious teams build intelligent automation systems that improve efficiency and unlock measurable growth.",
+  billing: { monthly: "Billed Monthly", yearly: "Billed Yearly" },
   plans: [
     {
       name: "Launch",
       tone: "sky",
       icon: "launch",
-      price: { amount: "199", period: "/month" },
+      /** ⚠️ Yearly is ten months of the monthly rate — a placeholder
+       * convention until the owner supplies the real figure. */
+      price: { monthly: 199, yearly: 1990, period: "/month" },
       body: "Automation solutions designed to help early-stage teams streamline workflows, reduce manual effort, and improve execution speed.",
       cta: { label: "Choose Launch", href: "/contact" },
       includesTitle: "Launch includes:",
@@ -260,7 +263,7 @@ export const pricingContent = {
       name: "Scale",
       tone: "lavender",
       icon: "scale",
-      price: { amount: "299", period: "/month" },
+      price: { monthly: 299, yearly: 2990, period: "/month" },
       body: "Advanced automation systems designed to improve team efficiency, accelerate growth, and support business operations.",
       cta: { label: "Choose Scale", href: "/contact" },
       includesTitle: "Scale includes:",
