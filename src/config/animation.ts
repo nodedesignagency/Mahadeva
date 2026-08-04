@@ -200,6 +200,22 @@ export const featureMarquee = {
 } as const;
 
 /**
+ * Trust statistics count-up, mirroring the original's NumberCounter props.
+ *
+ * Every figure climbs from the same start number to its own end number when
+ * the section is scrolled to — Replay off, Loop off, so each one runs once.
+ * The original expresses pace as a "Number Speed"; here it is a duration, so
+ * the whole row lands together regardless of how far each figure has to
+ * travel, which is what the design shows.
+ */
+export const statCounter = {
+  /** The Framer component's Start Number. */
+  start: 1,
+  /** Milliseconds from start to end number. */
+  duration: 1800,
+} as const;
+
+/**
  * Button hover sweep.
  *
  * The original button is four stacked rectangles parked off the left edge,

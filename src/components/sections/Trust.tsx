@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
+import { StatCounter } from "@/components/ui/StatCounter";
 import { featureMarquee, sectionTextRevealDynamic } from "@/config/animation";
 import type { TrustTone, trustContent } from "@/content/home";
 import { cn } from "@/lib/cn";
@@ -13,8 +14,8 @@ import { cn } from "@/lib/cn";
  * as a staircase rather than four equal boxes. Below them, a marquee of client
  * marks.
  *
- * A server component. The marquee is CSS and the heading declares its own
- * client boundary.
+ * A server component. The marquee is CSS, and the heading and the counting
+ * figures declare their own client boundaries.
  */
 
 /** Fills come from theme.css; the section never names a colour itself. */
@@ -86,21 +87,14 @@ export function Trust({ content }: TrustProps) {
               className="desktop:mt-(--stat-step)"
             >
               <div className={cn("flex h-full flex-col p-6", tones[stat.tone])}>
-                <p className="eyebrow text-fg-on-light">{stat.label}</p>
-
-                {/* Figure and unit are separate elements at separate sizes,
-                    baseline-aligned so the small unit sits on the big
-                    number's foot rather than floating beside its middle. */}
-                <p className="mt-6 flex items-baseline font-ui font-light text-fg-on-light">
-                  {stat.prefix ? (
-                    <span className="text-display-md">{stat.prefix}</span>
-                  ) : null}
-                  <span className="text-stat leading-none">{stat.value}</span>
-                  <span className="text-display-md uppercase">{stat.unit}</span>
-                </p>
+                {/* Label and figure are one stack 24px apart, per the owner. */}
+                <div className="flex flex-col gap-6">
+                  <p className="font-body text-body-md text-fg-on-light">{stat.label}</p>
+                  <StatCounter value={stat.value} prefix={stat.prefix} unit={stat.unit} />
+                </div>
 
                 {/* Pushed to the foot, which is the line all four share. */}
-                <p className="mt-auto pt-16 font-body text-body-sm leading-[1.5] text-fg-on-light">
+                <p className="mt-auto pt-16 font-body text-body-md leading-[1.5] text-fg-on-light">
                   {stat.body}
                 </p>
               </div>

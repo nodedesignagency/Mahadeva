@@ -220,6 +220,9 @@
   --text-display-md: clamp(1.75rem, 1.4rem + 1.1vw, 2.5rem);
   /* Big numeric stats, up to 100px. */
   --text-stat: clamp(3rem, 1rem + 6.2vw, 6.25rem);
+  /* The prefix and unit either side of one, up to 50px. Exactly half the
+   * figure's curve at every width, which is the ratio the original sets. */
+  --text-stat-affix: clamp(1.5rem, 0.5rem + 3.1vw, 3.125rem);
 
   --text-heading-lg: clamp(1.5rem, 1.3rem + 0.7vw, 1.75rem); /* 24 -> 28 */
   --text-heading-md: clamp(1.25rem, 1.15rem + 0.4vw, 1.375rem); /* 20 -> 22 */
@@ -417,6 +420,7 @@
   --text-display-lg: var(--text-display-lg);
   --text-display-md: var(--text-display-md);
   --text-stat: var(--text-stat);
+  --text-stat-affix: var(--text-stat-affix);
   --text-heading-lg: var(--text-heading-lg);
   --text-heading-md: var(--text-heading-md);
   --text-heading-sm: var(--text-heading-sm);

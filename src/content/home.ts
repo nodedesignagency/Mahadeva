@@ -142,6 +142,9 @@ export type FeatureTone = (typeof featuresContent.cards)[number]["tone"];
  * figure from its unit because the two are set at different sizes: 98 large
  * with a small %, $ small with a large 25 and a small M. Storing "98%" as one
  * string would make that a parsing problem in the component.
+ *
+ * `value` is a number, not a string: it is the end of a count-up, so the
+ * component needs to be able to do arithmetic on it.
  */
 export const trustContent = {
   headingLines: ["Why Top Companies Trust Us"],
@@ -153,7 +156,7 @@ export const trustContent = {
     {
       label: "Launch Success",
       prefix: "",
-      value: "98",
+      value: 98,
       unit: "%",
       body: "Solutions successfully adopted by teams to deliver consistent performance and measurable outcomes at scale.",
       tone: "peach",
@@ -161,7 +164,7 @@ export const trustContent = {
     {
       label: "Average ROI",
       prefix: "",
-      value: "17",
+      value: 17,
       unit: "x",
       body: "Systems designed to increase revenue efficiency, optimize operations, and create scalable business growth.",
       tone: "green",
@@ -169,7 +172,7 @@ export const trustContent = {
     {
       label: "Faster Operations",
       prefix: "",
-      value: "49",
+      value: 49,
       unit: "h",
       body: "Hours saved every month through automation, helping teams reduce manual work and focus on high-impact tasks.",
       tone: "blue",
@@ -177,7 +180,7 @@ export const trustContent = {
     {
       label: "Revenue Impact",
       prefix: "$",
-      value: "25",
+      value: 25,
       unit: "m",
       body: "Automation built to increase revenue, reduce friction, and drive measurable business growth across teams.",
       tone: "magenta",
