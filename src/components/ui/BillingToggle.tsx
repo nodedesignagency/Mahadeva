@@ -45,21 +45,20 @@ export function BillingToggle({ yearly, onChange, labels }: BillingToggleProps) 
       >
         {/* The mark the original shows in the track's empty half — the point
             the knob is travelling toward. It is the power pair: a ring while
-            off, a bar once on. The bar is 2px, so its `left` is the ring's
-            offset plus half the difference in width, keeping both centred on
-            the same spot as the shape changes. */}
+            off, a bar once on.
+            Two elements rather than one that changes shape. Animating a single
+            span between them narrows the ring into the bar, and a circle
+            collapsing sideways reads as a square mid-way. Each simply fades
+            in its own half of the track instead. */}
         <span
           aria-hidden="true"
-          className="absolute top-1/2 h-3 -translate-y-1/2 rounded-full transition-all duration-(--duration-base) ease-(--ease-in-out)"
-          style={{
-            left: yearly ? "calc(0.75rem + 5px)" : "auto",
-            right: yearly ? "auto" : "0.75rem",
-            width: yearly ? "2px" : "0.75rem",
-            border: yearly ? "0" : "2px solid var(--color-bg-white)",
-            backgroundColor: yearly
-              ? "color-mix(in srgb, var(--color-fg) 60%, transparent)"
-              : "transparent",
-          }}
+          className="absolute top-1/2 right-3 size-3 -translate-y-1/2 rounded-full border-2 border-bg-white transition-opacity duration-(--duration-base) ease-(--ease-in-out)"
+          style={{ opacity: yearly ? 0 : 1 }}
+        />
+        <span
+          aria-hidden="true"
+          className="absolute top-1/2 left-[1.0625rem] h-3 w-0.5 -translate-y-1/2 bg-bg-white transition-opacity duration-(--duration-base) ease-(--ease-in-out)"
+          style={{ opacity: yearly ? 1 : 0 }}
         />
 
         <span
