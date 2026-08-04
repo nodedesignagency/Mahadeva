@@ -104,8 +104,8 @@ export function PricingPlans({ content }: PricingPlansProps) {
                   {/* $ is Geist regular 24, the figure Geist Light 36, and
                       /month Almarai 16 — three faces on one baseline. */}
                   <p className="flex items-baseline font-ui text-fg-on-light">
-                    <span className="text-[1.5rem] font-normal">$</span>
-                    <NumberFlow value={yearly ? plan.price.yearly : plan.price.monthly} className="text-[2.25rem] font-light" />
+                    <span className="text-[1.5rem] font-normal tracking-[-0.03em]">$</span>
+                    <NumberFlow value={yearly ? plan.price.yearly : plan.price.monthly} className="text-[2.25rem] font-light tracking-[-0.03em]" />
                     <span className="ml-1 font-body text-[1rem] font-normal text-fg-on-light-muted">
                       {plan.price.period}
                     </span>
@@ -114,8 +114,9 @@ export function PricingPlans({ content }: PricingPlansProps) {
                 </div>
                 <Button
                   href={plan.cta.href}
+                  variant="plan"
                   withArrow
-                  className="mt-auto w-full bg-bg text-fg max-tablet:mt-8"
+                  className="mt-auto w-full max-tablet:mt-8"
                 >
                   {plan.cta.label}
                 </Button>
@@ -144,7 +145,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
           <div className="flex flex-col tablet:pr-6">
             <div className="flex flex-col gap-7">
               {/* Geist Light 36, matching the figures it stands in for. */}
-              <p className="font-ui text-[2.25rem] font-light leading-none text-fg-on-light">
+              <p className="font-ui text-[2.25rem] font-light tracking-[-0.03em] leading-none text-fg-on-light">
                 {content.enterprise.title}
               </p>
               <p className="max-w-[52ch] font-body text-[1rem] leading-[1.5]">
@@ -153,8 +154,9 @@ export function PricingPlans({ content }: PricingPlansProps) {
             </div>
             <Button
               href={content.enterprise.cta.href}
+              variant="plan"
               withArrow
-              className="mt-auto w-full bg-bg text-fg max-tablet:mt-8"
+              className="mt-auto w-full max-tablet:mt-8"
             >
               {content.enterprise.cta.label}
             </Button>

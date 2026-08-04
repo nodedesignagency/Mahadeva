@@ -52,14 +52,19 @@ export function NumberFlow({
       {/* The plain number for anything not watching the screen; the rolling
           columns are decoration over the top of it. */}
       <span className="sr-only">{value}</span>
-      <span aria-hidden="true" className="inline-flex">
+      <span aria-hidden="true">
         {digits.map((digit, i) => (
           <span
             key={`${digits.length}-${i}`}
-            // `1em` tall: exactly one glyph's window, whatever the size.
-            className="relative inline-block h-[1em] overflow-hidden tabular-nums"
-            style={{ width: "0.62em" }}
+            // The invisible digit inside is what makes this align: an
+            // inline-block with `overflow: hidden` takes its *bottom margin
+            // edge* as its baseline, not its text's — so a bare rolling
+            // column sits off the line its neighbours share. A static glyph
+            // restores a real text baseline, and sizes the column too, which
+            // `tabular-nums` keeps equal across digits.
+            className="relative inline-block overflow-hidden leading-none tabular-nums"
           >
+            <span className="invisible">{digit}</span>
             <span
               className="absolute inset-x-0 top-0 flex flex-col"
               style={{

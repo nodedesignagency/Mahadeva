@@ -34,6 +34,13 @@ const variants = {
   primary: "bg-fg text-fg-inverse",
   /** Solid dark body, no border, light label, light icon box. */
   secondary: "bg-button-secondary text-fg",
+  /**
+   * The pricing plans' call to action: the site's dark green body with a white
+   * label, and — unlike `secondary` — a white icon box holding a dark green
+   * arrow. Hovering fills it with the accent, where the label turns dark while
+   * the box stays white, so the arrow never changes.
+   */
+  plan: "bg-bg text-fg",
   outline: "border border-border-strong text-fg hover:bg-surface",
   ghost: "text-fg-muted hover:text-fg px-0",
 } as const;
@@ -46,6 +53,7 @@ const variants = {
 const sweeps: Record<keyof typeof variants, boolean> = {
   primary: true,
   secondary: true,
+  plan: true,
   outline: false,
   ghost: false,
 };
@@ -56,12 +64,14 @@ const sweeps: Record<keyof typeof variants, boolean> = {
  */
 const sweptLabels: Partial<Record<keyof typeof variants, string>> = {
   secondary: "group-hover:text-fg-inverse group-focus-visible:text-fg-inverse",
+  plan: "group-hover:text-fg-inverse group-focus-visible:text-fg-inverse",
 };
 
 /** Icon box colours, inverted against each variant's body. */
 const iconBoxes = {
   primary: "bg-fg-inverse text-fg",
   secondary: "bg-fg text-fg-inverse",
+  plan: "bg-fg text-fg-inverse",
   outline: "bg-fg text-fg-inverse",
   ghost: "bg-transparent text-current",
 } as const;
