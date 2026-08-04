@@ -401,6 +401,26 @@
 }
 
 /* ---------------------------------------------------------------------------
+ * Testimonial carousel
+ *
+ * The rectangles' trigger is state, not a pointer: a card plays them when it
+ * takes the centre, so the parked position is the default and `data-in` is
+ * what brings them home. Held back by a delay, so they arrive after the card
+ * has finished sliding rather than travelling with it.
+ * ------------------------------------------------------------------------- */
+.mh-quote-block {
+  position: absolute;
+  background-color: var(--mh-quote-shape);
+  translate: var(--mh-quote-from);
+  transition: translate var(--mh-quote-duration) var(--ease-case-hover);
+}
+
+.mh-quote-block[data-in="true"] {
+  translate: 0 0;
+  transition-delay: var(--mh-quote-delay);
+}
+
+/* ---------------------------------------------------------------------------
  * Tech stack tile hover
  *
  * The whole effect is inverted relative to the other two: what the tile shows

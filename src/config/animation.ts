@@ -216,6 +216,33 @@ export const statCounter = {
 } as const;
 
 /**
+ * Testimonial carousel.
+ *
+ * The card has the two states the owner's Framer file has: bare, and with the
+ * rectangles in. A card plays the second when it takes the centre — the first
+ * one as the section is scrolled to, each later one as the arrow brings it
+ * across — so the effect belongs to arriving rather than to hovering.
+ *
+ * Rectangles are in percentages of the card, which is 1120x516 in the file but
+ * has to hold its arrangement as it narrows. Each waits outside the edge it
+ * settles against; see `lib/hoverRect`.
+ */
+export const testimonialCarousel = {
+  /** Milliseconds for one card to slide across. */
+  slide: 700,
+  /** Milliseconds for the rectangles, held back until the slide is over. */
+  reveal: 700,
+  /** Milliseconds before the rectangles start. */
+  revealDelay: 150,
+
+  rects: [
+    { w: "18.6%", h: "6.4%", left: 0, top: 0, dx: "-100%", dy: 0 },
+    { w: "17.6%", h: "25.3%", right: 0, top: 0, dx: "100%", dy: 0 },
+    { w: "18.4%", h: "7%", right: 0, bottom: 0, dx: "100%", dy: 0 },
+  ],
+} as const;
+
+/**
  * Tech stack tile hover.
  *
  * Three things move together: a checkerboard closes in on the tile's head and

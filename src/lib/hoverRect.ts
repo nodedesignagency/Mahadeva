@@ -14,9 +14,13 @@ import type { CSSProperties } from "react";
  * with a `calc()` rather than a transform, since `translate` is spoken for.
  */
 export type HoverRect = {
-  /** Omit to let opposing anchors set the width — a bar that spans a gap. */
-  w?: number;
-  h: number;
+  /**
+   * Omit to let opposing anchors set the width — a bar that spans a gap. A
+   * percentage sizes the rectangle against the box it is placed in, for an
+   * arrangement that has to hold as that box changes width.
+   */
+  w?: number | string;
+  h: number | string;
   left?: number | string;
   right?: number | string;
   top?: number | string;

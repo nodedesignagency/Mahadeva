@@ -243,6 +243,54 @@ export type ToolTone = (typeof techStackContent.tools)[number]["tone"];
 export type ToolMark = (typeof techStackContent.tools)[number]["mark"];
 
 /**
+ * Testimonials — the quote carousel.
+ *
+ * One card at a time with the next peeking past the right gutter, advanced by
+ * the pair of arrows beside the heading.
+ *
+ * `portrait` names a file in `src/assets/portraits`; the cut-out sits on the
+ * card's own fill. Until the photographs land the column is left empty rather
+ * than filled with a stand-in — a grey box beside a testimonial reads as a
+ * broken image, where empty space reads as a wide quote.
+ *
+ * ⚠️ The third quote is written to the same brief as the two the owner
+ * supplied, and is a placeholder until the real one arrives.
+ */
+export const testimonialsContent = {
+  headingLines: ["Testimonials"],
+  subheading:
+    "Results from teams using intelligent automation to improve performance and unlock measurable growth across daily operations.",
+  /** Labels for the two arrows. Never shown — they are the buttons' names. */
+  controls: { previous: "Previous testimonial", next: "Next testimonial" },
+  items: [
+    {
+      quote:
+        "This system saved our team hours every week and made our workflows faster, clearer, and much easier to manage.",
+      name: "Ryan Mitchell",
+      role: "CEO @ Growth SaaS",
+      tone: "blue",
+    },
+    {
+      quote:
+        "This tool saved me hours every week — and made me sound like I actually know what I’m doing.",
+      name: "James Cooper",
+      role: "CEO @ Ragnarok AI",
+      tone: "green",
+    },
+    {
+      quote:
+        "We replaced three manual handoffs with one system, and the work simply arrives finished now.",
+      name: "Priya Raman",
+      role: "COO @ Northwind Labs",
+      tone: "peach",
+    },
+  ],
+} as const;
+
+/** Which pastel a testimonial card is filled with. */
+export type TestimonialTone = (typeof testimonialsContent.items)[number]["tone"];
+
+/**
  * Pricing — "Flexible Plans for Every Growth Stage".
  *
  * Copy is verbatim from the owner's Framer cards, which differ from the Figma
