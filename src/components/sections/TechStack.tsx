@@ -1,9 +1,16 @@
 import Image from "next/image";
+import type { StaticImageData } from "next/image";
 import type { CSSProperties } from "react";
+import airtable from "@/assets/logos/airtable.avif";
+import chatgpt from "@/assets/logos/chatgpt.avif";
+import claude from "@/assets/logos/claude.avif";
+import langchain from "@/assets/logos/langchain.avif";
+import python from "@/assets/logos/python.avif";
+import zapier from "@/assets/logos/zapier.avif";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextRevealDynamic, toolHover } from "@/config/animation";
-import type { ToolTone, techStackContent } from "@/content/home";
+import type { ToolMark, ToolTone, techStackContent } from "@/content/home";
 import { cn } from "@/lib/cn";
 
 /**
@@ -39,6 +46,20 @@ function cellStyle([row, column]: readonly [number, number]): CSSProperties {
     "--mh-tool-from": `0 ${fromTop ? "-" : ""}${rows * 100}%`,
   } as CSSProperties;
 }
+
+/**
+ * Tool key to mark. Imported rather than served from `public`: the build then
+ * hashes each file and knows its size, which is also what lets the standalone
+ * preview bundle carry the artwork with it.
+ */
+const marks: Record<ToolMark, StaticImageData> = {
+  claude,
+  chatgpt,
+  airtable,
+  zapier,
+  langchain,
+  python,
+};
 
 /** Fills come from theme.css; the section never names a colour itself. */
 const tones: Record<ToolTone, string> = {
@@ -117,10 +138,8 @@ export function TechStack({ content }: TechStackProps) {
                     name below does not move as the mark settles. */}
                 <div className="flex size-14 items-center justify-center">
                   <Image
-                    src={`/uploads/logos/${tool.mark}`}
+                    src={marks[tool.mark]}
                     alt=""
-                    width={56}
-                    height={56}
                     className="mh-tool-mark size-14 object-contain"
                   />
                 </div>

@@ -219,25 +219,28 @@ export type TrustTone = (typeof trustContent.stats)[number]["tone"];
 export const techStackContent = {
   headingLines: ["Our Automation Tools &", "Technology Stack"],
   /**
-   * `mark` is a file in `public/uploads/logos`. Served from there rather than
-   * imported from `src/assets`: they are square marks drawn at a fixed 56px,
-   * so there is nothing for the optimiser to size differently per breakpoint.
+   * `mark` keys the artwork, which the section imports — the same split the
+   * feature cards use, so this file stays free of imports and the build can
+   * hash and serve the files it can see.
    *
    * LangChain takes the slot the mobile strip labelled Make — that is the mark
    * the owner supplied, and the name follows the artwork.
    */
   tools: [
-    { name: "Claude Code", tone: "rose", mark: "claude.avif" },
-    { name: "OpenAI", tone: "green", mark: "chatgpt.avif" },
-    { name: "Airtable", tone: "magenta", mark: "airtable.avif" },
-    { name: "Zapier", tone: "peach", mark: "zapier.avif" },
-    { name: "LangChain", tone: "blue", mark: "langchain.avif" },
-    { name: "Python", tone: "lavender", mark: "python.avif" },
+    { name: "Claude Code", tone: "rose", mark: "claude" },
+    { name: "OpenAI", tone: "green", mark: "chatgpt" },
+    { name: "Airtable", tone: "magenta", mark: "airtable" },
+    { name: "Zapier", tone: "peach", mark: "zapier" },
+    { name: "LangChain", tone: "blue", mark: "langchain" },
+    { name: "Python", tone: "lavender", mark: "python" },
   ],
 } as const;
 
 /** Which pastel a tech stack tile is filled with. */
 export type ToolTone = (typeof techStackContent.tools)[number]["tone"];
+
+/** Keys the tiles use to pick their mark. */
+export type ToolMark = (typeof techStackContent.tools)[number]["mark"];
 
 /**
  * Pricing — "Flexible Plans for Every Growth Stage".
