@@ -216,6 +216,44 @@ export const statCounter = {
 } as const;
 
 /**
+ * The closing panel's pixel fringe — ten rectangles, to the owner's numbers.
+ *
+ * Two variants in the original, scrolled between: the second is the panel
+ * nearly bare, the first is the fringe fully out. Every offset is measured
+ * from the panel's own box.
+ *
+ * `fixed` are bites of the page's dark taken out of the panel and never move.
+ * The other seven are the panel's own green and only exist outside it: they
+ * begin flush with an edge — where, being the same colour, they cannot be seen
+ * — and grow or slide clear of it as the panel is scrolled to.
+ */
+export const ctaFringe = {
+  fixed: [
+    { w: 24, h: 24, top: 0, left: 24 },
+    { w: 40, h: 10, bottom: 0, right: 64 },
+    { w: 24, h: 10, bottom: 0, right: 0 },
+  ],
+
+  /** Above the head: one widens from nothing, three scale up from a tenth. */
+  grown: [
+    { w: 40, h: 12, top: -12, right: 0, grow: "width" },
+    { w: 12, h: 12, top: -24, right: 40, grow: "scale" },
+    { w: 24, h: 24, top: -24, left: 0, grow: "scale" },
+    { w: 24, h: 24, top: -48, left: 24, grow: "scale" },
+  ],
+
+  /** Below the foot: each slides down out of the panel by its own distance. */
+  dropped: [
+    { w: 92, h: 40, bottom: 0, left: 40, drop: 40 },
+    { w: 40, h: 40, bottom: 0, left: 172, drop: 40 },
+    { w: 40, h: 40, bottom: 0, left: 132, drop: 80 },
+  ],
+
+  /** The scale the three scaling cells wait at. */
+  restScale: 0.1,
+} as const;
+
+/**
  * Scramble-appear, from the owner's Framer University component.
  *
  * The text arrives from the left: a cursor walks the string, everything behind

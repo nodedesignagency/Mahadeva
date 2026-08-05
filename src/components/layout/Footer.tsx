@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { CtaPanel } from "@/components/layout/CtaPanel";
 import { Scramble } from "@/components/motion/Scramble";
 import { Button } from "@/components/ui/Button";
 import { footerNav } from "@/config/navigation";
@@ -15,33 +16,6 @@ import { cn } from "@/lib/cn";
  */
 
 /**
- * The pixel fringe around the panel, on a 32px grid measured from the corner
- * each cell belongs to.
- *
- * `light` squares stand outside the panel and read as it breaking up; `dark`
- * ones are cut into it. The pattern is a first pass at the original's, close
- * in weight and rhythm but not yet cell for cell.
- */
-const FRINGE_CELL = 32;
-
-const fringe = [
-  // Along the head.
-  { corner: "top-left", c: 1, r: -1, tone: "light" },
-  { corner: "top-left", c: 1, r: 0, tone: "dark" },
-  { corner: "top-left", c: 0, r: -1, tone: "dark" },
-  { corner: "top-right", c: 1, r: -1, tone: "light" },
-  { corner: "top-right", c: 0, r: 0, tone: "dark" },
-  // And the foot, which the original breaks up more.
-  { corner: "bottom-left", c: 1, r: -1, tone: "light" },
-  { corner: "bottom-left", c: 2, r: -1, tone: "light" },
-  { corner: "bottom-left", c: 4, r: 0, tone: "dark" },
-  { corner: "bottom-left", c: 4, r: -1, tone: "light" },
-  { corner: "bottom-left", c: 5, r: -2, tone: "light" },
-  { corner: "bottom-right", c: 2, r: 0, tone: "dark" },
-  { corner: "bottom-right", c: 3, r: -1, tone: "light" },
-] as const;
-
-/**
  * Every column heading. Almarai, in the scramble's settled green — the
  * component's own colour, not the muted white the rest of the column uses.
  */
@@ -54,30 +28,6 @@ const bars = [
   { left: "70%", width: "5%", tone: "bg-stat-green" },
 ] as const;
 
-/**
- * `c` counts cells along the edge from the corner. `r` counts across it: 0 is
- * the panel's own first row, and negatives step outside it. The layer paints
- * over the panel, which is what lets a dark cell read as a bite taken out of
- * it rather than a square lost behind it.
- */
-function FringeCell({ cell }: { cell: (typeof fringe)[number] }) {
-  const offset = (n: number) => `${n * FRINGE_CELL}px`;
-  const [side, edge] = cell.corner.split("-") as ["top" | "bottom", "left" | "right"];
-
-  return (
-    <span
-      aria-hidden="true"
-      className={cn("absolute hidden desktop:block", cell.tone === "light" ? "bg-cta" : "bg-bg")}
-      style={{
-        width: FRINGE_CELL,
-        height: FRINGE_CELL,
-        [edge]: offset(cell.c),
-        [side]: offset(cell.r),
-      }}
-    />
-  );
-}
-
 export function Footer() {
   return (
     // The two custom properties are what `.mh-nav-link` mixes between, so
@@ -85,31 +35,22 @@ export function Footer() {
     // always dark, so it takes the header's dark pair.
     <footer className="bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)]">
       <Container className="pt-20 pb-16">
-        <div className="relative">
-          <div className="relative flex flex-col justify-between gap-10 bg-cta p-10 text-fg-on-light tablet:flex-row tablet:items-center tablet:p-16">
-            <h2 className="flex flex-col text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal">
-              {footerContent.cta.headingLines.map((line) => (
-                <span key={line}>{line}</span>
-              ))}
-            </h2>
-
-            <Button
-              href={footerContent.cta.action.href}
-              variant="plan"
-              withArrow
-              className="shrink-0"
-            >
-              {footerContent.cta.action.label}
-            </Button>
-          </div>
-
-          {/* After the panel, so the dark cells cut into it. */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-            {fringe.map((cell, i) => (
-              <FringeCell key={i} cell={cell} />
+        <CtaPanel className="relative flex flex-col justify-between gap-10 bg-cta p-10 text-fg-on-light tablet:flex-row tablet:items-center tablet:p-16">
+          <h2 className="flex flex-col text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal">
+            {footerContent.cta.headingLines.map((line) => (
+              <span key={line}>{line}</span>
             ))}
-          </div>
-        </div>
+          </h2>
+
+          <Button
+            href={footerContent.cta.action.href}
+            variant="plan"
+            withArrow
+            className="shrink-0"
+          >
+            {footerContent.cta.action.label}
+          </Button>
+        </CtaPanel>
       </Container>
 
       <Container className="pb-14">
@@ -135,7 +76,11 @@ export function Footer() {
           </div>
 
           {footerNav.map((group) => (
-            <nav key={group.title} className="flex flex-col gap-5" aria-label={group.title}>
+            <nav
+              key={group.title}
+              className="flex flex-col gap-5"
+              aria-label={group.title}
+            >
               <Scramble text={group.title} className={LABEL} />
               {/* 16 between links, against the 20 that separates them from
                   the heading — enough that the hover rule under one clears
