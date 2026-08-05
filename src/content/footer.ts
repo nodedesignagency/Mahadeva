@@ -13,7 +13,14 @@ export const footerContent = {
   cta: {
     /** One entry per visual line, as elsewhere: the break is a decision. */
     headingLines: ["Ready to Build Your AI", "Growth Engine?"],
-    action: { label: "Get Free Consultation", href: "/contact" },
+    /** The break moves on a phone, where the first line no longer fits. */
+    headingLinesMobile: ["Ready to Build Your", "AI Growth Engine?"],
+    action: {
+      label: "Get Free Consultation",
+      /** The phone drops the verb; the button is the whole width there. */
+      labelShort: "Free Consultation",
+      href: "/contact",
+    },
   },
 
   contact: [

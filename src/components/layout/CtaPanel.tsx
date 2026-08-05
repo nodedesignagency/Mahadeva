@@ -75,13 +75,10 @@ export function CtaPanel({ children, className }: CtaPanelProps) {
     <div ref={panel} className="relative">
       <div className={className}>{children}</div>
 
-      {/* Over the panel, so the dark cells read as bites out of it. Below
-          tablet the panel runs edge to edge and the fringe has nowhere to
-          stand, so it is not drawn. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 hidden tablet:block"
-      >
+      {/* Over the panel, so the dark cells read as bites out of it. Drawn at
+          every width: the panel keeps the page's gutters on a phone, so the
+          cells still have ground to stand on either side of it. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         {ctaFringe.fixed.map((cell, i) => (
           <span
             key={`fixed-${i}`}

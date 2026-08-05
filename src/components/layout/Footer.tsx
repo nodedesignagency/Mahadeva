@@ -33,19 +33,36 @@ export function Footer() {
       {/* 160 between the panel and the columns, per the owner. */}
       <Container className="pt-20 pb-40">
         <CtaPanel className="relative flex flex-col justify-between gap-10 bg-cta p-10 text-fg-on-light tablet:flex-row tablet:items-center tablet:p-16">
-          <h2 className="flex flex-col text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal">
-            {footerContent.cta.headingLines.map((line) => (
-              <span key={line}>{line}</span>
-            ))}
+          {/* Both sets of breaks are in the markup and one is shown, the same
+              as the hero: where a line breaks is a decision, not a wrap. */}
+          <h2 className="text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal">
+            <span className="flex flex-col max-tablet:hidden">
+              {footerContent.cta.headingLines.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+            </span>
+            <span className="flex flex-col tablet:hidden">
+              {footerContent.cta.headingLinesMobile.map((line) => (
+                <span key={line}>{line}</span>
+              ))}
+            </span>
           </h2>
 
+          {/* Full width on a phone, and the label loses its verb there. The
+              accessible name stays the long one either way. */}
           <Button
             href={footerContent.cta.action.href}
             variant="plan"
             withArrow
-            className="shrink-0"
+            aria-label={footerContent.cta.action.label}
+            className="w-full shrink-0 tablet:w-auto"
           >
-            {footerContent.cta.action.label}
+            <span className="max-tablet:hidden">
+              {footerContent.cta.action.label}
+            </span>
+            <span className="tablet:hidden">
+              {footerContent.cta.action.labelShort}
+            </span>
           </Button>
         </CtaPanel>
       </Container>
@@ -79,10 +96,12 @@ export function Footer() {
               aria-label={group.title}
             >
               <Scramble text={group.title} className={LABEL} />
-              {/* 16 between links, against the 20 that separates them from
-                  the heading — enough that the hover rule under one clears
-                  the link below it. */}
-              <ul className="flex flex-col gap-4">
+              {/* A row that wraps on a phone, where a column of five would
+                  make the footer far taller than the page it closes; a column
+                  from tablet up. 16 between links either way, against the 20
+                  that separates them from the heading — enough that the hover
+                  rule under one clears the link below it. */}
+              <ul className="flex flex-wrap gap-x-10 gap-y-4 tablet:flex-col tablet:flex-nowrap">
                 {group.items.map((item) => (
                   <li key={item.label} className="w-fit">
                     <Link
@@ -130,26 +149,23 @@ export function Footer() {
 
       {/* The closing wordmark, only just visible, with a single row of the
           site's pattern above and below it. The bottom row is the last thing
-          on the page — there is no padding under it.
+          on the page, and the top one meets the bar above without a gap.
 
           Decorative throughout: the site's name is already the header's link.
 
-          Sized in `cqw` against the container rather than `vw` against the
-          screen, so the word fills the same measure the rest of the page is
-          set to and stops growing where that measure does. */}
-      {/* Full-bleed: the rows run the width of the screen, where everything
+          Full-bleed: the rows run the width of the screen, where everything
           else on the page — the word included — keeps the site's measure.
           `overflow-hidden` is what makes the foot of this box the foot of the
           page: at this size the glyphs stand outside their line box, and the
           document would otherwise carry on for another 40px below the last
           row. */}
-      <div aria-hidden="true" className="relative overflow-hidden pt-10">
+      <div aria-hidden="true" className="relative overflow-hidden">
         <PatternField
           side="footerTop"
           orientation="horizontal"
           tracks={1}
           thickness={BAR}
-          className="top-10"
+          className="top-0"
         />
 
         {/* The word takes the container, so it starts and ends where the
