@@ -59,10 +59,13 @@ export function Testimonials({ content }: TestimonialsProps) {
               settings={sectionTextRevealDynamic}
               className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
             />
-            {/* Pure white and set wider than the muted supporting lines
-                elsewhere on the dark ground — the original gives this one two
-                long lines rather than three short greyed ones. */}
-            <p className="mt-6 max-w-[68ch] font-body text-body-lg leading-[1.5] text-fg">
+            {/* Bound to the dynamic ink, not to white. The page crossfades to
+                the light surface while this section is still on screen — the
+                handover is pulled toward a dark section's own edges — so text
+                fixed to white goes invisible exactly there. Full strength
+                rather than the muted step, per the original, and set wide
+                enough for two long lines. */}
+            <p className="text-ink-dynamic mt-6 max-w-[68ch] font-body text-body-lg leading-[1.5]">
               {content.subheading}
             </p>
           </div>
@@ -81,7 +84,12 @@ export function Testimonials({ content }: TestimonialsProps) {
                 aria-label={label}
                 disabled={off}
                 onClick={() => setShown(to)}
-                className="flex size-11 items-center justify-center rounded-[4px] bg-fg/10 text-fg transition-[background-color,opacity] duration-(--duration-hover) ease-(--ease-out) hover:bg-fg/20 disabled:pointer-events-none disabled:opacity-40"
+                // A fixed dark button with a light arrow, as in the original,
+                // rather than anything derived from the surface: white-on-ink
+                // when the page is dark, and still a solid dark button once
+                // the page has crossfaded to white under it. An alpha of the
+                // ink would have gone pale and taken the arrow with it.
+                className="flex size-11 items-center justify-center rounded-[4px] bg-(--mh-ink-border) text-fg transition-[filter,opacity] duration-(--duration-hover) ease-(--ease-out) hover:brightness-125 disabled:pointer-events-none disabled:opacity-40"
               >
                 <Icon aria-hidden="true" className="size-5" />
               </button>

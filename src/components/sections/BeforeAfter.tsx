@@ -78,9 +78,10 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
           machinery runs, so an inner fill is also the one thing on the page
           that would not fade with the rest. */}
       <div ref={cards} className="sticky top-0 z-10 flex min-h-screen items-center py-20">
-        {/* 75% of the screen, holding the owner's pair of 812s at the width
-            they stop growing. Below desktop it is the page's own gutters. */}
-        <div className="mx-auto w-full px-gutter desktop:w-3/4 desktop:max-w-[1644px] desktop:px-0">
+        {/* A fixed 812 for the pair, not a share of the screen. The words
+            travel outward past the cards, and a proportional width kept
+            growing into the space they need — at which point they cross. */}
+        <div className="mx-auto w-full px-gutter desktop:w-[812px] desktop:px-0">
           <div className="grid gap-5 desktop:grid-cols-2">
             {content.columns.map((column) => (
               <div
