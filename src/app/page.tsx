@@ -11,13 +11,13 @@ import { Faq } from "@/components/sections/Faq";
 import {
   aboutContent,
   beforeAfterContent,
-  faqContent,
   featuresContent,
   heroContent,
   techStackContent,
   testimonialsContent,
   trustContent,
 } from "@/content/home";
+import { faqContent } from "@/content/faq";
 import { pricingContent } from "@/content/pricing";
 import { caseStudiesContent } from "@/content/case-studies";
 import { getCaseStudies } from "@/lib/case-studies";

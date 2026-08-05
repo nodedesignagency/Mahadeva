@@ -98,3 +98,91 @@ export const impactContent = {
     { client: "Logoipsum", prefix: "", value: 300, unit: "+", label: "Hours Saved Monthly" },
   ],
 } as const;
+
+/**
+ * Plan comparison — "Find The Right Plan".
+ *
+ * Three plans against the same list of features, in three groups. A cell is
+ * either a phrase or a yes/no: `true` and `false` render as the tick and the
+ * cross, so the table never spells "Included" in one row and draws a tick for
+ * the same meaning in the next.
+ *
+ * The blurbs are the comparison's own — shorter than the cards' copy above,
+ * since here they sit in a column head rather than a card.
+ *
+ * ⚠️ Read from the owner's reference shot. The plan names and tints match the
+ * cards; the feature list is this table's alone.
+ */
+export const compareContent = {
+  headingLines: ["Find The Right Plan"],
+  subheading:
+    "Compare features, automation capacity, and support levels to pick what fits your growth stage.",
+  plans: [
+    {
+      name: "Launch",
+      tone: "sky",
+      body: "Simple automation workflows built for growing teams.",
+      cta: { label: "Get Started", href: "/contact" },
+    },
+    {
+      name: "Scale",
+      tone: "lavender",
+      body: "Advanced automation designed to accelerate team growth.",
+      cta: { label: "Get Started", href: "/contact" },
+    },
+    {
+      name: "Enterprise",
+      tone: "peach",
+      body: "Custom AI infrastructure built for enterprise scale.",
+      cta: { label: "Get Started", href: "/contact" },
+    },
+  ],
+  /** Values are in plan order: Launch, Scale, Enterprise. */
+  groups: [
+    {
+      title: "General",
+      rows: [
+        {
+          label: "Automation Projects",
+          values: ["1 Active System", "Up to 5 Systems", "Unlimited Systems"],
+        },
+        {
+          label: "Monthly Runs",
+          values: ["Up to 2,000", "Up to 75,000", "Unlimited"],
+        },
+        {
+          label: "Connected Tools",
+          values: ["Core Integrations", "Advanced Stack", "Custom Ecosystem"],
+        },
+        {
+          label: "Support Access",
+          values: ["Email Support", "Priority Support", "Dedicated Success Team"],
+        },
+      ],
+    },
+    {
+      title: "Automation Capabilities",
+      rows: [
+        { label: "Visual Workflow Builder", values: [true, true, true] },
+        { label: "Event Triggers", values: ["Basic", "Advanced", "Advanced"] },
+        { label: "Context Memory", values: [false, true, true] },
+        { label: "Performance Insights", values: [false, "Included", "Included"] },
+      ],
+    },
+    {
+      title: "Security & Access",
+      rows: [
+        {
+          label: "Activity Tracking",
+          values: ["Only Once", "Basic Logs", "Full Audit Logs"],
+        },
+        { label: "SSO / Identity Login", values: [false, true, true] },
+        { label: "Private Infrastructure", values: [false, false, true] },
+        { label: "Custom Compliance", values: [false, false, true] },
+      ],
+    },
+  ],
+} as const;
+
+/** A cell: a phrase, or the tick and cross a yes/no draws. */
+export type CompareValue = (typeof compareContent.groups)[number]["rows"][number]["values"][number];

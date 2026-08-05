@@ -4,7 +4,7 @@ import { Container } from "@/components/layout/Container";
 import { Accordion } from "@/components/motion/Accordion";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextRevealBeige } from "@/config/animation";
-import type { faqContent } from "@/content/home";
+import type { faqContent } from "@/content/faq";
 
 /**
  * FAQ — "Answers to Your Questions".

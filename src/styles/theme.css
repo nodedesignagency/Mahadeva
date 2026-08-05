@@ -198,6 +198,9 @@
   --color-border-nav-on-light: var(--mh-mist);
   /* Neutral block standing in for photography until the file lands. */
   --color-placeholder: var(--mh-grey-200);
+  /* The comparison table's group bands. A step off the white rows, so a group
+   * heading reads as a divider between them rather than another row. */
+  --color-compare-band: var(--mh-grey-100);
   /* The billing toggle's off-state track and the grey of the pricing cards'
    * "PLAN INCLUDES:" labels. */
   --color-track: var(--mh-grey-250);
@@ -457,6 +460,7 @@
   --color-border-on-light: var(--color-border-on-light);
   --color-border-nav-on-light: var(--color-border-nav-on-light);
   --color-placeholder: var(--color-placeholder);
+  --color-compare-band: var(--color-compare-band);
   --color-track: var(--color-track);
   --color-fg-label: var(--color-fg-label);
   --color-accent: var(--color-accent);

@@ -15,14 +15,21 @@ import { cn } from "@/lib/cn";
 const SCROLL_THRESHOLD = 350;
 
 /**
- * Routes that open on a dark hero, and so want the dark strip at rest.
+ * The surface each route opens on, where it is not the default white.
  *
- * Everywhere else the page's first section is a light surface, where the dark
- * strip is a black bar sitting on beige. Listed by route rather than measured:
- * the header renders before the page it sits over, and reading the surface out
- * of the DOM would mean painting one strip and correcting it a frame later.
+ * `dark` keeps the dark strip until the scroll threshold; `beige` takes the
+ * light strip in the page's own beige, so the header is part of the surface
+ * rather than a white band laid over it. Everything else about the light strip
+ * — ink, hairline, link colours — is the same either way.
+ *
+ * Listed by route rather than measured: the header renders before the page it
+ * sits over, and reading the surface out of the DOM would mean painting one
+ * strip and correcting it a frame later.
  */
-const DARK_HERO_ROUTES = new Set(["/"]);
+const ROUTE_SURFACE: Record<string, "dark" | "beige"> = {
+  "/": "dark",
+  "/pricing": "beige",
+};
 
 /**
  * Site header.
@@ -49,7 +56,8 @@ export function Header() {
   // strip. Everything the header draws reads this, not `scrolled` — the CTA's
   // border followed the scroll alone once, and sat invisible on a page that
   // was light from the top.
-  const light = scrolled || !DARK_HERO_ROUTES.has(pathname);
+  const surface = ROUTE_SURFACE[pathname];
+  const light = scrolled || surface !== "dark";
 
   // `passive` keeps this off the scrolling critical path. The initial read is
   // deferred a frame rather than run in the effect body, so a restored scroll
@@ -145,8 +153,12 @@ export function Header() {
         // Each surface carries its own hairline and its own pair of link
         // colours, which the links mix between on hover.
         light
-          ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)] [--mh-nav-rule-color:var(--color-border-nav-on-light)]"
+          ? "border-border-on-light text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)] [--mh-nav-rule-color:var(--color-border-nav-on-light)]"
           : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)] [--mh-nav-rule-color:var(--color-fg)]",
+        // The light strip's fill is the only thing a beige page changes: it
+        // takes the page's own surface, so the header reads as the top of it
+        // rather than a white band laid over it.
+        light && (surface === "beige" ? "bg-bg-light" : "bg-bg-white"),
       )}
     >
       <Container className="flex h-header items-center justify-between gap-6">
