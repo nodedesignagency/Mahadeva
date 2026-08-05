@@ -33,8 +33,12 @@ const tones: Record<CaseTone, string> = {
 function Stat({ stat }: { stat: CaseStat }) {
   return (
     <div className="flex flex-col gap-2">
-      <dt className="font-ui text-body-sm font-light text-fg-on-light/70">{stat.label}</dt>
-      <dd className="font-ui text-heading-lg font-light text-fg-on-light">{stat.value}</dd>
+      <dt className="font-ui text-body-sm font-light text-fg-on-light/70">
+        {stat.label}
+      </dt>
+      <dd className="font-ui text-heading-lg font-light text-fg-on-light">
+        {stat.value}
+      </dd>
     </div>
   );
 }
@@ -73,7 +77,12 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             introduces the study sits at the top, the figures sit at the foot,
             and the gap between them absorbs whatever the artwork's height
             leaves over. */}
-        <div className={cn("flex flex-col justify-between gap-16 p-7", tones[study.tone])}>
+        <div
+          className={cn(
+            "flex flex-col justify-between gap-16 p-7",
+            tones[study.tone],
+          )}
+        >
           <div className="flex flex-col gap-7">
             <div className="flex items-start justify-between gap-4">
               {study.logo?.url ? (
@@ -112,7 +121,10 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
 
           <dl className="grid grid-cols-2 gap-x-5">
             {columns.map((column, i) => (
-              <div key={i} className="flex flex-col gap-10 border-l border-fg-on-light/15 pl-4">
+              <div
+                key={i}
+                className="flex flex-col gap-10 border-l border-fg-on-light/15 pl-4"
+              >
                 {column.map((stat) => (
                   <Stat key={stat.label} stat={stat} />
                 ))}
@@ -123,9 +135,13 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
 
         {/* The artwork half, and the whole of the hover. `aspect-[560/552]` is
             the Framer frame's proportion, which is what makes the rectangles'
-            pixel positions convertible to percentages at all. */}
+            pixel positions convertible to percentages at all.
+
+            Stacked under the panel on a phone, where it takes the owner's flat
+            424 instead: the square this proportion gives would be most of a
+            screen on its own. */}
         <div
-          className="relative aspect-[560/552] overflow-clip bg-bg-light"
+          className="relative h-[424px] overflow-clip bg-bg-light lg:aspect-[560/552] lg:h-auto"
           style={
             {
               "--mh-case-duration": `${caseHover.duration}ms`,
@@ -146,14 +162,19 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             />
           ) : (
             <div className="mh-case-cover flex size-full items-center justify-center p-7">
-              <p className="font-body text-body-sm text-fg-on-light/40">Screenshot to come</p>
+              <p className="font-body text-body-sm text-fg-on-light/40">
+                Screenshot to come
+              </p>
             </div>
           )}
 
           {/* Decorative, and confined to this half — the rectangles belong to
               the artwork, not to the reading matter beside it. Above the link
               surface so nothing clips them. */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-30">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-30"
+          >
             {caseHover.rects.map((rect, i) => (
               <span
                 key={i}

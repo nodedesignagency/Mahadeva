@@ -44,12 +44,21 @@ export function CaseStudies({ content, studies }: CaseStudiesProps) {
             </p>
           </div>
 
-          <Button href={content.cta.href} variant="secondary" withArrow className="shrink-0">
+          {/* `self-start`: in the column this row becomes on a phone, a flex
+              item stretches, and the original sizes this button to its own
+              228 rather than the screen. */}
+          <Button
+            href={content.cta.href}
+            variant="secondary"
+            withArrow
+            className="shrink-0 self-start"
+          >
             {content.cta.label}
           </Button>
         </div>
 
-        <div className="mt-15 flex flex-col gap-5">
+        {/* 10 between cards on a phone, per the owner. */}
+        <div className="mt-15 flex flex-col gap-2.5 tablet:gap-5">
           {studies.slice(0, SHOWN).map((study) => (
             <CaseStudyCard
               key={study.slug}
@@ -57,7 +66,11 @@ export function CaseStudies({ content, studies }: CaseStudiesProps) {
               // The rectangles are the panel's own colour, so a card's hover
               // reads as that card's tint arriving over the artwork rather
               // than a second, louder shade laid on top.
-              style={{ "--mh-case-shape": `var(--color-case-${study.tone})` } as CSSProperties}
+              style={
+                {
+                  "--mh-case-shape": `var(--color-case-${study.tone})`,
+                } as CSSProperties
+              }
             />
           ))}
         </div>

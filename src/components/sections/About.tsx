@@ -41,11 +41,20 @@ export function About({ content }: AboutProps) {
       data-bg-keep=""
       className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-30 text-fg-on-light"
     >
-      <Container className="relative flex min-h-screen flex-col items-center justify-center gap-10 px-0">
+      {/* A viewport tall from tablet up, where the statement is the whole
+          screen. On a phone it takes the height it needs and the section's
+          own 80/120 does the spacing — a forced 100vh there left a long
+          empty stretch under the mark. */}
+      <Container className="relative flex flex-col items-center justify-center gap-10 px-0 tablet:min-h-screen">
         <p className="flex items-center justify-center gap-2 text-body-md">
           <Image src={ornamentLeft} alt="" aria-hidden className="h-8 w-auto" />
           {content.eyebrow}
-          <Image src={ornamentRight} alt="" aria-hidden className="h-8 w-auto" />
+          <Image
+            src={ornamentRight}
+            alt=""
+            aria-hidden
+            className="h-8 w-auto"
+          />
         </p>
 
         <TextReveal
