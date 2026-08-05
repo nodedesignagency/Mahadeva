@@ -6,8 +6,12 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useInView } from "motion/react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { sectionTextRevealDynamic, testimonialCarousel } from "@/config/animation";
+import {
+  sectionTextRevealDynamic,
+  testimonialCarousel,
+} from "@/config/animation";
 import type { TestimonialTone, testimonialsContent } from "@/content/home";
+import { cn } from "@/lib/cn";
 import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
 import { viewport } from "@/lib/motion";
 
@@ -49,7 +53,10 @@ export function Testimonials({ content }: TestimonialsProps) {
   const last = content.items.length - 1;
 
   return (
-    <section data-bg="green" className="overflow-hidden bg-bg py-20 tablet:py-30">
+    <section
+      data-bg="green"
+      className="overflow-hidden bg-bg py-20 tablet:py-30"
+    >
       <Container>
         <div className="flex flex-col gap-8 tablet:flex-row tablet:items-end tablet:justify-between">
           <div>
@@ -75,8 +82,18 @@ export function Testimonials({ content }: TestimonialsProps) {
               a screen reader as well as to the eye. */}
           <div className="flex shrink-0 gap-2">
             {[
-              { label: content.controls.previous, Icon: ArrowLeft, to: shown - 1, off: shown === 0 },
-              { label: content.controls.next, Icon: ArrowRight, to: shown + 1, off: shown === last },
+              {
+                label: content.controls.previous,
+                Icon: ArrowLeft,
+                to: shown - 1,
+                off: shown === 0,
+              },
+              {
+                label: content.controls.next,
+                Icon: ArrowRight,
+                to: shown + 1,
+                off: shown === last,
+              },
             ].map(({ label, Icon, to, off }) => (
               <button
                 key={label}
@@ -89,9 +106,17 @@ export function Testimonials({ content }: TestimonialsProps) {
                 // when the page is dark, and still a solid dark button once
                 // the page has crossfaded to white under it. An alpha of the
                 // ink would have gone pale and taken the arrow with it.
-                className="flex size-11 items-center justify-center rounded-[4px] bg-(--mh-ink-border) text-fg transition-[filter,opacity] duration-(--duration-hover) ease-(--ease-out) hover:brightness-125 disabled:pointer-events-none disabled:opacity-40"
+                className="flex size-11 items-center justify-center rounded-[4px] bg-(--mh-ink-border) text-fg transition-[filter] duration-(--duration-hover) ease-(--ease-out) hover:brightness-125 disabled:pointer-events-none"
               >
-                <Icon aria-hidden="true" className="size-5" />
+                {/* The arrow dims at the end of the row, not the button under
+                    it — the square holds its weight either way. */}
+                <Icon
+                  aria-hidden="true"
+                  className={cn(
+                    "size-5 transition-opacity duration-(--duration-hover) ease-(--ease-out)",
+                    off && "opacity-40",
+                  )}
+                />
               </button>
             ))}
           </div>
@@ -125,7 +150,10 @@ export function Testimonials({ content }: TestimonialsProps) {
               }
               className={cardClass(item.tone)}
             >
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+              >
                 {testimonialCarousel.rects.map((rect, r) => (
                   <span
                     key={r}
@@ -144,11 +172,13 @@ export function Testimonials({ content }: TestimonialsProps) {
                 ))}
               </div>
 
-              {/* 40/60, per the owner. The portrait is a cut-out standing on
-                  the card's own fill, so the column has no frame of its own —
-                  and while the photographs are outstanding it is simply
-                  empty, which reads as a wide quote rather than as a fault. */}
-              <div className="relative hidden w-2/5 shrink-0 tablet:block" />
+              {/* The portrait: a 40% column beside the quote from tablet up,
+                  and a 300px band under it on a phone — which is why it is
+                  ordered last there and first above. It is a cut-out standing
+                  on the card's own fill, so it has no frame of its own, and
+                  while the photographs are outstanding it is simply empty
+                  rather than a grey box standing in for one. */}
+              <div className="relative order-last h-[300px] w-full shrink-0 tablet:order-first tablet:h-auto tablet:w-2/5" />
 
               <div className="relative flex w-full flex-col justify-between gap-10 p-10 tablet:w-3/5">
                 {/* The owner's L breakpoint: 48px, -0.05em, 1.2 line. Tighter
@@ -158,7 +188,7 @@ export function Testimonials({ content }: TestimonialsProps) {
                   {`“${item.quote}”`}
                 </blockquote>
 
-                <figcaption className="text-right font-body text-quote-by text-fg-on-light">
+                <figcaption className="font-body text-quote-by text-fg-on-light tablet:text-right">
                   {`— ${item.name}, ${item.role}`}
                 </figcaption>
               </div>
@@ -172,12 +202,12 @@ export function Testimonials({ content }: TestimonialsProps) {
 
 /**
  * The card's box. 1120x516 in the file, held as a ratio so it keeps its
- * proportion as the container narrows; below tablet the portrait column is
- * dropped and the card takes whatever height the quote needs.
+ * proportion as the container narrows; on a phone it stacks — quote over
+ * portrait — and takes whatever height the two need.
  */
 function cardClass(tone: TestimonialTone) {
   return [
-    "relative flex w-full shrink-0 overflow-clip",
+    "relative flex w-full shrink-0 flex-col overflow-clip tablet:flex-row",
     "tablet:aspect-[1120/516]",
     tones[tone],
   ].join(" ");
