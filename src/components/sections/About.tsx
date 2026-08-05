@@ -39,13 +39,15 @@ export function About({ content }: AboutProps) {
     <section
       data-bg="white"
       data-bg-keep=""
-      className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-30 text-fg-on-light"
+      className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-12 text-fg-on-light lg:pb-30"
     >
-      {/* A viewport tall from tablet up, where the statement is the whole
-          screen. On a phone it takes the height it needs and the section's
-          own 80/120 does the spacing — a forced 100vh there left a long
-          empty stretch under the mark. */}
-      <Container className="relative flex flex-col items-center justify-center gap-10 px-0 tablet:min-h-screen">
+      {/* A viewport tall on desktop, where the statement is the whole screen
+          and the mark hangs out of the section rather than sitting in it.
+          Below that it takes the height it needs: a forced 100vh holds the
+          section open past its content, and centring splits the difference
+          above and below, which is most of the empty stretch that used to sit
+          between the mark and the heading underneath. */}
+      <Container className="relative flex flex-col items-center justify-center gap-10 px-0 lg:min-h-screen">
         <p className="flex items-center justify-center gap-2 text-body-md">
           <Image src={ornamentLeft} alt="" aria-hidden className="h-8 w-auto" />
           {content.eyebrow}
@@ -74,11 +76,16 @@ export function About({ content }: AboutProps) {
          * overwrite, so the mark stays centred as it climbs. */}
         <Parallax
           drift={markParallax.drift}
-          // Only where the mark is taken out of the flow. Below that it sits
-          // in the column under the statement, and a drift would leave its own
-          // box behind as a hole between this section and the next.
+          // The full climb only where the mark is taken out of the flow. Below
+          // that it sits in the column under the statement, where the climb is
+          // also the hole left behind it, so it runs a much shorter one.
           minWidth={1024}
-          className="z-20 lg:absolute lg:-bottom-[431px] lg:left-1/2 lg:-translate-x-1/2"
+          narrowDrift={markParallax.driftNarrow}
+          // And the space that climb opens is taken back here: the mark hangs
+          // into the gap under the section rather than reserving all of its own
+          // height, which is what closes the long empty stretch between the
+          // statement and the heading below it.
+          className="-mb-14 sm:-mb-20 lg:mb-0 z-20 lg:absolute lg:-bottom-[431px] lg:left-1/2 lg:-translate-x-1/2"
         >
           <Image
             src={mark}

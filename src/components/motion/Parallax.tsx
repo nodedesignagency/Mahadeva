@@ -45,14 +45,20 @@ type ParallaxProps = {
    */
   range?: "traverse" | "top";
   /**
-   * Below this width, in px, the element stays where the layout puts it.
+   * Width, in px, at which `drift` takes over from `narrowDrift`.
    *
-   * A drifting element leaves its own box behind: the space it occupied is
-   * still there, empty, wherever it climbed away from. That is the point on a
-   * long desktop section and a bug on a phone, where it reads as a hole
-   * between one section and the next.
+   * The two exist because a drifting element leaves its own box behind: the
+   * space it occupied is still there, empty, wherever it climbed away from.
+   * Where the element is taken out of the flow that costs nothing. Where it
+   * still sits in the column — every screen below the desktop breakpoint here —
+   * the gap it opens is a hole between one section and the next, so the travel
+   * has to stay small enough for the layout to absorb.
    */
   minWidth?: number;
+  /**
+   * Climb used below `minWidth`. Omit to hold the element still down there.
+   */
+  narrowDrift?: string;
   className?: string;
 };
 
@@ -62,6 +68,7 @@ export function Parallax({
   trackSelector = "section",
   range = "traverse",
   minWidth,
+  narrowDrift,
   className,
 }: ParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -85,18 +92,25 @@ export function Parallax({
   // Turned on a frame later rather than synchronously: the scroll position has
   // settled by then, and setting state straight from an effect would cascade a
   // render before the browser has painted anything.
-  const [enabled, setEnabled] = useState(false);
+  //
+  // Null is "hold still", which is also what a narrow screen gets when no
+  // `narrowDrift` was given.
+  const [active, setActive] = useState<string | null>(null);
   useEffect(() => {
     track.current = ref.current?.closest(trackSelector) ?? ref.current;
 
     const query = minWidth
       ? window.matchMedia(`(min-width: ${minWidth}px)`)
       : null;
-    const wide = () => query?.matches ?? true;
-    let frame = requestAnimationFrame(() => setEnabled(!reduced && wide()));
+    const current = () => {
+      if (reduced) return null;
+      if (!query || query.matches) return drift;
+      return narrowDrift ?? null;
+    };
+    let frame = requestAnimationFrame(() => setActive(current()));
     const read = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setEnabled(!reduced && wide()));
+      frame = requestAnimationFrame(() => setActive(current()));
     };
 
     query?.addEventListener("change", read);
@@ -104,7 +118,7 @@ export function Parallax({
       cancelAnimationFrame(frame);
       query?.removeEventListener("change", read);
     };
-  }, [reduced, trackSelector, minWidth]);
+  }, [reduced, trackSelector, minWidth, drift, narrowDrift]);
 
   // Measured from the element entering the viewport to it leaving, so the
   // midpoint of the drift is the midpoint of its journey across the screen.
@@ -121,13 +135,13 @@ export function Parallax({
   // page from there. Swinging both ways started it below its own position and
   // spent half the travel just getting back, which is why it never reached the
   // text.
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", `-${drift}`]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", `-${active ?? "0%"}`]);
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      style={enabled ? { y } : undefined}
+      style={active ? { y } : undefined}
     >
       {children}
     </motion.div>

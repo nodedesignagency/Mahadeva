@@ -184,6 +184,17 @@ export const markParallax = {
   speed: 1.3,
   /** Total climb over a full traverse, as a share of the mark's height. */
   drift: "128%",
+  /**
+   * The same effect below the desktop breakpoint, where the mark sits in the
+   * column instead of hanging out of the section.
+   *
+   * Much shorter, and not for taste: in the flow the climb is also the size of
+   * the hole left under the mark, and by the time the next heading is on screen
+   * the section is ~80% through its traverse. At 26% of a 248-320px mark that
+   * is 50-70px of movement against the statement — read as drift, small enough
+   * for the section's own bottom padding to swallow.
+   */
+  driftNarrow: "26%",
 } as const;
 
 /**
