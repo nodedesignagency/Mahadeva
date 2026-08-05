@@ -142,6 +142,12 @@
   /* The closing call-to-action panel. */
   --color-cta: var(--mh-green-100);
 
+  /* The footer's column labels: the settled colour of the scramble that
+   * brings them in, which the original calls Green 4. Its churning colour is
+   * the accent, Green 8. Named for the role rather than `--color-label`,
+   * which would collide with the `--text-label` size under `text-label`. */
+  --color-footer-label: var(--mh-green-100);
+
   /* Testimonial cards, and the blocks that slide in when one takes the
    * centre — the same one-step-deeper relationship as everywhere else. */
   --color-quote-blue: var(--mh-blue-50); /* DCECFF */
@@ -420,6 +426,7 @@
   --color-tool-blue: var(--color-tool-blue);
   --color-tool-lavender: var(--color-tool-lavender);
   --color-cta: var(--color-cta);
+  --color-footer-label: var(--color-footer-label);
   --color-quote-blue: var(--color-quote-blue);
   --color-quote-green: var(--color-quote-green);
   --color-quote-yellow: var(--color-quote-yellow);

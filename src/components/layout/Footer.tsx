@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { Scramble } from "@/components/motion/Scramble";
 import { Button } from "@/components/ui/Button";
 import { footerNav } from "@/config/navigation";
 import { footerContent } from "@/content/footer";
@@ -40,6 +41,12 @@ const fringe = [
   { corner: "bottom-right", c: 3, r: -1, tone: "light" },
 ] as const;
 
+/**
+ * Every column heading. Almarai, in the scramble's settled green — the
+ * component's own colour, not the muted white the rest of the column uses.
+ */
+const LABEL = "font-body text-body-sm uppercase text-footer-label";
+
 /** The coloured bars either side of the wordmark. */
 const bars = [
   { left: "0%", width: "23%", tone: "bg-quote-blue" },
@@ -73,7 +80,10 @@ function FringeCell({ cell }: { cell: (typeof fringe)[number] }) {
 
 export function Footer() {
   return (
-    <footer className="bg-bg text-fg">
+    // The two custom properties are what `.mh-nav-link` mixes between, so
+    // every link here hovers exactly as the header's do. This ground is
+    // always dark, so it takes the header's dark pair.
+    <footer className="bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)]">
       <Container className="pt-20 pb-16">
         <div className="relative">
           <div className="relative flex flex-col justify-between gap-10 bg-cta p-10 text-fg-on-light tablet:flex-row tablet:items-center tablet:p-16">
@@ -107,11 +117,10 @@ export function Footer() {
           <div className="flex flex-col gap-8">
             {footerContent.contact.map((item) => (
               <div key={item.label} className="flex flex-col gap-2">
-                <p className="font-body text-body-sm uppercase text-fg-muted">{item.label}</p>
-                <a
-                  href={item.href}
-                  className="font-body text-heading-md transition-colors duration-(--duration-hover) ease-(--ease-out) hover:text-fg-muted"
-                >
+                <Scramble text={item.label} className={LABEL} />
+                {/* Geist 28 regular, unlike the links beside it, which are
+                    Almarai — the owner sets the two contact lines apart. */}
+                <a href={item.href} className="mh-nav-link font-ui text-[1.75rem] font-normal">
                   {item.value}
                 </a>
               </div>
@@ -120,7 +129,7 @@ export function Footer() {
 
           {footerNav.map((group) => (
             <nav key={group.title} className="flex flex-col gap-5" aria-label={group.title}>
-              <p className="font-body text-body-sm uppercase text-fg-muted">{group.title}</p>
+              <Scramble text={group.title} className={LABEL} />
               <ul className="flex flex-col gap-3">
                 {group.items.map((item) => (
                   <li key={item.label}>
@@ -129,7 +138,7 @@ export function Footer() {
                       {...(item.external
                         ? { target: "_blank", rel: "noreferrer noopener" }
                         : {})}
-                      className="font-body text-body-md transition-colors duration-(--duration-hover) ease-(--ease-out) hover:text-fg-muted"
+                      className="mh-nav-link font-body text-body-md"
                     >
                       {item.label}
                     </Link>

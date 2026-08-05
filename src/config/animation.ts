@@ -216,6 +216,27 @@ export const statCounter = {
 } as const;
 
 /**
+ * Scramble-appear, from the owner's Framer University component.
+ *
+ * The text arrives from the left: a cursor walks the string, everything behind
+ * it settled, a short run ahead of it churning through the character pool, and
+ * everything beyond that not yet arrived. Colours are the component's own —
+ * "Green 4" once settled, "Green 8" while churning.
+ *
+ * Framer expresses pace as a percentage; here it is the milliseconds a single
+ * character takes, which is the thing actually being set.
+ */
+export const textScramble = {
+  characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?~",
+  /** Characters churning ahead of the cursor at any moment. */
+  letters: 6,
+  /** Milliseconds per character, from the component's 90% speed. */
+  tick: 45,
+  /** Milliseconds after the text comes into view. */
+  delay: 200,
+} as const;
+
+/**
  * Before vs After.
  *
  * The three words are pinned and scroll-transformed: the outer two travel to
