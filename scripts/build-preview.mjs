@@ -2,7 +2,7 @@
  * Bundle the built site into one self-contained HTML file, so a section can be
  * published as a shareable preview and checked in a real browser.
  *
- * Usage:  npm run build && node scripts/build-preview.mjs [outfile]
+ * Usage:  npm run build && node scripts/build-preview.mjs [outfile] [route]
  *
  * Everything the page needs is folded in: stylesheets, every JS chunk, fonts
  * and the favicon as data URIs. The result opens from disk or from any host
@@ -40,12 +40,26 @@ import path from "node:path";
 const ROOT = ".next";
 const read = (url) => fs.readFileSync(path.join(ROOT, url.replace("/_next/", "")));
 
-if (!fs.existsSync(path.join(ROOT, "server/app/index.html"))) {
-  console.error("No build found. Run `npm run build` first.");
+// Which prerendered route to bundle: `pricing` for /pricing, and the home
+// page's own file is `index`. Only statically rendered routes have one.
+const route = process.argv[3] ?? "index";
+const page = path.join(ROOT, `server/app/${route}.html`);
+
+if (!fs.existsSync(page)) {
+  console.error(
+    fs.existsSync(path.join(ROOT, "server/app/index.html"))
+      ? `No prerendered page for "${route}". Built routes: ` +
+          fs
+            .readdirSync(path.join(ROOT, "server/app"))
+            .filter((f) => f.endsWith(".html"))
+            .map((f) => f.replace(/\.html$/, ""))
+            .join(", ")
+      : "No build found. Run `npm run build` first.",
+  );
   process.exit(1);
 }
 
-let html = fs.readFileSync(path.join(ROOT, "server/app/index.html"), "utf8");
+let html = fs.readFileSync(page, "utf8");
 
 const mime = (f) =>
   f.endsWith(".woff2") ? "font/woff2"
