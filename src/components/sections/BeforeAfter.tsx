@@ -1,9 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { Check, X } from "lucide-react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import { beforeAfter } from "@/config/animation";
 import type { CompareTone, beforeAfterContent } from "@/content/home";
 import { cn } from "@/lib/cn";
@@ -26,9 +31,14 @@ import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
  * A client component: it reads scroll position.
  */
 
-/** Each column's surface. Fills come from theme.css. */
+/**
+ * Each column's surface. Fills come from theme.css.
+ *
+ * The dark one is opaque, not a tint of white: the words are pinned behind
+ * these cards and a translucent panel let "vs" read straight through it.
+ */
 const surfaces: Record<CompareTone, string> = {
-  dark: "border border-fg/10 bg-fg/[0.03] text-fg",
+  dark: "border border-fg/10 bg-bg-raised text-fg",
   light: "bg-quote-green text-fg-on-light",
 };
 
@@ -38,6 +48,28 @@ const rings: Record<CompareTone, string> = {
   light: "border-fg-on-light/20 text-fg-on-light",
 };
 
+/**
+ * Whether the two panels are pinned, which is where the whole effect lives.
+ *
+ * A phone gets the section laid out plainly — 200vh of pinning to read two
+ * cards is a lot of scrolling on a small screen, and the original does not do
+ * it there. Assumed true before the first paint, which costs nothing: at the
+ * top of the section the transforms are at rest anyway.
+ */
+function usePinned() {
+  const [pinned, setPinned] = useState(true);
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 810px)");
+    const read = () => setPinned(query.matches);
+    read();
+    query.addEventListener("change", read);
+    return () => query.removeEventListener("change", read);
+  }, []);
+
+  return pinned;
+}
+
 type BeforeAfterProps = {
   content: typeof beforeAfterContent;
 };
@@ -45,6 +77,7 @@ type BeforeAfterProps = {
 export function BeforeAfter({ content }: BeforeAfterProps) {
   const cards = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion() ?? false;
+  const pinned = usePinned();
 
   // Zero when the cards panel is a viewport away, one when it has arrived.
   const { scrollYProgress } = useScroll({
@@ -58,16 +91,24 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
   const fade = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
   return (
-    <section data-bg="green" className="relative bg-bg">
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
+    <section data-bg="green" className="relative bg-bg max-tablet:py-20">
+      <div className="flex items-center justify-center overflow-hidden max-tablet:pb-14 tablet:sticky tablet:top-0 tablet:h-screen">
         {/* Explicitly white, not the dynamic ink: this text is only ever on
             the dark ground, and the ink token turns dark as the light section
             below starts winning the handover — which stranded the words in
             near-black against the green. */}
         <p className="flex w-full items-center justify-center gap-2.5 text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal text-fg">
-          <motion.span style={{ x: before, opacity: fade }}>{content.headingBefore}</motion.span>
-          <motion.span style={{ opacity: fade }}>{content.headingJoin}</motion.span>
-          <motion.span style={{ x: after, opacity: fade }}>{content.headingAfter}</motion.span>
+          <motion.span
+            style={pinned ? { x: before, opacity: fade } : undefined}
+          >
+            {content.headingBefore}
+          </motion.span>
+          <motion.span style={pinned ? { opacity: fade } : undefined}>
+            {content.headingJoin}
+          </motion.span>
+          <motion.span style={pinned ? { x: after, opacity: fade } : undefined}>
+            {content.headingAfter}
+          </motion.span>
         </p>
       </div>
 
@@ -77,7 +118,10 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
           Section fills are cleared to transparent once the background
           machinery runs, so an inner fill is also the one thing on the page
           that would not fade with the rest. */}
-      <div ref={cards} className="sticky top-0 z-10 flex min-h-screen items-center py-20">
+      <div
+        ref={cards}
+        className="z-10 flex items-center tablet:sticky tablet:top-0 tablet:min-h-screen tablet:py-20"
+      >
         {/* A fixed 812 for the pair, not a share of the screen. The words
             travel outward past the cards, and a proportional width kept
             growing into the space they need — at which point they cross. */}
@@ -93,24 +137,41 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                     "--mh-quote-delay": `${beforeAfter.revealDelay}ms`,
                   } as CSSProperties
                 }
-                className={cn("relative overflow-clip p-8", surfaces[column.tone])}
+                className={cn(
+                  "relative overflow-clip p-8",
+                  surfaces[column.tone],
+                )}
               >
                 {/* Only the light column carries them, as in the original. */}
                 {column.tone === "light" ? (
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0"
+                  >
                     {beforeAfter.rects.map((rect, r) => (
-                      <ScrollBlock key={r} rect={rect} progress={scrollYProgress} />
+                      <ScrollBlock
+                        key={r}
+                        rect={rect}
+                        progress={scrollYProgress}
+                        // Nothing is pinned on a phone, so there is no arrival
+                        // to time these to: they are simply in place.
+                        settled={!pinned}
+                      />
                     ))}
                   </div>
                 ) : null}
 
                 <div className="relative flex flex-col gap-8">
                   <div className="flex flex-col gap-3">
-                    <h3 className="font-body text-heading-lg">{column.title}</h3>
+                    <h3 className="font-body text-heading-lg">
+                      {column.title}
+                    </h3>
                     <p
                       className={cn(
                         "max-w-[42ch] font-body text-body-md leading-[1.5]",
-                        column.tone === "dark" ? "text-fg-muted" : "text-fg-on-light/70",
+                        column.tone === "dark"
+                          ? "text-fg-muted"
+                          : "text-fg-on-light/70",
                       )}
                     >
                       {column.body}
@@ -120,7 +181,9 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                   <hr
                     className={cn(
                       "border-0 border-t",
-                      column.tone === "dark" ? "border-fg/10" : "border-fg-on-light/15",
+                      column.tone === "dark"
+                        ? "border-fg/10"
+                        : "border-fg-on-light/15",
                     )}
                   />
 
@@ -141,11 +204,15 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                         </span>
 
                         <div className="flex flex-col gap-1.5">
-                          <p className="font-body text-heading-md">{item.title}</p>
+                          <p className="font-body text-heading-md">
+                            {item.title}
+                          </p>
                           <p
                             className={cn(
                               "font-body text-body-md leading-[1.5]",
-                              column.tone === "dark" ? "text-fg-muted" : "text-fg-on-light/70",
+                              column.tone === "dark"
+                                ? "text-fg-muted"
+                                : "text-fg-on-light/70",
                             )}
                           >
                             {item.body}
@@ -174,9 +241,12 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
 function ScrollBlock({
   rect,
   progress,
+  settled,
 }: {
   rect: (typeof beforeAfter.rects)[number];
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  /** Skip the arrival and sit where it lands. */
+  settled: boolean;
 }) {
   const arrived = useTransform(progress, (value) => value > 0.75);
 
@@ -185,9 +255,9 @@ function ScrollBlock({
       className="mh-quote-block"
       // A motion value cannot be read during render, so the attribute is
       // driven rather than computed — the same value the words are on.
-      data-in={arrived.get()}
+      data-in={settled || arrived.get()}
       ref={(node) => {
-        if (!node) return;
+        if (!node || settled) return;
         return arrived.on("change", (value) => {
           node.dataset.in = String(value);
         });

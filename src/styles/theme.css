@@ -255,11 +255,11 @@
   --text-display-lg: clamp(2rem, 1.461rem + 2.051vw, 3rem);
   /* 28 -> 32 -> 40 */
   --text-display-md: clamp(1.75rem, 1.4rem + 1.1vw, 2.5rem);
-  /* Big numeric stats, up to 100px. */
-  --text-stat: clamp(3rem, 1rem + 6.2vw, 6.25rem);
-  /* The prefix and unit either side of one, up to 50px. Exactly half the
-   * figure's curve at every width, which is the ratio the original sets. */
-  --text-stat-affix: clamp(1.5rem, 0.5rem + 3.1vw, 3.125rem);
+  /* The trust figures and the prefix and unit either side of them. Flat, not
+   * a curve: the original sets 100 and 50 at every breakpoint, and a phone
+   * shows one panel at a time where the figure has all the room it needs. */
+  --text-stat: 6.25rem;
+  --text-stat-affix: 3.125rem;
 
   /* Testimonial quote and its attribution.
    *
