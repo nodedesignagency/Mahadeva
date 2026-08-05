@@ -282,7 +282,7 @@ export const testimonialsContent = {
         "We replaced three manual handoffs with one system, and the work simply arrives finished now.",
       name: "Priya Raman",
       role: "COO @ Northwind Labs",
-      tone: "peach",
+      tone: "yellow",
     },
   ],
 } as const;

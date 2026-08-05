@@ -141,12 +141,12 @@
 
   /* Testimonial cards, and the blocks that slide in when one takes the
    * centre — the same one-step-deeper relationship as everywhere else. */
-  --color-quote-blue: var(--mh-blue-50);
-  --color-quote-green: var(--mh-green-100);
-  --color-quote-peach: var(--mh-peach-50);
-  --color-quote-shape-blue: var(--mh-blue-100);
-  --color-quote-shape-green: var(--mh-green-200);
-  --color-quote-shape-peach: var(--mh-peach);
+  --color-quote-blue: var(--mh-blue-50); /* DCECFF */
+  --color-quote-green: var(--mh-green-100); /* DCFFE4 */
+  --color-quote-yellow: var(--mh-yellow-50); /* FFFBDD */
+  --color-quote-shape-blue: var(--mh-blue-200); /* A8DEFF */
+  --color-quote-shape-green: var(--mh-green-200); /* ABFFA8 */
+  --color-quote-shape-yellow: var(--mh-yellow); /* FFE8A8 */
 
   /* The checkerboard that slides in on hover: one step deeper than the tile,
    * the same relationship the trust panels' blocks have to theirs. */
@@ -252,9 +252,14 @@
    * figure's curve at every width, which is the ratio the original sets. */
   --text-stat-affix: clamp(1.5rem, 0.5rem + 3.1vw, 3.125rem);
 
-  /* Testimonial quote and its attribution: 24 -> 48 and 18 -> 24. */
-  --text-quote: clamp(1.5rem, 0.85rem + 2vw, 3rem);
-  --text-quote-by: clamp(1.125rem, 0.97rem + 0.47vw, 1.5rem);
+  /* Testimonial quote and its attribution.
+   *
+   * Both curves are solved to land exactly on the owner's L values at the
+   * 1200px breakpoint where L begins — 48 and 24 — rather than reaching them
+   * at some wider width the design never specifies. The quote works out at a
+   * flat 4vw between its stops. */
+  --text-quote: clamp(1.5rem, 4vw, 3rem); /* 24 -> 48 at 1200 */
+  --text-quote-by: clamp(1.125rem, 0.6rem + 1.2vw, 1.5rem); /* 18 -> 24 at 1200 */
 
   --text-heading-lg: clamp(1.5rem, 1.3rem + 0.7vw, 1.75rem); /* 24 -> 28 */
   --text-heading-md: clamp(1.25rem, 1.15rem + 0.4vw, 1.375rem); /* 20 -> 22 */
@@ -280,6 +285,8 @@
 
   --tracking-display: -0.02em;
   --tracking-label: 0.08em;
+  /* The testimonial quote is set tighter than any heading on the site. */
+  --tracking-quote: -0.05em;
 }
 
 /* ---------------------------------------------------------------------------
@@ -411,7 +418,7 @@
   --color-tool-lavender: var(--color-tool-lavender);
   --color-quote-blue: var(--color-quote-blue);
   --color-quote-green: var(--color-quote-green);
-  --color-quote-peach: var(--color-quote-peach);
+  --color-quote-yellow: var(--color-quote-yellow);
   --color-tool-shape-rose: var(--color-tool-shape-rose);
   --color-tool-shape-green: var(--color-tool-shape-green);
   --color-tool-shape-magenta: var(--color-tool-shape-magenta);

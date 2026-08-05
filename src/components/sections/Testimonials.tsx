@@ -31,7 +31,7 @@ import { viewport } from "@/lib/motion";
 const tones: Record<TestimonialTone, string> = {
   blue: "bg-quote-blue",
   green: "bg-quote-green",
-  peach: "bg-quote-peach",
+  yellow: "bg-quote-yellow",
 };
 
 /** Gap between cards in the track, px — part of how far one advance travels. */
@@ -140,7 +140,10 @@ export function Testimonials({ content }: TestimonialsProps) {
               <div className="relative hidden w-2/5 shrink-0 tablet:block" />
 
               <div className="relative flex w-full flex-col justify-between gap-10 p-10 tablet:w-3/5">
-                <blockquote className="font-body text-quote leading-[1.25] text-fg-on-light">
+                {/* The owner's L breakpoint: 48px, -0.05em, 1.2 line. Tighter
+                    tracking than any heading on the site, hence its own
+                    token rather than the display one. */}
+                <blockquote className="font-body text-quote leading-[1.2] tracking-(--tracking-quote) text-fg-on-light">
                   {`“${item.quote}”`}
                 </blockquote>
 
