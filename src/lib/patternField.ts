@@ -82,14 +82,14 @@ function overlaps(a: Span, b: Span, gap: number) {
 }
 
 /**
- * `trackCount` overrides how many tracks the field is built from. The footer
- * closes the page on a single row where the hero's band is three, and that is
- * the only difference between them.
+ * `overrides` adjusts the field's shape without a second set of rules: the
+ * footer closes the page on one row of a fixed height where the hero's band is
+ * three of sampled heights, and that is all that differs between them.
  */
 export function generateTracks(
   seed: number,
   orientation: Orientation,
-  trackCount?: number,
+  overrides: { tracks?: number; thickness?: number } = {},
 ): Track[] {
   const random = createRandom(seed);
   const {
@@ -102,8 +102,12 @@ export function generateTracks(
     maxStagger,
     minGap,
   } = patternField;
-  const { cellsPerTrack, thickness } = patternField[orientation];
-  const tracks = trackCount ?? patternField[orientation].tracks;
+  const { cellsPerTrack } = patternField[orientation];
+  const tracks = overrides.tracks ?? patternField[orientation].tracks;
+  const thickness =
+    overrides.thickness !== undefined
+      ? [overrides.thickness]
+      : patternField[orientation].thickness;
 
   // 1. Geometry. Fixed for the lifetime of the field.
   const grid: Track[] = Array.from({ length: tracks }, () => {
@@ -135,7 +139,10 @@ export function generateTracks(
       };
     });
 
-    return { thickness: thickness[Math.floor(random() * thickness.length)], cells };
+    return {
+      thickness: thickness[Math.floor(random() * thickness.length)],
+      cells,
+    };
   });
 
   // 2. Assign each cell a single state to be visible in — its phase.
@@ -178,9 +185,10 @@ export function generateTracks(
         });
       });
 
-      const allowed = Array.from({ length: stateCount }, (_, state) => state).filter(
-        (state) => !forbidden.has(state),
-      );
+      const allowed = Array.from(
+        { length: stateCount },
+        (_, state) => state,
+      ).filter((state) => !forbidden.has(state));
       if (allowed.length === 0) return;
 
       // Least-used phase keeps the states evenly populated; the random offset
@@ -241,7 +249,9 @@ export function generateTracks(
           0,
         );
         const score =
-          onScreen * 1000 + (touching.has(color) ? 100 : 0) + (totalUsage[color] ?? 0);
+          onScreen * 1000 +
+          (touching.has(color) ? 100 : 0) +
+          (totalUsage[color] ?? 0);
 
         if (score < bestScore) {
           bestScore = score;
@@ -252,7 +262,8 @@ export function generateTracks(
       cell.color = best;
       totalUsage[best] = (totalUsage[best] ?? 0) + 1;
       openStates.forEach((state) => {
-        stateColorCounts[state][best] = (stateColorCounts[state][best] ?? 0) + 1;
+        stateColorCounts[state][best] =
+          (stateColorCounts[state][best] ?? 0) + 1;
       });
     });
   });

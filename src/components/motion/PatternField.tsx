@@ -25,6 +25,8 @@ type PatternFieldProps = {
   orientation: Orientation;
   /** Tracks to build, where the breakpoint's own count is not wanted. */
   tracks?: number;
+  /** A track's width or height in px, where the sampled ones are not wanted. */
+  thickness?: number;
   className?: string;
 };
 
@@ -32,15 +34,22 @@ export function PatternField({
   side,
   orientation,
   tracks: trackCount,
+  thickness,
   className,
 }: PatternFieldProps) {
   const reduced = useReducedMotion() ?? false;
   const [state, setState] = useState(0);
 
   const { stateCount, stateInterval, transition } = patternField;
+  // Named apart from the `tracks` prop: the generated field shadowed it, and
+  // the memo then read itself rather than what it was given.
   const tracks = useMemo(
-    () => generateTracks(patternField.seeds[side], orientation, trackCount),
-    [side, orientation, trackCount],
+    () =>
+      generateTracks(patternField.seeds[side], orientation, {
+        tracks: trackCount,
+        thickness,
+      }),
+    [side, orientation, trackCount, thickness],
   );
 
   // Cycle through the arrangements. Held still under reduced motion.

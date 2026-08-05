@@ -21,6 +21,9 @@ import { footerContent } from "@/content/footer";
  */
 const LABEL = "font-body text-body-sm uppercase text-footer-label";
 
+/** Height of the two pattern rows the page closes on, in px. */
+const BAR = 26;
+
 export function Footer() {
   return (
     // The two custom properties are what `.mh-nav-link` mixes between, so
@@ -141,22 +144,37 @@ export function Footer() {
             box the foot of the page: at this size the glyphs stand outside
             their line box, and the document would otherwise carry on for
             another 40px below the last row. */}
-        <div className="@container relative overflow-hidden">
+        <div className="relative overflow-hidden">
           <PatternField
             side="footerTop"
             orientation="horizontal"
             tracks={1}
+            thickness={BAR}
             className="top-0"
           />
 
-          <p className="w-full text-center font-body text-[21.5cqw] leading-[0.86] font-normal tracking-(--tracking-display) text-fg/[0.06]">
-            {footerContent.wordmark}
-          </p>
+          {/* The word is inset 40 either side; the rows are not, and run the
+              full measure. Its own `@container` is what keeps the size honest
+              — `cqw` then resolves against the padded width the word actually
+              has, rather than the block's, so it fills its box at every
+              screen instead of only at the width the number was picked for.
+
+              Vertical padding of exactly one bar: the word meets each row and
+              neither crosses it. */}
+          <div
+            className="@container px-10"
+            style={{ paddingTop: BAR, paddingBottom: BAR }}
+          >
+            <p className="w-full text-center font-body text-[22.6cqw] leading-[0.86] font-normal tracking-(--tracking-display) text-fg/[0.06]">
+              {footerContent.wordmark}
+            </p>
+          </div>
 
           <PatternField
             side="footerBottom"
             orientation="horizontal"
             tracks={1}
+            thickness={BAR}
             className="bottom-0"
           />
         </div>
