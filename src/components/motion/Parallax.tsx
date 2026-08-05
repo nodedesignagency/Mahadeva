@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 
 /**
  * Scroll-linked drift, the equivalent of Framer's Scroll Speed effect.
@@ -44,21 +39,6 @@ type ParallaxProps = {
    * top of the page and so is already part-way through a traverse at rest.
    */
   range?: "traverse" | "top";
-  /**
-   * Width, in px, at which `drift` takes over from `narrowDrift`.
-   *
-   * The two exist because a drifting element leaves its own box behind: the
-   * space it occupied is still there, empty, wherever it climbed away from.
-   * Where the element is taken out of the flow that costs nothing. Where it
-   * still sits in the column — every screen below the desktop breakpoint here —
-   * the gap it opens is a hole between one section and the next, so the travel
-   * has to stay small enough for the layout to absorb.
-   */
-  minWidth?: number;
-  /**
-   * Climb used below `minWidth`. Omit to hold the element still down there.
-   */
-  narrowDrift?: string;
   className?: string;
 };
 
@@ -67,8 +47,6 @@ export function Parallax({
   drift,
   trackSelector = "section",
   range = "traverse",
-  minWidth,
-  narrowDrift,
   className,
 }: ParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -92,42 +70,18 @@ export function Parallax({
   // Turned on a frame later rather than synchronously: the scroll position has
   // settled by then, and setting state straight from an effect would cascade a
   // render before the browser has painted anything.
-  //
-  // Null is "hold still", which is also what a narrow screen gets when no
-  // `narrowDrift` was given.
-  const [active, setActive] = useState<string | null>(null);
+  const [enabled, setEnabled] = useState(false);
   useEffect(() => {
     track.current = ref.current?.closest(trackSelector) ?? ref.current;
-
-    const query = minWidth
-      ? window.matchMedia(`(min-width: ${minWidth}px)`)
-      : null;
-    const current = () => {
-      if (reduced) return null;
-      if (!query || query.matches) return drift;
-      return narrowDrift ?? null;
-    };
-    let frame = requestAnimationFrame(() => setActive(current()));
-    const read = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => setActive(current()));
-    };
-
-    query?.addEventListener("change", read);
-    return () => {
-      cancelAnimationFrame(frame);
-      query?.removeEventListener("change", read);
-    };
-  }, [reduced, trackSelector, minWidth, drift, narrowDrift]);
+    const frame = requestAnimationFrame(() => setEnabled(!reduced));
+    return () => cancelAnimationFrame(frame);
+  }, [reduced, trackSelector]);
 
   // Measured from the element entering the viewport to it leaving, so the
   // midpoint of the drift is the midpoint of its journey across the screen.
   const { scrollYProgress } = useScroll({
     target: track,
-    offset:
-      range === "top"
-        ? ["start start", "end start"]
-        : ["start end", "end start"],
+    offset: range === "top" ? ["start start", "end start"] : ["start end", "end start"],
   });
   // Starts where the layout puts it and accumulates upward, rather than
   // swinging symmetrically about its resting place. That is what "scroll
@@ -135,14 +89,10 @@ export function Parallax({
   // page from there. Swinging both ways started it below its own position and
   // spent half the travel just getting back, which is why it never reached the
   // text.
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", `-${active ?? "0%"}`]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", `-${drift}`]);
 
   return (
-    <motion.div
-      ref={ref}
-      className={className}
-      style={active ? { y } : undefined}
-    >
+    <motion.div ref={ref} className={className} style={enabled ? { y } : undefined}>
       {children}
     </motion.div>
   );
