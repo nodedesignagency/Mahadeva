@@ -139,6 +139,9 @@
   --color-tool-blue: var(--mh-blue-25);
   --color-tool-lavender: var(--mh-lavender-50);
 
+  /* The closing call-to-action panel. */
+  --color-cta: var(--mh-green-100);
+
   /* Testimonial cards, and the blocks that slide in when one takes the
    * centre — the same one-step-deeper relationship as everywhere else. */
   --color-quote-blue: var(--mh-blue-50); /* DCECFF */
@@ -416,6 +419,7 @@
   --color-tool-peach: var(--color-tool-peach);
   --color-tool-blue: var(--color-tool-blue);
   --color-tool-lavender: var(--color-tool-lavender);
+  --color-cta: var(--color-cta);
   --color-quote-blue: var(--color-quote-blue);
   --color-quote-green: var(--color-quote-green);
   --color-quote-yellow: var(--color-quote-yellow);

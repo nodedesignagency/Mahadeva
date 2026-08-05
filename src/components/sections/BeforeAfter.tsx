@@ -64,7 +64,7 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
             the dark ground, and the ink token turns dark as the light section
             below starts winning the handover — which stranded the words in
             near-black against the green. */}
-        <p className="flex w-full items-center justify-center gap-6 text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal text-fg">
+        <p className="flex w-full items-center justify-center gap-2.5 text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal text-fg">
           <motion.span style={{ x: before, opacity: fade }}>{content.headingBefore}</motion.span>
           <motion.span style={{ opacity: fade }}>{content.headingJoin}</motion.span>
           <motion.span style={{ x: after, opacity: fade }}>{content.headingAfter}</motion.span>

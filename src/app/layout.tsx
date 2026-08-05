@@ -4,6 +4,7 @@ import { baseMetadata, organizationSchema } from "@/config/seo";
 import { siteConfig } from "@/config/site.config";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { BackgroundTransition } from "@/components/motion/BackgroundTransition";
 import "./globals.css";
@@ -31,8 +32,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <BackgroundTransition />
         <SkipLink />
         <Header />
-        {/* Footer lands here once its section is built. */}
         <main id="main">{children}</main>
+        <Footer />
         <script
           type="application/ld+json"
           // Static, developer-authored JSON-LD — no user input reaches this.

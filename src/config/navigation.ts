@@ -30,17 +30,41 @@ export const mainNav: NavItem[] = [
 /** Header call-to-action. */
 export const navCta: NavItem = { label: "Contact Us", href: "/contact" };
 
-/** Footer link columns. */
+/**
+ * Footer link columns, in the original's three groups. Titles carry their
+ * braces: `{NAVIGATION}` is the footer's heading style, not a placeholder.
+ *
+ * The legal pages sit under Company here rather than in a bottom bar, which
+ * is where the original puts them — `legalNav` below is still the list, so
+ * the two cannot drift.
+ */
 export const footerNav: NavGroup[] = [
   {
-    title: "Company",
+    title: "{Navigation}",
+    items: [
+      { label: "Home", href: "/" },
+      { label: "Pricing", href: "/pricing" },
+      { label: "Case Studies", href: "/case-study" },
+      { label: "Blog", href: "/blogs" },
+      { label: "404", href: "/404" },
+    ],
+  },
+  {
+    title: "{Company}",
     items: [
       { label: "About", href: "/about" },
-      { label: "Case Studies", href: "/case-study" },
-      { label: "Pricing", href: "/pricing" },
       { label: "Careers", href: "/careers" },
-      { label: "Blogs", href: "/blogs" },
       { label: "Contact", href: "/contact" },
+      { label: "Privacy Policy", href: "/legal-pages/privacy-policy" },
+      { label: "Terms of Services", href: "/legal-pages/terms-of-services" },
+    ],
+  },
+  {
+    title: "{Follow Us}",
+    items: [
+      { label: "LinkedIn", href: "https://linkedin.com/", external: true },
+      { label: "Instagram", href: "https://instagram.com/", external: true },
+      { label: "X/Twitter", href: "https://x.com/", external: true },
     ],
   },
 ];
