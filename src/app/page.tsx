@@ -14,11 +14,11 @@ import {
   faqContent,
   featuresContent,
   heroContent,
-  pricingContent,
   techStackContent,
   testimonialsContent,
   trustContent,
 } from "@/content/home";
+import { pricingContent } from "@/content/pricing";
 import { caseStudiesContent } from "@/content/case-studies";
 import { getCaseStudies } from "@/lib/case-studies";
 

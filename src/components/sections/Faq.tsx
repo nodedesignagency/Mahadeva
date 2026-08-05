@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Accordion } from "@/components/motion/Accordion";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { sectionTextRevealDynamic } from "@/config/animation";
+import { sectionTextRevealBeige } from "@/config/animation";
 import type { faqContent } from "@/content/home";
 
 /**
@@ -30,8 +30,8 @@ export function Faq({ content }: FaqProps) {
           <TextReveal
             as="h2"
             lines={content.headingLines}
-            settings={sectionTextRevealDynamic}
-            lineStagger={sectionTextRevealDynamic.lineStagger}
+            settings={sectionTextRevealBeige}
+            lineStagger={sectionTextRevealBeige.lineStagger}
             className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
           <p className="text-ink-dynamic mt-8 max-w-[38ch] font-body text-body-md leading-[1.5]">

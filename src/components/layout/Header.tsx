@@ -15,6 +15,16 @@ import { cn } from "@/lib/cn";
 const SCROLL_THRESHOLD = 350;
 
 /**
+ * Routes that open on a dark hero, and so want the dark strip at rest.
+ *
+ * Everywhere else the page's first section is a light surface, where the dark
+ * strip is a black bar sitting on beige. Listed by route rather than measured:
+ * the header renders before the page it sits over, and reading the surface out
+ * of the DOM would mean painting one strip and correcting it a frame later.
+ */
+const DARK_HERO_ROUTES = new Set(["/"]);
+
+/**
  * Site header.
  *
  * Opaque at every scroll position — the hero's pattern field animates directly
@@ -33,6 +43,13 @@ export function Header() {
   const pathname = usePathname();
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+
+  // Which surface the strip wears. Past the threshold it is always the light
+  // one; before it, only a page that opens on the dark hero keeps the dark
+  // strip. Everything the header draws reads this, not `scrolled` — the CTA's
+  // border followed the scroll alone once, and sat invisible on a page that
+  // was light from the top.
+  const light = scrolled || !DARK_HERO_ROUTES.has(pathname);
 
   // `passive` keeps this off the scrolling critical path. The initial read is
   // deferred a frame rather than run in the effect body, so a restored scroll
@@ -127,7 +144,7 @@ export function Header() {
         //
         // Each surface carries its own hairline and its own pair of link
         // colours, which the links mix between on hover.
-        scrolled
+        light
           ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)] [--mh-nav-rule-color:var(--color-border-nav-on-light)]"
           : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)] [--mh-nav-rule-color:var(--color-fg)]",
       )}
@@ -197,7 +214,7 @@ export function Header() {
               // Opacity only — the hairline swaps with the surface it belongs
               // to, so easing it would leave it a step behind the flip.
               "transition-opacity duration-(--duration-hover) ease-(--ease-out)",
-              scrolled ? "border-border-on-light" : "border-border",
+              light ? "border-border-on-light" : "border-border",
             )}
           >
             {navCta.label}
@@ -218,7 +235,7 @@ export function Header() {
               "desktop:hidden inline-flex size-[33px] shrink-0 items-center justify-center",
               "rounded-(--radius-button) border text-current",
               "transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-50",
-              scrolled ? "border-border-on-light" : "border-border",
+              light ? "border-border-on-light" : "border-border",
             )}
           >
             <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">

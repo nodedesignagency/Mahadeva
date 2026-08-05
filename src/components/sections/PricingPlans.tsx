@@ -6,7 +6,7 @@ import type { LucideIcon } from "lucide-react";
 import NumberFlow from "@number-flow/react";
 import { BillingToggle } from "@/components/ui/BillingToggle";
 import { Button } from "@/components/ui/Button";
-import type { PlanIcon, PlanTone, pricingContent } from "@/content/home";
+import type { PlanIcon, PlanTone, pricingContent } from "@/content/pricing";
 import { cn } from "@/lib/cn";
 
 /**

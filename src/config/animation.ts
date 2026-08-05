@@ -130,6 +130,23 @@ export const sectionTextRevealDynamic = {
 } as const;
 
 /**
+ * The same reveal on the beige wrappers.
+ *
+ * One value differs: the leading bar sweeps in peach — Framer's "Orange 5",
+ * which the palette already carries as `--mh-peach`. Pale green on beige is
+ * two neighbouring near-whites, so the first bar all but disappears on exactly
+ * the sections that are meant to show it, and the wipe reads as one dark bar
+ * instead of two. The second stays "Green 11", as in the owner's panel, and
+ * so do the selection colours.
+ *
+ * Every section that declares `data-bg="beige"` uses this.
+ */
+export const sectionTextRevealBeige = {
+  ...sectionTextRevealDynamic,
+  revealColor: "var(--mh-peach)",
+} as const;
+
+/**
  * Site-wide smooth scrolling.
  *
  * The original runs its Smooth Scroll component at intensity 10. Expressed here
