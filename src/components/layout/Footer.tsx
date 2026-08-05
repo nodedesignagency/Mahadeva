@@ -137,48 +137,45 @@ export function Footer() {
           Sized in `cqw` against the container rather than `vw` against the
           screen, so the word fills the same measure the rest of the page is
           set to and stops growing where that measure does. */}
-      <Container aria-hidden="true" className="pt-10">
-        {/* The rows are anchored to this box rather than the Container, whose
-            own box includes the page's gutters — they belong to the measure,
-            not to the margin. `overflow-hidden` is what makes the foot of this
-            box the foot of the page: at this size the glyphs stand outside
-            their line box, and the document would otherwise carry on for
-            another 40px below the last row. */}
-        <div className="relative overflow-hidden">
-          <PatternField
-            side="footerTop"
-            orientation="horizontal"
-            tracks={1}
-            thickness={BAR}
-            className="top-0"
-          />
+      {/* Full-bleed: the rows run the width of the screen, where everything
+          else on the page — the word included — keeps the site's measure.
+          `overflow-hidden` is what makes the foot of this box the foot of the
+          page: at this size the glyphs stand outside their line box, and the
+          document would otherwise carry on for another 40px below the last
+          row. */}
+      <div aria-hidden="true" className="relative overflow-hidden pt-10">
+        <PatternField
+          side="footerTop"
+          orientation="horizontal"
+          tracks={1}
+          thickness={BAR}
+          className="top-10"
+        />
 
-          {/* The word is inset 40 either side; the rows are not, and run the
-              full measure. Its own `@container` is what keeps the size honest
-              — `cqw` then resolves against the padded width the word actually
-              has, rather than the block's, so it fills its box at every
-              screen instead of only at the width the number was picked for.
+        {/* The word takes the container, so it starts and ends where the
+            copyright above it does. The Container is its own query container,
+            which is what keeps the size honest: `cqw` resolves against the
+            measure the word actually has, so it fills it at every screen
+            rather than at the one width a number was picked for.
 
-              Vertical padding of exactly one bar: the word meets each row and
-              neither crosses it. */}
-          <div
-            className="@container px-10"
-            style={{ paddingTop: BAR, paddingBottom: BAR }}
-          >
+            Vertical padding of exactly one row: the word meets each and
+            neither crosses it. */}
+        <div style={{ paddingTop: BAR, paddingBottom: BAR }}>
+          <Container className="@container">
             <p className="w-full text-center font-body text-[22.6cqw] leading-[0.86] font-normal tracking-(--tracking-display) text-fg/[0.06]">
               {footerContent.wordmark}
             </p>
-          </div>
-
-          <PatternField
-            side="footerBottom"
-            orientation="horizontal"
-            tracks={1}
-            thickness={BAR}
-            className="bottom-0"
-          />
+          </Container>
         </div>
-      </Container>
+
+        <PatternField
+          side="footerBottom"
+          orientation="horizontal"
+          tracks={1}
+          thickness={BAR}
+          className="bottom-0"
+        />
+      </div>
     </footer>
   );
 }
