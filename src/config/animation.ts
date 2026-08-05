@@ -230,8 +230,12 @@ export const textScramble = {
   characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?~",
   /** Characters churning ahead of the cursor at any moment. */
   letters: 6,
-  /** Milliseconds per character, from the component's 90% speed. */
-  tick: 45,
+  /**
+   * Milliseconds per character. Framer states this as a percentage of a pace
+   * it does not show; twice the first reading is what matches the original,
+   * which plays slower than the number suggested.
+   */
+  tick: 90,
   /** Milliseconds after the text comes into view. */
   delay: 200,
 } as const;

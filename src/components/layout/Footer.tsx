@@ -119,8 +119,15 @@ export function Footer() {
               <div key={item.label} className="flex flex-col gap-2">
                 <Scramble text={item.label} className={LABEL} />
                 {/* Geist 28 regular, unlike the links beside it, which are
-                    Almarai — the owner sets the two contact lines apart. */}
-                <a href={item.href} className="mh-nav-link font-ui text-[1.75rem] font-normal">
+                    Almarai — the owner sets the two contact lines apart.
+
+                    `self-start` matters: as a flex item this would otherwise
+                    stretch to the column's width, and the hover rule is drawn
+                    across the link's box, not its text. */}
+                <a
+                  href={item.href}
+                  className="mh-nav-link self-start font-ui text-[1.75rem] font-normal"
+                >
                   {item.value}
                 </a>
               </div>
@@ -130,9 +137,12 @@ export function Footer() {
           {footerNav.map((group) => (
             <nav key={group.title} className="flex flex-col gap-5" aria-label={group.title}>
               <Scramble text={group.title} className={LABEL} />
-              <ul className="flex flex-col gap-3">
+              {/* 16 between links, against the 20 that separates them from
+                  the heading — enough that the hover rule under one clears
+                  the link below it. */}
+              <ul className="flex flex-col gap-4">
                 {group.items.map((item) => (
-                  <li key={item.label}>
+                  <li key={item.label} className="w-fit">
                     <Link
                       href={item.href}
                       {...(item.external
@@ -150,18 +160,28 @@ export function Footer() {
         </div>
       </Container>
 
-      <div className="border-t border-fg/10">
+      {/* Ruled above and below, per the original. */}
+      <div className="border-y border-fg/10">
         <Container className="flex flex-col gap-4 py-6 tablet:flex-row tablet:items-center tablet:justify-between">
-          <p className="font-body text-body-sm text-fg-muted">{footerContent.copyright}</p>
+          {/* Geist Light 16 on the left, Almarai 18 on the right — the two
+              sides of this bar are set in different faces. */}
+          <p className="font-ui text-body-md font-light text-fg-muted">
+            {footerContent.copyright}
+          </p>
 
-          <p className="flex flex-wrap items-center gap-2 font-body text-body-sm text-fg-muted">
-            {footerContent.credits.label}
-            {footerContent.credits.people.map((person, i) => (
-              <span key={person} className="flex items-center gap-2 text-fg">
-                {i > 0 ? <span aria-hidden="true" className="text-fg-muted">•</span> : null}
-                {person}
-              </span>
-            ))}
+          <p className="flex flex-wrap items-center gap-3 font-body text-body-lg">
+            <span className="text-fg-muted">{footerContent.credits.label}</span>
+
+            {/* The names and the dots between them share one 8px rhythm, so
+                they are one row rather than a name-plus-dot per person. */}
+            <span className="flex flex-wrap items-center gap-2">
+              {footerContent.credits.people.map((person, i) => (
+                <span key={person} className="flex items-center gap-2">
+                  {i > 0 ? <span aria-hidden="true">•</span> : null}
+                  {person}
+                </span>
+              ))}
+            </span>
           </p>
         </Container>
       </div>
