@@ -59,7 +59,10 @@ export function Testimonials({ content }: TestimonialsProps) {
               settings={sectionTextRevealDynamic}
               className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
             />
-            <p className="text-ink-dynamic-muted mt-6 max-w-[46ch] font-body text-body-md">
+            {/* Pure white and set wider than the muted supporting lines
+                elsewhere on the dark ground — the original gives this one two
+                long lines rather than three short greyed ones. */}
+            <p className="mt-6 max-w-[68ch] font-body text-body-lg leading-[1.5] text-fg">
               {content.subheading}
             </p>
           </div>

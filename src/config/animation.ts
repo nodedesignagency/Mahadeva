@@ -216,6 +216,31 @@ export const statCounter = {
 } as const;
 
 /**
+ * Before vs After.
+ *
+ * The three words are pinned and scroll-transformed: the outer two travel to
+ * either side while all three fade. Values are the owner's, in px, and run
+ * over the panel's own pin — from the cards panel entering the viewport to it
+ * reaching the top, which is exactly the distance the words stay pinned.
+ *
+ * The rectangles on the light card follow the section's habit: they arrive
+ * when the cards do, from outside the edge each settles against.
+ */
+export const beforeAfter = {
+  /** How far "Before" travels left and "After" right, in px. */
+  spread: 600,
+
+  rects: [
+    { w: "16%", h: "13%", left: 0, top: 0, dx: "-100%", dy: 0 },
+    { w: "18%", h: "4%", right: 0, top: 0, dx: "100%", dy: 0 },
+    { w: "5%", h: "18%", right: 0, top: "43%", dx: "100%", dy: 0 },
+  ],
+  /** Milliseconds for those rectangles. */
+  reveal: 700,
+  revealDelay: 150,
+} as const;
+
+/**
  * Testimonial carousel.
  *
  * The card has the two states the owner's Framer file has: bare, and with the

@@ -291,6 +291,62 @@ export const testimonialsContent = {
 export type TestimonialTone = (typeof testimonialsContent.items)[number]["tone"];
 
 /**
+ * Before vs After.
+ *
+ * Two pinned panels: the three words, which split apart and fade as the page
+ * moves under them, and then the pair of cards that slides up over them.
+ */
+export const beforeAfterContent = {
+  /** Each word transforms on its own, so they are stored apart. */
+  headingBefore: "Before",
+  headingJoin: "vs",
+  headingAfter: "After",
+  columns: [
+    {
+      title: "Before working with us",
+      body: "Growth slows when teams rely on manual processes and disconnected systems.",
+      tone: "dark",
+      items: [
+        {
+          title: "Slow Execution Cycles",
+          body: "Projects move slowly due to manual approvals and unclear workflows.",
+        },
+        {
+          title: "Operational Overload",
+          body: "Teams spend too much time on repetitive tasks instead of strategy.",
+        },
+        {
+          title: "Unclear Performance",
+          body: "Lack of automation leads to inconsistent output and missed opportunities.",
+        },
+      ],
+    },
+    {
+      title: "After working with us",
+      body: "Automation brings clarity, speed, and scalable systems across every workflow.",
+      tone: "light",
+      items: [
+        {
+          title: "Accelerated Delivery",
+          body: "Workflows move faster with automation supporting execution.",
+        },
+        {
+          title: "Operational Clarity",
+          body: "Teams focus on meaningful work instead of repetitive tasks.",
+        },
+        {
+          title: "Scalable Systems",
+          body: "Processes become reliable and built for long-term growth.",
+        },
+      ],
+    },
+  ],
+} as const;
+
+/** Which side of the comparison a column is. */
+export type CompareTone = (typeof beforeAfterContent.columns)[number]["tone"];
+
+/**
  * Pricing — "Flexible Plans for Every Growth Stage".
  *
  * Copy is verbatim from the owner's Framer cards, which differ from the Figma

@@ -5,10 +5,12 @@ import { CaseStudies } from "@/components/sections/CaseStudies";
 import { Trust } from "@/components/sections/Trust";
 import { TechStack } from "@/components/sections/TechStack";
 import { Testimonials } from "@/components/sections/Testimonials";
+import { BeforeAfter } from "@/components/sections/BeforeAfter";
 import { Pricing } from "@/components/sections/Pricing";
 import { Faq } from "@/components/sections/Faq";
 import {
   aboutContent,
+  beforeAfterContent,
   faqContent,
   featuresContent,
   heroContent,
@@ -44,6 +46,7 @@ export default async function HomePage() {
       <Trust content={trustContent} />
       <TechStack content={techStackContent} />
       <Testimonials content={testimonialsContent} />
+      <BeforeAfter content={beforeAfterContent} />
       <Pricing content={pricingContent} />
       <Faq content={faqContent} />
     </>
