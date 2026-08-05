@@ -2,7 +2,11 @@ import type { CSSProperties } from "react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { StatCounter } from "@/components/ui/StatCounter";
-import { featureMarquee, sectionTextRevealDynamic, statHover } from "@/config/animation";
+import {
+  featureMarquee,
+  sectionTextRevealDynamic,
+  statHover,
+} from "@/config/animation";
 import type { TrustTone, trustContent } from "@/content/home";
 import { cn } from "@/lib/cn";
 import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
@@ -95,14 +99,20 @@ export function Trust({ content }: TrustProps) {
                   } as CSSProperties
                 }
                 className={cn(
-                  "group relative flex h-full flex-col overflow-clip p-6",
+                  // A flat 424 on a phone, where the panels are read one at a
+                  // time; from tablet up they fill the row, which is what the
+                  // staircase needs.
+                  "group relative flex h-[424px] flex-col overflow-clip p-6 tablet:h-full",
                   tones[stat.tone],
                 )}
               >
                 {/* Decorative: the blocks that slide in on hover, each panel
                     with its own arrangement. Behind the text, so a block can
                     pass under the figure without taking it with it. */}
-                <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0"
+                >
                   {statHover.rects[stat.tone].map((rect, r) => (
                     <span
                       key={r}
@@ -126,7 +136,11 @@ export function Trust({ content }: TrustProps) {
                     <p className="font-body text-body-md uppercase text-fg-on-light">
                       {stat.label}
                     </p>
-                    <StatCounter value={stat.value} prefix={stat.prefix} unit={stat.unit} />
+                    <StatCounter
+                      value={stat.value}
+                      prefix={stat.prefix}
+                      unit={stat.unit}
+                    />
                   </div>
 
                   {/* Pushed to the foot, which is the line all four share. */}

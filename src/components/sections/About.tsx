@@ -74,6 +74,10 @@ export function About({ content }: AboutProps) {
          * overwrite, so the mark stays centred as it climbs. */}
         <Parallax
           drift={markParallax.drift}
+          // Only where the mark is taken out of the flow. Below that it sits
+          // in the column under the statement, and a drift would leave its own
+          // box behind as a hole between this section and the next.
+          minWidth={1024}
           className="z-20 lg:absolute lg:-bottom-[431px] lg:left-1/2 lg:-translate-x-1/2"
         >
           <Image

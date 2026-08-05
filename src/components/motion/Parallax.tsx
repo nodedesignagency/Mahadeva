@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 
 /**
  * Scroll-linked drift, the equivalent of Framer's Scroll Speed effect.
@@ -39,6 +44,15 @@ type ParallaxProps = {
    * top of the page and so is already part-way through a traverse at rest.
    */
   range?: "traverse" | "top";
+  /**
+   * Below this width, in px, the element stays where the layout puts it.
+   *
+   * A drifting element leaves its own box behind: the space it occupied is
+   * still there, empty, wherever it climbed away from. That is the point on a
+   * long desktop section and a bug on a phone, where it reads as a hole
+   * between one section and the next.
+   */
+  minWidth?: number;
   className?: string;
 };
 
@@ -47,6 +61,7 @@ export function Parallax({
   drift,
   trackSelector = "section",
   range = "traverse",
+  minWidth,
   className,
 }: ParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -73,15 +88,32 @@ export function Parallax({
   const [enabled, setEnabled] = useState(false);
   useEffect(() => {
     track.current = ref.current?.closest(trackSelector) ?? ref.current;
-    const frame = requestAnimationFrame(() => setEnabled(!reduced));
-    return () => cancelAnimationFrame(frame);
-  }, [reduced, trackSelector]);
+
+    const query = minWidth
+      ? window.matchMedia(`(min-width: ${minWidth}px)`)
+      : null;
+    const wide = () => query?.matches ?? true;
+    let frame = requestAnimationFrame(() => setEnabled(!reduced && wide()));
+    const read = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setEnabled(!reduced && wide()));
+    };
+
+    query?.addEventListener("change", read);
+    return () => {
+      cancelAnimationFrame(frame);
+      query?.removeEventListener("change", read);
+    };
+  }, [reduced, trackSelector, minWidth]);
 
   // Measured from the element entering the viewport to it leaving, so the
   // midpoint of the drift is the midpoint of its journey across the screen.
   const { scrollYProgress } = useScroll({
     target: track,
-    offset: range === "top" ? ["start start", "end start"] : ["start end", "end start"],
+    offset:
+      range === "top"
+        ? ["start start", "end start"]
+        : ["start end", "end start"],
   });
   // Starts where the layout puts it and accumulates upward, rather than
   // swinging symmetrically about its resting place. That is what "scroll
@@ -92,7 +124,11 @@ export function Parallax({
   const y = useTransform(scrollYProgress, [0, 1], ["0%", `-${drift}`]);
 
   return (
-    <motion.div ref={ref} className={className} style={enabled ? { y } : undefined}>
+    <motion.div
+      ref={ref}
+      className={className}
+      style={enabled ? { y } : undefined}
+    >
       {children}
     </motion.div>
   );
