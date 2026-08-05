@@ -4,7 +4,6 @@ import { useRef } from "react";
 import type { CSSProperties } from "react";
 import { Check, X } from "lucide-react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { Container } from "@/components/layout/Container";
 import { beforeAfter } from "@/config/animation";
 import type { CompareTone, beforeAfterContent } from "@/content/home";
 import { cn } from "@/lib/cn";
@@ -61,16 +60,27 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
   return (
     <section data-bg="green" className="relative bg-bg">
       <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
-        <p className="flex w-full items-center justify-center gap-6 text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal">
+        {/* Explicitly white, not the dynamic ink: this text is only ever on
+            the dark ground, and the ink token turns dark as the light section
+            below starts winning the handover — which stranded the words in
+            near-black against the green. */}
+        <p className="flex w-full items-center justify-center gap-6 text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal text-fg">
           <motion.span style={{ x: before, opacity: fade }}>{content.headingBefore}</motion.span>
           <motion.span style={{ opacity: fade }}>{content.headingJoin}</motion.span>
           <motion.span style={{ x: after, opacity: fade }}>{content.headingAfter}</motion.span>
         </p>
       </div>
 
-      {/* Its own fill and above the words, since it rides up over them. */}
-      <div ref={cards} className="sticky top-0 z-10 flex min-h-screen items-center bg-bg py-20">
-        <Container>
+      {/* No fill of its own. A panel that paints the surface cuts the words in
+          half along its own top edge as it rides up; the words are meant to
+          leave by fading, and they are gone by the time this has arrived.
+          Section fills are cleared to transparent once the background
+          machinery runs, so an inner fill is also the one thing on the page
+          that would not fade with the rest. */}
+      <div ref={cards} className="sticky top-0 z-10 flex min-h-screen items-center py-20">
+        {/* 75% of the screen, holding the owner's pair of 812s at the width
+            they stop growing. Below desktop it is the page's own gutters. */}
+        <div className="mx-auto w-full px-gutter desktop:w-3/4 desktop:max-w-[1644px] desktop:px-0">
           <div className="grid gap-5 desktop:grid-cols-2">
             {content.columns.map((column) => (
               <div
@@ -147,7 +157,7 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
               </div>
             ))}
           </div>
-        </Container>
+        </div>
       </div>
     </section>
   );
