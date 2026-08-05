@@ -81,7 +81,16 @@ function overlaps(a: Span, b: Span, gap: number) {
   return a.start < b.end + gap && b.start < a.end + gap;
 }
 
-export function generateTracks(seed: number, orientation: Orientation): Track[] {
+/**
+ * `trackCount` overrides how many tracks the field is built from. The footer
+ * closes the page on a single row where the hero's band is three, and that is
+ * the only difference between them.
+ */
+export function generateTracks(
+  seed: number,
+  orientation: Orientation,
+  trackCount?: number,
+): Track[] {
   const random = createRandom(seed);
   const {
     minCellWeight,
@@ -93,7 +102,8 @@ export function generateTracks(seed: number, orientation: Orientation): Track[] 
     maxStagger,
     minGap,
   } = patternField;
-  const { tracks, cellsPerTrack, thickness } = patternField[orientation];
+  const { cellsPerTrack, thickness } = patternField[orientation];
+  const tracks = trackCount ?? patternField[orientation].tracks;
 
   // 1. Geometry. Fixed for the lifetime of the field.
   const grid: Track[] = Array.from({ length: tracks }, () => {

@@ -748,5 +748,13 @@ export const patternField = {
    * render on both server and client, so a time- or Math.random-based source
    * would produce different markup on each side and cause a hydration error.
    */
-  seeds: { left: 20260730, right: 19880413, top: 40213377, bottom: 91827364 },
+  seeds: {
+    left: 20260730,
+    right: 19880413,
+    top: 40213377,
+    bottom: 91827364,
+    /** The two single rows the page closes on, above and below the wordmark. */
+    footerTop: 27182818,
+    footerBottom: 16180339,
+  },
 } as const;

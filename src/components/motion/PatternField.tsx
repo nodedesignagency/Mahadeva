@@ -20,26 +20,36 @@ import { cn } from "@/lib/cn";
  */
 
 type PatternFieldProps = {
-  /** Which edge of the hero this field sits against. */
-  side: "left" | "right" | "top" | "bottom";
+  /** Which field this is — the key its seed is stored under. */
+  side: keyof typeof patternField.seeds;
   orientation: Orientation;
+  /** Tracks to build, where the breakpoint's own count is not wanted. */
+  tracks?: number;
   className?: string;
 };
 
-export function PatternField({ side, orientation, className }: PatternFieldProps) {
+export function PatternField({
+  side,
+  orientation,
+  tracks: trackCount,
+  className,
+}: PatternFieldProps) {
   const reduced = useReducedMotion() ?? false;
   const [state, setState] = useState(0);
 
   const { stateCount, stateInterval, transition } = patternField;
   const tracks = useMemo(
-    () => generateTracks(patternField.seeds[side], orientation),
-    [side, orientation],
+    () => generateTracks(patternField.seeds[side], orientation, trackCount),
+    [side, orientation, trackCount],
   );
 
   // Cycle through the arrangements. Held still under reduced motion.
   useEffect(() => {
     if (reduced) return;
-    const id = setInterval(() => setState((s) => (s + 1) % stateCount), stateInterval);
+    const id = setInterval(
+      () => setState((s) => (s + 1) % stateCount),
+      stateInterval,
+    );
     return () => clearInterval(id);
   }, [reduced, stateCount, stateInterval]);
 

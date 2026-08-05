@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { CtaPanel } from "@/components/layout/CtaPanel";
+import { PatternField } from "@/components/motion/PatternField";
 import { Scramble } from "@/components/motion/Scramble";
 import { Button } from "@/components/ui/Button";
 import { footerNav } from "@/config/navigation";
 import { footerContent } from "@/content/footer";
-import { cn } from "@/lib/cn";
 
 /**
  * The closing call to action and the footer, which the original treats as one
@@ -21,20 +21,14 @@ import { cn } from "@/lib/cn";
  */
 const LABEL = "font-body text-body-sm uppercase text-footer-label";
 
-/** The coloured bars either side of the wordmark. */
-const bars = [
-  { left: "0%", width: "23%", tone: "bg-quote-blue" },
-  { left: "31%", width: "16%", tone: "bg-quote-yellow" },
-  { left: "70%", width: "5%", tone: "bg-stat-green" },
-] as const;
-
 export function Footer() {
   return (
     // The two custom properties are what `.mh-nav-link` mixes between, so
     // every link here hovers exactly as the header's do. This ground is
     // always dark, so it takes the header's dark pair.
     <footer className="bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)]">
-      <Container className="pt-20 pb-16">
+      {/* 160 between the panel and the columns, per the owner. */}
+      <Container className="pt-20 pb-40">
         <CtaPanel className="relative flex flex-col justify-between gap-10 bg-cta p-10 text-fg-on-light tablet:flex-row tablet:items-center tablet:p-16">
           <h2 className="flex flex-col text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal">
             {footerContent.cta.headingLines.map((line) => (
@@ -131,24 +125,42 @@ export function Footer() {
         </Container>
       </div>
 
-      {/* The closing wordmark: set to the page's width and only just visible,
-          with the coloured bars the original runs above it. Decorative — the
-          site's name is already the header's link. */}
-      <div aria-hidden="true" className="relative overflow-hidden">
-        <div className="relative h-6">
-          {bars.map((bar) => (
-            <span
-              key={bar.tone}
-              className={cn("absolute top-0 h-full", bar.tone)}
-              style={{ left: bar.left, width: bar.width }}
-            />
-          ))}
-        </div>
+      {/* The closing wordmark, only just visible, with a single row of the
+          site's pattern above and below it. The bottom row is the last thing
+          on the page — there is no padding under it.
 
-        <p className="-mt-2 w-full text-center font-body leading-[0.8] font-normal tracking-(--tracking-display) text-fg/[0.06] text-[19vw]">
-          {footerContent.wordmark}
-        </p>
-      </div>
+          Decorative throughout: the site's name is already the header's link.
+
+          Sized in `cqw` against the container rather than `vw` against the
+          screen, so the word fills the same measure the rest of the page is
+          set to and stops growing where that measure does. */}
+      <Container aria-hidden="true" className="pt-10">
+        {/* The rows are anchored to this box rather than the Container, whose
+            own box includes the page's gutters — they belong to the measure,
+            not to the margin. `overflow-hidden` is what makes the foot of this
+            box the foot of the page: at this size the glyphs stand outside
+            their line box, and the document would otherwise carry on for
+            another 40px below the last row. */}
+        <div className="@container relative overflow-hidden">
+          <PatternField
+            side="footerTop"
+            orientation="horizontal"
+            tracks={1}
+            className="top-0"
+          />
+
+          <p className="w-full text-center font-body text-[21.5cqw] leading-[0.86] font-normal tracking-(--tracking-display) text-fg/[0.06]">
+            {footerContent.wordmark}
+          </p>
+
+          <PatternField
+            side="footerBottom"
+            orientation="horizontal"
+            tracks={1}
+            className="bottom-0"
+          />
+        </div>
+      </Container>
     </footer>
   );
 }
