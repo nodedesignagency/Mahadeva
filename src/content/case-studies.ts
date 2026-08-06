@@ -115,8 +115,11 @@ export const caseStudyDetailContent = {
   /** The two studies at the foot of every case study page. */
   more: {
     headingLines: ["Explore More Work"],
-    subheading:
-      "Browse additional work focused on strategy, automation, and scalable design built to improve clarity and performance.",
+    /** Two authored lines, so the break falls where the design puts it. */
+    subheadingLines: [
+      "Browse additional work focused on strategy, automation, and scalable",
+      "design built to improve clarity and performance.",
+    ],
     cta: { label: "More Case Studies", href: "/case-study" },
     /** How many to show. Two fit the row the cards are drawn for. */
     count: 2,

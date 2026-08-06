@@ -579,13 +579,6 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
   transition: color var(--duration-base) var(--ease-in-out);
 }
 
-/* The muted step of the same ink, derived rather than stored so the pair can
- * never drift apart. */
-@utility text-ink-dynamic-muted {
-  color: color-mix(in srgb, var(--color-fg-dynamic) 60%, transparent);
-  transition: color var(--duration-base) var(--ease-in-out);
-}
-
 /* Eyebrow / kicker label treatment, used above most section headings. */
 @utility eyebrow {
   font-size: var(--text-label);

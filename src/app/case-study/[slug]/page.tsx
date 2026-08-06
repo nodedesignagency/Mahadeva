@@ -105,7 +105,7 @@ function Result({ stat }: { stat: CaseStat }) {
 
   return (
     <div className="flex flex-col gap-10 border-l border-border ps-6">
-      <dt className="text-ink-dynamic-muted font-body text-body-md">
+      <dt className="text-ink-dynamic font-body text-body-md">
         {stat.label}
       </dt>
       <dd className="flex items-baseline font-ui font-normal">
@@ -126,7 +126,7 @@ function Meta({
 }) {
   return (
     <div className="flex flex-col gap-6 border-t border-border pt-6">
-      <h2 className="text-ink-dynamic-muted font-body text-body-sm">{label}</h2>
+      <h2 className="text-ink-dynamic font-body text-body-md">{label}</h2>
       {children}
     </div>
   );
@@ -149,7 +149,7 @@ function Section({
         {paragraphs.map((paragraph) => (
           <p
             key={paragraph}
-            className="text-ink-dynamic-muted max-w-[74ch] font-body text-body-md leading-[1.6]"
+            className="text-ink-dynamic max-w-[74ch] font-body text-body-md leading-[1.6]"
           >
             {paragraph}
           </p>
@@ -202,7 +202,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               lineStagger={sectionTextRevealDynamic.lineStagger}
               className="flex flex-col items-start gap-(--space-heading-line) text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal"
             />
-            <p className="text-ink-dynamic-muted max-w-[46ch] font-body text-body-md leading-[1.6]">
+            <p className="text-ink-dynamic max-w-[46ch] font-body text-body-md leading-[1.6]">
               {study.summary}
             </p>
           </div>
@@ -323,8 +323,12 @@ export default async function CaseStudyPage({ params }: PageProps) {
                     settings={sectionTextRevealDynamic}
                     className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
                   />
-                  <p className="text-ink-dynamic-muted mt-6 max-w-[46ch] font-body text-body-md">
-                    {t.more.subheading}
+                  <p className="text-ink-dynamic mt-6 font-body text-body-md">
+                    {t.more.subheadingLines.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
                   </p>
                 </div>
 

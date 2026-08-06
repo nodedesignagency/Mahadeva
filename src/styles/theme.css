@@ -185,8 +185,19 @@
   --color-case-periwinkle: var(--mh-periwinkle);
 
   --color-fg: var(--mh-white);
-  --color-fg-muted: var(--mh-white-a60);
-  --color-fg-subtle: var(--mh-white-a50);
+  /**
+   * Both were white at 60% and 50%. The site does not dim white text — a
+   * paragraph on the dark surface is as white as the heading above it, and a
+   * step down in opacity reads as a step down in importance that none of this
+   * copy has. They stay named for the roles components already ask for, so
+   * one edit here is the whole rule.
+   *
+   * Ink on a light surface is a different matter and still steps down: dark
+   * type at 70% on a pastel panel is legible where white at 70% on the dark
+   * surface simply looks switched off.
+   */
+  --color-fg-muted: var(--mh-white);
+  --color-fg-subtle: var(--mh-white);
   --color-fg-inverse: var(--mh-ink);
   --color-fg-on-light: var(--mh-ink);
   --color-fg-on-light-muted: var(--mh-slate);
