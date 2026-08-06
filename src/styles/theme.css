@@ -157,6 +157,14 @@
   --color-quote-shape-green: var(--mh-green-200); /* ABFFA8 */
   --color-quote-shape-yellow: var(--mh-yellow); /* FFE8A8 */
 
+  /* The About page's mission panel, and the blocks stood along its edges —
+   * the same one-step-deeper relationship the quote cards' blocks have to
+   * theirs, spread across three tints rather than matched to the fill. */
+  --color-mission-panel: var(--mh-blue-10); /* F1FAFF */
+  --color-mission-shape-blue: var(--mh-blue-100); /* BEDFFF */
+  --color-mission-shape-lavender: var(--mh-lavender); /* C2BFFF */
+  --color-mission-shape-green: var(--mh-green-300); /* A0DFA9 */
+
   /* The checkerboard that slides in on hover: one step deeper than the tile,
    * the same relationship the trust panels' blocks have to theirs. */
   --color-tool-shape-rose: var(--mh-rose-200);
