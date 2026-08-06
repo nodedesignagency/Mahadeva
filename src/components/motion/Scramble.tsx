@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { ElementType } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { textScramble } from "@/config/animation";
 import { viewport } from "@/lib/motion";
@@ -33,11 +34,20 @@ type Frame = {
 
 type ScrambleProps = {
   text: string;
+  /**
+   * The element to render. A label that heads a block of prose is a heading
+   * and should be one; the footer's are not, which is why the default stays a
+   * paragraph.
+   */
+  as?: "p" | "h2" | "h3" | "span";
   className?: string;
 };
 
-export function Scramble({ text, className }: ScrambleProps) {
-  const ref = useRef<HTMLParagraphElement>(null);
+export function Scramble({ text, as = "p", className }: ScrambleProps) {
+  // Widened deliberately: the ref is only ever read for `useInView`, and a
+  // union of intrinsic elements narrows its type to the first of them.
+  const Tag = as as ElementType;
+  const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, viewport);
   const reduced = useReducedMotion() ?? false;
   const [armed, setArmed] = useState(false);
@@ -87,14 +97,14 @@ export function Scramble({ text, className }: ScrambleProps) {
 
   if (!frame) {
     return (
-      <p ref={ref} className={className}>
+      <Tag ref={ref} className={className}>
         {text}
-      </p>
+      </Tag>
     );
   }
 
   return (
-    <p ref={ref} className={className}>
+    <Tag ref={ref} className={className}>
       {[...text].map((character, i) => {
         const settled = i < frame.cursor;
         const churning = !settled && i < frame.cursor + textScramble.letters;
@@ -109,6 +119,6 @@ export function Scramble({ text, className }: ScrambleProps) {
           </span>
         );
       })}
-    </p>
+    </Tag>
   );
 }

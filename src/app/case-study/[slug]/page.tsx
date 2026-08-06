@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { PageSurface } from "@/components/layout/PageSurface";
 import { PatternField } from "@/components/motion/PatternField";
+import { Scramble } from "@/components/motion/Scramble";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { Button } from "@/components/ui/Button";
 import { CaseStudyCard } from "@/components/ui/CaseStudyCard";
@@ -50,6 +51,12 @@ export async function generateMetadata({ params }: PageProps) {
     type: "article",
   });
 }
+
+/**
+ * The label that heads a block: the accent green, and the footer's
+ * scramble-appear. One constant so the three cannot drift apart.
+ */
+const BLOCK_LABEL = "font-body text-body-sm uppercase text-accent";
 
 /** A picture, or the space one will take. */
 function Frame({
@@ -137,9 +144,7 @@ function Section({
 
   return (
     <div className="grid gap-6 desktop:grid-cols-[5fr_12fr] desktop:gap-20">
-      <h2 className="font-body text-body-sm uppercase tracking-[0.04em]">
-        {label}
-      </h2>
+      <Scramble as="h2" text={label} className={BLOCK_LABEL} />
       <div className="flex flex-col gap-6">
         {paragraphs.map((paragraph) => (
           <p
@@ -204,10 +209,10 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
           <Frame
             image={study.image}
-            className="mt-15 aspect-[16/10] w-full overflow-hidden bg-bg-white"
+            className="mt-20 aspect-[16/10] w-full overflow-hidden bg-bg-white"
           />
 
-          <div className="mt-15 grid gap-10 tablet:grid-cols-3 tablet:gap-6">
+          <div className="mt-20 grid gap-10 tablet:grid-cols-3 tablet:gap-6">
             <Meta label={t.meta.client}>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 {study.logo ? (
@@ -220,7 +225,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                     className="h-8 w-auto max-w-[138px] object-contain"
                   />
                 ) : (
-                  <p className="font-body text-heading-sm">{study.client}</p>
+                  <p className="font-ui text-meta font-normal">{study.client}</p>
                 )}
 
                 {/* Only where there is something to open. */}
@@ -240,7 +245,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
             {study.timeline ? (
               <Meta label={t.meta.timeline}>
-                <p className="font-body text-heading-sm">{study.timeline}</p>
+                <p className="font-ui text-meta font-normal">{study.timeline}</p>
               </Meta>
             ) : null}
 
@@ -249,7 +254,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 {/* One run of names separated by dots, not a list of items:
                     the separators belong between them and so are drawn by the
                     layout, hidden from the reading order. */}
-                <p className="flex flex-wrap items-center gap-x-3 gap-y-2 font-body text-heading-sm">
+                <p className="flex flex-wrap items-center gap-x-3 gap-y-2 font-ui text-meta font-normal">
                   {study.services.map((service, i) => (
                     <span key={service} className="inline-flex items-center gap-3">
                       {i > 0 ? (
@@ -265,18 +270,32 @@ export default async function CaseStudyPage({ params }: PageProps) {
             ) : null}
           </div>
 
-          <div className="mt-30 flex flex-col gap-20">
+          <div className="mt-20 flex flex-col gap-20">
             <Section label={t.challenge} paragraphs={study.challenge} />
             <Section label={t.solution} paragraphs={study.solution} />
+          </div>
+
+          {/* Two across, and square: the tiles are artefacts of the work
+              rather than screenshots of it, and a fixed ratio is what keeps
+              the grid a grid when they arrive at different sizes.
+
+              Four placeholders stand in until they do, which is the count the
+              layout is drawn for. */}
+          <div className="mt-20 grid gap-2.5 tablet:grid-cols-2 tablet:gap-5">
+            {(study.gallery ?? Array.from({ length: 4 })).map((item, i) => (
+              <Frame
+                key={item ? item.url : i}
+                image={item ?? undefined}
+                className="aspect-square w-full overflow-hidden bg-bg-white"
+              />
+            ))}
           </div>
 
           {/* The four figures the card carries, given room. The label sits
               where the challenge and solution labels do, so the three blocks
               read as one column of arguments. */}
-          <div className="mt-30 grid gap-10 desktop:grid-cols-[5fr_12fr] desktop:gap-20">
-            <h2 className="font-body text-body-sm uppercase tracking-[0.04em]">
-              {t.results}
-            </h2>
+          <div className="mt-20 grid gap-10 desktop:grid-cols-[5fr_12fr] desktop:gap-20">
+            <Scramble as="h2" text={t.results} className={BLOCK_LABEL} />
             {/* Down the columns, not across: the pairs that sit under one
                 another are the first two and the last two, which is the order
                 an editor writes them in. `grid-flow-col` over two rows is what
@@ -289,29 +308,13 @@ export default async function CaseStudyPage({ params }: PageProps) {
             </dl>
           </div>
 
-          {/* Two across, and square: the tiles are artefacts of the work
-              rather than screenshots of it, and a fixed ratio is what keeps
-              the grid a grid when they arrive at different sizes.
-
-              Four placeholders stand in until they do, which is the count the
-              layout is drawn for. */}
-          <div className="mt-30 grid gap-2.5 tablet:grid-cols-2 tablet:gap-5">
-            {(study.gallery ?? Array.from({ length: 4 })).map((item, i) => (
-              <Frame
-                key={item ? item.url : i}
-                image={item ?? undefined}
-                className="aspect-square w-full overflow-hidden bg-bg-white"
-              />
-            ))}
-          </div>
-
           {/* Two more studies, never this one. Which two is decided by this
               study's own slug, so the pair is stable for a page and differs
               between pages — a build cannot roll one arrangement and leave
               every page showing it, and the server and the client cannot
               disagree about what to render. */}
           {more.length > 0 ? (
-            <div className="mt-30">
+            <div className="mt-20">
               <div className="flex flex-col gap-8 tablet:flex-row tablet:items-end tablet:justify-between">
                 <div>
                   <TextReveal
@@ -335,7 +338,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 </Button>
               </div>
 
-              <div className="mt-15 flex flex-col gap-2.5 tablet:gap-5">
+              <div className="mt-20 flex flex-col gap-2.5 tablet:gap-5">
                 {more.map((other) => (
                   <CaseStudyCard
                     key={other.slug}
