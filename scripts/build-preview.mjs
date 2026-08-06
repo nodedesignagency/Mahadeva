@@ -359,9 +359,26 @@ const fontVars = [
 ].map((m) => m[1]).join(";");
 if (!fontVars) throw new Error("no next/font variable classes found — check the build");
 
+/**
+ * The host's own body rule, and why this style has to restate the document's
+ * typography.
+ *
+ * A published artifact is wrapped in a page whose head carries
+ * `body{...font:14px -apple-system...}`. `font` is a shorthand, so it resets
+ * `line-height` to `normal` — and it is unlayered, while everything Tailwind
+ * emits sits in `@layer base`, which loses to an unlayered rule whatever the
+ * order. Every paragraph that takes its leading by inheritance from `body`
+ * therefore renders at `normal` in the artifact and at its real value
+ * everywhere else, which is invisible when the file is opened directly.
+ *
+ * This rule is unlayered too, and comes after the host's, so it wins.
+ */
 const embedded =
   `${html.match(/<head[^>]*>([\s\S]*?)<\/head>/)[1]}\n` +
-  `<style>:root{${fontVars}}\nhtml,body{margin:0;padding:0;background:#0e1e1d}</style>\n` +
+  `<style>:root{${fontVars}}\n` +
+  `html,body{margin:0;padding:0;background:#0e1e1d;` +
+  `font-family:var(--font-body);font-size:var(--text-body-md);` +
+  `line-height:var(--leading-body);color:var(--color-fg)}</style>\n` +
   `<div class="${[cls, bodyCls].filter(Boolean).join(" ")}">\n` +
   `${html.match(/<body[^>]*>([\s\S]*?)<\/body>/)[1]}\n</div>`;
 
