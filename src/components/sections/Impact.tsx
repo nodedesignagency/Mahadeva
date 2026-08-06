@@ -40,36 +40,43 @@ export function Impact({ content }: ImpactProps) {
             Tailwind's defaults here put `sm:grid-cols-2` after the four-up in
             the cascade, and the row silently stayed two wide on a desktop.
 
-            The rule sits on the left of every cell at every width: it is what
-            separates one measure from the next across the row, and what marks
-            where each begins down the stack.
+            From a tablet up a measure is a column: the mark at the top, the
+            figure at the foot with its label under it, and a rule down the
+            whole cell. A floor on the cell rather than a gap between the two
+            keeps the four figures on one line however tall a client's mark
+            turns out to be.
 
-            A floor on the cell rather than a gap between the mark and the
-            figure, so the four hang off the same line however tall a client's
-            mark turns out to be. */}
+            On a phone it turns on its side — the label moves alongside the
+            figure and shares its baseline, which is what stops four stacked
+            measures running the section to three screens. The rule goes with
+            it, marking that line rather than the whole entry. */}
         <ul className="mt-15 grid grid-cols-1 gap-x-6 gap-y-10 tablet:grid-cols-2 desktop:grid-cols-4">
           {content.stats.map((stat) => (
             <li
               key={stat.label}
-              className="flex min-h-[280px] flex-col justify-between border-l border-border-on-light pl-6"
+              className="flex flex-col tablet:min-h-[200px] tablet:justify-between tablet:border-l tablet:border-border-on-light tablet:ps-6"
             >
               {/* The client's mark. A placeholder at the slot's real size
                   until the files land, so the row's rhythm is already right
-                  when they arrive and the artwork is a drop-in. */}
+                  when they arrive and the artwork is a drop-in.
+
+                  The transparent rule is not decoration: it is the same 1px
+                  the figure's own rule takes below, so the two line up on a
+                  phone instead of sitting a hair apart. */}
               <span
                 aria-hidden="true"
-                className="block h-7 w-[150px] bg-placeholder"
+                className="block h-7 w-[150px] border-l border-transparent bg-clip-content bg-placeholder ps-6 tablet:border-0 tablet:bg-clip-border tablet:ps-0"
               />
               <span className="sr-only">{stat.client}</span>
 
-              <div>
+              <div className="mt-6 flex items-baseline gap-5 border-l border-border-on-light ps-6 tablet:mt-0 tablet:block tablet:border-0 tablet:ps-0">
                 <StatCounter
                   value={stat.value}
                   prefix={stat.prefix}
                   unit={stat.unit}
                   size="compact"
                 />
-                <p className="text-ink-dynamic mt-4 font-body text-body-md leading-[1.5]">
+                <p className="text-ink-dynamic font-body text-body-md leading-[1.5] tablet:mt-4">
                   {stat.label}
                 </p>
               </div>

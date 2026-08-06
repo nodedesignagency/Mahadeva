@@ -81,8 +81,14 @@ export function Compare({ content }: CompareProps) {
           {/* `table-fixed`, so the columns take the widths declared on the
               head rather than whatever their longest cell asks for. Left to
               size itself, the three buttons alone push the table past its
-              container and the last column is cut off at a tablet. */}
-          <table className="w-full table-fixed border-separate border-spacing-0 text-left max-desktop:min-w-[820px]">
+              container and the last column is cut off at a tablet.
+
+              940 is the floor where it scrolls: narrow enough to leave the
+              first plan in view beside the labels, wide enough that a sliver
+              of the second is showing, which is what tells a reader there is
+              more of the table to the right. The 1200 ceiling is the design's;
+              the container already holds it below that. */}
+          <table className="w-full table-fixed border-separate border-spacing-0 text-left max-w-[1200px] max-desktop:min-w-[940px]">
             <caption className="sr-only">
               Features included in each plan
             </caption>
