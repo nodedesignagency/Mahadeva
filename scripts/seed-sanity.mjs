@@ -71,6 +71,8 @@ studies.forEach((study, index) => {
     _id: `caseStudy-${study.slug}`,
     _type: "caseStudy",
     title: study.title,
+    titleLines: study.titleLines,
+    titleLinesMobile: study.titleLinesMobile,
     slug: { _type: "slug", current: study.slug },
     client: study.client,
     year: study.year,

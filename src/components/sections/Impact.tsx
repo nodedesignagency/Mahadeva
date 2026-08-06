@@ -78,7 +78,7 @@ export function Impact({ content }: ImpactProps) {
                   unit={stat.unit}
                   size="compact"
                 />
-                <p className="text-ink-dynamic font-body text-body-md leading-[1.5] tablet:mt-4">
+                <p className="text-ink-dynamic font-body text-body-md tablet:mt-4">
                   {stat.label}
                 </p>
               </div>

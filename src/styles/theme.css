@@ -322,14 +322,20 @@
 
   --leading-display: 1;
   --leading-heading: 1.15;
-  /* 150%, matching the original's body preset. */
-  --leading-body: 1.5;
+  /**
+   * 160%. The original's preset is 150 and it read tight at every size on
+   * this palette — the owner asked for air, and this is the one place that
+   * decides it. No component sets its own: a literal in a class is how one
+   * paragraph ends up a step tighter than the one beside it, which is exactly
+   * what happened here.
+   */
+  --leading-body: 1.6;
   /**
    * The feature cards' body setting. Was 1.4, the one paragraph on the site
    * set tighter than the rest — which read as cramped beside every other
    * paragraph and answered to nothing in the design.
    */
-  --leading-card: 1.5;
+  --leading-card: 1.6;
 
   /** Gap between the display heading's lines. */
   --space-heading-line: 4px;

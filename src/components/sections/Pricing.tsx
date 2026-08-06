@@ -51,7 +51,7 @@ export function Pricing({ content, variant = "section" }: PricingProps) {
           lineStagger={sectionTextRevealBeige.lineStagger}
           className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
-        <p className="text-ink-dynamic mx-auto mt-6 max-w-[56ch] text-center font-body text-body-md leading-[1.5]">
+        <p className="text-ink-dynamic mx-auto mt-6 max-w-[56ch] text-center font-body text-body-md">
           {content.subheading}
         </p>
 

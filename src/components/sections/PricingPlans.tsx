@@ -127,7 +127,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
                       {plan.price.period}
                     </span>
                   </p>
-                  <p className="font-body text-[1rem] leading-[1.5]">{plan.body}</p>
+                  <p className="font-body text-[1rem]">{plan.body}</p>
                 </div>
                 <Button
                   href={plan.cta.href}
@@ -166,7 +166,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
               <p className="font-ui text-[2.25rem] font-light tracking-normal leading-[1em] text-fg-on-light">
                 {content.enterprise.title}
               </p>
-              <p className="max-w-[52ch] font-body text-[1rem] leading-[1.5]">
+              <p className="max-w-[52ch] font-body text-[1rem]">
                 {content.enterprise.body}
               </p>
             </div>

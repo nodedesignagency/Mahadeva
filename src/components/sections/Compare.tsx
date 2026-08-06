@@ -66,7 +66,7 @@ export function Compare({ content }: CompareProps) {
           lineStagger={sectionTextRevealBeige.lineStagger}
           className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
-        <p className="text-ink-dynamic mx-auto mt-6 max-w-[46ch] text-center font-body text-body-md leading-[1.5]">
+        <p className="text-ink-dynamic mx-auto mt-6 max-w-[46ch] text-center font-body text-body-md">
           {content.subheading}
         </p>
 
@@ -132,7 +132,7 @@ export function Compare({ content }: CompareProps) {
                   >
                     <div className={cn("h-full p-4 desktop:p-6", tones[plan.tone])}>
                       <p className="font-body text-heading-md">{plan.name}</p>
-                      <p className="mt-2 font-body text-body-sm leading-[1.5]">
+                      <p className="mt-2 font-body text-body-sm">
                         {plan.body}
                       </p>
                       <Button

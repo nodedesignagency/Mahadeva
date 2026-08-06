@@ -116,7 +116,7 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
               {study.title}
             </h3>
 
-            <p className="font-body text-body-md leading-[1.5] text-fg-on-light/80">
+            <p className="font-body text-body-md text-fg-on-light/80">
               {study.summary}
             </p>
           </div>

@@ -72,7 +72,7 @@ export function Testimonials({ content }: TestimonialsProps) {
                 fixed to white goes invisible exactly there. Full strength
                 rather than the muted step, per the original, and set wide
                 enough for two long lines. */}
-            <p className="text-ink-dynamic mt-6 max-w-[68ch] font-body text-body-lg leading-[1.5]">
+            <p className="text-ink-dynamic mt-6 max-w-[68ch] font-body text-body-lg">
               {content.subheading}
             </p>
           </div>

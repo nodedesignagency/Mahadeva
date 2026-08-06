@@ -27,6 +27,23 @@ export type CaseStudy = {
   /** Shown in the chip at the top right of the panel. */
   year: string;
   title: string;
+  /**
+   * The title broken into the lines the detail page sets it on.
+   *
+   * Every heading on this site is authored line by line, and the reveal
+   * depends on it: a line's bar is one box, sized to that line's text, so a
+   * heading left to wrap gets a single bar as wide as the column with the gap
+   * between its rows hidden underneath. Absent, the page falls back to the
+   * whole title and copes — but the breaks are a design decision, not the
+   * column's to make.
+   */
+  titleLines?: string[];
+  /**
+   * The same title broken for a phone, where the desktop break runs past the
+   * column and wraps — which puts the bar back to the column's width for the
+   * line that wrapped. The hero does the same thing for the same reason.
+   */
+  titleLinesMobile?: string[];
   summary: string;
   /**
    * Exactly four, laid out 2x2. Fewer would leave a hole in the grid, more

@@ -34,7 +34,7 @@ export function Faq({ content }: FaqProps) {
             lineStagger={sectionTextRevealBeige.lineStagger}
             className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
-          <p className="text-ink-dynamic mt-8 max-w-[38ch] font-body text-body-md leading-[1.5]">
+          <p className="text-ink-dynamic mt-8 max-w-[38ch] font-body text-body-md">
             {content.subheading}
           </p>
 

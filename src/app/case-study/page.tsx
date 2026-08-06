@@ -61,7 +61,7 @@ export default async function CaseStudyIndexPage() {
           />
           {/* Two authored lines rather than a wrapped paragraph, so the break
               falls where the design puts it and not where the column ends. */}
-          <p className="text-ink-dynamic max-w-[52ch] font-body text-body-md leading-[1.5]">
+          <p className="text-ink-dynamic max-w-[52ch] font-body text-body-md">
             {caseStudyIndexContent.subheadingLines.map((line) => (
               <span key={line} className="block">
                 {line}
