@@ -46,8 +46,16 @@ type CompareProps = {
   content: typeof compareContent;
 };
 
-/** Shared by every body cell: the hairline above it and its padding. */
-const cell = "border-t border-border-on-light px-4 py-4 desktop:px-6";
+/**
+ * Shared by every body cell: the hairline above it, its fill and its padding.
+ *
+ * Rules are drawn on one side only — above every cell, and down the left of
+ * every cell but the first. Any pair of neighbours would otherwise lay two
+ * hairlines along the same edge, which at these values reads as one heavier
+ * line in some places and not others.
+ */
+const cell =
+  "border-t border-border-compare bg-compare-cell px-4 py-4 desktop:px-6";
 
 export function Compare({ content }: CompareProps) {
   return (
@@ -125,7 +133,7 @@ export function Compare({ content }: CompareProps) {
                   <th
                     scope="colgroup"
                     colSpan={content.plans.length + 1}
-                    className="border-t border-border-on-light bg-compare-band px-6 py-4 text-left font-body text-heading-sm font-normal"
+                    className="border-t border-border-compare bg-compare-band px-6 py-4 text-left font-body text-heading-sm font-normal"
                   >
                     {group.title}
                   </th>
@@ -149,7 +157,7 @@ export function Compare({ content }: CompareProps) {
                           // Pinned to the left edge only where the table
                           // scrolls sideways, with a rule of its own: it is a
                           // column boundary there, not the table's edge.
-                          "bg-bg-white font-body text-body-md font-normal max-desktop:sticky max-desktop:left-0 max-desktop:border-r",
+                          "font-body text-body-md font-normal max-desktop:sticky max-desktop:left-0 max-desktop:border-r",
                         )}
                       >
                         {row.label}
@@ -160,7 +168,11 @@ export function Compare({ content }: CompareProps) {
                           className={cn(
                             cell,
                             foot,
-                            "border-l bg-bg-white text-center font-body text-body-md",
+                            "border-l text-center font-body text-body-md",
+                            // Where the label column is pinned it carries the
+                            // rule between the two, since the rule on this
+                            // cell travels away underneath it.
+                            i === 0 && "max-desktop:border-l-0",
                           )}
                         >
                           {typeof value === "string" ? (

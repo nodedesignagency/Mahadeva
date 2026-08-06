@@ -43,9 +43,9 @@ const variants = {
   plan: "bg-bg text-fg",
   /**
    * The comparison table's call to action. `primary`'s white body, but the
-   * arrow rides an outlined white box rather than a dark one — three of them
-   * sit side by side on the tinted column heads, where three dark blocks read
-   * as the loudest thing in the table.
+   * arrow rides a quiet grey frame rather than a dark one — three of them sit
+   * side by side on the tinted column heads, where three dark blocks read as
+   * the loudest thing in the table.
    */
   compare: "bg-fg text-fg-inverse",
   outline: "border border-border-strong text-fg hover:bg-surface",
@@ -78,7 +78,7 @@ const sweptLabels: Partial<Record<keyof typeof variants, string>> = {
 /** Icon box colours, inverted against each variant's body. */
 const iconBoxes = {
   primary: "bg-fg-inverse text-fg",
-  compare: "border border-border-strong bg-fg text-fg-inverse",
+  compare: "bg-icon-box-quiet text-fg-inverse",
   secondary: "bg-fg text-fg-inverse",
   plan: "bg-fg text-fg-inverse",
   outline: "bg-fg text-fg-inverse",

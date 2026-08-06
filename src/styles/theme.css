@@ -198,9 +198,18 @@
   --color-border-nav-on-light: var(--mh-mist);
   /* Neutral block standing in for photography until the file lands. */
   --color-placeholder: var(--mh-grey-200);
-  /* The comparison table's group bands. A step off the white rows, so a group
-   * heading reads as a divider between them rather than another row. */
-  --color-compare-band: var(--mh-grey-100);
+  /* The comparison table.
+   *
+   * Only the plan heads are white; the table below them tints the page's own
+   * surface — the group bands by 5% of the slate, the cells under them by 4%
+   * white. Both are mixed down to an opaque colour rather than left
+   * translucent, because these fills are what a pinned head and a pinned
+   * label column hide the rows travelling under them behind. */
+  --color-compare-band: color-mix(in srgb, var(--mh-slate) 5%, var(--mh-beige));
+  --color-compare-cell: color-mix(in srgb, var(--mh-white) 4%, var(--mh-beige));
+  --color-border-compare: var(--mh-grey-250);
+  /* The comparison button's icon frame: a quiet grey, no border of its own. */
+  --color-icon-box-quiet: var(--mh-grey-100);
   /* The billing toggle's off-state track and the grey of the pricing cards'
    * "PLAN INCLUDES:" labels. */
   --color-track: var(--mh-grey-250);
@@ -461,6 +470,9 @@
   --color-border-nav-on-light: var(--color-border-nav-on-light);
   --color-placeholder: var(--color-placeholder);
   --color-compare-band: var(--color-compare-band);
+  --color-compare-cell: var(--color-compare-cell);
+  --color-border-compare: var(--color-border-compare);
+  --color-icon-box-quiet: var(--color-icon-box-quiet);
   --color-track: var(--color-track);
   --color-fg-label: var(--color-fg-label);
   --color-accent: var(--color-accent);
