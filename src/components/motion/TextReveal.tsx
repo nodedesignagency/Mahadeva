@@ -56,6 +56,16 @@ type TextRevealProps = {
   mobileLines?: readonly string[];
   settings: TextRevealSettings;
   as?: "h1" | "h2" | "h3" | "h4" | "p" | "div";
+  /**
+   * Set where a line is expected to wrap rather than break where it is
+   * written — a CMS title, say.
+   *
+   * The bars are one box per line, so a wrapped line gets one bar over both of
+   * its rows and the gap between them disappears under it. This draws them as
+   * a repeating band instead, one per row with the line's own gutter between,
+   * which is what a pair of authored lines already looks like.
+   */
+  wraps?: boolean;
   /** Extra milliseconds between consecutive lines starting. */
   lineStagger?: number;
   id?: string;
@@ -68,6 +78,7 @@ export function TextReveal({
   mobileLines,
   settings,
   as: Tag = "h2",
+  wraps = false,
   lineStagger = 0,
   id,
   className,
@@ -83,6 +94,7 @@ export function TextReveal({
         settings={settings}
         reduced={reduced}
         extraDelay={i * lineStagger}
+        wraps={wraps}
         className={lineClassName}
       />
     ));
@@ -112,10 +124,28 @@ type RevealLineProps = {
   settings: TextRevealSettings;
   reduced: boolean;
   extraDelay: number;
+  wraps?: boolean;
   className?: string;
 };
 
-function RevealLine({ text, settings, reduced, extraDelay, className }: RevealLineProps) {
+/**
+ * A bar's fill.
+ *
+ * Flat, unless the line may wrap: then a band the height of one row, repeating
+ * on the line box, so every row gets its own bar and the gutter between rows
+ * stays open. `1em` is the row and the block's own line-height is the period —
+ * both read from the element the bar sits in, so nothing has to be measured
+ * and any number of rows works.
+ */
+function barFill(color: string, wraps: boolean) {
+  if (!wraps) return color;
+  return (
+    `repeating-linear-gradient(to bottom, ${color} 0 1em, ` +
+    `transparent 1em calc(1em + var(--space-heading-line)))`
+  );
+}
+
+function RevealLine({ text, settings, reduced, extraDelay, wraps = false, className }: RevealLineProps) {
   const blockRef = useRef<HTMLSpanElement>(null);
   const overlayRef = useRef<HTMLSpanElement>(null);
   const overlay2Ref = useRef<HTMLSpanElement>(null);
@@ -274,7 +304,7 @@ function RevealLine({ text, settings, reduced, extraDelay, className }: RevealLi
             ref={overlayRef}
             className="pointer-events-none absolute inset-0 z-[5]"
             style={{
-              background: settings.revealColor,
+              background: barFill(settings.revealColor, wraps),
               transform: "scaleX(0)",
               transformOrigin: leadingEdge,
             }}
@@ -283,7 +313,7 @@ function RevealLine({ text, settings, reduced, extraDelay, className }: RevealLi
             ref={overlay2Ref}
             className="pointer-events-none absolute inset-0 z-[6]"
             style={{
-              background: settings.revealColor2,
+              background: barFill(settings.revealColor2, wraps),
               transform: "scaleX(0)",
               transformOrigin: leadingEdge,
             }}

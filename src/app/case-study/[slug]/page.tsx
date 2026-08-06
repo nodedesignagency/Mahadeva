@@ -203,6 +203,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 the two rules agree however a title breaks. */}
             <TextReveal
               as="h1"
+              wraps
               lines={[study.title]}
               settings={sectionTextRevealDynamic}
               lineStagger={sectionTextRevealDynamic.lineStagger}
