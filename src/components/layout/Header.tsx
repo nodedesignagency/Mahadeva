@@ -11,37 +11,24 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
 import { cn } from "@/lib/cn";
 
-/** Where the header flips from its dark surface to its light one. */
-const SCROLL_THRESHOLD = 350;
-
 /**
- * The surface each route holds, where it is not the default white.
+ * Where a `hero` page's header flips from its dark surface to its light one.
  *
- * `dark` is a page that is dark the whole way down, so the strip is too — it
- * never flips. `hero` is dark over the opening and light past it, which is the
- * home page: an intro on the dark surface, then white and beige wrappers under
- * it. `beige` is the light strip in the page's own beige, so the header reads
- * as the top of the surface rather than a white band laid over it. Everything
- * else about the light strip — ink, hairline, link colours — is the same
- * whichever light it wears.
- *
- * Listed by route rather than measured: the header renders before the page it
- * sits over, and reading the surface out of the DOM would mean painting one
- * strip and correcting it a frame later.
+ * Which surface it wears otherwise is not this component's business at all —
+ * the page declares it and `globals.css` styles from that declaration. See
+ * PageSurface. All that is passed on from here is whether the reader is past
+ * the threshold, which is the one part of it JavaScript has to know.
  */
-const ROUTE_SURFACE: Record<string, "dark" | "hero" | "beige"> = {
-  "/": "hero",
-  "/case-study": "dark",
-  "/pricing": "beige",
-};
+const SCROLL_THRESHOLD = 350;
 
 /**
  * Site header.
  *
  * Opaque at every scroll position — the hero's pattern field animates directly
  * behind this strip, and bars passing under the wordmark made both hard to
- * read — but which surface it wears depends on scroll. Dark over the hero,
- * light once past the threshold, with everything inside inverting to match.
+ * read. Which surface it wears is the page's to declare, and `globals.css`
+ * styles the strip from that declaration; the only part of it decided here is
+ * whether a hero page has been scrolled past.
  *
  * The mobile overlay implements the accessibility the original omits — focus is
  * trapped while open, Escape closes it, background scroll is locked, and the
@@ -54,17 +41,6 @@ export function Header() {
   const pathname = usePathname();
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-
-  // Which surface the strip wears. Only a `hero` page trades one for the
-  // other, and only at the threshold; a dark page keeps the dark strip however
-  // far down it you are, and everything else is light from the top.
-  //
-  // Everything the header draws reads this, not `scrolled` — the CTA's border
-  // followed the scroll alone once, and sat invisible on a page that was light
-  // from the top.
-  const surface = ROUTE_SURFACE[pathname];
-  const light =
-    surface === "dark" ? false : surface === "hero" ? scrolled : true;
 
   // `passive` keeps this off the scrolling critical path. The initial read is
   // deferred a frame rather than run in the effect body, so a restored scroll
@@ -139,6 +115,9 @@ export function Header() {
 
   return (
     <header
+      // Read by `globals.css`, where a hero page's strip turns light past the
+      // threshold. Nothing else consults it.
+      data-scrolled={scrolled}
       style={
         { "--mh-nav-open-duration": `${mobileNav.openDuration}ms` } as CSSProperties
       }
@@ -153,19 +132,10 @@ export function Header() {
         open ? "h-[100dvh] border-transparent" : "h-header",
         // The strip crossfades as one — surface, hairline, wordmark and CTA
         // (`text-current`), and both endpoints the links mix between. That
-        // list lives in `.mh-nav-shell` alongside the open/close height, not
-        // here: an unlayered `transition` there beats a utility here, so
-        // splitting them across the two meant one quietly deleted the other.
-        //
-        // Each surface carries its own hairline and its own pair of link
-        // colours, which the links mix between on hover.
-        light
-          ? "border-border-on-light text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)] [--mh-nav-rule-color:var(--color-border-nav-on-light)]"
-          : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)] [--mh-nav-rule-color:var(--color-fg)]",
-        // The light strip's fill is the only thing a beige page changes: it
-        // takes the page's own surface, so the header reads as the top of it
-        // rather than a white band laid over it.
-        light && (surface === "beige" ? "bg-bg-light" : "bg-bg-white"),
+        // list lives in `.mh-nav-shell` alongside the open/close height and
+        // the surfaces themselves: an unlayered `transition` there beats a
+        // utility here, so splitting them across the two meant one quietly
+        // deleted the other.
       )}
     >
       <Container className="flex h-header items-center justify-between gap-6">
@@ -233,7 +203,7 @@ export function Header() {
               // Opacity only — the hairline swaps with the surface it belongs
               // to, so easing it would leave it a step behind the flip.
               "transition-opacity duration-(--duration-hover) ease-(--ease-out)",
-              light ? "border-border-on-light" : "border-border",
+              "border-(--mh-nav-border)",
             )}
           >
             {navCta.label}
@@ -254,7 +224,7 @@ export function Header() {
               "desktop:hidden inline-flex size-[33px] shrink-0 items-center justify-center",
               "rounded-(--radius-button) border text-current",
               "transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-50",
-              light ? "border-border-on-light" : "border-border",
+              "border-(--mh-nav-border)",
             )}
           >
             <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">

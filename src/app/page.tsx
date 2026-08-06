@@ -8,6 +8,7 @@ import { Testimonials } from "@/components/sections/Testimonials";
 import { BeforeAfter } from "@/components/sections/BeforeAfter";
 import { Pricing } from "@/components/sections/Pricing";
 import { Faq } from "@/components/sections/Faq";
+import { PageSurface } from "@/components/layout/PageSurface";
 import {
   aboutContent,
   beforeAfterContent,
@@ -34,6 +35,9 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* Dark over the hero, light from the moment the reader is past it. */}
+      <PageSurface value="hero" />
+
       {/* Hero and About share one stack: both stick to the top, so About rides
           up over the pinned hero rather than pushing it off. The stack's height
           is what decides how long each stays pinned. */}

@@ -1,4 +1,5 @@
 import { buildMetadata } from "@/config/seo";
+import { PageSurface } from "@/components/layout/PageSurface";
 import { Compare } from "@/components/sections/Compare";
 import { Faq } from "@/components/sections/Faq";
 import { Impact } from "@/components/sections/Impact";
@@ -27,6 +28,7 @@ export const metadata = buildMetadata({
 export default function PricingPage() {
   return (
     <>
+      <PageSurface value="beige" />
       <Pricing content={pricingContent} variant="hero" />
       <Impact content={impactContent} />
       <Compare content={compareContent} />

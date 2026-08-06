@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Container } from "@/components/layout/Container";
+import { PageSurface } from "@/components/layout/PageSurface";
 import { PatternField } from "@/components/motion/PatternField";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { CaseStudyCard } from "@/components/ui/CaseStudyCard";
@@ -30,6 +31,8 @@ export default async function CaseStudyIndexPage() {
 
   return (
     <>
+      <PageSurface value="dark" />
+
       {/* `overflow-hidden` so the band's cells cannot widen the page as they
           animate, and the top offset clears the fixed header — the field runs
           from under it rather than behind it, which would cut its first row
