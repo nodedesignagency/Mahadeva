@@ -46,10 +46,12 @@ export function Impact({ content }: ImpactProps) {
             keeps the four figures on one line however tall a client's mark
             turns out to be.
 
-            On a phone it turns on its side — the label moves alongside the
-            figure and shares its baseline, which is what stops four stacked
-            measures running the section to three screens. The rule goes with
-            it, marking that line rather than the whole entry. */}
+            On a phone it turns on its side, which is what stops four stacked
+            measures running the section to three screens: the label moves
+            alongside the figure and sits on its baseline. Its *last* baseline
+            — a label long enough to wrap would otherwise hang its second line
+            below the figure while its first sat level with it. The rule goes
+            with it, marking that line rather than the whole entry. */}
         <ul className="mt-15 grid grid-cols-1 gap-x-6 gap-y-10 tablet:grid-cols-2 desktop:grid-cols-4">
           {content.stats.map((stat) => (
             <li
@@ -69,7 +71,7 @@ export function Impact({ content }: ImpactProps) {
               />
               <span className="sr-only">{stat.client}</span>
 
-              <div className="mt-6 flex items-baseline gap-5 border-l border-border-on-light ps-6 tablet:mt-0 tablet:block tablet:border-0 tablet:ps-0">
+              <div className="mt-6 flex items-baseline-last gap-5 border-l border-border-on-light ps-6 tablet:mt-0 tablet:block tablet:border-0 tablet:ps-0">
                 <StatCounter
                   value={stat.value}
                   prefix={stat.prefix}

@@ -26,11 +26,9 @@ import { cn } from "@/lib/cn";
  *     stripped of its own edges.
  *
  * Below the desktop breakpoint four columns and three buttons do not fit, so
- * the table keeps its width and scrolls sideways in its own box. Vertical
- * pinning is off there — an element cannot stick to the viewport from inside a
- * scroll container — and the row labels pin to the left edge instead, which is
- * the axis that is actually moving. One breakpoint governs both: wherever the
- * table can scroll sideways the labels pin, wherever it cannot the head does.
+ * the table keeps its width and scrolls sideways in its own box — every column
+ * of it, the labels included. Vertical pinning is off there: an element cannot
+ * stick to the viewport from inside a scroll container.
  *
  * A server component — nothing here holds state.
  */
@@ -72,12 +70,19 @@ export function Compare({ content }: CompareProps) {
           {content.subheading}
         </p>
 
-        {/* The scroller keeps the container's gutter outside itself rather
-            than repeating it as padding. Inside a padded scroll box, `left-0`
-            is the padding edge, so the pinned label column would sit a gutter
-            in from the box's own edge and the row it belongs to would slide
-            through the gap beside it. */}
-        <div className="mt-15 max-desktop:overflow-x-auto">
+        {/* `relative` is load-bearing, not tidiness. `sr-only` positions its
+            text absolutely, and with no positioned ancestor the containing
+            block was the page — so the hidden "Included" beside every tick sat
+            wherever its cell fell in the 940px table, at x≈846 on a phone,
+            outside this box's clip. The page itself scrolled sideways to reach
+            it, carrying the header and every section with it and showing the
+            dark surface past the right edge. Positioning this box makes it
+            their containing block, and the clip applies.
+
+            The right edge is drawn here rather than on the table, so it stays
+            at the edge of the box while the table travels under it. Without
+            it a scrolled table simply runs off into the page. */}
+        <div className="relative mt-15 max-desktop:overflow-x-auto max-desktop:border-r max-desktop:border-border-compare">
           {/* `table-fixed`, so the columns take the widths declared on the
               head rather than whatever their longest cell asks for. Left to
               size itself, the three buttons alone push the table past its
@@ -145,7 +150,7 @@ export function Compare({ content }: CompareProps) {
                   <th
                     scope="colgroup"
                     colSpan={content.plans.length + 1}
-                    className="border-x border-t border-border-compare bg-compare-band px-6 py-4 text-left font-body text-heading-sm font-normal"
+                    className="border-l border-t border-border-compare bg-compare-band desktop:border-r px-6 py-4 text-left font-body text-heading-sm font-normal"
                   >
                     {group.title}
                   </th>
@@ -166,13 +171,10 @@ export function Compare({ content }: CompareProps) {
                         className={cn(
                           cell,
                           foot,
-                          // Pinned to the left edge only where the table
-                          // scrolls sideways, with a rule of its own: it is a
-                          // column boundary there, not the table's edge.
                           // `border-l` is the table's own left edge, which
                           // starts at the first band and never runs beside
                           // the plan cards above it.
-                          "border-l font-body text-body-md font-normal max-desktop:sticky max-desktop:left-0 max-desktop:border-r",
+                          "border-l font-body text-body-md font-normal",
                         )}
                       >
                         {row.label}
@@ -184,11 +186,9 @@ export function Compare({ content }: CompareProps) {
                             cell,
                             foot,
                             "border-l text-center font-body text-body-md",
-                            // Where the label column is pinned it carries the
-                            // rule between the two, since the rule on this
-                            // cell travels away underneath it.
-                            i === 0 && "max-desktop:border-l-0",
-                            i === row.values.length - 1 && "border-r",
+                            // The table draws its own right edge only where
+                            // the box does not draw one for it.
+                            i === row.values.length - 1 && "desktop:border-r",
                           )}
                         >
                           {typeof value === "string" ? (
