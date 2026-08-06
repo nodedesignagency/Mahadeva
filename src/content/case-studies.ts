@@ -111,6 +111,16 @@ export const caseStudyDetailContent = {
   livePreview: "Live Preview",
   challenge: "{The Challenge}",
   solution: "{The Solution}",
+  results: "{The Results}",
+  /** The two studies at the foot of every case study page. */
+  more: {
+    headingLines: ["Explore More Work"],
+    subheading:
+      "Browse additional work focused on strategy, automation, and scalable design built to improve clarity and performance.",
+    cta: { label: "More Case Studies", href: "/case-study" },
+    /** How many to show. Two fit the row the cards are drawn for. */
+    count: 2,
+  },
   /** Stands in for a picture that has not been supplied yet. */
   imagePending: "Screenshot to come",
 } as const;

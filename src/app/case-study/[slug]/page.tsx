@@ -1,14 +1,18 @@
+import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { PageSurface } from "@/components/layout/PageSurface";
 import { PatternField } from "@/components/motion/PatternField";
 import { TextReveal } from "@/components/motion/TextReveal";
+import { Button } from "@/components/ui/Button";
+import { CaseStudyCard } from "@/components/ui/CaseStudyCard";
 import { sectionTextRevealDynamic } from "@/config/animation";
 import { buildMetadata } from "@/config/seo";
 import { caseStudyDetailContent as t } from "@/content/case-studies";
-import type { CaseStudy } from "@/content/case-studies";
+import type { CaseStat, CaseStudy } from "@/content/case-studies";
 import { getCaseStudies, getCaseStudy } from "@/lib/case-studies";
+import { hashString, pickSeeded } from "@/lib/random";
 
 /**
  * One case study.
@@ -77,6 +81,34 @@ function Frame({
   );
 }
 
+/**
+ * One result.
+ *
+ * The figures are written as whole strings — "13.2x", "$80K+", "18h/wk" — so
+ * the split is done here rather than in the content: everything up to the
+ * first character that is not part of a number is the number, and the rest is
+ * its unit, set smaller beside it. A value with no unit simply has none.
+ *
+ * These do not count up, unlike the trust panels and the pricing figures.
+ * Those are numbers with a unit attached; these are strings an editor writes,
+ * and there is no honest number to climb to in "18h/wk".
+ */
+function Result({ stat }: { stat: CaseStat }) {
+  const [, figure, unit] = stat.value.match(/^([-$]?[\d.,]*)(.*)$/) ?? [];
+
+  return (
+    <div className="flex flex-col gap-10 border-l border-border ps-6">
+      <dt className="text-ink-dynamic-muted font-body text-body-md">
+        {stat.label}
+      </dt>
+      <dd className="flex items-baseline font-ui font-normal">
+        <span className="text-stat-sm leading-none">{figure || stat.value}</span>
+        {unit ? <span className="text-stat-unit leading-none">{unit}</span> : null}
+      </dd>
+    </div>
+  );
+}
+
 /** A labelled column of the meta row. */
 function Meta({
   label,
@@ -126,6 +158,13 @@ export default async function CaseStudyPage({ params }: PageProps) {
   const { slug } = await params;
   const study: CaseStudy | undefined = await getCaseStudy(slug);
   if (!study) notFound();
+
+  const studies = await getCaseStudies();
+  const more = pickSeeded(
+    studies.filter((other) => other.slug !== study.slug),
+    t.more.count,
+    hashString(study.slug),
+  );
 
   return (
     <>
@@ -231,6 +270,25 @@ export default async function CaseStudyPage({ params }: PageProps) {
             <Section label={t.solution} paragraphs={study.solution} />
           </div>
 
+          {/* The four figures the card carries, given room. The label sits
+              where the challenge and solution labels do, so the three blocks
+              read as one column of arguments. */}
+          <div className="mt-30 grid gap-10 desktop:grid-cols-[5fr_12fr] desktop:gap-20">
+            <h2 className="font-body text-body-sm uppercase tracking-[0.04em]">
+              {t.results}
+            </h2>
+            {/* Down the columns, not across: the pairs that sit under one
+                another are the first two and the last two, which is the order
+                an editor writes them in. `grid-flow-col` over two rows is what
+                fills them that way; on a phone it is one column and the flow
+                is the plain one. */}
+            <dl className="grid gap-x-6 gap-y-15 tablet:grid-flow-col tablet:grid-cols-2 tablet:grid-rows-2">
+              {study.stats.map((stat) => (
+                <Result key={stat.label} stat={stat} />
+              ))}
+            </dl>
+          </div>
+
           {/* Two across, and square: the tiles are artefacts of the work
               rather than screenshots of it, and a fixed ratio is what keeps
               the grid a grid when they arrive at different sizes.
@@ -246,6 +304,52 @@ export default async function CaseStudyPage({ params }: PageProps) {
               />
             ))}
           </div>
+
+          {/* Two more studies, never this one. Which two is decided by this
+              study's own slug, so the pair is stable for a page and differs
+              between pages — a build cannot roll one arrangement and leave
+              every page showing it, and the server and the client cannot
+              disagree about what to render. */}
+          {more.length > 0 ? (
+            <div className="mt-30">
+              <div className="flex flex-col gap-8 tablet:flex-row tablet:items-end tablet:justify-between">
+                <div>
+                  <TextReveal
+                    as="h2"
+                    lines={t.more.headingLines}
+                    settings={sectionTextRevealDynamic}
+                    className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+                  />
+                  <p className="text-ink-dynamic-muted mt-6 max-w-[46ch] font-body text-body-md">
+                    {t.more.subheading}
+                  </p>
+                </div>
+
+                <Button
+                  href={t.more.cta.href}
+                  variant="secondary"
+                  withArrow
+                  className="shrink-0 self-start"
+                >
+                  {t.more.cta.label}
+                </Button>
+              </div>
+
+              <div className="mt-15 flex flex-col gap-2.5 tablet:gap-5">
+                {more.map((other) => (
+                  <CaseStudyCard
+                    key={other.slug}
+                    study={other}
+                    style={
+                      {
+                        "--mh-case-shape": `var(--color-case-${other.tone})`,
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
         </Container>
       </section>
     </>

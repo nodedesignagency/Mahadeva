@@ -279,6 +279,10 @@
    * against the same 50px affix. */
   --text-stat-sm: 3.5rem; /* 56 */
   --text-stat-affix: 3.125rem; /* 50 */
+  /* The unit beside a case study's result. Smaller against its figure than the
+   * pricing affix is against its own — these are read as a set of four at a
+   * glance, where a unit at nearly full height competes with the number. */
+  --text-stat-unit: 2.25rem; /* 36 */
 
   /* Testimonial quote and its attribution.
    *
@@ -510,6 +514,7 @@
   --text-stat: var(--text-stat);
   --text-stat-sm: var(--text-stat-sm);
   --text-stat-affix: var(--text-stat-affix);
+  --text-stat-unit: var(--text-stat-unit);
   --text-quote: var(--text-quote);
   --text-quote-by: var(--text-quote-by);
   --text-heading-lg: var(--text-heading-lg);
