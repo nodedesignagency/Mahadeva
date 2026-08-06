@@ -160,13 +160,12 @@
   --color-quote-shape-green: var(--mh-green-200); /* ABFFA8 */
   --color-quote-shape-yellow: var(--mh-yellow); /* FFE8A8 */
 
-  /* The About page's mission panel, and the blocks stood along its edges —
-   * the same one-step-deeper relationship the quote cards' blocks have to
-   * theirs, spread across three tints rather than matched to the fill. */
-  --color-mission-panel: var(--mh-blue-10); /* F1FAFF */
-  --color-mission-shape-blue: var(--mh-blue-100); /* BEDFFF */
-  --color-mission-shape-lavender: var(--mh-lavender); /* C2BFFF */
-  --color-mission-shape-green: var(--mh-green-300); /* A0DFA9 */
+  /* The About page's mission card, one fill per variant. Palest tints on the
+   * site: the card is a page of prose held on the screen, so its ground has to
+   * stay under the words rather than compete with them. */
+  --color-mission-blue: var(--mh-blue-10); /* F1FAFF — the owner's Blue 1 */
+  --color-mission-green: var(--mh-green-50); /* F6FFF1 */
+  --color-mission-lavender: var(--mh-lavender-25); /* F3F1FF */
 
   /* The marks beside the About page's six principles. Full-strength tints,
    * unlike the card fills: each is a 64px square carrying a drawing, not a
@@ -509,7 +508,9 @@
   --color-tool-shape-peach: var(--color-tool-shape-peach);
   --color-tool-shape-blue: var(--color-tool-shape-blue);
   --color-tool-shape-lavender: var(--color-tool-shape-lavender);
-  --color-mission-panel: var(--color-mission-panel);
+  --color-mission-blue: var(--color-mission-blue);
+  --color-mission-green: var(--color-mission-green);
+  --color-mission-lavender: var(--color-mission-lavender);
   --color-principle-blue: var(--color-principle-blue);
   --color-principle-peach: var(--color-principle-peach);
   --color-principle-lavender: var(--color-principle-lavender);

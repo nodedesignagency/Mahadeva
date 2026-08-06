@@ -196,6 +196,37 @@ export const heroParallax = {
  * Measured against the section rather than the mark, since the mark hangs far
  * below its section and its own box would enter the viewport far too late.
  */
+/**
+ * The About page's mission card — three variants stepped through by scroll.
+ *
+ * The card is pinned in the middle of the screen and opens from its own
+ * centreline, the two halves of a mask parting. It opens as the section is
+ * arriving, so the reader meets a card that is already there rather than one
+ * that appears; at each step it closes on the centreline, swaps its words and
+ * its fill while it is shut, and opens again.
+ *
+ * `hold` is the scroll each variant is given, as a share of the viewport. It
+ * is the one number to change to make the sequence longer or shorter: the
+ * section's height is derived from it, so the pin lasts exactly as long as the
+ * three variants need and not a pixel more.
+ */
+export const missionCards = {
+  /** Viewport heights of scroll per variant. */
+  hold: 100,
+  /**
+   * The share of one variant's scroll spent closing at its end — and the same
+   * again opening at the start of the next. Small: the swap should read as a
+   * blink between two settled cards, not as the card being mostly shut.
+   */
+  swap: 0.16,
+  /**
+   * How far into the section's arrival the card has finished opening, as a
+   * share of the approach. Under half, so it is open well before it reaches
+   * the middle of the screen — "as soon as a sliver of the section shows".
+   */
+  entrance: 0.45,
+} as const;
+
 export const markParallax = {
   /** Per the Framer panel. The climb below is derived from it. */
   speed: 1.3,

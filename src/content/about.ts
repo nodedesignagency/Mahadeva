@@ -109,18 +109,52 @@ export const teamContent = {
   ],
 } as const;
 
-export const missionContent = {
-  headingLines: ["Our Mission"],
+/** The card's fill. One per variant, in the order they are scrolled through. */
+export type MissionTone = "blue" | "green" | "lavender";
 
-  /**
-   * Three paragraphs, not one block with breaks: they are separate thoughts —
-   * what changed, why the company exists, where it went — and each is its own
-   * <p> so the spacing between them is the prose rhythm rather than a gap
-   * anyone has to maintain.
-   */
-  bodyParagraphs: [
-    "Businesses once operated with clear workflows and shared context across teams. Over time, simple processes were replaced by fragmented tools, manual coordination, and growing operational complexity that slowed execution and reduced clarity.",
-    "Mahadeva was created to rethink how modern teams work with automation. Instead of adding more software, we focus on building smarter systems that support decisions, reduce friction, and help teams operate with greater speed and confidence.",
-    "What began as focused automation work has evolved into an AI-first approach that helps companies design scalable systems, streamline operations, and create a stronger foundation for long-term growth.",
-  ],
+/**
+ * The mission card's three variants.
+ *
+ * One card is on screen at a time and the scroll steps between them, so this
+ * is a list rather than three sections: the component renders whichever the
+ * scroll position names, and adding a fourth is an entry here.
+ *
+ * Each holds three paragraphs — separate thoughts, not one block with breaks,
+ * so the spacing between them is the prose rhythm rather than a gap anyone has
+ * to maintain.
+ */
+export const missionContent = {
+  cards: [
+    {
+      heading: "Our Mission",
+      tone: "blue",
+      paragraphs: [
+        "Businesses once operated with clear workflows and shared context across teams. Over time, simple processes were replaced by fragmented tools, manual coordination, and growing operational complexity that slowed execution and reduced clarity.",
+        "Mahadeva was created to rethink how modern teams work with automation. Instead of adding more software, we focus on building smarter systems that support decisions, reduce friction, and help teams operate with greater speed and confidence.",
+        "What began as focused automation work has evolved into an AI-first approach that helps companies design scalable systems, streamline operations, and create a stronger foundation for long-term growth.",
+      ],
+    },
+    {
+      heading: "Future Vision",
+      tone: "green",
+      paragraphs: [
+        "Teams once worked with clarity because context was shared and decisions felt connected to real outcomes. Over time, growth introduced disconnected tools, layered processes, and operational complexity that made collaboration harder and slowed meaningful progress across organizations",
+        "Our vision is to simplify how modern businesses operate through intelligent systems. By connecting workflows and automation, teams gain clarity, reduce operational friction, and stay aligned around shared goals.",
+        "What started as focused automation initiatives has grown into a long-term vision of building AI-driven systems that help organizations scale sustainably and operate with greater efficiency.",
+      ],
+    },
+    {
+      heading: "Scalable Systems",
+      tone: "lavender",
+      paragraphs: [
+        "Businesses today face growing complexity as workflows spread across tools, teams, and manual processes. What once felt simple now requires constant coordination, making execution slower and creating unnecessary overhead that prevents teams from focusing on meaningful work.",
+        "Our approach focuses on building systems instead of adding more layers. Automation should feel natural and supportive, allowing teams to work smarter while removing repetitive tasks from daily operations.",
+        "What began as workflow automation projects has evolved into a proven method for designing AI-powered systems that connect operations, improve consistency, and help organizations scale with confidence.",
+      ],
+    },
+  ] satisfies readonly {
+    heading: string;
+    tone: MissionTone;
+    paragraphs: readonly string[];
+  }[],
 } as const;
