@@ -38,9 +38,13 @@ export default async function CaseStudyIndexPage() {
         data-bg="green"
         className="relative overflow-hidden bg-bg pt-[calc(var(--header-height)+10rem)] pb-15 text-fg"
       >
+        {/* 26px rows, to the owner's Framer measurement. The band's own
+            30/34/38 are the hero's, sampled per row; this one is a flat
+            height, which is what `thickness` is for. */}
         <PatternField
           side="top"
           orientation="horizontal"
+          thickness={26}
           className="top-header"
         />
 

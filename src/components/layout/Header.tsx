@@ -15,19 +15,22 @@ import { cn } from "@/lib/cn";
 const SCROLL_THRESHOLD = 350;
 
 /**
- * The surface each route opens on, where it is not the default white.
+ * The surface each route holds, where it is not the default white.
  *
- * `dark` keeps the dark strip until the scroll threshold; `beige` takes the
- * light strip in the page's own beige, so the header is part of the surface
- * rather than a white band laid over it. Everything else about the light strip
- * — ink, hairline, link colours — is the same either way.
+ * `dark` is a page that is dark the whole way down, so the strip is too — it
+ * never flips. `hero` is dark over the opening and light past it, which is the
+ * home page: an intro on the dark surface, then white and beige wrappers under
+ * it. `beige` is the light strip in the page's own beige, so the header reads
+ * as the top of the surface rather than a white band laid over it. Everything
+ * else about the light strip — ink, hairline, link colours — is the same
+ * whichever light it wears.
  *
  * Listed by route rather than measured: the header renders before the page it
  * sits over, and reading the surface out of the DOM would mean painting one
  * strip and correcting it a frame later.
  */
-const ROUTE_SURFACE: Record<string, "dark" | "beige"> = {
-  "/": "dark",
+const ROUTE_SURFACE: Record<string, "dark" | "hero" | "beige"> = {
+  "/": "hero",
   "/case-study": "dark",
   "/pricing": "beige",
 };
@@ -52,13 +55,16 @@ export function Header() {
   const panelRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
 
-  // Which surface the strip wears. Past the threshold it is always the light
-  // one; before it, only a page that opens on the dark hero keeps the dark
-  // strip. Everything the header draws reads this, not `scrolled` — the CTA's
-  // border followed the scroll alone once, and sat invisible on a page that
-  // was light from the top.
+  // Which surface the strip wears. Only a `hero` page trades one for the
+  // other, and only at the threshold; a dark page keeps the dark strip however
+  // far down it you are, and everything else is light from the top.
+  //
+  // Everything the header draws reads this, not `scrolled` — the CTA's border
+  // followed the scroll alone once, and sat invisible on a page that was light
+  // from the top.
   const surface = ROUTE_SURFACE[pathname];
-  const light = scrolled || surface !== "dark";
+  const light =
+    surface === "dark" ? false : surface === "hero" ? scrolled : true;
 
   // `passive` keeps this off the scrolling critical path. The initial read is
   // deferred a frame rather than run in the effect body, so a restored scroll
