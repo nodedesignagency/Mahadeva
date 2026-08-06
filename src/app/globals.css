@@ -441,6 +441,24 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Scrolled rails
+ *
+ * The team row is a scroll container so its card count per screen is CSS's
+ * business rather than JS's. It is driven by its arrows and by touch, and a
+ * visible scrollbar under it would be a second, uglier control for the same
+ * thing — hidden in both engines, since neither property is standard in the
+ * other. Keyboard users still reach every card: the cards hold links and
+ * focus scrolls the rail to them.
+ * ------------------------------------------------------------------------- */
+.mh-rail {
+  scrollbar-width: none;
+}
+
+.mh-rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------------
  * Testimonial carousel
  *
  * The rectangles' trigger is state, not a pointer: a card plays them when it

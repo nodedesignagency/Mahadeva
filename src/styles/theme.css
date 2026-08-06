@@ -80,6 +80,9 @@
   --mh-rose-10: #fff2f2;
   --mh-yellow: #ffe8a8;
   --mh-yellow-50: #fffbdd;
+  /* Sampled from the About page's team row rather than taken from the
+   * original's set — nothing else on the site carries a tone this deep. */
+  --mh-amber: #e8a317;
 
   /* Neutrals & status */
   --mh-slate: #4d5564;
@@ -164,6 +167,20 @@
   --color-mission-shape-blue: var(--mh-blue-100); /* BEDFFF */
   --color-mission-shape-lavender: var(--mh-lavender); /* C2BFFF */
   --color-mission-shape-green: var(--mh-green-300); /* A0DFA9 */
+
+  /* The marks beside the About page's six principles. Full-strength tints,
+   * unlike the card fills: each is a 64px square carrying a drawing, not a
+   * field behind a paragraph, so it has to hold its own on the beige. */
+  --color-principle-blue: var(--mh-blue-200);
+  --color-principle-peach: var(--mh-peach);
+  --color-principle-lavender: var(--mh-lavender-200);
+  --color-principle-rose: var(--mh-rose-200);
+  --color-principle-green: var(--mh-green-150);
+  --color-principle-magenta: var(--mh-magenta-200);
+
+  /* The panel the team portraits are cut out against. The one warm tone on
+   * the site — it belongs to this row and nothing else. */
+  --color-team-panel: var(--mh-amber);
 
   /* The checkerboard that slides in on hover: one step deeper than the tile,
    * the same relationship the trust panels' blocks have to theirs. */
@@ -492,6 +509,14 @@
   --color-tool-shape-peach: var(--color-tool-shape-peach);
   --color-tool-shape-blue: var(--color-tool-shape-blue);
   --color-tool-shape-lavender: var(--color-tool-shape-lavender);
+  --color-mission-panel: var(--color-mission-panel);
+  --color-principle-blue: var(--color-principle-blue);
+  --color-principle-peach: var(--color-principle-peach);
+  --color-principle-lavender: var(--color-principle-lavender);
+  --color-principle-rose: var(--color-principle-rose);
+  --color-principle-green: var(--color-principle-green);
+  --color-principle-magenta: var(--color-principle-magenta);
+  --color-team-panel: var(--color-team-panel);
   --color-plan-sky: var(--color-plan-sky);
   --color-plan-lavender: var(--color-plan-lavender);
   --color-plan-peach: var(--color-plan-peach);

@@ -32,9 +32,14 @@ export function AboutHero({ content }: AboutHeroProps) {
     <section
       data-bg="white"
       data-bg-keep=""
-      // `100dvh` tracks mobile browser chrome as it hides and shows; `h-screen`
-      // is the fallback for browsers without the dynamic unit.
-      className="sticky top-0 flex h-screen min-h-[40rem] items-end overflow-hidden bg-bg pb-20 h-[100dvh] tablet:pb-30"
+      // 65% of the viewport, not the home page's full screen: this opening
+      // carries a heading and a line of copy rather than a heading, a
+      // paragraph and two buttons, and at full height it read as a mostly
+      // empty screen. `65dvh` tracks mobile browser chrome as it hides and
+      // shows; the `vh` before it is the fallback for browsers without the
+      // dynamic unit. The floor is what keeps the band, the heading and the
+      // paragraph from crowding on a short window.
+      className="sticky top-0 flex h-[65vh] min-h-[28rem] items-end overflow-hidden bg-bg pb-20 h-[65dvh] tablet:pb-25"
     >
       {/* Below the header rather than behind it: the header is opaque, so a
           band that started at the top of the section would have its first row

@@ -1,8 +1,17 @@
 import { PageSurface } from "@/components/layout/PageSurface";
 import { AboutHero } from "@/components/sections/AboutHero";
+import { HowWeWork } from "@/components/sections/HowWeWork";
+import { InsideAgency } from "@/components/sections/InsideAgency";
 import { Mission } from "@/components/sections/Mission";
+import { Team } from "@/components/sections/Team";
 import { buildMetadata } from "@/config/seo";
-import { aboutHeroContent, missionContent } from "@/content/about";
+import {
+  aboutHeroContent,
+  howWeWorkContent,
+  insideAgencyContent,
+  missionContent,
+  teamContent,
+} from "@/content/about";
 
 export const metadata = buildMetadata({
   title: "About",
@@ -30,6 +39,9 @@ export default function AboutPage() {
         <AboutHero content={aboutHeroContent} />
         <Mission content={missionContent} />
       </div>
+      <InsideAgency content={insideAgencyContent} />
+      <HowWeWork content={howWeWorkContent} />
+      <Team content={teamContent} />
     </>
   );
 }

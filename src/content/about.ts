@@ -19,6 +19,96 @@ export const aboutHeroContent = {
     "We help ambitious companies turn automation into practical systems that scale operations, improve execution, and drive measurable growth.",
 } as const;
 
+export const insideAgencyContent = {
+  headingLines: ["Inside The Agency"],
+  subheading:
+    "We combine design thinking, automation expertise, and strategic execution to deliver systems that actually work in the real world.",
+  /** Stands in the frame until the photograph lands. */
+  imagePending: "Photograph to come",
+} as const;
+
+/** The tint behind a principle's mark, and the mark itself. */
+export type PrincipleTone =
+  | "blue"
+  | "peach"
+  | "lavender"
+  | "rose"
+  | "green"
+  | "magenta";
+
+export type PrincipleMark =
+  | "people"
+  | "bolt"
+  | "trend"
+  | "layers"
+  | "shield"
+  | "loop";
+
+export const howWeWorkContent = {
+  headingLines: ["How We Work"],
+
+  /**
+   * Six principles, read across then down. `mark` names the drawing rather
+   * than importing it: the icon set is a rendering choice, and content that
+   * held components could not be moved to a CMS.
+   */
+  principles: [
+    {
+      title: "Human First",
+      body: "Personalized systems designed to support teams across daily workflows.",
+      tone: "blue",
+      mark: "people",
+    },
+    {
+      title: "Smart Execution",
+      body: "Automation built to deliver clarity, speed, and consistent results without complexity.",
+      tone: "peach",
+      mark: "bolt",
+    },
+    {
+      title: "Real Impact",
+      body: "Solutions focused on measurable outcomes that help businesses grow with confidence.",
+      tone: "lavender",
+      mark: "trend",
+    },
+    {
+      title: "Scalable Thinking",
+      body: "Systems designed to grow alongside teams without creating operational friction later.",
+      tone: "rose",
+      mark: "layers",
+    },
+    {
+      title: "Reliable Delivery",
+      body: "Processes structured to ensure execution stays smooth and aligned with goals.",
+      tone: "green",
+      mark: "shield",
+    },
+    {
+      title: "Continuous Growth",
+      body: "Automation that improves over time and evolves with changing business needs.",
+      tone: "magenta",
+      mark: "loop",
+    },
+  ] satisfies readonly {
+    title: string;
+    body: string;
+    tone: PrincipleTone;
+    mark: PrincipleMark;
+  }[],
+} as const;
+
+export const teamContent = {
+  headingLines: ["Meet The Team"],
+  controls: { previous: "Previous team members", next: "Next team members" },
+
+  members: [
+    { name: "Daniel Cruz", role: "CEO & Founder" },
+    { name: "Sarah Kim", role: "Automation Engineer" },
+    { name: "Emma Watson", role: "Product Lead" },
+    { name: "James Cooper", role: "Growth Strategist" },
+  ],
+} as const;
+
 export const missionContent = {
   headingLines: ["Our Mission"],
 
