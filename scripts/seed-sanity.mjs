@@ -82,6 +82,13 @@ studies.forEach((study, index) => {
       value: stat.value,
     })),
     tone: study.tone,
+    // The detail page's fields. Optional in the schema, so a study seeded
+    // without them still opens — the page draws what it has.
+    timeline: study.timeline,
+    services: study.services,
+    liveUrl: study.liveUrl,
+    challenge: study.challenge,
+    solution: study.solution,
     order: index,
   });
 });

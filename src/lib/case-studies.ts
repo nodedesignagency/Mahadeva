@@ -24,7 +24,13 @@ const CASE_STUDIES = groq`
     stats[]{ label, value },
     tone,
     logo,
-    image
+    image,
+    timeline,
+    services,
+    liveUrl,
+    challenge,
+    solution,
+    gallery
   }
 `;
 
@@ -34,15 +40,30 @@ const IMAGE_WIDTH = 1120;
 /** The logo box is 138 wide; ask for twice that so it stays crisp. */
 const LOGO_WIDTH = 276;
 
+/** A gallery tile is half the content column, so half the cover's width. */
+const GALLERY_WIDTH = 560;
+
 type SanityAsset = SanityImage & { alt?: string };
 
-type SanityCaseStudy = Omit<CaseStudy, "image" | "logo"> & {
+type SanityCaseStudy = Omit<CaseStudy, "image" | "logo" | "gallery"> & {
   logo?: SanityAsset;
   image?: SanityAsset;
+  gallery?: SanityAsset[];
 };
 
 function resolve(asset: SanityAsset, width: number, crop: boolean) {
   return { url: imageUrl(asset, width, crop) ?? "", alt: asset.alt ?? "" };
+}
+
+/** Turn one document's image references into URLs. */
+function shape(doc: SanityCaseStudy): CaseStudy {
+  return {
+    ...doc,
+    // `contain`, not `cover`, so the logo must not be cropped to its box.
+    logo: doc.logo ? resolve(doc.logo, LOGO_WIDTH, false) : undefined,
+    image: doc.image ? resolve(doc.image, IMAGE_WIDTH, true) : undefined,
+    gallery: doc.gallery?.map((item) => resolve(item, GALLERY_WIDTH, true)),
+  };
 }
 
 export async function getCaseStudies(): Promise<CaseStudy[]> {
@@ -61,12 +82,7 @@ export async function getCaseStudies(): Promise<CaseStudy[]> {
 
     if (documents.length === 0) return demoCaseStudies;
 
-    return documents.map((doc) => ({
-      ...doc,
-      // `contain`, not `cover`, so the logo must not be cropped to its box.
-      logo: doc.logo ? resolve(doc.logo, LOGO_WIDTH, false) : undefined,
-      image: doc.image ? resolve(doc.image, IMAGE_WIDTH, true) : undefined,
-    }));
+    return documents.map(shape);
   } catch (error) {
     // A misconfigured project ID or a CORS rule that was never added should not
     // take the page down. Log it where the operator will see it and serve the
@@ -74,4 +90,17 @@ export async function getCaseStudies(): Promise<CaseStudy[]> {
     console.error("[case-studies] Sanity query failed, using demo content.", error);
     return demoCaseStudies;
   }
+}
+
+/**
+ * One study, by slug.
+ *
+ * Filters the same list rather than running a second query. The set is small
+ * and already cached by the fetch above, so a per-slug query would trade a
+ * cache hit for a round trip; and it means a page and the index can never
+ * disagree about what a study says.
+ */
+export async function getCaseStudy(slug: string): Promise<CaseStudy | undefined> {
+  const studies = await getCaseStudies();
+  return studies.find((study) => study.slug === slug);
 }

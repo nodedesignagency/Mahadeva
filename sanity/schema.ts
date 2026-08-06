@@ -135,6 +135,59 @@ const caseStudy = defineType({
       ],
     }),
     defineField({
+      name: "timeline",
+      title: "Timeline",
+      type: "string",
+      description: "How long the work ran, as the page states it, e.g. “3 Months”.",
+    }),
+    defineField({
+      name: "services",
+      title: "Services",
+      type: "array",
+      description: "Read as one dot-separated run under a single heading. Three or four keeps it to two lines.",
+      of: [defineArrayMember({ type: "string" })],
+    }),
+    defineField({
+      name: "liveUrl",
+      title: "Live site",
+      type: "url",
+      description: "The finished site. Leave empty and the “Live Preview” link is simply not drawn.",
+    }),
+    defineField({
+      name: "challenge",
+      title: "The challenge",
+      type: "array",
+      description: "The brief, one entry per paragraph.",
+      of: [defineArrayMember({ type: "text", rows: 4 })],
+    }),
+    defineField({
+      name: "solution",
+      title: "The solution",
+      type: "array",
+      description: "What was built, one entry per paragraph.",
+      of: [defineArrayMember({ type: "text", rows: 4 })],
+    }),
+    defineField({
+      name: "gallery",
+      title: "Gallery",
+      type: "array",
+      description: "The grid under the prose, two across. Four looks right; any even number works.",
+      of: [
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              title: "Alternative text",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+          ],
+        }),
+      ],
+    }),
+    defineField({
       name: "order",
       title: "Order",
       type: "number",

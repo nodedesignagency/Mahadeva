@@ -44,6 +44,24 @@ export type CaseStudy = {
    * the space rather than collapsing, so a missing image is obvious.
    */
   image?: { url: string; alt: string };
+
+  /**
+   * Everything below is the detail page's, and every field of it is optional:
+   * a study that has only been written as a card still renders one, with the
+   * page showing what it has. The card fields above are the shared part.
+   */
+  /** How long the work ran, as the meta row states it: "3 Months". */
+  timeline?: string;
+  /** Read as a dot-separated run under one heading, not as a list. */
+  services?: string[];
+  /** The finished site. Absent when there is nothing public to point at. */
+  liveUrl?: string;
+  /** The brief, in paragraphs. */
+  challenge?: string[];
+  /** What was built, in paragraphs. */
+  solution?: string[];
+  /** The grid below the prose. */
+  gallery?: { url: string; alt: string }[];
 };
 
 export const caseStudiesContent = {
@@ -76,3 +94,23 @@ export const caseStudyIndexContent = {
  * demo are the same words by construction, and cannot drift apart.
  */
 export const caseStudies = demoCaseStudies as CaseStudy[];
+
+/**
+ * The detail page's fixed words — the labels, not the content.
+ *
+ * The braces are the site's heading style, the same ones the footer's column
+ * titles carry. They are part of the label rather than something the component
+ * adds, so a translation can drop them.
+ */
+export const caseStudyDetailContent = {
+  meta: {
+    client: "Client",
+    timeline: "Timeline",
+    services: "Services",
+  },
+  livePreview: "Live Preview",
+  challenge: "{The Challenge}",
+  solution: "{The Solution}",
+  /** Stands in for a picture that has not been supplied yet. */
+  imagePending: "Screenshot to come",
+} as const;
