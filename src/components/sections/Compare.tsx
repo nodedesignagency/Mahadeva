@@ -99,21 +99,18 @@ export function Compare({ content }: CompareProps) {
                   <span className="sr-only">Feature</span>
                 </th>
 
-                {content.plans.map((plan, i) => (
+                {content.plans.map((plan) => (
                   // The cards are separate blocks laid on the white strip,
                   // not the cells themselves: the row around them is padded 4
                   // on three sides — nothing on the left, where the first card
-                  // meets the label column — and the cards sit 8 apart. Half
-                  // of each gap belongs to the cell on either side of it, so
-                  // the padding here is 4 and only the first cell drops its
-                  // own.
+                  // meets the label column — and the cards sit 4 apart. Each
+                  // gap is one cell's padding rather than two halves, so the
+                  // padding is on the right only and the last cell's is also
+                  // the row's right edge.
                   <th
                     key={plan.name}
                     scope="col"
-                    className={cn(
-                      "w-[24.66%] bg-bg-white p-1 align-top font-normal desktop:sticky desktop:top-header desktop:z-20",
-                      i === 0 && "ps-0",
-                    )}
+                    className="w-[24.66%] bg-bg-white py-1 pe-1 align-top font-normal desktop:sticky desktop:top-header desktop:z-20"
                   >
                     <div className={cn("h-full p-4 desktop:p-6", tones[plan.tone])}>
                       <p className="font-body text-heading-md">{plan.name}</p>
@@ -142,7 +139,7 @@ export function Compare({ content }: CompareProps) {
                   <th
                     scope="colgroup"
                     colSpan={content.plans.length + 1}
-                    className="border-t border-border-compare bg-compare-band px-6 py-4 text-left font-body text-heading-sm font-normal"
+                    className="border-x border-t border-border-compare bg-compare-band px-6 py-4 text-left font-body text-heading-sm font-normal"
                   >
                     {group.title}
                   </th>
@@ -166,7 +163,10 @@ export function Compare({ content }: CompareProps) {
                           // Pinned to the left edge only where the table
                           // scrolls sideways, with a rule of its own: it is a
                           // column boundary there, not the table's edge.
-                          "font-body text-body-md font-normal max-desktop:sticky max-desktop:left-0 max-desktop:border-r",
+                          // `border-l` is the table's own left edge, which
+                          // starts at the first band and never runs beside
+                          // the plan cards above it.
+                          "border-l font-body text-body-md font-normal max-desktop:sticky max-desktop:left-0 max-desktop:border-r",
                         )}
                       >
                         {row.label}
@@ -182,6 +182,7 @@ export function Compare({ content }: CompareProps) {
                             // rule between the two, since the rule on this
                             // cell travels away underneath it.
                             i === 0 && "max-desktop:border-l-0",
+                            i === row.values.length - 1 && "border-r",
                           )}
                         >
                           {typeof value === "string" ? (

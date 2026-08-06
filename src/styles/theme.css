@@ -270,8 +270,11 @@
   /* The trust figures and the prefix and unit either side of them. Flat, not
    * a curve: the original sets 100 and 50 at every breakpoint, and a phone
    * shows one panel at a time where the figure has all the room it needs. */
-  --text-stat: 6.25rem;
-  --text-stat-affix: 3.125rem;
+  --text-stat: 6.25rem; /* 100 */
+  /* The pricing page's figures, which are set smaller than the trust panels'
+   * against the same 50px affix. */
+  --text-stat-sm: 3.5rem; /* 56 */
+  --text-stat-affix: 3.125rem; /* 50 */
 
   /* Testimonial quote and its attribution.
    *
@@ -499,6 +502,7 @@
   --text-display-lg: var(--text-display-lg);
   --text-display-md: var(--text-display-md);
   --text-stat: var(--text-stat);
+  --text-stat-sm: var(--text-stat-sm);
   --text-stat-affix: var(--text-stat-affix);
   --text-quote: var(--text-quote);
   --text-quote-by: var(--text-quote-by);

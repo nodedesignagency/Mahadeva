@@ -67,6 +67,7 @@ export function Impact({ content }: ImpactProps) {
                   value={stat.value}
                   prefix={stat.prefix}
                   unit={stat.unit}
+                  size="compact"
                 />
                 <p className="text-ink-dynamic mt-4 font-body text-body-md leading-[1.5]">
                   {stat.label}
