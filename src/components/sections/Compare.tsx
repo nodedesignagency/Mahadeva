@@ -99,27 +99,36 @@ export function Compare({ content }: CompareProps) {
                   <span className="sr-only">Feature</span>
                 </th>
 
-                {content.plans.map((plan) => (
+                {content.plans.map((plan, i) => (
+                  // The cards are separate blocks laid on the white strip,
+                  // not the cells themselves: the row around them is padded 4
+                  // on three sides — nothing on the left, where the first card
+                  // meets the label column — and the cards sit 8 apart. Half
+                  // of each gap belongs to the cell on either side of it, so
+                  // the padding here is 4 and only the first cell drops its
+                  // own.
                   <th
                     key={plan.name}
                     scope="col"
                     className={cn(
-                      "w-[24.66%] p-4 align-top font-normal desktop:sticky desktop:top-header desktop:z-20 desktop:p-6",
-                      tones[plan.tone],
+                      "w-[24.66%] bg-bg-white p-1 align-top font-normal desktop:sticky desktop:top-header desktop:z-20",
+                      i === 0 && "ps-0",
                     )}
                   >
-                    <p className="font-body text-heading-md">{plan.name}</p>
-                    <p className="mt-2 font-body text-body-sm leading-[1.5]">
-                      {plan.body}
-                    </p>
-                    <Button
-                      href={plan.cta.href}
-                      variant="compare"
-                      withArrow
-                      className="mt-6 w-full"
-                    >
-                      {plan.cta.label}
-                    </Button>
+                    <div className={cn("h-full p-4 desktop:p-6", tones[plan.tone])}>
+                      <p className="font-body text-heading-md">{plan.name}</p>
+                      <p className="mt-2 font-body text-body-sm leading-[1.5]">
+                        {plan.body}
+                      </p>
+                      <Button
+                        href={plan.cta.href}
+                        variant="compare"
+                        withArrow
+                        className="mt-6 w-full"
+                      >
+                        {plan.cta.label}
+                      </Button>
+                    </div>
                   </th>
                 ))}
               </tr>
