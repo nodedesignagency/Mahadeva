@@ -324,8 +324,12 @@
   --leading-heading: 1.15;
   /* 150%, matching the original's body preset. */
   --leading-body: 1.5;
-  /** Tighter body setting, used inside the feature cards. */
-  --leading-card: 1.4;
+  /**
+   * The feature cards' body setting. Was 1.4, the one paragraph on the site
+   * set tighter than the rest — which read as cramped beside every other
+   * paragraph and answered to nothing in the design.
+   */
+  --leading-card: 1.5;
 
   /** Gap between the display heading's lines. */
   --space-heading-line: 4px;

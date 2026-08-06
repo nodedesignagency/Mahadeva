@@ -149,7 +149,7 @@ function Section({
         {paragraphs.map((paragraph) => (
           <p
             key={paragraph}
-            className="text-ink-dynamic max-w-[74ch] font-body text-body-md leading-[1.6]"
+            className="text-ink-dynamic max-w-[74ch] font-body text-body-md leading-[1.5]"
           >
             {paragraph}
           </p>
@@ -195,14 +195,20 @@ export default async function CaseStudyPage({ params }: PageProps) {
               desktop up and under it below, where a column that narrow would
               set four words to a line. */}
           <div className="grid items-end gap-8 desktop:grid-cols-[8fr_5fr] desktop:gap-20">
+            {/* The title is one authored line that wraps, unlike the headings
+                elsewhere, which break where the design says. Display leading
+                is 1, so its wrapped lines sat flush against each other —
+                `1em + 4` gives them the 4 that `--space-heading-line` puts
+                between a pair of authored ones, half above and half below, so
+                the two rules agree however a title breaks. */}
             <TextReveal
               as="h1"
               lines={[study.title]}
               settings={sectionTextRevealDynamic}
               lineStagger={sectionTextRevealDynamic.lineStagger}
-              className="flex flex-col items-start gap-(--space-heading-line) text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal"
+              className="flex flex-col items-start gap-(--space-heading-line) text-display-xl leading-[calc(1em+var(--space-heading-line))] tracking-(--tracking-display) font-normal"
             />
-            <p className="text-ink-dynamic max-w-[46ch] font-body text-body-md leading-[1.6]">
+            <p className="text-ink-dynamic max-w-[46ch] font-body text-body-md leading-[1.5]">
               {study.summary}
             </p>
           </div>
