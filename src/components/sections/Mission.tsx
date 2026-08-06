@@ -11,6 +11,7 @@ import {
 
 import { Container } from "@/components/layout/Container";
 import { PatternField } from "@/components/motion/PatternField";
+import { Scramble } from "@/components/motion/Scramble";
 import { missionCards } from "@/config/animation";
 import type { MissionTone, missionContent } from "@/content/about";
 
@@ -19,14 +20,15 @@ import type { MissionTone, missionContent } from "@/content/about";
  *
  * The section is tall and the frame inside it is pinned, which is what buys
  * the sequence its scroll: the card sits in the middle of the screen while the
- * page travels past, and each variant is given `missionCards.hold` viewports
- * of that travel. The section's own height is derived from that number, so the
- * pin ends exactly when the third card is done.
+ * page travels past, on the owner's schedule — a long hold on the first card,
+ * a stretch where nothing happens, then a shorter beat for each card after it.
+ * The section's own height is derived from that schedule, so the pin ends
+ * exactly when the last card is done.
  *
- * The card opens from its centreline rather than fading: a mask parts, the two
- * halves running to the card's edges. That plays once as the section arrives,
- * and again at each step — shut on the boundary, where the words and the fill
- * are swapped out of sight, then open on the other side of it.
+ * The mask belongs to the arrival and to nothing else: the card opens from its
+ * centreline as the section comes up, a clip parting to the card's edges, and
+ * stays open from there. A step is then a change of words and fill inside a
+ * card that never moves.
  *
  * This is also the section that rides up over the pinned hero, so it keeps its
  * own fill: transparent, it would show the hero through it for the whole
@@ -72,53 +74,51 @@ export function Mission({ content }: MissionProps) {
     offset: ["start start", "end end"],
   });
 
-  /** Where the sequence is, in cards: 0 through the count. */
-  const position = useTransform(held, [0, 1], [0, content.cards.length]);
+  /**
+   * Where each card takes over, as a share of the pinned travel.
+   *
+   * Derived from the schedule rather than written down: the first card's hold
+   * and the spacer both pass before anything changes, and every card after
+   * that gets one `step`. Changing a number in the config retimes the sequence
+   * and nothing here needs touching.
+   */
+  const travel =
+    missionCards.first + missionCards.spacer + missionCards.step * last;
+  const starts = content.cards
+    .slice(1)
+    .map(
+      (_, i) =>
+        (missionCards.first + missionCards.spacer + missionCards.step * i) /
+        travel,
+    );
 
   // The variant is state, not a transform: swapping the words is a render.
-  // Read off the same value the mask is driven by, and changed at the
-  // boundary — which is exactly where the mask is shut, so the swap happens
-  // out of sight.
-  useMotionValueEvent(position, "change", (value) => {
-    const index = Math.min(last, Math.max(0, Math.floor(value)));
+  useMotionValueEvent(held, "change", (value) => {
+    const index = starts.filter((start) => value >= start).length;
     setShown((current) => (current === index ? current : index));
   });
 
   /**
-   * How open the card is, 0 to 1.
-   *
-   * Two things close it, and the smaller wins: the approach, which has it shut
-   * until the section is arriving, and the distance to the nearest step, which
-   * shuts it again at each boundary. Written as a plain function of the two
-   * rather than a keyframe list, since the boundaries are wherever the card
-   * count puts them.
+   * How open the card is, 0 to 1 — a function of the arrival and nothing else.
+   * Once the section is up the card is open, and it stays open for the whole
+   * pin however many times its contents change.
    */
-  const open = useTransform<number, number>(
-    [approach, position],
-    ([arriving, at]: number[]) => {
-      const entering = Math.min(1, arriving / missionCards.entrance);
-
-      // Distance to the nearest step, in cards. The ends are not steps: the
-      // card is already open when the pin starts and stays open when it ends.
-      let toStep = 1;
-      for (let step = 1; step <= last; step += 1) {
-        toStep = Math.min(toStep, Math.abs(at - step));
-      }
-      const stepping = Math.min(1, toStep / missionCards.swap);
-
-      return Math.min(entering, stepping);
-    },
+  const open = useTransform(approach, (arriving) =>
+    Math.min(1, arriving / missionCards.entrance),
   );
 
   /**
-   * The mask, as an inset from the top and bottom edges. At 0 open it is a
-   * closed seam on the centreline; at 1 it is the whole card.
+   * The mask, as an inset from the left and right edges. At 0 open it is a
+   * closed seam on the card's vertical centreline; at 1 it is the whole card.
    *
    * `clip-path` rather than a gradient mask: the edge is hard in the original,
    * and this is the one property that expresses "from the middle outwards"
    * without a second element to slide.
    */
-  const clipPath = useTransform(open, (value) => `inset(${(1 - value) * 50}% 0)`);
+  const clipPath = useTransform(
+    open,
+    (value) => `inset(0 ${(1 - value) * 50}%)`,
+  );
 
   const card = content.cards[shown];
 
@@ -128,8 +128,8 @@ export function Mission({ content }: MissionProps) {
       data-bg="white"
       data-bg-keep=""
       className="relative z-10 bg-bg-white text-fg-on-light"
-      // One viewport for the pin itself plus the scroll each variant is given.
-      style={{ height: `${100 + content.cards.length * missionCards.hold}vh` }}
+      // One viewport for the pinned frame itself, plus the whole schedule.
+      style={{ height: `${100 + travel}vh` }}
     >
       <div className="sticky top-0 flex h-screen items-center overflow-hidden h-[100dvh]">
         <Container className="flex justify-center">
@@ -142,12 +142,13 @@ export function Mission({ content }: MissionProps) {
             className="relative w-full max-w-[548px] overflow-hidden px-8 py-10 tablet:h-[576px] tablet:px-[72px] tablet:py-[60px]"
             style={reduced ? undefined : { clipPath }}
           >
-            {/* The fill is a layer rather than the card's own background, so a
-                variant's colour can cross to the next while the card is shut
-                without the mask having to be re-applied to anything. */}
+            {/* The fill is a layer rather than the card's own background, so
+                it can cross to the next variant's colour on its own timing
+                while the pattern and the words sit over it. */}
             <div
               aria-hidden="true"
-              className={`absolute inset-0 transition-colors duration-(--duration-hover) ${tones[card.tone]}`}
+              className={`absolute inset-0 transition-colors ${tones[card.tone]}`}
+              style={{ transitionDuration: `${missionCards.swap}ms` }}
             />
 
             {/* A single column of cells down each edge, flush inside it — the
@@ -168,20 +169,38 @@ export function Mission({ content }: MissionProps) {
               className="right-0 w-6"
             />
 
-            {/* An `h2`: the hero above carries the page's only `h1`. Keyed on
-                the variant so a screen reader is told the heading changed
-                rather than silently re-reading the old one. */}
-            <div key={card.heading} className="relative flex flex-col gap-5">
-              <h2 className="text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal">
-                {card.heading}
-              </h2>
+            {/* Keyed on the variant, so React replaces the block rather than
+                editing it in place: the new words arrive together instead of
+                each paragraph changing under the reader's eye, and a screen
+                reader is told the heading changed rather than silently
+                re-reading the old one.
+
+                The `h2` is the page's second heading — the hero above carries
+                its only `h1`. */}
+            <motion.div
+              key={card.heading}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: missionCards.swap / 1000 }}
+              className="relative flex flex-col gap-5"
+            >
+              {/* Scrambled, like every label the site swaps under the reader.
+                  It is what tells them the card changed: the fill and the
+                  paragraphs cross over quietly, and the heading resolving
+                  letter by letter is the signal that something did. Replays on
+                  each step because the keyed block above remounts it. */}
+              <Scramble
+                as="h2"
+                text={card.heading}
+                className="text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+              />
 
               <div className="flex flex-col gap-6 font-body text-body-md text-fg-on-light">
                 {card.paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </Container>
       </div>

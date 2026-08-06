@@ -211,20 +211,32 @@ export const heroParallax = {
  * three variants need and not a pixel more.
  */
 export const missionCards = {
-  /** Viewport heights of scroll per variant. */
-  hold: 100,
   /**
-   * The share of one variant's scroll spent closing at its end — and the same
-   * again opening at the start of the next. Small: the swap should read as a
-   * blink between two settled cards, not as the card being mostly shut.
+   * The owner's schedule, in viewport heights of scroll. The first card is
+   * given a long hold, then a stretch where nothing happens at all, and the
+   * cards after it change on a shorter beat.
+   *
+   * The section's height is derived from these three, so the pin lasts exactly
+   * as long as the sequence needs: `100vh` for the frame itself, plus the
+   * whole schedule.
    */
-  swap: 0.16,
+  first: 100,
+  spacer: 25,
+  step: 75,
+
   /**
    * How far into the section's arrival the card has finished opening, as a
    * share of the approach. Under half, so it is open well before it reaches
    * the middle of the screen — "as soon as a sliver of the section shows".
    */
   entrance: 0.45,
+
+  /**
+   * Milliseconds for one card's words and fill to give way to the next. The
+   * mask is not involved: it plays on arrival and the card stays open from
+   * there, so a step is a change of content inside a card that never moves.
+   */
+  swap: 250,
 } as const;
 
 export const markParallax = {
