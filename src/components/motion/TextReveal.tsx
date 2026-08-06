@@ -105,10 +105,15 @@ export function TextReveal({
     <Tag id={id} aria-label={lines.join(" ")} className={cn("font-display", className)}>
       {mobileLines ? (
         <>
-          <span className="hidden flex-col items-center gap-(--space-heading-line) tablet:flex">
+          {/* `contents`, so the lines are the heading's own children and take
+              its alignment and its gap. These wrappers used to be flex boxes
+              with `items-center` baked in — written when the hero was the only
+              caller, and centre is what the hero wants. Every left-aligned
+              heading that passed a phone break silently became centred. */}
+          <span className="hidden tablet:contents">
             {renderLines(lines)}
           </span>
-          <span className="flex flex-col items-center gap-(--space-heading-line) tablet:hidden">
+          <span className="contents tablet:hidden">
             {renderLines(mobileLines)}
           </span>
         </>
