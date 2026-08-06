@@ -179,6 +179,10 @@
   --color-case-sky: var(--mh-blue-100);
   --color-case-lavender: var(--mh-lavender-50);
   --color-case-peach: var(--mh-peach-50);
+  /* The index carries more studies than the home page shows, so the set runs
+   * two tints further than the three the demo entries use. */
+  --color-case-mint: var(--mh-green-140);
+  --color-case-periwinkle: var(--mh-periwinkle);
 
   --color-fg: var(--mh-white);
   --color-fg-muted: var(--mh-white-a60);
@@ -457,6 +461,8 @@
   --color-case-sky: var(--color-case-sky);
   --color-case-lavender: var(--color-case-lavender);
   --color-case-peach: var(--color-case-peach);
+  --color-case-mint: var(--color-case-mint);
+  --color-case-periwinkle: var(--color-case-periwinkle);
   --color-surface: var(--color-surface);
   --color-surface-hover: var(--color-surface-hover);
   --color-fg: var(--color-fg);

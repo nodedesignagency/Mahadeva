@@ -28,6 +28,7 @@ const SCROLL_THRESHOLD = 350;
  */
 const ROUTE_SURFACE: Record<string, "dark" | "beige"> = {
   "/": "dark",
+  "/case-study": "dark",
   "/pricing": "beige",
 };
 

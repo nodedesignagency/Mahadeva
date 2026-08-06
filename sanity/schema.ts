@@ -110,6 +110,8 @@ const caseStudy = defineType({
           { title: "Sky", value: "sky" },
           { title: "Lavender", value: "lavender" },
           { title: "Peach", value: "peach" },
+          { title: "Mint", value: "mint" },
+          { title: "Periwinkle", value: "periwinkle" },
         ],
         layout: "radio",
       },

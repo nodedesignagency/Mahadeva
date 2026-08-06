@@ -24,6 +24,8 @@ const tones: Record<CaseTone, string> = {
   sky: "bg-case-sky",
   lavender: "bg-case-lavender",
   peach: "bg-case-peach",
+  mint: "bg-case-mint",
+  periwinkle: "bg-case-periwinkle",
 };
 
 /**

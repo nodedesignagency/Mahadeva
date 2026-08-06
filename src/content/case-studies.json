@@ -76,5 +76,57 @@
       }
     ],
     "tone": "peach"
+  },
+  {
+    "slug": "meridian-retail",
+    "client": "Meridian Retail",
+    "year": "2025",
+    "title": "Inventory Agents Across Forty Store Rooms",
+    "summary": "Stock agents watch every shelf and reorder before a line runs dry, ending the weekly count that four regions used to run by hand.",
+    "stats": [
+      {
+        "label": "Stockouts",
+        "value": "-72%"
+      },
+      {
+        "label": "Count Hours",
+        "value": "24h/wk"
+      },
+      {
+        "label": "Held Stock",
+        "value": "$1.4M"
+      },
+      {
+        "label": "Reorder Speed",
+        "value": "9x"
+      }
+    ],
+    "tone": "mint"
+  },
+  {
+    "slug": "halden-health",
+    "client": "Halden Health",
+    "year": "2025",
+    "title": "Patient Intake Rebuilt as One Clean Handover",
+    "summary": "Intake, triage notes and scheduling meet in a single flow, so a clinic books the right appointment on the first call rather than the third.",
+    "stats": [
+      {
+        "label": "Intake Time",
+        "value": "-68%"
+      },
+      {
+        "label": "First-Call Booking",
+        "value": "91%"
+      },
+      {
+        "label": "Admin Saved",
+        "value": "31h/wk"
+      },
+      {
+        "label": "No-Show Rate",
+        "value": "-44%"
+      }
+    ],
+    "tone": "periwinkle"
   }
 ]
