@@ -83,12 +83,13 @@ export function Compare({ content }: CompareProps) {
             at the edge of the box while the table travels under it. Without
             it a scrolled table simply runs off into the page.
 
-            The box gives back the container's gutter on the right where it
-            scrolls, so the runway reaches the edge of the screen. A table that
-            stops short of it reads as a table that fits; one that runs to the
-            edge reads as one that continues. The left gutter stays — that edge
-            is where the table begins. */}
-        <div className="relative mt-15 max-desktop:-me-gutter max-desktop:overflow-x-auto max-desktop:border-r max-desktop:border-border-compare">
+            Where it scrolls the box is full bleed, and takes the gutter back
+            as its own start padding. That padding belongs to the scrollport,
+            so it holds the table in from the edge at rest and then travels
+            away with it: the runway is the whole screen in both directions,
+            and nothing is left standing in a margin while the table moves
+            past it. */}
+        <div className="relative mt-15 max-desktop:-mx-gutter max-desktop:overflow-x-auto max-desktop:border-r max-desktop:border-border-compare max-desktop:ps-gutter">
           {/* `table-fixed`, so the columns take the widths declared on the
               head rather than whatever their longest cell asks for. Left to
               size itself, the three buttons alone push the table past its
