@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   motion,
+  useInView,
   useMotionValueEvent,
   useReducedMotion,
   useScroll,
-  useTransform,
 } from "motion/react";
 
 import { Container } from "@/components/layout/Container";
@@ -14,6 +14,7 @@ import { PatternField } from "@/components/motion/PatternField";
 import { Scramble } from "@/components/motion/Scramble";
 import { missionCards } from "@/config/animation";
 import type { MissionTone, missionContent } from "@/content/about";
+import { easings } from "@/lib/motion";
 
 /**
  * Our Mission — one card, three variants, stepped through by scroll.
@@ -25,10 +26,11 @@ import type { MissionTone, missionContent } from "@/content/about";
  * The section's own height is derived from that schedule, so the pin ends
  * exactly when the last card is done.
  *
- * The mask belongs to the arrival and to nothing else: the card opens from its
- * centreline as the section comes up, a clip parting to the card's edges, and
- * stays open from there. A step is then a change of words and fill inside a
- * card that never moves.
+ * The mask belongs to the arrival and to nothing else. It is a variant, not a
+ * scrubbed value: the card is shut until any part of the section shows, then
+ * it parts horizontally from its centreline on its own clock and stays open
+ * for good. A step is then a change of words and fill inside a card that never
+ * moves, and the heading's scramble is what tells the reader it happened.
  *
  * This is also the section that rides up over the pinned hero, so it keeps its
  * own fill: transparent, it would show the hero through it for the whole
@@ -36,6 +38,10 @@ import type { MissionTone, missionContent } from "@/content/about";
  *
  * A client component: it holds which variant is showing.
  */
+
+/** See Scramble: the layout effect is the client's, and only the client's. */
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 type MissionProps = {
   content: typeof missionContent;
@@ -56,17 +62,28 @@ export function Mission({ content }: MissionProps) {
   const last = content.cards.length - 1;
 
   /**
-   * Two readings of the same section, because the card's two jobs begin at
-   * different moments.
+   * The opening move is a state change, not a scroll position.
    *
-   * The approach runs from the section's top reaching the bottom of the
-   * viewport to it reaching the top — the stretch during which the card is
-   * arriving, and the only one in which the opening move can play.
+   * `amount` is a sliver — the card opens the moment any part of the section
+   * shows, and `once` keeps it open for good. Driven by the scroll instead,
+   * the card sat part-open at whatever position the page loaded at, which is
+   * the wrong reading of the original: there the mask is a variant, and a
+   * variant either is or is not.
    */
-  const { scrollYProgress: approach } = useScroll({
-    target: section,
-    offset: ["start end", "start start"],
-  });
+  const inView = useInView(section, { once: true, amount: 0.01 });
+
+  /**
+   * Off for the server's markup and the first client render, so the two agree
+   * — and so the card is simply present, open, for anyone without JS. The
+   * layout effect closes it before the browser has painted, so arming it costs
+   * no flash of an open card.
+   */
+  const [armed, setArmed] = useState(false);
+  useIsomorphicLayoutEffect(() => {
+    if (!reduced) setArmed(true);
+  }, [reduced]);
+
+  const shut = armed && !inView;
 
   /** The pin: from the card taking the screen to the section giving it up. */
   const { scrollYProgress: held } = useScroll({
@@ -98,28 +115,6 @@ export function Mission({ content }: MissionProps) {
     setShown((current) => (current === index ? current : index));
   });
 
-  /**
-   * How open the card is, 0 to 1 — a function of the arrival and nothing else.
-   * Once the section is up the card is open, and it stays open for the whole
-   * pin however many times its contents change.
-   */
-  const open = useTransform(approach, (arriving) =>
-    Math.min(1, arriving / missionCards.entrance),
-  );
-
-  /**
-   * The mask, as an inset from the left and right edges. At 0 open it is a
-   * closed seam on the card's vertical centreline; at 1 it is the whole card.
-   *
-   * `clip-path` rather than a gradient mask: the edge is hard in the original,
-   * and this is the one property that expresses "from the middle outwards"
-   * without a second element to slide.
-   */
-  const clipPath = useTransform(
-    open,
-    (value) => `inset(0 ${(1 - value) * 50}%)`,
-  );
-
   const card = content.cards[shown];
 
   return (
@@ -140,7 +135,22 @@ export function Mission({ content }: MissionProps) {
             // than the screen, and at a fixed 576 the longest variant would be
             // cut off by its own `overflow`.
             className="relative w-full max-w-[548px] overflow-hidden px-8 py-10 tablet:h-[576px] tablet:px-[72px] tablet:py-[60px]"
-            style={reduced ? undefined : { clipPath }}
+            // A seam on the card's vertical centreline when shut, the whole
+            // card when open. `clip-path` rather than a gradient mask: the
+            // edge is hard in the original, and this is the one property that
+            // says "from the middle outwards" without a second element to
+            // slide.
+            //
+            // `initial={false}` so the first paint takes the value straight
+            // rather than animating to it — the closing above is meant to be
+            // instant, and only the opening is a move anyone sees.
+            initial={false}
+            animate={{ clipPath: shut ? "inset(0 50%)" : "inset(0 0%)" }}
+            transition={
+              shut
+                ? { duration: 0 }
+                : { ...missionCards.open, ease: easings.reveal }
+            }
           >
             {/* The fill is a layer rather than the card's own background, so
                 it can cross to the next variant's colour on its own timing
@@ -192,6 +202,7 @@ export function Mission({ content }: MissionProps) {
               <Scramble
                 as="h2"
                 text={card.heading}
+                tick={missionCards.scramble.tick}
                 className="text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
               />
 

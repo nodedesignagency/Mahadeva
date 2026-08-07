@@ -225,11 +225,12 @@ export const missionCards = {
   step: 75,
 
   /**
-   * How far into the section's arrival the card has finished opening, as a
-   * share of the approach. Under half, so it is open well before it reaches
-   * the middle of the screen — "as soon as a sliver of the section shows".
+   * The opening move, in seconds. It plays once, on its own clock, when the
+   * section first shows a sliver — it is a variant change, not something the
+   * scroll drives. Scrubbed against the scroll instead, the card sat half
+   * open at whatever position the page happened to be at.
    */
-  entrance: 0.45,
+  open: { delay: 0.2, duration: 0.7 },
 
   /**
    * Milliseconds for one card's words and fill to give way to the next. The
@@ -237,6 +238,16 @@ export const missionCards = {
    * there, so a step is a change of content inside a card that never moves.
    */
   swap: 250,
+
+  /**
+   * The heading's scramble, faster than the site's default pace.
+   *
+   * The footer's labels play once as the page is read; this one has to land
+   * inside a swap, and at the default 90ms a two-word heading spent over a
+   * second and a half resolving — long enough that the reader had moved on
+   * before it finished saying the card had changed.
+   */
+  scramble: { tick: 45 },
 } as const;
 
 export const markParallax = {

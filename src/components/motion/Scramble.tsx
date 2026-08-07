@@ -40,10 +40,25 @@ type ScrambleProps = {
    * paragraph.
    */
   as?: "p" | "h2" | "h3" | "span";
+  /**
+   * Milliseconds per character, where the site's default pace is not wanted.
+   *
+   * The pace is a property of what the effect is being asked to do, not of the
+   * effect: a label playing once as a page is read can take its time, while
+   * one that has to land inside a swap cannot. Its own prop rather than a
+   * second config export, so the caller's reason for the number stays next to
+   * the caller.
+   */
+  tick?: number;
   className?: string;
 };
 
-export function Scramble({ text, as = "p", className }: ScrambleProps) {
+export function Scramble({
+  text,
+  as = "p",
+  tick = textScramble.tick,
+  className,
+}: ScrambleProps) {
   // Widened deliberately: the ref is only ever read for `useInView`, and a
   // union of intrinsic elements narrows its type to the first of them.
   const Tag = as as ElementType;
@@ -86,14 +101,14 @@ export function Scramble({ text, as = "p", className }: ScrambleProps) {
           return;
         }
         setFrame({ cursor, noise: draw() });
-      }, textScramble.tick);
+      }, tick);
     }, textScramble.delay);
 
     return () => {
       window.clearTimeout(start);
       window.clearInterval(interval);
     };
-  }, [armed, inView, text]);
+  }, [armed, inView, text, tick]);
 
   if (!frame) {
     return (
