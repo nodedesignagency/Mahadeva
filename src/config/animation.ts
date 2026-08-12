@@ -197,6 +197,31 @@ export const heroParallax = {
  * below its section and its own box would enter the viewport far too late.
  */
 /**
+ * A team portrait, and what is behind it.
+ *
+ * The picture is cut into three standing strips, each a window onto the same
+ * photograph at a different constraint — left, middle, right — so together
+ * they read as one image. On hover each slides up out of the card, and because
+ * they leave one after another the picture peels away in a stagger rather than
+ * lifting as a slab. The bio underneath is uncovered as they go.
+ *
+ * Leaving reverses it, right strip first, so the picture closes the way it
+ * opened rather than snapping back.
+ */
+export const teamCard = {
+  /** Milliseconds for one strip's travel. */
+  slide: 520,
+  /** Milliseconds between one strip leaving and the next. */
+  stagger: 70,
+  /**
+   * Milliseconds for the name to fade. Quicker than a strip's travel: the
+   * owner's first hover state already has no name on it, so it is gone before
+   * the picture has finished lifting rather than riding along with it.
+   */
+  name: 180,
+} as const;
+
+/**
  * The About page's mission card — three variants stepped through by scroll.
  *
  * The card is pinned in the middle of the screen and opens from its own

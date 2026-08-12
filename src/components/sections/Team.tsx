@@ -2,10 +2,16 @@
 
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useReducedMotion } from "motion/react";
 
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { sectionTextRevealBeige } from "@/config/animation";
+import {
+  InstagramIcon,
+  LinkedInIcon,
+  XIcon,
+} from "@/components/ui/BrandIcons";
+import { sectionTextRevealBeige, teamCard } from "@/config/animation";
 import type { teamContent } from "@/content/about";
 import { cn } from "@/lib/cn";
 
@@ -121,26 +127,128 @@ export function Team({ content }: TeamProps) {
           {content.members.map((member) => (
             <li
               key={member.name}
-              className="relative flex w-[78%] shrink-0 snap-start flex-col justify-end overflow-clip bg-team-panel tablet:w-[calc((100%-20px)/2)] desktop:w-[calc((100%-60px)/4)]"
+              className="relative w-[78%] shrink-0 snap-start overflow-clip tablet:w-[calc((100%-20px)/2)] desktop:w-[calc((100%-60px)/4)]"
             >
-              {/* The portrait's box. A cut-out stands on the panel's own
-                  fill, so the slot is the panel until the photographs land
-                  rather than a grey rectangle over it. */}
-              <div className="aspect-[440/545] w-full" />
-
-              {/* The name sits over the foot of the picture, so it needs its
-                  own ground: a scrim from the bottom edge rather than a bar,
-                  which would cut the portrait off at a hard line. */}
-              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/55 to-transparent p-6 pt-15">
-                <p className="font-body text-body-lg text-fg">{member.name}</p>
-                <p className="mt-1 font-body text-body-sm text-fg/70">
-                  {member.role}
-                </p>
-              </div>
+              <TeamCard member={member} />
             </li>
           ))}
         </ul>
       </Container>
     </section>
+  );
+}
+
+/** The three windows the portrait is cut into, left to right. */
+const STRIPS = ["left", "center", "right"] as const;
+
+/**
+ * One portrait, and the bio it lifts to show.
+ *
+ * The picture is three standing strips over a dark panel. Each strip is a
+ * window onto the same photograph at its own constraint, so at rest they read
+ * as one image and the seams are invisible; on hover each translates a full
+ * card height upwards, one after another, and the panel is uncovered behind
+ * them. Leaving runs the same move in reverse order.
+ *
+ * The strips are `aria-hidden` and the whole card is one focusable link:
+ * hovering three decorative panes is not a thing to announce, and a keyboard
+ * reaching the card should get the person, not the effect.
+ */
+function TeamCard({
+  member,
+}: {
+  member: (typeof teamContent.members)[number];
+}) {
+  const [open, setOpen] = useState(false);
+  const reduced = useReducedMotion() ?? false;
+
+  const socials = [
+    { label: "X", href: member.links.x, Icon: XIcon },
+    { label: "Instagram", href: member.links.instagram, Icon: InstagramIcon },
+    { label: "LinkedIn", href: member.links.linkedin, Icon: LinkedInIcon },
+  ];
+
+  return (
+    <div
+      className="relative isolate size-full bg-bg text-fg"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={() => setOpen(false)}
+    >
+      {/* The back of the card. Always in the document and always beneath the
+          strips, so what the picture uncovers is already there rather than
+          something that has to arrive as it goes. */}
+      <div className="absolute inset-0 flex flex-col justify-between p-6">
+        <p className="font-body text-body-md leading-[1.5] text-fg">
+          {member.bio}
+        </p>
+
+        <ul className="flex gap-4">
+          {socials.map(({ label, href, Icon }) => (
+            <li key={label}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noreferrer noopener"
+                aria-label={`${member.name} on ${label}`}
+                className="block text-fg transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-60"
+              >
+                <Icon className="size-4" aria-hidden="true" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* The picture, and the card's only source of height: the panel behind
+          it is absolute and cannot set one. The ratio belongs here rather than
+          on a strip — on a third-width strip it resolves against that third
+          and the card comes out a third of its height. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none relative flex aspect-[440/545] w-full"
+      >
+        {STRIPS.map((strip, i) => (
+          <div
+            key={strip}
+            className="h-full w-1/3 shrink-0 bg-team-panel transition-transform ease-(--ease-case-hover)"
+            style={{
+              transform: open && !reduced ? "translateY(-100%)" : undefined,
+              transitionDuration: `${teamCard.slide}ms`,
+              // Left leaves first on the way out and last on the way back, so
+              // the picture closes in the order it opened rather than all
+              // three landing together.
+              transitionDelay: `${(open ? i : STRIPS.length - 1 - i) * teamCard.stagger}ms`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* The name, over the foot of the picture. It goes the moment the card
+          is hovered — the owner's first hover state already has no name on it
+          — and it goes by fading rather than travelling: a block this short
+          translated by its own height lands in the middle of the bio it was
+          supposed to be getting out of the way of. The scrim is a gradient
+          rather than a bar so the portrait is not cut off at a hard line. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/55 to-transparent p-6 pt-15 transition-opacity ease-(--ease-out)"
+        style={{
+          opacity: open && !reduced ? 0 : 1,
+          transitionDuration: `${teamCard.name}ms`,
+        }}
+      >
+        <p className="font-body text-body-lg text-fg">{member.name}</p>
+        <p className="mt-1 font-body text-body-sm text-fg/70">{member.role}</p>
+      </div>
+
+      {/* One link over the whole card, under nothing: the card is a person,
+          and this is what a pointer and a keyboard both land on. The name is
+          repeated here for anything reading the link rather than the card. */}
+      <a href="#" className="absolute inset-0 z-10">
+        <span className="sr-only">{`${member.name}, ${member.role}`}</span>
+      </a>
+    </div>
   );
 }

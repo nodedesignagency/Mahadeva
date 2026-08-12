@@ -163,21 +163,28 @@ export function Mission({ content }: MissionProps) {
 
             {/* A single column of cells down each edge, flush inside it — the
                 two Pattern Animations the card is built around. Same field the
-                rest of the site uses, one track wide. */}
-            <PatternField
-              side="left"
-              orientation="vertical"
-              tracks={1}
-              thickness={24}
-              className="left-0 w-6"
-            />
-            <PatternField
-              side="right"
-              orientation="vertical"
-              tracks={1}
-              thickness={24}
-              className="right-0 w-6"
-            />
+                rest of the site uses, one track wide.
+
+                Tablet and up only. On a phone the card is nearly the width of
+                the screen and the columns would be eating the text's margin to
+                run an animation nobody is looking at, which is why the owner's
+                mobile variant drops them. */}
+            <div className="hidden tablet:contents">
+              <PatternField
+                side="left"
+                orientation="vertical"
+                tracks={1}
+                thickness={24}
+                className="left-0 w-6"
+              />
+              <PatternField
+                side="right"
+                orientation="vertical"
+                tracks={1}
+                thickness={24}
+                className="right-0 w-6"
+              />
+            </div>
 
             {/* Keyed on the variant, so React replaces the block rather than
                 editing it in place: the new words arrive together instead of
@@ -192,6 +199,7 @@ export function Mission({ content }: MissionProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: missionCards.swap / 1000 }}
+              // The owner's 20 between every block, heading included.
               className="relative flex flex-col gap-5"
             >
               {/* Scrambled, like every label the site swaps under the reader.
@@ -203,10 +211,16 @@ export function Mission({ content }: MissionProps) {
                 as="h2"
                 text={card.heading}
                 tick={missionCards.scramble.tick}
-                className="text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+                className="text-display-md leading-(--leading-display) tracking-(--tracking-display) font-normal"
               />
 
-              <div className="flex flex-col gap-6 font-body text-body-md text-fg-on-light">
+              {/* Tighter than the site's 1.75 body leading, and deliberately
+                  so: the card is a fixed 576 tall with 60 above and below, and
+                  three paragraphs of this length at the page's own leading run
+                  past the foot and are clipped by the card's own overflow —
+                  which is what took the bottom padding away. At 1.5 the
+                  longest variant sits inside its 456 with room to spare. */}
+              <div className="flex flex-col gap-5 font-body text-body-md leading-[1.5] text-fg-on-light">
                 {card.paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}

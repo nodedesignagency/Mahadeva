@@ -101,11 +101,52 @@ export const teamContent = {
   headingLines: ["Meet The Team"],
   controls: { previous: "Previous team members", next: "Next team members" },
 
+  /**
+   * `bio` and `links` are the back of the card — what the portrait slides up
+   * to reveal. Every member carries their own three, so a card with nobody's
+   * handle on it simply shows the line and no icons.
+   */
   members: [
-    { name: "Daniel Cruz", role: "CEO & Founder" },
-    { name: "Sarah Kim", role: "Automation Engineer" },
-    { name: "Emma Watson", role: "Product Lead" },
-    { name: "James Cooper", role: "Growth Strategist" },
+    {
+      name: "Daniel Cruz",
+      role: "CEO & Founder",
+      bio: "Leads AI strategy and builds scalable automation systems designed to drive measurable business growth.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
+    {
+      name: "Sarah Kim",
+      role: "Automation Engineer",
+      bio: "Designs and ships the workflow automation behind every engagement, from first integration to steady state.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
+    {
+      name: "Emma Watson",
+      role: "Product Lead",
+      bio: "Turns operational complexity into systems teams can actually use, and keeps every build aimed at the outcome.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
+    {
+      name: "James Cooper",
+      role: "Growth Strategist",
+      bio: "Connects automation to revenue, measuring what each system returns and where the next one should go.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
   ],
 } as const;
 
