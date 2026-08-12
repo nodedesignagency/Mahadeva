@@ -209,16 +209,25 @@ export const heroParallax = {
  * opened rather than snapping back.
  */
 export const teamCard = {
-  /** Milliseconds for one strip's travel. */
-  slide: 520,
-  /** Milliseconds between one strip leaving and the next. */
-  stagger: 70,
   /**
-   * Milliseconds for the name to fade. Quicker than a strip's travel: the
-   * owner's first hover state already has no name on it, so it is gone before
-   * the picture has finished lifting rather than riding along with it.
+   * The component's own transition, from the owner's panel: a spring based on
+   * time, 0.4s with 0.2 of bounce. Every strip's travel uses it, which is why
+   * the picture settles rather than stopping dead.
    */
-  name: 180,
+  spring: { type: "spring", duration: 0.4, bounce: 0.2 },
+
+  /**
+   * The chain, in milliseconds, exactly as the variants are wired.
+   *
+   * Entering runs Default → Hover 1 → Hover 2 → Hover 3, each step firing on
+   * the one before it appearing: 0.2s, then 0.06s. Leaving runs Hover 3 →
+   * Back 1 → Back 2 → Default on 0.2s, then 0.6s — much slower, and
+   * deliberately so. The picture takes its time coming back, and the name,
+   * which only returns at Default, arrives a beat after everything else has
+   * settled instead of snapping in the moment the pointer goes.
+   */
+  enter: { hover2: 200, hover3: 60 },
+  leave: { back1: 200, back2: 600, settled: 200 },
 } as const;
 
 /**
