@@ -210,24 +210,31 @@ export const heroParallax = {
  */
 export const teamCard = {
   /**
-   * The component's own transition, from the owner's panel: a spring based on
-   * time, 0.4s with 0.2 of bounce. Every strip's travel uses it, which is why
-   * the picture settles rather than stopping dead.
+   * Milliseconds for one strip's travel, on `--ease-out` — a curve that only
+   * decelerates. The picture is a big thing to move and the eye follows it the
+   * whole way, so it wants to arrive rather than to stop.
    */
-  spring: { type: "spring", duration: 0.4, bounce: 0.2 },
+  slide: 760,
 
   /**
-   * The chain, in milliseconds, exactly as the variants are wired.
-   *
-   * Entering runs Default → Hover 1 → Hover 2 → Hover 3, each step firing on
-   * the one before it appearing: 0.2s, then 0.06s. Leaving runs Hover 3 →
-   * Back 1 → Back 2 → Default on 0.2s, then 0.6s — much slower, and
-   * deliberately so. The picture takes its time coming back, and the name,
-   * which only returns at Default, arrives a beat after everything else has
-   * settled instead of snapping in the moment the pointer goes.
+   * Milliseconds between one strip leaving and the next. Wide enough to read
+   * as three separate departures and not as one edge going ragged.
    */
-  enter: { hover2: 200, hover3: 60 },
-  leave: { back1: 200, back2: 600, settled: 200 },
+  stagger: 100,
+
+  /** The name over the foot of the picture. */
+  name: {
+    /** Out as the card is entered: quick, it is not what anyone is watching. */
+    out: 200,
+    /** And back in, over this. */
+    in: 300,
+    /**
+     * After this wait — the length of the strips' return, so the name arrives
+     * behind the picture rather than racing it home. Snapping back the instant
+     * the pointer left was the thing that read as cheap.
+     */
+    back: 720,
+  },
 } as const;
 
 /**

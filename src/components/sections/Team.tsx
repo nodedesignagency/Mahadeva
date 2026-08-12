@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { useReducedMotion } from "motion/react";
 
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -141,25 +141,6 @@ export function Team({ content }: TeamProps) {
 /** The three windows the portrait is cut into, left to right. */
 const STRIPS = ["left", "center", "right"] as const;
 
-/**
- * The card's variants, and where each strip stands in them.
- *
- * `-100` is a strip lifted clear of the card. The staircase is not a stagger
- * applied to one move: it is six states the card walks through, one strip
- * changing at each, which is how the owner's file draws it. Entering runs
- * down the first four; leaving runs Hover 3 → Back 1 → Back 2 → Default,
- * putting the strips back in the reverse of the order they left.
- */
-const PHASES = {
-  default: [0, 0, 0],
-  hover1: [-100, 0, 0],
-  hover2: [-100, -100, 0],
-  hover3: [-100, -100, -100],
-  back1: [-100, -100, 0],
-  back2: [-100, 0, 0],
-} as const;
-
-type Phase = keyof typeof PHASES;
 
 /**
  * One portrait, and the bio it lifts to show.
@@ -167,12 +148,12 @@ type Phase = keyof typeof PHASES;
  * The picture is three standing strips over a dark panel. Each strip is a
  * window onto the same photograph at its own constraint, so at rest they read
  * as one image and the seams are invisible; on hover each lifts a full card
- * height, one variant at a time, and the panel is uncovered behind them.
+ * height, one after another, and the panel is uncovered behind them. Leaving
+ * runs the same move right to left, so the picture closes the way it opened.
  *
- * The chain is the owner's, delay for delay. Entering is quick — 0.2s to the
- * second strip, 0.06s to the third — and leaving is slow: 0.2s before the
- * first comes back, then 0.6s, then the name. Every travel is their spring,
- * 0.4s with a little bounce, so the strips settle rather than stopping dead.
+ * The only thing that does not simply reverse is the name, which waits out the
+ * strips' whole return before coming back — racing them home was what read as
+ * cheap.
  *
  * The strips are `aria-hidden` and the whole card is one focusable link:
  * hovering three decorative panes is not a thing to announce, and a keyboard
@@ -183,49 +164,8 @@ function TeamCard({
 }: {
   member: (typeof teamContent.members)[number];
 }) {
-  const [phase, setPhase] = useState<Phase>("default");
+  const [open, setOpen] = useState(false);
   const reduced = useReducedMotion() ?? false;
-
-  /**
-   * The pending steps of whichever chain is running. Cleared before either
-   * chain starts, so a pointer that leaves mid-entrance does not have the
-   * rest of the entrance land on top of the exit — which is the `Mouse Enter →
-   * Reset` on every one of the owner's variants.
-   */
-  const timers = useRef<number[]>([]);
-  const stop = () => {
-    timers.current.forEach(window.clearTimeout);
-    timers.current = [];
-  };
-  useEffect(() => stop, []);
-
-  /** Walk a chain of [phase, delay-after-the-previous-step] pairs. */
-  function run(steps: [Phase, number][]) {
-    stop();
-    let at = 0;
-    for (const [next, delay] of steps) {
-      at += delay;
-      if (at === 0) {
-        setPhase(next);
-        continue;
-      }
-      timers.current.push(window.setTimeout(() => setPhase(next), at));
-    }
-  }
-
-  const enter = () =>
-    run([
-      ["hover1", 0],
-      ["hover2", teamCard.enter.hover2],
-      ["hover3", teamCard.enter.hover3],
-    ]);
-
-  const leave = () =>
-    run([
-      ["back1", teamCard.leave.back1],
-      ["back2", teamCard.leave.back2],
-      ["default", teamCard.leave.settled],
-    ]);
 
   const socials = [
     { label: "X", href: member.links.x, Icon: XIcon },
@@ -236,10 +176,10 @@ function TeamCard({
   return (
     <div
       className="relative isolate size-full bg-bg text-fg"
-      onMouseEnter={enter}
-      onMouseLeave={leave}
-      onFocus={enter}
-      onBlur={leave}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onFocus={() => setOpen(true)}
+      onBlur={() => setOpen(false)}
     >
       {/* The back of the card. Always in the document and always beneath the
           strips, so what the picture uncovers is already there rather than
@@ -275,11 +215,17 @@ function TeamCard({
         className="pointer-events-none relative flex aspect-[280/344] w-full"
       >
         {STRIPS.map((strip, i) => (
-          <motion.div
+          <div
             key={strip}
-            className="h-full w-1/3 shrink-0 bg-team-panel"
-            animate={{ y: `${reduced ? 0 : PHASES[phase][i]}%` }}
-            transition={teamCard.spring}
+            className="h-full w-1/3 shrink-0 bg-team-panel transition-transform ease-(--ease-out)"
+            style={{
+              transform: open && !reduced ? "translateY(-100%)" : undefined,
+              transitionDuration: `${teamCard.slide}ms`,
+              // Left leaves first on the way out and last on the way back, so
+              // the picture closes in the order it opened rather than all
+              // three landing together.
+              transitionDelay: `${(open ? i : STRIPS.length - 1 - i) * teamCard.stagger}ms`,
+            }}
           />
         ))}
       </div>
@@ -295,15 +241,21 @@ function TeamCard({
           own height lands in the middle of the bio it was getting out of the
           way of. The scrim is a gradient rather than a bar so the portrait is
           not cut off at a hard line. */}
-      <motion.div
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/55 to-transparent p-6 pt-15"
-        animate={{ opacity: phase === "default" ? 1 : 0 }}
-        transition={teamCard.spring}
+        className="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/55 to-transparent p-6 pt-15 transition-opacity ease-(--ease-out)"
+        style={{
+          opacity: open && !reduced ? 0 : 1,
+          transitionDuration: `${open ? teamCard.name.out : teamCard.name.in}ms`,
+          // Nothing on the way out, so it clears the picture immediately; the
+          // strips' whole return on the way back, so it arrives once they have
+          // landed rather than racing them home.
+          transitionDelay: `${open ? 0 : teamCard.name.back}ms`,
+        }}
       >
         <p className="font-body text-body-lg text-fg">{member.name}</p>
         <p className="mt-1 font-body text-body-sm text-fg/70">{member.role}</p>
-      </motion.div>
+      </div>
 
       {/* One link over the whole card, under nothing: the card is a person,
           and this is what a pointer and a keyboard both land on. The name is
