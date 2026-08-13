@@ -159,7 +159,12 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             <img
               src={study.image.url}
               alt={study.image.alt}
-              className="mh-case-cover size-full object-cover object-left-top"
+              // Centred. Anchored to the top left, anything wider than the
+              // box lost its right-hand side — and a product screenshot is
+              // wider than this box every time, so the part an editor cared
+              // about was the part being cut. Centre is also what the hotspot
+              // falls back to, so the two agree when none is set.
+              className="mh-case-cover size-full object-cover object-center"
               loading="lazy"
             />
           ) : (
