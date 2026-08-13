@@ -14,7 +14,7 @@ import {
  * keep in sync. Only the documents themselves travel separately, via the seed.
  *
  * Field names match `CaseStudy` in src/content/case-studies.ts one for one, so
- * the query in src/lib/sanity/queries.ts is a projection rather than a
+ * the query in src/lib/case-studies.ts is a projection rather than a
  * translation layer.
  */
 
