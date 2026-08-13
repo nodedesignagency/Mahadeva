@@ -2,7 +2,7 @@
  * Bundle the built site into one self-contained HTML file, so a section can be
  * published as a shareable preview and checked in a real browser.
  *
- * Usage:  npm run build && node scripts/build-preview.mjs [outfile]
+ * Usage:  npm run build && node scripts/build-preview.mjs [outfile] [route]
  *
  * Everything the page needs is folded in: stylesheets, every JS chunk, fonts
  * and the favicon as data URIs. The result opens from disk or from any host
@@ -40,12 +40,26 @@ import path from "node:path";
 const ROOT = ".next";
 const read = (url) => fs.readFileSync(path.join(ROOT, url.replace("/_next/", "")));
 
-if (!fs.existsSync(path.join(ROOT, "server/app/index.html"))) {
-  console.error("No build found. Run `npm run build` first.");
+// Which prerendered route to bundle: `pricing` for /pricing, and the home
+// page's own file is `index`. Only statically rendered routes have one.
+const route = process.argv[3] ?? "index";
+const page = path.join(ROOT, `server/app/${route}.html`);
+
+if (!fs.existsSync(page)) {
+  console.error(
+    fs.existsSync(path.join(ROOT, "server/app/index.html"))
+      ? `No prerendered page for "${route}". Built routes: ` +
+          fs
+            .readdirSync(path.join(ROOT, "server/app"))
+            .filter((f) => f.endsWith(".html"))
+            .map((f) => f.replace(/\.html$/, ""))
+            .join(", ")
+      : "No build found. Run `npm run build` first.",
+  );
   process.exit(1);
 }
 
-let html = fs.readFileSync(path.join(ROOT, "server/app/index.html"), "utf8");
+let html = fs.readFileSync(page, "utf8");
 
 const mime = (f) =>
   f.endsWith(".woff2") ? "font/woff2"
@@ -345,9 +359,26 @@ const fontVars = [
 ].map((m) => m[1]).join(";");
 if (!fontVars) throw new Error("no next/font variable classes found — check the build");
 
+/**
+ * The host's own body rule, and why this style has to restate the document's
+ * typography.
+ *
+ * A published artifact is wrapped in a page whose head carries
+ * `body{...font:14px -apple-system...}`. `font` is a shorthand, so it resets
+ * `line-height` to `normal` — and it is unlayered, while everything Tailwind
+ * emits sits in `@layer base`, which loses to an unlayered rule whatever the
+ * order. Every paragraph that takes its leading by inheritance from `body`
+ * therefore renders at `normal` in the artifact and at its real value
+ * everywhere else, which is invisible when the file is opened directly.
+ *
+ * This rule is unlayered too, and comes after the host's, so it wins.
+ */
 const embedded =
   `${html.match(/<head[^>]*>([\s\S]*?)<\/head>/)[1]}\n` +
-  `<style>:root{${fontVars}}\nhtml,body{margin:0;padding:0;background:#0e1e1d}</style>\n` +
+  `<style>:root{${fontVars}}\n` +
+  `html,body{margin:0;padding:0;background:#0e1e1d;` +
+  `font-family:var(--font-body);font-size:var(--text-body-md);` +
+  `line-height:var(--leading-body);color:var(--color-fg)}</style>\n` +
   `<div class="${[cls, bodyCls].filter(Boolean).join(" ")}">\n` +
   `${html.match(/<body[^>]*>([\s\S]*?)<\/body>/)[1]}\n</div>`;
 

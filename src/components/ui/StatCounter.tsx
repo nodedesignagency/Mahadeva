@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { animate, useInView, useReducedMotion } from "motion/react";
 import { statCounter } from "@/config/animation";
+import { cn } from "@/lib/cn";
 import { easings, viewport } from "@/lib/motion";
 
 /**
@@ -41,6 +42,19 @@ import { easings, viewport } from "@/lib/motion";
  */
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
+/**
+ * Two typographic sizes, both Geist against the same 50px affix.
+ *
+ * `display` is the trust panels': a 100px figure, its unit set as a capital
+ * because at that size the panels read as a headline. `compact` is the
+ * pricing page's: 56px, the affix in medium, and the unit exactly as it is
+ * written — an uppercased "x" beside a 56px figure is nearly a second digit.
+ */
+const sizes = {
+  display: { figure: "text-stat", affix: "text-stat-affix uppercase" },
+  compact: { figure: "text-stat-sm", affix: "text-stat-affix font-medium" },
+} as const;
+
 type StatCounterProps = {
   /** The end number — what the figure counts up to. */
   value: number;
@@ -48,9 +62,15 @@ type StatCounterProps = {
   prefix?: string;
   /** Sits after it: %, x, h, m. */
   unit: string;
+  size?: keyof typeof sizes;
 };
 
-export function StatCounter({ value, prefix, unit }: StatCounterProps) {
+export function StatCounter({
+  value,
+  prefix,
+  unit,
+  size = "display",
+}: StatCounterProps) {
   const ref = useRef<HTMLParagraphElement>(null);
   const inView = useInView(ref, viewport);
   const reduced = useReducedMotion() ?? false;
@@ -75,7 +95,9 @@ export function StatCounter({ value, prefix, unit }: StatCounterProps) {
 
   return (
     <p ref={ref} className="flex items-baseline font-ui font-normal text-fg-on-light">
-      {prefix ? <span className="text-stat-affix">{prefix}</span> : null}
+      {prefix ? (
+        <span className={sizes[size].affix}>{prefix}</span>
+      ) : null}
       {/* Proportional figures, not tabular. Geist's tabular set is a different
           drawing — wider, squarer, and its 1 carries a full foot — so it reads
           as another typeface altogether at 100px. It would hold the unit still
@@ -83,10 +105,10 @@ export function StatCounter({ value, prefix, unit }: StatCounterProps) {
 
           Fixed locale rather than the browser's, so the server's text and the
           client's first frame group digits the same way. */}
-      <span className="text-stat leading-none">
+      <span className={cn(sizes[size].figure, "leading-none")}>
         {(counting ? shown : value).toLocaleString("en-US")}
       </span>
-      <span className="text-stat-affix uppercase">{unit}</span>
+      <span className={sizes[size].affix}>{unit}</span>
     </p>
   );
 }

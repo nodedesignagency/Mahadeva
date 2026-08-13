@@ -39,13 +39,19 @@ export function About({ content }: AboutProps) {
     <section
       data-bg="white"
       data-bg-keep=""
-      className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-30 text-fg-on-light"
+      // The bottom padding is the room the mark climbs through. It tracks the
+      // mark's own breakpoints, not the layout's: at 640 the mark grows from
+      // 200 to 260 wide and its climb grows with it, so the section has to give
+      // the heading below it that much more clearance or the two cross.
+      className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-25 text-fg-on-light sm:pb-34 lg:pb-30"
     >
-      {/* A viewport tall from tablet up, where the statement is the whole
-          screen. On a phone it takes the height it needs and the section's
-          own 80/120 does the spacing — a forced 100vh there left a long
-          empty stretch under the mark. */}
-      <Container className="relative flex flex-col items-center justify-center gap-10 px-0 tablet:min-h-screen">
+      {/* A viewport tall on desktop, where the statement is the whole screen
+          and the mark hangs out of the section rather than sitting in it.
+          Below that it takes the height it needs: a forced 100vh holds the
+          section open past its content, and centring splits the difference
+          above and below, which is most of the empty stretch that used to sit
+          between the mark and the heading underneath. */}
+      <Container className="relative flex flex-col items-center justify-center gap-10 px-0 lg:min-h-screen">
         <p className="flex items-center justify-center gap-2 text-body-md">
           <Image src={ornamentLeft} alt="" aria-hidden className="h-8 w-auto" />
           {content.eyebrow}
@@ -68,27 +74,39 @@ export function About({ content }: AboutProps) {
 
         {/* Decorative: the statement above already names the brand.
          *
-         * Positioning lives on the wrapper so the parallax has something of its
-         * own to transform. Tailwind centres it with the `translate` property
-         * while the drift writes `transform`; the two compose rather than
-         * overwrite, so the mark stays centred as it climbs. */}
-        <Parallax
-          drift={markParallax.drift}
-          // Only where the mark is taken out of the flow. Below that it sits
-          // in the column under the statement, and a drift would leave its own
-          // box behind as a hole between this section and the next.
-          minWidth={1024}
-          className="z-20 lg:absolute lg:-bottom-[431px] lg:left-1/2 lg:-translate-x-1/2"
-        >
-          <Image
-            src={mark}
-            alt=""
-            aria-hidden
-            priority
-            sizes="(min-width: 1024px) 376px, (min-width: 640px) 260px, 200px"
-            className="h-auto w-[200px] object-cover sm:w-[260px] lg:h-[467px] lg:w-[376px]"
-          />
-        </Parallax>
+         * A zero-height anchor, and the `-mt-10` cancels the column gap that
+         * precedes it, so `top` is measured from the last line of the statement
+         * and nothing here occupies a row of its own.
+         *
+         * That is what lets the drift run at full strength on every screen. Out
+         * of the flow the climb costs no layout; in the column it is also the
+         * size of the hole left under the mark, and the section ends up
+         * carrying a growing empty stretch between the statement and the
+         * heading below it. Anchoring to the statement rather than to the
+         * column's box keeps the mark the same distance under the text whatever
+         * height the section takes. */}
+        <div className="relative -mt-10 w-full">
+          <Parallax
+            drift={markParallax.drift}
+            // 40 under the statement where the mark sits in the body of the
+            // section, 220 on desktop where it hangs out of the bottom of it.
+            //
+            // Positioning lives on this wrapper so the parallax has something
+            // of its own to transform. Tailwind centres it with the `translate`
+            // property while the drift writes `transform`; the two compose
+            // rather than overwrite, so the mark stays centred as it climbs.
+            className="absolute top-10 left-1/2 z-20 -translate-x-1/2 lg:top-55"
+          >
+            <Image
+              src={mark}
+              alt=""
+              aria-hidden
+              priority
+              sizes="(min-width: 1024px) 376px, (min-width: 640px) 260px, 200px"
+              className="h-auto w-[200px] object-cover sm:w-[260px] lg:h-[467px] lg:w-[376px]"
+            />
+          </Parallax>
+        </div>
       </Container>
     </section>
   );

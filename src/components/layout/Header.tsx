@@ -11,7 +11,14 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
 import { cn } from "@/lib/cn";
 
-/** Where the header flips from its dark surface to its light one. */
+/**
+ * Where a `hero` page's header flips from its dark surface to its light one.
+ *
+ * Which surface it wears otherwise is not this component's business at all —
+ * the page declares it and `globals.css` styles from that declaration. See
+ * PageSurface. All that is passed on from here is whether the reader is past
+ * the threshold, which is the one part of it JavaScript has to know.
+ */
 const SCROLL_THRESHOLD = 350;
 
 /**
@@ -19,8 +26,9 @@ const SCROLL_THRESHOLD = 350;
  *
  * Opaque at every scroll position — the hero's pattern field animates directly
  * behind this strip, and bars passing under the wordmark made both hard to
- * read — but which surface it wears depends on scroll. Dark over the hero,
- * light once past the threshold, with everything inside inverting to match.
+ * read. Which surface it wears is the page's to declare, and `globals.css`
+ * styles the strip from that declaration; the only part of it decided here is
+ * whether a hero page has been scrolled past.
  *
  * The mobile overlay implements the accessibility the original omits — focus is
  * trapped while open, Escape closes it, background scroll is locked, and the
@@ -107,6 +115,9 @@ export function Header() {
 
   return (
     <header
+      // Read by `globals.css`, where a hero page's strip turns light past the
+      // threshold. Nothing else consults it.
+      data-scrolled={scrolled}
       style={
         { "--mh-nav-open-duration": `${mobileNav.openDuration}ms` } as CSSProperties
       }
@@ -121,15 +132,10 @@ export function Header() {
         open ? "h-[100dvh] border-transparent" : "h-header",
         // The strip crossfades as one — surface, hairline, wordmark and CTA
         // (`text-current`), and both endpoints the links mix between. That
-        // list lives in `.mh-nav-shell` alongside the open/close height, not
-        // here: an unlayered `transition` there beats a utility here, so
-        // splitting them across the two meant one quietly deleted the other.
-        //
-        // Each surface carries its own hairline and its own pair of link
-        // colours, which the links mix between on hover.
-        scrolled
-          ? "border-border-on-light bg-bg-white text-fg-on-light [--mh-nav-accent:var(--color-fg-on-light-hover)] [--mh-nav-ink:var(--color-fg-on-light)] [--mh-nav-rule-color:var(--color-border-nav-on-light)]"
-          : "border-border bg-bg text-fg [--mh-nav-accent:var(--color-accent)] [--mh-nav-ink:var(--color-fg)] [--mh-nav-rule-color:var(--color-fg)]",
+        // list lives in `.mh-nav-shell` alongside the open/close height and
+        // the surfaces themselves: an unlayered `transition` there beats a
+        // utility here, so splitting them across the two meant one quietly
+        // deleted the other.
       )}
     >
       <Container className="flex h-header items-center justify-between gap-6">
@@ -197,7 +203,7 @@ export function Header() {
               // Opacity only — the hairline swaps with the surface it belongs
               // to, so easing it would leave it a step behind the flip.
               "transition-opacity duration-(--duration-hover) ease-(--ease-out)",
-              scrolled ? "border-border-on-light" : "border-border",
+              "border-(--mh-nav-border)",
             )}
           >
             {navCta.label}
@@ -218,7 +224,7 @@ export function Header() {
               "desktop:hidden inline-flex size-[33px] shrink-0 items-center justify-center",
               "rounded-(--radius-button) border text-current",
               "transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-50",
-              scrolled ? "border-border-on-light" : "border-border",
+              "border-(--mh-nav-border)",
             )}
           >
             <span aria-hidden="true" className="flex w-4 flex-col gap-[5px]">

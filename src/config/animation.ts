@@ -130,6 +130,23 @@ export const sectionTextRevealDynamic = {
 } as const;
 
 /**
+ * The same reveal on the beige wrappers.
+ *
+ * One value differs: the leading bar sweeps in peach — Framer's "Orange 5",
+ * which the palette already carries as `--mh-peach`. Pale green on beige is
+ * two neighbouring near-whites, so the first bar all but disappears on exactly
+ * the sections that are meant to show it, and the wipe reads as one dark bar
+ * instead of two. The second stays "Green 11", as in the owner's panel, and
+ * so do the selection colours.
+ *
+ * Every section that declares `data-bg="beige"` uses this.
+ */
+export const sectionTextRevealBeige = {
+  ...sectionTextRevealDynamic,
+  revealColor: "var(--mh-peach)",
+} as const;
+
+/**
  * Site-wide smooth scrolling.
  *
  * The original runs its Smooth Scroll component at intensity 10. Expressed here
@@ -179,6 +196,101 @@ export const heroParallax = {
  * Measured against the section rather than the mark, since the mark hangs far
  * below its section and its own box would enter the viewport far too late.
  */
+/**
+ * A team portrait, and what is behind it.
+ *
+ * The picture is cut into three standing strips, each a window onto the same
+ * photograph at a different constraint — left, middle, right — so together
+ * they read as one image. On hover each slides up out of the card, and because
+ * they leave one after another the picture peels away in a stagger rather than
+ * lifting as a slab. The bio underneath is uncovered as they go.
+ *
+ * Leaving reverses it, right strip first, so the picture closes the way it
+ * opened rather than snapping back.
+ */
+export const teamCard = {
+  /**
+   * Milliseconds for one strip's travel, on `--ease-out` — a curve that only
+   * decelerates. The picture is a big thing to move and the eye follows it the
+   * whole way, so it wants to arrive rather than to stop.
+   */
+  slide: 760,
+
+  /**
+   * Milliseconds between one strip leaving and the next. Wide enough to read
+   * as three separate departures and not as one edge going ragged.
+   */
+  stagger: 100,
+
+  /** The name over the foot of the picture. */
+  name: {
+    /** Out as the card is entered: quick, it is not what anyone is watching. */
+    out: 200,
+    /** And back in, over this. */
+    in: 300,
+    /**
+     * After this wait — the length of the strips' return, so the name arrives
+     * behind the picture rather than racing it home. Snapping back the instant
+     * the pointer left was the thing that read as cheap.
+     */
+    back: 720,
+  },
+} as const;
+
+/**
+ * The About page's mission card — three variants stepped through by scroll.
+ *
+ * The card is pinned in the middle of the screen and opens from its own
+ * centreline, the two halves of a mask parting. It opens as the section is
+ * arriving, so the reader meets a card that is already there rather than one
+ * that appears; at each step it closes on the centreline, swaps its words and
+ * its fill while it is shut, and opens again.
+ *
+ * `hold` is the scroll each variant is given, as a share of the viewport. It
+ * is the one number to change to make the sequence longer or shorter: the
+ * section's height is derived from it, so the pin lasts exactly as long as the
+ * three variants need and not a pixel more.
+ */
+export const missionCards = {
+  /**
+   * The owner's schedule, in viewport heights of scroll. The first card is
+   * given a long hold, then a stretch where nothing happens at all, and the
+   * cards after it change on a shorter beat.
+   *
+   * The section's height is derived from these three, so the pin lasts exactly
+   * as long as the sequence needs: `100vh` for the frame itself, plus the
+   * whole schedule.
+   */
+  first: 100,
+  spacer: 25,
+  step: 75,
+
+  /**
+   * The opening move, in seconds. It plays once, on its own clock, when the
+   * section first shows a sliver — it is a variant change, not something the
+   * scroll drives. Scrubbed against the scroll instead, the card sat half
+   * open at whatever position the page happened to be at.
+   */
+  open: { delay: 0.2, duration: 0.7 },
+
+  /**
+   * Milliseconds for one card's words and fill to give way to the next. The
+   * mask is not involved: it plays on arrival and the card stays open from
+   * there, so a step is a change of content inside a card that never moves.
+   */
+  swap: 250,
+
+  /**
+   * The heading's scramble, faster than the site's default pace.
+   *
+   * The footer's labels play once as the page is read; this one has to land
+   * inside a swap, and at the default 90ms a two-word heading spent over a
+   * second and a half resolving — long enough that the reader had moved on
+   * before it finished saying the card had changed.
+   */
+  scramble: { tick: 45 },
+} as const;
+
 export const markParallax = {
   /** Per the Framer panel. The climb below is derived from it. */
   speed: 1.3,

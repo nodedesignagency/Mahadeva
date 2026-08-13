@@ -74,7 +74,7 @@ export function Trust({ content }: TrustProps) {
             settings={sectionTextRevealDynamic}
             className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
-          <p className="text-ink-dynamic max-w-[42ch] font-body text-body-md leading-[1.5] tablet:pt-2">
+          <p className="text-ink-dynamic max-w-[42ch] font-body text-body-md tablet:pt-2">
             {content.subheading}
           </p>
         </div>
@@ -144,7 +144,7 @@ export function Trust({ content }: TrustProps) {
                   </div>
 
                   {/* Pushed to the foot, which is the line all four share. */}
-                  <p className="mt-auto pt-16 font-body text-body-md leading-[1.5] text-fg-on-light">
+                  <p className="mt-auto pt-16 font-body text-body-md text-fg-on-light">
                     {stat.body}
                   </p>
                 </div>
@@ -154,7 +154,7 @@ export function Trust({ content }: TrustProps) {
         </ul>
 
         <div className="mt-15 flex flex-col gap-8 tablet:flex-row tablet:items-center tablet:gap-16">
-          <p className="text-ink-dynamic max-w-[24ch] shrink-0 font-body text-body-sm leading-[1.5]">
+          <p className="text-ink-dynamic max-w-[24ch] shrink-0 font-body text-body-sm">
             {content.logosCaption}
           </p>
 

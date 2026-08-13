@@ -168,7 +168,7 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                     </h3>
                     <p
                       className={cn(
-                        "max-w-[42ch] font-body text-body-md leading-[1.5]",
+                        "max-w-[42ch] font-body text-body-md",
                         column.tone === "dark"
                           ? "text-fg-muted"
                           : "text-fg-on-light/70",
@@ -209,7 +209,7 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                           </p>
                           <p
                             className={cn(
-                              "font-body text-body-md leading-[1.5]",
+                              "font-body text-body-md",
                               column.tone === "dark"
                                 ? "text-fg-muted"
                                 : "text-fg-on-light/70",

@@ -1,0 +1,232 @@
+import { Check, X } from "lucide-react";
+import { Container } from "@/components/layout/Container";
+import { TextReveal } from "@/components/motion/TextReveal";
+import { Button } from "@/components/ui/Button";
+import { sectionTextRevealBeige } from "@/config/animation";
+import type { PlanTone, compareContent } from "@/content/pricing";
+import { cn } from "@/lib/cn";
+
+/**
+ * Plan comparison — "Find The Right Plan".
+ *
+ * A real table: three plans across, features down, grouped into bands. Screen
+ * readers get the relationships for free from `scope`, which is the whole
+ * reason this is not a grid of divs — a cell reading "Advanced" means nothing
+ * without the row and column it sits in.
+ *
+ * The column heads pin under the site header, so the plan a column belongs to
+ * is still on screen twenty rows down. Two details make that work:
+ *
+ *  1. `sticky` goes on the cells, not on `<thead>`. Support for sticking the
+ *     section element is newer than support for sticking its cells, and the
+ *     cells are what carry the fill anyway.
+ *  2. `border-separate`, not `border-collapse`. Collapsed borders belong to
+ *     the table rather than to any cell, so they stay behind while the cell
+ *     they were drawn on travels — the head arrives at the top of the screen
+ *     stripped of its own edges.
+ *
+ * Below the desktop breakpoint four columns and three buttons do not fit, so
+ * the table keeps its width and scrolls sideways in its own box — every column
+ * of it, the labels included. Vertical pinning is off there: an element cannot
+ * stick to the viewport from inside a scroll container.
+ *
+ * A server component — nothing here holds state.
+ */
+
+/** The head fills, the same tints the plan cards use. */
+const tones: Record<PlanTone, string> = {
+  sky: "bg-plan-sky",
+  lavender: "bg-plan-lavender",
+  peach: "bg-plan-peach",
+};
+
+type CompareProps = {
+  content: typeof compareContent;
+};
+
+/**
+ * Shared by every body cell: the hairline above it, its fill and its padding.
+ *
+ * Rules are drawn on one side only — above every cell, and down the left of
+ * every cell but the first. Any pair of neighbours would otherwise lay two
+ * hairlines along the same edge, which at these values reads as one heavier
+ * line in some places and not others.
+ */
+const cell =
+  "border-t border-border-compare bg-compare-cell px-4 py-4 desktop:px-6";
+
+export function Compare({ content }: CompareProps) {
+  return (
+    <section data-bg="beige" className="bg-bg-light py-20 text-fg-on-light">
+      <Container className="px-10">
+        <TextReveal
+          as="h2"
+          lines={content.headingLines}
+          settings={sectionTextRevealBeige}
+          lineStagger={sectionTextRevealBeige.lineStagger}
+          className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
+        />
+        <p className="text-ink-dynamic mx-auto mt-6 max-w-[46ch] text-center font-body text-body-md">
+          {content.subheading}
+        </p>
+
+        {/* `relative` is load-bearing, not tidiness. `sr-only` positions its
+            text absolutely, and with no positioned ancestor the containing
+            block was the page — so the hidden "Included" beside every tick sat
+            wherever its cell fell in the 940px table, at x≈846 on a phone,
+            outside this box's clip. The page itself scrolled sideways to reach
+            it, carrying the header and every section with it and showing the
+            dark surface past the right edge. Positioning this box makes it
+            their containing block, and the clip applies.
+
+            The right edge is drawn here rather than on the table, so it stays
+            at the edge of the box while the table travels under it. Without
+            it a scrolled table simply runs off into the page.
+
+            Where it scrolls the box is full bleed, and takes the gutter back
+            as its own start padding. That padding belongs to the scrollport,
+            so it holds the table in from the edge at rest and then travels
+            away with it: the runway is the whole screen in both directions,
+            and nothing is left standing in a margin while the table moves
+            past it. */}
+        <div className="relative mt-15 max-desktop:-mx-gutter max-desktop:overflow-x-auto max-desktop:border-r max-desktop:border-border-compare max-desktop:ps-gutter">
+          {/* `table-fixed`, so the columns take the widths declared on the
+              head rather than whatever their longest cell asks for. Left to
+              size itself, the three buttons alone push the table past its
+              container and the last column is cut off at a tablet.
+
+              940 is the floor where it scrolls: narrow enough to leave the
+              first plan in view beside the labels, wide enough that a sliver
+              of the second is showing, which is what tells a reader there is
+              more of the table to the right. The 1200 ceiling is the design's;
+              the container already holds it below that. */}
+          <table className="w-full table-fixed border-separate border-spacing-0 text-left max-w-[1200px] max-desktop:min-w-[940px]">
+            <caption className="sr-only">
+              Features included in each plan
+            </caption>
+
+            <thead>
+              <tr>
+                {/* The corner. Empty by design, and named only for screen
+                    readers, which would otherwise announce a blank column
+                    head before every row label. */}
+                <th
+                  scope="col"
+                  className="w-[26%] bg-bg-white align-top desktop:sticky desktop:top-header desktop:z-20"
+                >
+                  <span className="sr-only">Feature</span>
+                </th>
+
+                {content.plans.map((plan) => (
+                  // The cards are separate blocks laid on the white strip,
+                  // not the cells themselves: the row around them is padded 4
+                  // on three sides — nothing on the left, where the first card
+                  // meets the label column — and the cards sit 4 apart. Each
+                  // gap is one cell's padding rather than two halves, so the
+                  // padding is on the right only and the last cell's is also
+                  // the row's right edge.
+                  <th
+                    key={plan.name}
+                    scope="col"
+                    className="w-[24.66%] bg-bg-white py-1 pe-1 align-top font-normal desktop:sticky desktop:top-header desktop:z-20"
+                  >
+                    <div className={cn("h-full p-4 desktop:p-6", tones[plan.tone])}>
+                      <p className="font-body text-heading-md">{plan.name}</p>
+                      <p className="mt-2 font-body text-body-sm">
+                        {plan.body}
+                      </p>
+                      <Button
+                        href={plan.cta.href}
+                        variant="compare"
+                        withArrow
+                        className="mt-6 w-full"
+                      >
+                        {plan.cta.label}
+                      </Button>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+
+            {content.groups.map((group, g) => (
+              <tbody key={group.title}>
+                <tr>
+                  {/* A band across the whole width. `colgroup` scope is the
+                      honest one: it heads the rows under it, not a column. */}
+                  <th
+                    scope="colgroup"
+                    colSpan={content.plans.length + 1}
+                    className="border-l border-t border-border-compare bg-compare-band desktop:border-r px-6 py-4 text-left font-body text-heading-sm font-normal"
+                  >
+                    {group.title}
+                  </th>
+                </tr>
+
+                {group.rows.map((row, r) => {
+                  // The table draws its rules above each row, so the last one
+                  // in the last group closes the bottom edge itself.
+                  const foot =
+                    g === content.groups.length - 1 &&
+                    r === group.rows.length - 1 &&
+                    "border-b";
+
+                  return (
+                    <tr key={row.label}>
+                      <th
+                        scope="row"
+                        className={cn(
+                          cell,
+                          foot,
+                          // `border-l` is the table's own left edge, which
+                          // starts at the first band and never runs beside
+                          // the plan cards above it.
+                          "border-l font-body text-body-md font-normal",
+                        )}
+                      >
+                        {row.label}
+                      </th>
+                      {row.values.map((value, i) => (
+                        <td
+                          key={content.plans[i].name}
+                          className={cn(
+                            cell,
+                            foot,
+                            "border-l text-center font-body text-body-md",
+                            // The table draws its own right edge only where
+                            // the box does not draw one for it.
+                            i === row.values.length - 1 && "desktop:border-r",
+                          )}
+                        >
+                          {typeof value === "string" ? (
+                            value
+                          ) : value ? (
+                            <>
+                              <Check
+                                aria-hidden="true"
+                                className="mx-auto size-5"
+                              />
+                              <span className="sr-only">Included</span>
+                            </>
+                          ) : (
+                            <>
+                              <X
+                                aria-hidden="true"
+                                className="mx-auto size-5 text-fg-label"
+                              />
+                              <span className="sr-only">Not included</span>
+                            </>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            ))}
+          </table>
+        </div>
+      </Container>
+    </section>
+  );
+}

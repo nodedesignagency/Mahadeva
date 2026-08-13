@@ -4,6 +4,15 @@
     "client": "Ragnarok AI",
     "year": "2023",
     "title": "AI Agent Website Built for Automation Startups",
+    "titleLines": [
+      "AI Agent Website Built",
+      "for Automation Startups"
+    ],
+    "titleLinesMobile": [
+      "AI Agent Website",
+      "Built for",
+      "Automation Startups"
+    ],
     "summary": "AI-driven automation systems improved engagement and conversion clarity for a SaaS company, reducing friction.",
     "stats": [
       {
@@ -23,13 +32,37 @@
         "value": "77%"
       }
     ],
-    "tone": "sky"
+    "tone": "sky",
+    "timeline": "3 Months",
+    "services": [
+      "NLP Solutions",
+      "AI Automation",
+      "AI Integration"
+    ],
+    "liveUrl": "https://example.com/ragnarok",
+    "challenge": [
+      "Ragnarok needed to position itself as the premium choice for automation startups while entering a crowded AI market filled with similar solutions and competing messaging.",
+      "The product had strong positioning potential but lacked clear structure and messaging that communicated its value to both technical users and business decision makers. Ragnarok needed a clear identity to stand out while competing against established automation platforms."
+    ],
+    "solution": [
+      "We designed a premium conversion-focused experience that clarified positioning, strengthened messaging, and helped Ragnarok communicate value clearly with automation market.",
+      "We designed a high-conversion layout focused on clarity, authority, and structured storytelling to help users understand value quickly. The new experience aligned visual direction with product strategy, improving engagement and supporting stronger positioning in the AI space."
+    ]
   },
   {
     "slug": "northwind-labs",
     "client": "Northwind Labs",
     "year": "2024",
     "title": "Lead Qualification Rebuilt Around a Scoring Model",
+    "titleLines": [
+      "Lead Qualification Rebuilt",
+      "Around a Scoring Model"
+    ],
+    "titleLinesMobile": [
+      "Lead Qualification",
+      "Rebuilt Around a",
+      "Scoring Model"
+    ],
     "summary": "Automated scoring cut wasted sales time and doubled recurring revenue for a mid-market SaaS team.",
     "stats": [
       {
@@ -49,13 +82,37 @@
         "value": "-64%"
       }
     ],
-    "tone": "lavender"
+    "tone": "lavender",
+    "timeline": "4 Months",
+    "services": [
+      "Lead Scoring",
+      "AI Automation",
+      "CRM Integration"
+    ],
+    "liveUrl": "https://example.com/northwind",
+    "challenge": [
+      "Sales worked a single queue in the order leads arrived, so the strongest accounts waited behind the weakest and follow-up depended on whoever opened the list first.",
+      "Nobody could say which signals actually predicted a close. The team had years of outcomes recorded and no model reading them, which made every prioritisation call an argument rather than a decision."
+    ],
+    "solution": [
+      "We built a scoring model on their own closed-won history and put it in front of the queue, so the list a rep opens is ordered by what the data says will close.",
+      "Routing, enrichment and the first touch run from the same score, and the model is retrained on outcomes each month — the ranking improves on its own rather than ageing into a rule nobody trusts."
+    ]
   },
   {
     "slug": "atlas-logistics",
     "client": "Atlas Logistics",
     "year": "2024",
     "title": "Forecasting Agents for a Freight Network",
+    "titleLines": [
+      "Forecasting Agents",
+      "for a Freight Network"
+    ],
+    "titleLinesMobile": [
+      "Forecasting Agents",
+      "for a Freight",
+      "Network"
+    ],
     "summary": "Demand forecasting and route planning agents trimmed empty miles and steadied delivery windows across the fleet.",
     "stats": [
       {
@@ -75,6 +132,121 @@
         "value": "-58%"
       }
     ],
-    "tone": "peach"
+    "tone": "peach",
+    "timeline": "6 Months",
+    "services": [
+      "Demand Forecasting",
+      "Route Planning",
+      "AI Automation"
+    ],
+    "liveUrl": "https://example.com/atlas",
+    "challenge": [
+      "Planners built the next day's routes from a spreadsheet and a decade of instinct, and a single late booking could unpick an afternoon of work across three depots.",
+      "Empty miles were the cost nobody owned. Every depot optimised its own fleet, so a truck ran back light while another depot forty miles away turned freight away."
+    ],
+    "solution": [
+      "Forecasting agents read booking history, seasonality and live capacity, and propose the next day's plan across every depot at once rather than one at a time.",
+      "Planners approve or override, and each override is fed back as a signal — the system learns the local knowledge that was never written down instead of overruling it."
+    ]
+  },
+  {
+    "slug": "meridian-retail",
+    "client": "Meridian Retail",
+    "year": "2025",
+    "title": "Inventory Agents Across Forty Store Rooms",
+    "titleLines": [
+      "Inventory Agents Across",
+      "Forty Store Rooms"
+    ],
+    "titleLinesMobile": [
+      "Inventory Agents",
+      "Across Forty",
+      "Store Rooms"
+    ],
+    "summary": "Stock agents watch every shelf and reorder before a line runs dry, ending the weekly count that four regions used to run by hand.",
+    "stats": [
+      {
+        "label": "Stockouts",
+        "value": "-72%"
+      },
+      {
+        "label": "Count Hours",
+        "value": "24h/wk"
+      },
+      {
+        "label": "Held Stock",
+        "value": "$1.4M"
+      },
+      {
+        "label": "Reorder Speed",
+        "value": "9x"
+      }
+    ],
+    "tone": "mint",
+    "timeline": "5 Months",
+    "services": [
+      "Inventory Agents",
+      "Forecasting",
+      "Systems Integration"
+    ],
+    "liveUrl": "https://example.com/meridian",
+    "challenge": [
+      "Forty store rooms counted stock by hand every week, and the count was already out of date by the time it reached the regional buyer who needed it.",
+      "Reordering ran on fixed thresholds that ignored the season, the store and the shelf, so the same line was short in one region and sitting in a back room in another."
+    ],
+    "solution": [
+      "Stock agents watch sales, deliveries and returns per line per store, and raise the reorder themselves when the forecast says a shelf will run dry.",
+      "The weekly count became an exception report: staff check what the system flags rather than walking every aisle, and the buyer sees one position across all forty rooms."
+    ]
+  },
+  {
+    "slug": "halden-health",
+    "client": "Halden Health",
+    "year": "2025",
+    "title": "Patient Intake Rebuilt as One Clean Handover",
+    "titleLines": [
+      "Patient Intake Rebuilt",
+      "as One Clean Handover"
+    ],
+    "titleLinesMobile": [
+      "Patient Intake",
+      "Rebuilt as One",
+      "Clean Handover"
+    ],
+    "summary": "Intake, triage notes and scheduling meet in a single flow, so a clinic books the right appointment on the first call rather than the third.",
+    "stats": [
+      {
+        "label": "Intake Time",
+        "value": "-68%"
+      },
+      {
+        "label": "First-Call Booking",
+        "value": "91%"
+      },
+      {
+        "label": "Admin Saved",
+        "value": "31h/wk"
+      },
+      {
+        "label": "No-Show Rate",
+        "value": "-44%"
+      }
+    ],
+    "tone": "periwinkle",
+    "timeline": "4 Months",
+    "services": [
+      "Intake Automation",
+      "Triage Support",
+      "Scheduling"
+    ],
+    "liveUrl": "https://example.com/halden",
+    "challenge": [
+      "Intake, triage and scheduling lived in three systems that did not speak, so a patient repeated the same details to three people and still reached the wrong appointment.",
+      "Reception carried the whole handover in its head. When the front desk was busy, bookings queued — and a booking made from an incomplete note became a wasted slot a week later."
+    ],
+    "solution": [
+      "One flow now carries intake through triage to the booking, so the clinician's note and the appointment are written from the same record rather than re-keyed between systems.",
+      "Reception sees the recommended slot with the reasoning beside it, and can override in a click. The right appointment is made on the first call instead of the third."
+    ]
   }
 ]

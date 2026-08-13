@@ -14,7 +14,7 @@ import {
  * keep in sync. Only the documents themselves travel separately, via the seed.
  *
  * Field names match `CaseStudy` in src/content/case-studies.ts one for one, so
- * the query in src/lib/sanity/queries.ts is a projection rather than a
+ * the query in src/lib/case-studies.ts is a projection rather than a
  * translation layer.
  */
 
@@ -29,6 +29,22 @@ const caseStudy = defineType({
       type: "string",
       description: "The headline on the card, e.g. “AI Agent Website Built for Automation Startups”.",
       validation: (rule) => rule.required().max(90),
+    }),
+    defineField({
+      name: "titleLines",
+      title: "Title, line by line",
+      type: "array",
+      description:
+        "How the title is set on its own page — one entry per line. The reveal draws a bar per line, sized to that line, so this is where the breaks are decided. Leave empty and the page sets the whole title and lets it wrap.",
+      of: [defineArrayMember({ type: "string" })],
+    }),
+    defineField({
+      name: "titleLinesMobile",
+      title: "Title, line by line (phone)",
+      type: "array",
+      description:
+        "The same break for a narrow screen, where the lines above run past the column. Leave empty to use the same ones.",
+      of: [defineArrayMember({ type: "string" })],
     }),
     defineField({
       name: "slug",
@@ -110,6 +126,8 @@ const caseStudy = defineType({
           { title: "Sky", value: "sky" },
           { title: "Lavender", value: "lavender" },
           { title: "Peach", value: "peach" },
+          { title: "Mint", value: "mint" },
+          { title: "Periwinkle", value: "periwinkle" },
         ],
         layout: "radio",
       },
@@ -129,6 +147,59 @@ const caseStudy = defineType({
           type: "string",
           description: "Describes the image for screen readers and when it fails to load.",
           validation: (rule) => rule.required(),
+        }),
+      ],
+    }),
+    defineField({
+      name: "timeline",
+      title: "Timeline",
+      type: "string",
+      description: "How long the work ran, as the page states it, e.g. “3 Months”.",
+    }),
+    defineField({
+      name: "services",
+      title: "Services",
+      type: "array",
+      description: "Read as one dot-separated run under a single heading. Three or four keeps it to two lines.",
+      of: [defineArrayMember({ type: "string" })],
+    }),
+    defineField({
+      name: "liveUrl",
+      title: "Live site",
+      type: "url",
+      description: "The finished site. Leave empty and the “Live Preview” link is simply not drawn.",
+    }),
+    defineField({
+      name: "challenge",
+      title: "The challenge",
+      type: "array",
+      description: "The brief, one entry per paragraph.",
+      of: [defineArrayMember({ type: "text", rows: 4 })],
+    }),
+    defineField({
+      name: "solution",
+      title: "The solution",
+      type: "array",
+      description: "What was built, one entry per paragraph.",
+      of: [defineArrayMember({ type: "text", rows: 4 })],
+    }),
+    defineField({
+      name: "gallery",
+      title: "Gallery",
+      type: "array",
+      description: "The grid under the prose, two across. Four looks right; any even number works.",
+      of: [
+        defineArrayMember({
+          type: "image",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              title: "Alternative text",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+          ],
         }),
       ],
     }),

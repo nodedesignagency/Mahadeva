@@ -1,12 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { fontVariables } from "@/config/fonts";
-import { baseMetadata, organizationSchema } from "@/config/seo";
+import { baseMetadata } from "@/config/seo";
 import { siteConfig } from "@/config/site.config";
-import { SkipLink } from "@/components/layout/SkipLink";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { SmoothScroll } from "@/components/motion/SmoothScroll";
-import { BackgroundTransition } from "@/components/motion/BackgroundTransition";
 import "./globals.css";
 
 export const metadata: Metadata = baseMetadata;
@@ -18,6 +13,16 @@ export const viewport: Viewport = {
   themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#08080b" }],
 };
 
+/**
+ * The document, and only the document.
+ *
+ * The header, footer, scroll behaviour and changing background are not here —
+ * they are in SiteChrome, applied by the (site) group. /studio sits outside
+ * that group precisely so it gets none of them: it is an editing application,
+ * not a page of the site, and wearing the site's furniture it was unusable.
+ *
+ * The fonts and the stylesheet stay, because both halves need them.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang={siteConfig.lang} className={fontVariables}>
@@ -28,17 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <noscript>
           <style>{`[data-reveal-word]{color:var(--color-fg)!important}`}</style>
         </noscript>
-        <SmoothScroll />
-        <BackgroundTransition />
-        <SkipLink />
-        <Header />
-        <main id="main">{children}</main>
-        <Footer />
-        <script
-          type="application/ld+json"
-          // Static, developer-authored JSON-LD — no user input reaches this.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema()) }}
-        />
+        {children}
       </body>
     </html>
   );

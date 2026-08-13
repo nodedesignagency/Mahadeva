@@ -265,6 +265,46 @@
  *
  * Two groups, two durations, one curve. The surface swap is the short one; the
  * height is the owner's full second. */
+/**
+ * The header's surface.
+ *
+ * Every colour it wears is here rather than on the component, because what it
+ * should wear is a fact about the page underneath it — see PageSurface. The
+ * page declares itself, `:has()` finds the declaration anywhere in the
+ * document, and the strip is styled from it: no route table, and nothing to
+ * get wrong where the app renders without its real path.
+ *
+ * The default is the light strip on white. `--mh-nav-border` is the hairline
+ * the CTA and the menu toggle draw themselves in, so they change with the
+ * strip instead of each carrying their own copy of the rule.
+ */
+.mh-nav-shell {
+  background-color: var(--color-bg-white);
+  border-color: var(--color-border-on-light);
+  color: var(--color-fg-on-light);
+  --mh-nav-border: var(--color-border-on-light);
+  --mh-nav-accent: var(--color-fg-on-light-hover);
+  --mh-nav-ink: var(--color-fg-on-light);
+  --mh-nav-rule-color: var(--color-border-nav-on-light);
+}
+
+/* A beige page changes the fill and nothing else. */
+body:has([data-page-surface="beige"]) .mh-nav-shell {
+  background-color: var(--color-bg-light);
+}
+
+/* Dark all the way down, or over a hero that has not been scrolled past. */
+body:has([data-page-surface="dark"]) .mh-nav-shell,
+body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
+  background-color: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-fg);
+  --mh-nav-border: var(--color-border);
+  --mh-nav-accent: var(--color-accent);
+  --mh-nav-ink: var(--color-fg);
+  --mh-nav-rule-color: var(--color-fg);
+}
+
 .mh-nav-shell {
   overflow: clip;
   transition:
@@ -398,6 +438,24 @@
   .group:hover .mh-stat-block {
     translate: 0 0;
   }
+}
+
+/* ---------------------------------------------------------------------------
+ * Scrolled rails
+ *
+ * The team row is a scroll container so its card count per screen is CSS's
+ * business rather than JS's. It is driven by its arrows and by touch, and a
+ * visible scrollbar under it would be a second, uglier control for the same
+ * thing — hidden in both engines, since neither property is standard in the
+ * other. Keyboard users still reach every card: the cards hold links and
+ * focus scrolls the rail to them.
+ * ------------------------------------------------------------------------- */
+.mh-rail {
+  scrollbar-width: none;
+}
+
+.mh-rail::-webkit-scrollbar {
+  display: none;
 }
 
 /* ---------------------------------------------------------------------------
@@ -536,13 +594,6 @@
  * changes. */
 @utility text-ink-dynamic {
   color: var(--color-fg-dynamic);
-  transition: color var(--duration-base) var(--ease-in-out);
-}
-
-/* The muted step of the same ink, derived rather than stored so the pair can
- * never drift apart. */
-@utility text-ink-dynamic-muted {
-  color: color-mix(in srgb, var(--color-fg-dynamic) 60%, transparent);
   transition: color var(--duration-base) var(--ease-in-out);
 }
 

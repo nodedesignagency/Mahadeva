@@ -80,6 +80,9 @@
   --mh-rose-10: #fff2f2;
   --mh-yellow: #ffe8a8;
   --mh-yellow-50: #fffbdd;
+  /* Sampled from the About page's team row rather than taken from the
+   * original's set — nothing else on the site carries a tone this deep. */
+  --mh-amber: #e8a317;
 
   /* Neutrals & status */
   --mh-slate: #4d5564;
@@ -157,6 +160,27 @@
   --color-quote-shape-green: var(--mh-green-200); /* ABFFA8 */
   --color-quote-shape-yellow: var(--mh-yellow); /* FFE8A8 */
 
+  /* The About page's mission card, one fill per variant. Palest tints on the
+   * site: the card is a page of prose held on the screen, so its ground has to
+   * stay under the words rather than compete with them. */
+  --color-mission-blue: var(--mh-blue-10); /* F1FAFF — the owner's Blue 1 */
+  --color-mission-green: var(--mh-green-50); /* F6FFF1 */
+  --color-mission-lavender: var(--mh-lavender-25); /* F3F1FF */
+
+  /* The marks beside the About page's six principles. Full-strength tints,
+   * unlike the card fills: each is a 64px square carrying a drawing, not a
+   * field behind a paragraph, so it has to hold its own on the beige. */
+  --color-principle-blue: var(--mh-blue-200);
+  --color-principle-peach: var(--mh-peach);
+  --color-principle-lavender: var(--mh-lavender-200);
+  --color-principle-rose: var(--mh-rose-200);
+  --color-principle-green: var(--mh-green-150);
+  --color-principle-magenta: var(--mh-magenta-200);
+
+  /* The panel the team portraits are cut out against. The one warm tone on
+   * the site — it belongs to this row and nothing else. */
+  --color-team-panel: var(--mh-amber);
+
   /* The checkerboard that slides in on hover: one step deeper than the tile,
    * the same relationship the trust panels' blocks have to theirs. */
   --color-tool-shape-rose: var(--mh-rose-200);
@@ -179,10 +203,25 @@
   --color-case-sky: var(--mh-blue-100);
   --color-case-lavender: var(--mh-lavender-50);
   --color-case-peach: var(--mh-peach-50);
+  /* The index carries more studies than the home page shows, so the set runs
+   * two tints further than the three the demo entries use. */
+  --color-case-mint: var(--mh-green-140);
+  --color-case-periwinkle: var(--mh-periwinkle);
 
   --color-fg: var(--mh-white);
-  --color-fg-muted: var(--mh-white-a60);
-  --color-fg-subtle: var(--mh-white-a50);
+  /**
+   * Both were white at 60% and 50%. The site does not dim white text — a
+   * paragraph on the dark surface is as white as the heading above it, and a
+   * step down in opacity reads as a step down in importance that none of this
+   * copy has. They stay named for the roles components already ask for, so
+   * one edit here is the whole rule.
+   *
+   * Ink on a light surface is a different matter and still steps down: dark
+   * type at 70% on a pastel panel is legible where white at 70% on the dark
+   * surface simply looks switched off.
+   */
+  --color-fg-muted: var(--mh-white);
+  --color-fg-subtle: var(--mh-white);
   --color-fg-inverse: var(--mh-ink);
   --color-fg-on-light: var(--mh-ink);
   --color-fg-on-light-muted: var(--mh-slate);
@@ -198,6 +237,18 @@
   --color-border-nav-on-light: var(--mh-mist);
   /* Neutral block standing in for photography until the file lands. */
   --color-placeholder: var(--mh-grey-200);
+  /* The comparison table.
+   *
+   * Only the plan heads are white; the table below them tints the page's own
+   * surface — the group bands by 5% of the slate, the cells under them by 4%
+   * white. Both are mixed down to an opaque colour rather than left
+   * translucent, because these fills are what a pinned head and a pinned
+   * label column hide the rows travelling under them behind. */
+  --color-compare-band: color-mix(in srgb, var(--mh-slate) 5%, var(--mh-beige));
+  --color-compare-cell: color-mix(in srgb, var(--mh-white) 4%, var(--mh-beige));
+  --color-border-compare: var(--mh-grey-250);
+  /* The comparison button's icon frame: a quiet grey, no border of its own. */
+  --color-icon-box-quiet: var(--mh-grey-100);
   /* The billing toggle's off-state track and the grey of the pricing cards'
    * "PLAN INCLUDES:" labels. */
   --color-track: var(--mh-grey-250);
@@ -258,8 +309,15 @@
   /* The trust figures and the prefix and unit either side of them. Flat, not
    * a curve: the original sets 100 and 50 at every breakpoint, and a phone
    * shows one panel at a time where the figure has all the room it needs. */
-  --text-stat: 6.25rem;
-  --text-stat-affix: 3.125rem;
+  --text-stat: 6.25rem; /* 100 */
+  /* The pricing page's figures, which are set smaller than the trust panels'
+   * against the same 50px affix. */
+  --text-stat-sm: 3.5rem; /* 56 */
+  --text-stat-affix: 3.125rem; /* 50 */
+  /* The unit beside a case study's result. Smaller against its figure than the
+   * pricing affix is against its own — these are read as a set of four at a
+   * glance, where a unit at nearly full height competes with the number. */
+  --text-stat-unit: 2.25rem; /* 36 */
 
   /* Testimonial quote and its attribution.
    *
@@ -278,16 +336,30 @@
   --text-nav-mobile: 1.5rem; /* 24 */
 
   --text-body-lg: 1.125rem; /* 18 */
+  /* The case study meta row's values — client, timeline, services. Geist at a
+   * flat 22, not the heading clamp beside it, which would set them at 20 on a
+   * phone. */
+  --text-meta: 1.375rem; /* 22 */
   --text-body-md: 1rem; /* 16 */
   --text-body-sm: 0.875rem; /* 14 */
   --text-label: 0.75rem; /* 12 */
 
   --leading-display: 1;
   --leading-heading: 1.15;
-  /* 150%, matching the original's body preset. */
-  --leading-body: 1.5;
-  /** Tighter body setting, used inside the feature cards. */
-  --leading-card: 1.4;
+  /**
+   * 175%. The original's preset is 150, which read tight at every size on this
+   * palette; 160 was not enough of a move to see. This is the one place that
+   * decides it — no component sets its own, because a literal in a class is
+   * how one paragraph ends up a step tighter than the one beside it, which is
+   * exactly what happened here.
+   */
+  --leading-body: 1.75;
+  /**
+   * The feature cards' body setting. Was 1.4, the one paragraph on the site
+   * set tighter than the rest — which read as cramped beside every other
+   * paragraph and answered to nothing in the design.
+   */
+  --leading-card: 1.75;
 
   /** Gap between the display heading's lines. */
   --space-heading-line: 4px;
@@ -436,12 +508,24 @@
   --color-tool-shape-peach: var(--color-tool-shape-peach);
   --color-tool-shape-blue: var(--color-tool-shape-blue);
   --color-tool-shape-lavender: var(--color-tool-shape-lavender);
+  --color-mission-blue: var(--color-mission-blue);
+  --color-mission-green: var(--color-mission-green);
+  --color-mission-lavender: var(--color-mission-lavender);
+  --color-principle-blue: var(--color-principle-blue);
+  --color-principle-peach: var(--color-principle-peach);
+  --color-principle-lavender: var(--color-principle-lavender);
+  --color-principle-rose: var(--color-principle-rose);
+  --color-principle-green: var(--color-principle-green);
+  --color-principle-magenta: var(--color-principle-magenta);
+  --color-team-panel: var(--color-team-panel);
   --color-plan-sky: var(--color-plan-sky);
   --color-plan-lavender: var(--color-plan-lavender);
   --color-plan-peach: var(--color-plan-peach);
   --color-case-sky: var(--color-case-sky);
   --color-case-lavender: var(--color-case-lavender);
   --color-case-peach: var(--color-case-peach);
+  --color-case-mint: var(--color-case-mint);
+  --color-case-periwinkle: var(--color-case-periwinkle);
   --color-surface: var(--color-surface);
   --color-surface-hover: var(--color-surface-hover);
   --color-fg: var(--color-fg);
@@ -457,6 +541,10 @@
   --color-border-on-light: var(--color-border-on-light);
   --color-border-nav-on-light: var(--color-border-nav-on-light);
   --color-placeholder: var(--color-placeholder);
+  --color-compare-band: var(--color-compare-band);
+  --color-compare-cell: var(--color-compare-cell);
+  --color-border-compare: var(--color-border-compare);
+  --color-icon-box-quiet: var(--color-icon-box-quiet);
   --color-track: var(--color-track);
   --color-fg-label: var(--color-fg-label);
   --color-accent: var(--color-accent);
@@ -483,7 +571,9 @@
   --text-display-lg: var(--text-display-lg);
   --text-display-md: var(--text-display-md);
   --text-stat: var(--text-stat);
+  --text-stat-sm: var(--text-stat-sm);
   --text-stat-affix: var(--text-stat-affix);
+  --text-stat-unit: var(--text-stat-unit);
   --text-quote: var(--text-quote);
   --text-quote-by: var(--text-quote-by);
   --text-heading-lg: var(--text-heading-lg);
@@ -491,6 +581,7 @@
   --text-heading-sm: var(--text-heading-sm);
   --text-nav-mobile: var(--text-nav-mobile);
   --text-body-lg: var(--text-body-lg);
+  --text-meta: var(--text-meta);
   --text-body-md: var(--text-body-md);
   --text-body-sm: var(--text-body-sm);
   --text-label: var(--text-label);

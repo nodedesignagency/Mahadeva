@@ -39,7 +39,7 @@ export function CaseStudies({ content, studies }: CaseStudiesProps) {
               settings={sectionTextRevealDynamic}
               className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
             />
-            <p className="text-ink-dynamic-muted mt-6 max-w-[46ch] font-body text-body-md">
+            <p className="text-ink-dynamic mt-6 max-w-[46ch] font-body text-body-md">
               {content.subheading}
             </p>
           </div>

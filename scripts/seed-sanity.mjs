@@ -71,6 +71,8 @@ studies.forEach((study, index) => {
     _id: `caseStudy-${study.slug}`,
     _type: "caseStudy",
     title: study.title,
+    titleLines: study.titleLines,
+    titleLinesMobile: study.titleLinesMobile,
     slug: { _type: "slug", current: study.slug },
     client: study.client,
     year: study.year,
@@ -82,6 +84,13 @@ studies.forEach((study, index) => {
       value: stat.value,
     })),
     tone: study.tone,
+    // The detail page's fields. Optional in the schema, so a study seeded
+    // without them still opens — the page draws what it has.
+    timeline: study.timeline,
+    services: study.services,
+    liveUrl: study.liveUrl,
+    challenge: study.challenge,
+    solution: study.solution,
     order: index,
   });
 });
