@@ -41,6 +41,28 @@ implies. A dark section wrongly marked `white` gets dark ink, and its heading
 reveals into a colour it cannot be read in — a heading that is simply not there
 with nothing in the console.
 
+## A section that paints itself needs fixed ink
+
+`sectionTextRevealDynamic` resolves into `--color-fg-dynamic`, which follows
+whichever section currently owns the viewport. That is correct only for a
+heading on a section that crossfades with the page. A section carrying
+`data-bg-keep` paints its own fill and never crossfades, so it must use a fixed
+`afterColor` instead:
+
+| Section's own fill | Reveal to use |
+| --- | --- |
+| Crossfades with the page | `sectionTextRevealDynamic` |
+| Keeps a dark fill | `sectionTextRevealDark` |
+| Keeps a light fill | `sectionTextReveal` |
+| Beige | `sectionTextRevealBeige` |
+
+Get it wrong and the heading is **absent, not dim** — it reveals into the same
+colour as the ground it sits on. Worse, whether it happens depends on the
+window height: a dark section's pixels count at two thirds in the ownership
+contest, so a dark block with a taller light section under it loses as soon as
+the window is tall enough. It will look fine on your screen and be invisible on
+someone else's. Check a short window *and* a tall one.
+
 ## Fonts
 
 Two families, and which is which is not a matter of taste:

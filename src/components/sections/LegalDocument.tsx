@@ -2,7 +2,7 @@ import { Container } from "@/components/layout/Container";
 import { PageSurface } from "@/components/layout/PageSurface";
 import { PatternField } from "@/components/motion/PatternField";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { sectionTextRevealDynamic } from "@/config/animation";
+import { sectionTextRevealDark } from "@/config/animation";
 import type { LegalDocument as Document } from "@/content/legal";
 
 /**
@@ -56,8 +56,12 @@ export function LegalDocument({ content }: LegalDocumentProps) {
           <TextReveal
             as="h1"
             lines={content.titleLines}
-            settings={sectionTextRevealDynamic}
-            lineStagger={sectionTextRevealDynamic.lineStagger}
+            // Fixed white, not the live token: this section keeps its own dark
+            // fill, so it never crossfades and the live ink would resolve to the
+            // document's dark ink the moment the window is tall enough for the
+            // white half to win the viewport.
+            settings={sectionTextRevealDark}
+            lineStagger={sectionTextRevealDark.lineStagger}
             className="flex flex-col items-start gap-(--space-heading-line) text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
 

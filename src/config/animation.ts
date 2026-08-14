@@ -130,6 +130,26 @@ export const sectionTextRevealDynamic = {
 } as const;
 
 /**
+ * The section reveal on a section that keeps its own *dark* fill.
+ *
+ * `sectionTextReveal` is the fixed-ink one, but its ink is the light surface's.
+ * This is its opposite number, and it exists for the same reason: a section
+ * that paints itself does not crossfade, so the live token is the wrong thing
+ * to resolve into.
+ *
+ * The failure is quiet and worth knowing. The dynamic token follows whichever
+ * section owns the viewport, and a dark section's pixels count at two thirds
+ * in that contest — so a dark block with a taller light section under it loses
+ * the moment the window is tall enough, and its heading finishes its reveal in
+ * dark ink on its own dark ground. It is not dim or mistinted; it is absent,
+ * on some window heights and not others.
+ */
+export const sectionTextRevealDark = {
+  ...sectionTextReveal,
+  afterColor: "var(--color-fg)",
+} as const;
+
+/**
  * The same reveal on the beige wrappers.
  *
  * One value differs: the leading bar sweeps in peach — Framer's "Orange 5",
