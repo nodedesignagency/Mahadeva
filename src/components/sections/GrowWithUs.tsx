@@ -33,10 +33,17 @@ export function GrowWithUs({ content }: GrowWithUsProps) {
       data-bg="white"
       data-bg-keep=""
       // `relative z-10` and an opaque fill are what make it ride over the hero
-      // rather than under it. `overflow-x-clip` catches the outermost frames'
-      // lean: they hang past the row's own width by design, and on a narrow
-      // desktop that would otherwise put a scrollbar on the page.
-      className="relative z-10 overflow-x-clip bg-bg-white py-20 text-fg-on-light tablet:py-25"
+      // rather than under it.
+      //
+      // The clip does two jobs. Horizontally it catches the outermost frames'
+      // lean — they hang past the row's own width by design, and on a narrow
+      // desktop that would otherwise put a scrollbar on the page. Vertically it
+      // is the frame the pile rises into: it starts 1200 below its place, which
+      // is well inside the next section, and this band is what it climbs out
+      // of. Clipping any tighter — around the row itself — hides all but the
+      // last fraction of that climb, and the pile reads as appearing rather
+      // than arriving.
+      className="relative z-10 overflow-clip bg-bg-white py-20 text-fg-on-light tablet:py-25"
     >
       <Container>
         <TextReveal

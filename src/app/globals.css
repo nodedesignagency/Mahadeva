@@ -508,68 +508,89 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
  * page.
  * ------------------------------------------------------------------------- */
 @media (min-width: 810px) {
-  /* The finished fan, and the resting state: what anyone without the script,
-   * and anyone who asked for less motion, is given. */
+  /* ── The container ──────────────────────────────────────────────────────
+   *
+   * The rise, the turn and the scale are all here, on the row itself, because
+   * in the owner's file they belong to the Image Container and not to the
+   * frames inside it.
+   *
+   * Turning the row is only the same thing as turning the pile because the
+   * pile sits on the middle frame, and the middle frame's centre is the row's
+   * centre — which is exactly where the default `transform-origin` is. By the
+   * time the frames leave that spot the row is back at zero degrees, so the
+   * two transforms never fight.
+   *
+   * The resting state is the finished fan: upright, true size, in place. */
+  .mh-fan {
+    transform: translateY(0) rotate(0deg) scale(1);
+    transition: transform var(--mh-fan-duration, 0ms) var(--ease-fan);
+  }
+
+  /* Below its place and turned hard over. No transition — this is where the
+   * sequence starts, not something it travels from. */
+  [data-fan="out"] {
+    transform: translateY(var(--mh-fan-lift)) rotate(var(--mh-fan-rotate-out))
+      scale(var(--mh-fan-scale-piled));
+    transition: none;
+  }
+
+  /* Risen and unwound, still oversized. */
+  [data-fan="piled"] {
+    --mh-fan-duration: var(--mh-fan-rise);
+    transform: translateY(0) rotate(var(--mh-fan-rotate-piled))
+      scale(var(--mh-fan-scale-piled));
+  }
+
+  /* Upright and down to its true size. `open` inherits the same resting
+   * transform, so the settle simply runs on underneath the spread. */
+  [data-fan="settled"],
+  [data-fan="open"] {
+    --mh-fan-duration: var(--mh-fan-settle);
+  }
+
+  /* ── The frames ─────────────────────────────────────────────────────────
+   *
+   * These only ever change position. Each keeps its own angle from the arc at
+   * every stage, piled and fanned alike — that is what shows the pile's edges
+   * and stops seven identical squares reading as one photograph.
+   *
+   * Every state lists the same three functions in the same order: a transition
+   * between two transform lists only interpolates if they match function for
+   * function, and a list that is one entry shorter makes the frames jump
+   * instead of travelling. */
   .mh-fan-card {
     margin-inline-start: var(--mh-fan-overlap);
     transform: translateX(0) translateY(var(--mh-fan-drop))
-      rotate(var(--mh-fan-rotate)) scale(1);
-    transition:
-      transform var(--mh-fan-duration, 0ms) var(--ease-out)
-        var(--mh-fan-delay, 0ms),
-      opacity var(--mh-fan-duration, 0ms) var(--ease-out)
-        var(--mh-fan-delay, 0ms);
+      rotate(var(--mh-fan-rotate));
+    transition: transform var(--mh-fan-card-duration, 0ms) var(--ease-fan);
   }
 
-  /* The first card has nothing to overlap. Without this the whole row is
-   * pulled off its own left edge by one card's worth of overlap. */
+  /* The first frame has nothing to overlap. Without this the whole row is
+   * pulled off its own left edge by one frame's worth of overlap. */
   .mh-fan-card:first-child {
     margin-inline-start: 0;
   }
 
-  /* The pile: every frame carried back onto the middle one, which is the only
-   * one that never moves — its step is zero. `--mh-fan-advance` is a share of
-   * a frame's own width, so this is the same distance at every breakpoint. */
+  /* Piled: every frame carried back onto the middle one, which is the only one
+   * that never moves — its step is zero. `--mh-fan-advance` is a share of a
+   * frame's own width, so this is the same distance at every breakpoint. */
   [data-fan="out"] .mh-fan-card,
-  [data-fan="stacked"] .mh-fan-card,
-  [data-fan="small"] .mh-fan-card {
+  [data-fan="piled"] .mh-fan-card,
+  [data-fan="settled"] .mh-fan-card {
     transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
-      translateY(var(--mh-fan-stack-drift)) rotate(var(--mh-fan-stack-rotate))
-      scale(1);
+      translateY(0) rotate(var(--mh-fan-rotate));
   }
 
-  /* Not there yet. No transition on the way in — this is where the sequence
-   * starts, not something it travels from. */
   [data-fan="out"] .mh-fan-card {
-    opacity: 0;
-    transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
-      translateY(var(--mh-fan-stack-drift)) rotate(var(--mh-fan-stack-rotate))
-      scale(var(--mh-fan-arrive-scale));
     transition: none;
   }
 
-  /* Landing, one after another, left to right. */
-  [data-fan="stacked"] .mh-fan-card {
-    --mh-fan-duration: var(--mh-fan-arrive);
-    --mh-fan-delay: calc(var(--mh-fan-order-in) * var(--mh-fan-arrive-stagger));
-  }
-
-  /* The breath. Every frame shrinks about its own centre, and they are all
-   * coincident by now, so the pile shrinks as one. */
-  [data-fan="small"] .mh-fan-card {
-    --mh-fan-duration: var(--mh-fan-squash);
-    --mh-fan-delay: 0ms;
-    transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
-      translateY(var(--mh-fan-stack-drift)) rotate(var(--mh-fan-stack-rotate))
-      scale(var(--mh-fan-squash-scale));
-  }
-
-  /* Opening, from the middle outwards. */
-  [data-fan="expanded"] .mh-fan-card {
-    --mh-fan-duration: var(--mh-fan-spread);
-    --mh-fan-delay: calc(var(--mh-fan-order-out) * var(--mh-fan-spread-stagger));
+  /* Opening. All seven together — one container, one transition, no stagger. */
+  [data-fan="open"] .mh-fan-card {
+    --mh-fan-card-duration: var(--mh-fan-open);
   }
 }
+
 
 /* ---------------------------------------------------------------------------
  * Testimonial carousel

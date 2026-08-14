@@ -378,30 +378,57 @@ export const photoFan = {
   ],
 
   /**
-   * The pile before it opens.
+   * ── What actually moves ───────────────────────────────────────────────────
    *
-   * Every frame is turned to about the same angle, so the stack reads as one
-   * tilted square with its edges just showing — which is what the owner's `In`
-   * variant is. The per-frame spread is what shows those edges; without it the
-   * seven are pixel-identical and the pile looks like a single photograph.
+   * The turn and the scale belong to the *container*, not to the frames. The
+   * pile is one object that rises, unwinds and settles; the frames inside it
+   * only ever change position — piled, then fanned — and each keeps its own
+   * angle from the arc above throughout. That is what gives the pile its
+   * edges: seven frames at the same spot but at seven slightly different
+   * angles read as a stack of prints rather than as one photograph.
+   *
+   * Turning the container is only equivalent to turning the pile because the
+   * pile sits on the middle frame, and the middle frame's centre is the row's
+   * centre. By the time the frames leave that spot the container is back at
+   * zero, so the two never fight.
+   *
+   * Nothing fades. The entrance is the rise.
    */
-  stack: { rotate: -8, rotateSpread: 1.2, drift: 1 },
 
-  /** The frames arrive one after another, building the pile. */
-  arrive: { duration: 620, stagger: 70, from: 0.7 },
+  /** How far below its place the pile starts, in px. Absolute, in the file. */
+  lift: 1200,
 
-  /** Held once the pile is complete, before it draws breath. */
-  hold: 260,
+  /** The container's turn at each state, in degrees. */
+  rotate: { out: -40, piled: -14, settled: 0 },
 
-  /** The breath: the whole pile shrinks, then opens from there. */
-  squash: { duration: 340, scale: 0.82 },
+  /** And its scale: held oversized until the pile settles. */
+  scale: { piled: 1.2, settled: 1 },
 
   /**
-   * The opening. Staggered from the middle of the fan outwards rather than
-   * left to right — the pile sits on the middle frame, so that is the one
-   * already home, and the outermost have furthest to travel.
+   * ── The sequence ─────────────────────────────────────────────────────────
+   *
+   * `delay` is the trigger — Appear for the first, After Delay for the rest,
+   * each counted from the moment the state before it was entered. `duration`
+   * is that state's own transition time.
+   *
+   *   0.0s  out → piled     0.4s   rises 1200 and unwinds -40 to -14
+   *   0.4s  piled → settled 1.0s   -14 to 0, and 1.2 down to 1
+   *   0.8s  settled → open  1.0s   the frames spread
+   *
+   * The delays are shorter than the durations, and that is the point rather
+   * than an oversight. The rise lands exactly as the settle begins, and the
+   * frames start spreading while the container is still settling — they are
+   * different elements, so the two overlap instead of interrupting, and the
+   * whole thing reads as one gesture rather than three.
+   *
+   * No stagger. All seven frames are one container with one transition in the
+   * owner's file, so they move together.
    */
-  spread: { duration: 900, stagger: 60 },
+  steps: {
+    piled: { delay: 0, duration: 400 },
+    settled: { delay: 400, duration: 1000 },
+    open: { delay: 400, duration: 1000 },
+  },
 } as const;
 
 /**
