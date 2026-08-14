@@ -28,6 +28,19 @@ that forgets it comes out with a white header.
 Setting `data-bg` on a section is a different thing and not a substitute: that
 drives the changing background *behind* the page. Both are usually needed.
 
+## `data-bg` takes three values, and "dark" is not one of them
+
+`white`, `green`, `beige` — the set in `BackgroundTransition.tsx`, and
+**`green` is the dark surface.** The whole palette is built on that green, so
+it is the page's colour rather than a section's. Anything else is ignored
+silently.
+
+This matters beyond the background: `sectionTextRevealDynamic` resolves its
+settled colour from `--color-fg-dynamic`, which is whatever the current surface
+implies. A dark section wrongly marked `white` gets dark ink, and its heading
+reveals into a colour it cannot be read in — a heading that is simply not there
+with nothing in the console.
+
 ## Fonts
 
 Two families, and which is which is not a matter of taste:
@@ -48,12 +61,25 @@ at the bottom of that file. Tailwind generates a utility only for what is in
 error, no warning, just an element with no fill. Three panels shipped invisible
 this way.
 
-After adding one, check it survived:
+After adding one, check it survived — and check it properly. Tailwind groups
+selectors that share a declaration (`.bg-x,.bg-x\/70{…}`) and the build emits
+several stylesheets, so a naive `grep '\.bg-x{'` against the first file reports
+a working utility as missing:
 
 ```
 rm -rf .next && npm run build
-grep -c '\.bg-your-token{' $(find .next -name '*.css' -path '*static*' | head -1)
+grep -rho '\.bg-your-token[,{]' $(find .next -name '*.css' -path '*static*')
 ```
+
+Better still, read it off the element in a browser — `getComputedStyle(el)
+.backgroundColor` cannot be fooled by how the CSS was written.
+
+One caveat when you do: `BackgroundTransition` sets
+`section.style.backgroundColor = "transparent"` on every `[data-bg]` section it
+manages, so those *should* compute as transparent and let the body's crossfade
+show through. `data-bg-keep` opts a section out, which is what a pinned section
+needs — it has to carry its own fill or you see straight through it to whatever
+it is riding over.
 
 ## Tailwind class names must be whole
 

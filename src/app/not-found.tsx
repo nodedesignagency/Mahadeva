@@ -35,7 +35,7 @@ export default function NotFound() {
       <PageSurface value="dark" />
 
       <section
-        data-bg="dark"
+        data-bg="green"
         // `overflow-hidden` because the bands are wider than the page by design
         // — they run past each edge so neither ends on a visible seam.
         className="relative flex h-screen min-h-[34rem] flex-col items-center justify-center gap-14 overflow-hidden bg-bg pt-header text-fg h-[100dvh]"

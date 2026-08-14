@@ -35,7 +35,7 @@ export default function ContactPage() {
           from under it rather than behind it, which would cut its first row in
           half. */}
       <section
-        data-bg="dark"
+        data-bg="green"
         className="relative overflow-hidden bg-bg pt-[calc(var(--header-height)+10rem)] pb-15 text-fg"
       >
         <PatternField

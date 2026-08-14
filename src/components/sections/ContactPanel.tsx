@@ -53,7 +53,7 @@ export function ContactPanel({ content }: ContactPanelProps) {
   );
 
   return (
-    <section data-bg="dark" className="bg-bg pb-20 tablet:pb-30">
+    <section data-bg="green" className="bg-bg pb-20 tablet:pb-30">
       <Container>
         <div className="flex flex-col overflow-clip bg-bg-white desktop:flex-row">
           {/* The quote half. */}
