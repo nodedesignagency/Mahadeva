@@ -40,11 +40,15 @@ export default function NotFound() {
         // — they run past each edge so neither ends on a visible seam.
         className="relative flex h-screen min-h-[34rem] flex-col items-center justify-center gap-14 overflow-hidden bg-bg pt-header text-fg h-[100dvh]"
       >
-        {/* Below desktop the pattern is a band under the header and the figure
-            sits clear of it, as the owner's tablet and phone frames have it.
-            The overlap is a desktop effect: at those widths the figure is a
-            third of the screen's height, and bars across it would be covering
-            most of what there is to look at. */}
+        {/* Below desktop the pattern frames the page instead of crossing it: a
+            band under the header and another on the floor, with the figure
+            clear between them. The overlap is a desktop effect — at these
+            widths the figure is a third of the screen's height and bars across
+            it would cover most of what there is to look at.
+
+            The two take different seeds, so the floor is not the ceiling
+            repeated. `bottom` is a different arrangement of the same rules,
+            which is the point: one field, two faces. */}
         <div className="contents desktop:hidden">
           <PatternField
             side="top"
@@ -52,6 +56,13 @@ export default function NotFound() {
             tracks={3}
             thickness={26}
             className={`top-header ${BAND}`}
+          />
+          <PatternField
+            side="bottom"
+            orientation="horizontal"
+            tracks={3}
+            thickness={26}
+            className={`bottom-0 ${BAND}`}
           />
         </div>
 
