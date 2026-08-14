@@ -319,6 +319,92 @@ export const markParallax = {
 } as const;
 
 /**
+ * The careers page's photo fan, assembling itself.
+ *
+ * A port of the owner's `Image Animation` component, which is four variants
+ * stepped through on appear:
+ *
+ *   Out         the frames are not there
+ *   In          all seven land in one square, stacked on top of one another
+ *   Scale Down  the pile shrinks
+ *   Expand      the frames spread out into the arc
+ *
+ * The third beat is the point of the whole thing. A stack that simply opens
+ * reads as a transition; a stack that draws breath first and *then* opens
+ * reads as a gesture, and the shrink is that breath.
+ *
+ * ── Why the geometry is in sixths ──────────────────────────────────────────
+ *
+ * The frames are 184x184 in the Framer file, and 184 is not an arbitrary
+ * number: the content row at the design width is 1104, and 1104/6 is exactly
+ * 184. Seven frames at a sixth of the row, each lapping the one before it by a
+ * sixth of its own width, span the row to the pixel.
+ *
+ * That is worth keeping as fractions rather than as pixels, because it is what
+ * makes the motion correct at every width. A percentage `translate` resolves
+ * against the element's own box, so "move to where the middle frame is" is
+ * `advance x (3 - index)` — a constant multiple of the card's width at every
+ * breakpoint. Pinned to 184 literal pixels it would be right on a 1440 screen
+ * and wrong on all the others, and the pile would land off-centre.
+ */
+export const photoFan = {
+  /** A frame's share of the row, and how much of it the next one covers. */
+  cardWidth: 100 / 6,
+  overlap: 100 / 36,
+
+  /**
+   * How far apart two frames sit, as a share of one frame's own width. The
+   * distance each frame travels to reach the middle of the pile is this times
+   * how many places it is from the middle.
+   */
+  advance: 500 / 6,
+
+  /**
+   * The arc, left to right: how far each frame is turned and how far it hangs
+   * below the middle one. The drop is a share of the frame's own height rather
+   * than a pixel figure, so the arc keeps its shape as the frames narrow.
+   *
+   * Small on purpose. At ±9 degrees the row read as a hand of cards being
+   * dealt; the design is a set of prints laid down slightly askew.
+   */
+  arc: [
+    { rotate: -7, drop: 10 },
+    { rotate: -5, drop: 4.5 },
+    { rotate: -3, drop: 1.5 },
+    { rotate: 0, drop: 0 },
+    { rotate: 3, drop: 1.5 },
+    { rotate: 5, drop: 4.5 },
+    { rotate: 7, drop: 10 },
+  ],
+
+  /**
+   * The pile before it opens.
+   *
+   * Every frame is turned to about the same angle, so the stack reads as one
+   * tilted square with its edges just showing — which is what the owner's `In`
+   * variant is. The per-frame spread is what shows those edges; without it the
+   * seven are pixel-identical and the pile looks like a single photograph.
+   */
+  stack: { rotate: -8, rotateSpread: 1.2, drift: 1 },
+
+  /** The frames arrive one after another, building the pile. */
+  arrive: { duration: 620, stagger: 70, from: 0.7 },
+
+  /** Held once the pile is complete, before it draws breath. */
+  hold: 260,
+
+  /** The breath: the whole pile shrinks, then opens from there. */
+  squash: { duration: 340, scale: 0.82 },
+
+  /**
+   * The opening. Staggered from the middle of the fan outwards rather than
+   * left to right — the pile sits on the middle frame, so that is the one
+   * already home, and the outermost have furthest to travel.
+   */
+  spread: { duration: 900, stagger: 60 },
+} as const;
+
+/**
  * Feature strip marquee.
  *
  * Expressed as a rate rather than a duration on purpose: the row renders the

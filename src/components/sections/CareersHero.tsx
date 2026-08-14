@@ -73,8 +73,11 @@ export function CareersHero({ content }: CareersHeroProps) {
       >
         <Container className="flex flex-col items-start">
           {/* Not the site's `eyebrow` utility: that is uppercase, tracked out
-              and 12px, and this line is set as body copy in the design. */}
-          <p className="font-body text-body-md text-fg">{content.eyebrow}</p>
+              and 12px, and this line is set as body copy in the design.
+              `green-soft` is the palette's DCFFE4 — the same pale green the
+              footer's column labels settle into, which is already exposed as a
+              token rather than being a fourth name for one colour. */}
+          <p className="font-body text-body-md text-green-soft">{content.eyebrow}</p>
 
           <TextReveal
             as="h1"

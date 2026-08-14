@@ -40,12 +40,12 @@ type Facet = (typeof FACETS)[number];
 /**
  * One control's shell — white, hairline, the ink of the surface it sits on.
  *
- * 52px, and the same corner as the form fields on the contact page: these are
- * inputs on a light panel and there is no reason for the site to have two
- * kinds.
+ * 40px to the owner's measurement, and the same corner as the form fields on
+ * the contact page: these are inputs on a light panel and there is no reason
+ * for the site to have two kinds.
  */
 const field =
-  "h-[52px] w-full rounded-(--radius-input) border border-border-on-light bg-bg-white " +
+  "h-[40px] w-full rounded-(--radius-input) border border-border-on-light bg-bg-white " +
   "font-body text-body-md text-fg-on-light " +
   "placeholder:text-fg-on-light-muted " +
   "transition-colors duration-(--duration-hover) ease-(--ease-out) " +

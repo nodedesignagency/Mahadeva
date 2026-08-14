@@ -478,16 +478,26 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 /* ---------------------------------------------------------------------------
  * Careers photo fan
  *
- * Seven frames turned into a shallow arc and overlapped. Both the turn and the
- * overlap are here rather than in the component's inline styles, because both
- * belong to the tablet breakpoint and up: below it the same list is a plain
- * scroll rail, and an inline `transform` cannot be undone by a media query —
- * it outranks every stylesheet rule at any width.
+ * Seven frames that land in a pile, draw breath, and open into a shallow arc.
+ * A port of the owner's `Image Animation` component; its four variants are the
+ * four `[data-fan]` states below, and every number arrives as a custom
+ * property from `photoFan` in src/config/animation.ts.
  *
- * Each card's own numbers arrive as custom properties, which inline styles may
- * set freely; see `FAN` in GrowWithUs.tsx.
+ * The whole arrangement lives inside this media query, and that is the reason
+ * it is CSS at all. Below the tablet breakpoint the same seven frames are a
+ * plain scroll rail — no arc, no pile, nothing to assemble — and an inline
+ * `transform` cannot be undone by a media query, since it outranks every
+ * stylesheet rule at every width. React holds the stage; CSS decides whether
+ * this breakpoint has anything to do with it.
  *
- * The origin is the card's centre. Turning about the foot is the obvious
+ * Two things about the transform are load-bearing.
+ *
+ * Every state lists the same four functions in the same order. A transition
+ * between two transform lists only interpolates if they match function for
+ * function; drop `scale` from one state and the frames jump instead of
+ * travelling.
+ *
+ * And the origin is each card's centre. Turning about the foot is the obvious
  * choice and it is wrong: the feet stay level in theory, but each card's lower
  * outside corner rises past its neighbour's and the row's bottom edge comes
  * out as a staircase of notches. About the centre the corners splay
@@ -498,15 +508,66 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
  * page.
  * ------------------------------------------------------------------------- */
 @media (min-width: 810px) {
+  /* The finished fan, and the resting state: what anyone without the script,
+   * and anyone who asked for less motion, is given. */
   .mh-fan-card {
     margin-inline-start: var(--mh-fan-overlap);
-    transform: translateY(var(--mh-fan-drop)) rotate(var(--mh-fan-rotate));
+    transform: translateX(0) translateY(var(--mh-fan-drop))
+      rotate(var(--mh-fan-rotate)) scale(1);
+    transition:
+      transform var(--mh-fan-duration, 0ms) var(--ease-out)
+        var(--mh-fan-delay, 0ms),
+      opacity var(--mh-fan-duration, 0ms) var(--ease-out)
+        var(--mh-fan-delay, 0ms);
   }
 
   /* The first card has nothing to overlap. Without this the whole row is
    * pulled off its own left edge by one card's worth of overlap. */
   .mh-fan-card:first-child {
     margin-inline-start: 0;
+  }
+
+  /* The pile: every frame carried back onto the middle one, which is the only
+   * one that never moves — its step is zero. `--mh-fan-advance` is a share of
+   * a frame's own width, so this is the same distance at every breakpoint. */
+  [data-fan="out"] .mh-fan-card,
+  [data-fan="stacked"] .mh-fan-card,
+  [data-fan="small"] .mh-fan-card {
+    transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
+      translateY(var(--mh-fan-stack-drift)) rotate(var(--mh-fan-stack-rotate))
+      scale(1);
+  }
+
+  /* Not there yet. No transition on the way in — this is where the sequence
+   * starts, not something it travels from. */
+  [data-fan="out"] .mh-fan-card {
+    opacity: 0;
+    transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
+      translateY(var(--mh-fan-stack-drift)) rotate(var(--mh-fan-stack-rotate))
+      scale(var(--mh-fan-arrive-scale));
+    transition: none;
+  }
+
+  /* Landing, one after another, left to right. */
+  [data-fan="stacked"] .mh-fan-card {
+    --mh-fan-duration: var(--mh-fan-arrive);
+    --mh-fan-delay: calc(var(--mh-fan-order-in) * var(--mh-fan-arrive-stagger));
+  }
+
+  /* The breath. Every frame shrinks about its own centre, and they are all
+   * coincident by now, so the pile shrinks as one. */
+  [data-fan="small"] .mh-fan-card {
+    --mh-fan-duration: var(--mh-fan-squash);
+    --mh-fan-delay: 0ms;
+    transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
+      translateY(var(--mh-fan-stack-drift)) rotate(var(--mh-fan-stack-rotate))
+      scale(var(--mh-fan-squash-scale));
+  }
+
+  /* Opening, from the middle outwards. */
+  [data-fan="expanded"] .mh-fan-card {
+    --mh-fan-duration: var(--mh-fan-spread);
+    --mh-fan-delay: calc(var(--mh-fan-order-out) * var(--mh-fan-spread-stagger));
   }
 }
 
