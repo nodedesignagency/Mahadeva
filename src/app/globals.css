@@ -293,6 +293,23 @@ body:has([data-page-surface="beige"]) .mh-nav-shell {
   background-color: var(--color-bg-light);
 }
 
+/* ---------------------------------------------------------------------------
+ * The colour a page opens on.
+ *
+ * `--color-bg-dynamic` is initialised to the dark surface, which is right for
+ * every page that opens dark and wrong for the one that does not. The section
+ * observer corrects it, but only once it has run — so a beige page painted
+ * dark green for a frame and then crossfaded to beige, which reads as a flash
+ * on load rather than as the handover it is meant to be.
+ *
+ * Taken from the page's own surface declaration, the same one the strip above
+ * reads, so the opening colour cannot disagree with the header over it.
+ * ------------------------------------------------------------------------- */
+body:has([data-page-surface="beige"]) {
+  --color-bg-dynamic: var(--color-bg-light);
+  --color-fg-dynamic: var(--color-fg-on-light);
+}
+
 /* Dark all the way down, or over a hero that has not been scrolled past. */
 body:has([data-page-surface="dark"]) .mh-nav-shell,
 body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {

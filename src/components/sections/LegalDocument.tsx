@@ -16,6 +16,12 @@ import type { LegalDocument as Document } from "@/content/legal";
  * `hero` as the surface: the opening is dark and everything under it is white,
  * so the header's strip flips once as the reader passes the title.
  *
+ * Both halves keep their own fill. The site's habit is to let the page's
+ * background crossfade between sections, but a document is a dark block with
+ * white under it and a hard edge between — crossfading that edge drags a wash
+ * of green across the top of the reading matter, which is neither the design
+ * nor readable.
+ *
  * Headings inside the document are plain rather than revealed. The title gets
  * the site's entrance; eight more of them down a page nobody came here to
  * enjoy would be noise.
@@ -36,6 +42,7 @@ export function LegalDocument({ content }: LegalDocumentProps) {
           in half. */}
       <section
         data-bg="green"
+        data-bg-keep=""
         className="relative overflow-hidden bg-bg pt-[calc(var(--header-height)+13rem)] pb-15 text-fg"
       >
         <PatternField
@@ -60,7 +67,11 @@ export function LegalDocument({ content }: LegalDocumentProps) {
         </Container>
       </section>
 
-      <section data-bg="white" className="bg-bg-white py-20 text-fg-on-light tablet:py-25">
+      <section
+        data-bg="white"
+        data-bg-keep=""
+        className="bg-bg-white py-20 text-fg-on-light tablet:py-25"
+      >
         <Container>
           {/* An ordered run of headings and paragraphs, not cards. The rhythm
               between sections is what separates them — a document reads as one
