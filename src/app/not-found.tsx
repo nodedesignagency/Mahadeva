@@ -1,4 +1,5 @@
 import { Container } from "@/components/layout/Container";
+import { PageSurface } from "@/components/layout/PageSurface";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { PatternField } from "@/components/motion/PatternField";
 import { Button } from "@/components/ui/Button";
@@ -13,10 +14,7 @@ import { notFoundContent } from "@/content/not-found";
  * visitor, and should get the header and a way back rather than a bare page.
  *
  * The figure is set to the width of the page rather than to a size, so it
- * shrinks with the viewport and the page reads the same on a phone as on a
- * desktop. Two bands of the pattern are then laid *over* it — the one place on
- * the site where they are in front of something rather than behind it, which is
- * what gives the numerals their depth.
+ * shrinks with the viewport and reads the same on a phone as on a desktop.
  */
 
 export const metadata = {
@@ -24,63 +22,77 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-/**
- * Where each band sits, as a share of the figure's own height, and how tall it
- * is — the owner's 78, three rows of 26.
- *
- * Measured against the figure and not the section: the section is a viewport
- * tall and the figure is sized by width, so the two only agree at one window
- * size. Tied to the numerals, the bands cross them in the same place on every
- * screen, which is the whole point of the effect.
- */
-const BANDS = [
-  { side: "top", className: "top-[3%]" },
-  { side: "bottom", className: "top-[73%]" },
-] as const;
+/** The band's own geometry: the owner's 78, three rows of 26. */
+const BAND = "-left-1.5 -right-1.5 h-[78px]";
 
 export default function NotFound() {
   return (
     <SiteChrome>
+      {/* Dark the whole way down, so the header wears the page's own surface
+          rather than the light strip it falls back to. Declared, not inferred:
+          the header is fixed in the root layout and is neither this page's
+          ancestor nor its sibling in any order CSS can walk. */}
+      <PageSurface value="dark" />
+
       <section
         data-bg="dark"
         // `overflow-hidden` because the bands are wider than the page by design
-        // — they run 6px past each edge so neither ends on a visible seam.
-        // The gap is the figure's only separation from the copy below it: with
-        // the line box trimmed to the numerals there is no leading left to do
-        // that job, and the paragraph sat against their feet.
+        // — they run past each edge so neither ends on a visible seam.
         className="relative flex h-screen min-h-[34rem] flex-col items-center justify-center gap-14 overflow-hidden bg-bg pt-header text-fg h-[100dvh]"
       >
+        {/* Below desktop the pattern is a band under the header and the figure
+            sits clear of it, as the owner's tablet and phone frames have it.
+            The overlap is a desktop effect: at those widths the figure is a
+            third of the screen's height, and bars across it would be covering
+            most of what there is to look at. */}
+        <div className="contents desktop:hidden">
+          <PatternField
+            side="top"
+            orientation="horizontal"
+            tracks={3}
+            thickness={26}
+            className={`top-header ${BAND}`}
+          />
+        </div>
+
         <div className="relative w-full">
-          {/* Sized by the viewport, not by a scale: the figure is three
-              characters of a known face, so its width is a fixed multiple of
-              its size and `57.5vw` is what fills the page's width at every
-              size the site has.
+          {/* Geist, like every figure on the site — see config/fonts.ts, which
+              is where that rule lives.
+
+              Sized by the viewport rather than to a scale: three characters of
+              a known face have a width that is a fixed multiple of their size,
+              so one value fills the page at every width and the figure shrinks
+              with the device instead of stepping between breakpoints.
 
               `0.72` rather than `leading-none`: digits fill about seven tenths
               of their em box, so even a line-height of 1 wraps them in a third
-              of a screen of air — enough, at this size, to push the button off
-              the bottom of a viewport-tall section. This makes the box the
-              figure, which is also what lets the bands below be positioned
-              against the numerals rather than against the space around
-              them. */}
-          <h1 className="w-full text-center font-display text-[57.5vw] leading-[0.72] font-normal tracking-(--tracking-display)">
+              of a screen of air — enough at this size to push the button off
+              the bottom of a viewport-tall section. Trimming it is also what
+              lets the bands be positioned against the numerals rather than
+              against the space around them. */}
+          <h1 className="w-full text-center font-ui text-[47vw] leading-[0.72] font-normal">
             {notFoundContent.code}
           </h1>
 
-          {BANDS.map((band) => (
+          {/* Desktop only, and the one place on the site where the pattern is
+              in front of something rather than behind it. That is the whole
+              effect — the bars cross the numerals and give them depth. */}
+          <div className="hidden desktop:contents">
             <PatternField
-              key={band.side}
-              side={band.side}
+              side="top"
               orientation="horizontal"
               tracks={3}
               thickness={26}
-              // Past both edges, so a band never resolves into a bar that
-              // happens to stop exactly at the window's edge. Offsets are
-              // written out rather than interpolated: a class assembled from a
-              // variable is invisible to Tailwind and compiles to nothing.
-              className={`-left-1.5 -right-1.5 h-[78px] ${band.className}`}
+              className={`top-[3%] ${BAND}`}
             />
-          ))}
+            <PatternField
+              side="bottom"
+              orientation="horizontal"
+              tracks={3}
+              thickness={26}
+              className={`top-[73%] ${BAND}`}
+            />
+          </div>
         </div>
 
         <Container className="relative flex flex-col items-center gap-10 text-center">
@@ -88,7 +100,13 @@ export default function NotFound() {
             {notFoundContent.body}
           </p>
 
-          <Button href={notFoundContent.cta.href} withArrow>
+          {/* The site's button width: 267 from tablet up, full width on a
+              phone, the same pair the hero's two take. */}
+          <Button
+            href={notFoundContent.cta.href}
+            withArrow
+            className="w-full tablet:w-[267px]"
+          >
             {notFoundContent.cta.label}
           </Button>
         </Container>
