@@ -41,6 +41,21 @@ implies. A dark section wrongly marked `white` gets dark ink, and its heading
 reveals into a colour it cannot be read in — a heading that is simply not there
 with nothing in the console.
 
+## A dark opening pins, and what follows rides over it
+
+This is the site's handover and the owner's design style, not a home-page
+flourish. Any page shaped as a dark opening with content under it gets it: wrap
+both in `<div data-scroll-stack>`, make the opening `sticky top-0`, and give
+what follows `relative z-10` and its own opaque fill. Anything pinned that
+carries a `Parallax` must track `[data-scroll-stack]` rather than its own
+section — keyed to a pinned element the drift freezes for exactly the stretch
+it should be moving.
+
+**Only the opening is sticky.** A section taller than the viewport cannot be:
+`sticky` pins its top and its own content then stops scrolling, which freezes
+the page. What rides over needs no stickiness at all — being later in the
+document, positioned, and opaque is the whole effect.
+
 ## A section that paints itself needs fixed ink
 
 `sectionTextRevealDynamic` resolves into `--color-fg-dynamic`, which follows
