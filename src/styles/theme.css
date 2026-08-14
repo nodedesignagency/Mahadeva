@@ -187,6 +187,13 @@
    * the site — it belongs to this row and nothing else. */
   --color-team-panel: var(--mh-amber);
 
+  /* The facts card on a role's page: salary, location, and the apply button.
+   * A step deeper than the feature-card tints, which are drawn to sit
+   * six-across on a dark field — this is one panel on white, where a 50 tint
+   * lands within a few points of the page and the card stops reading as a
+   * card at all. */
+  --color-facts-panel: var(--mh-green-75);
+
   /* The checkerboard that slides in on hover: one step deeper than the tile,
    * the same relationship the trust panels' blocks have to theirs. */
   --color-tool-shape-rose: var(--mh-rose-200);
@@ -542,6 +549,7 @@
   --color-principle-green: var(--color-principle-green);
   --color-principle-magenta: var(--color-principle-magenta);
   --color-team-panel: var(--color-team-panel);
+  --color-facts-panel: var(--color-facts-panel);
   --color-plan-sky: var(--color-plan-sky);
   --color-plan-lavender: var(--color-plan-lavender);
   --color-plan-peach: var(--color-plan-peach);

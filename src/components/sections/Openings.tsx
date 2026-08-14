@@ -7,7 +7,8 @@ import { ArrowUpRight, ChevronDown, Search } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextRevealBeige } from "@/config/animation";
-import type { openingsContent } from "@/content/careers";
+import type { Role, openingsContent } from "@/content/careers";
+import { roleHref } from "@/lib/careers";
 import { cn } from "@/lib/cn";
 
 /**
@@ -30,8 +31,6 @@ import { cn } from "@/lib/cn";
 type OpeningsProps = {
   content: typeof openingsContent;
 };
-
-type Role = (typeof openingsContent.roles)[number];
 
 /** The three select-driven fields, in the order the row shows them. */
 const FACETS = ["location", "type", "department"] as const;
@@ -179,7 +178,7 @@ export function Openings({ content }: OpeningsProps) {
         ) : (
           <ul className="mt-8">
             {matches.map((role) => (
-              <li key={role.title} className="border-b border-border-on-light last:border-b-0">
+              <li key={role.slug} className="border-b border-border-on-light last:border-b-0">
                 <RoleRow role={role} applyLabel={content.applyLabel} />
               </li>
             ))}
@@ -203,7 +202,7 @@ function RoleRow({ role, applyLabel }: { role: Role; applyLabel: string }) {
 
   return (
     <Link
-      href={role.href}
+      href={roleHref(role.slug)}
       aria-label={`${applyLabel}: ${role.title}`}
       className="group flex items-center justify-between gap-6 py-8 transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-70"
     >
