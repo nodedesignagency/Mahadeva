@@ -160,6 +160,12 @@
   --color-quote-shape-green: var(--mh-green-200); /* ABFFA8 */
   --color-quote-shape-yellow: var(--mh-yellow); /* FFE8A8 */
 
+  /* The contact panel's reassurance half, and the oversized quote mark laid
+   * over it. Deeper than any card tint on the site: this panel is half of one
+   * object and has a white form beside it to hold its own against. */
+  --color-contact-panel: var(--mh-blue-200); /* A8DEFF */
+  --color-contact-mark: var(--mh-blue); /* 80CEFF */
+
   /* The About page's mission card, one fill per variant. Palest tints on the
    * site: the card is a page of prose held on the screen, so its ground has to
    * stay under the words rather than compete with them. */
@@ -384,6 +390,9 @@
 
   --radius-sm: 0.5rem;
   --radius-button: 0.25rem; /* 4px */
+  /* A form field takes the button's corner. The two sit in the same panel and
+   * are pressed one after the other, so they belong to the same family. */
+  --radius-input: 0.25rem;
   --radius-icon: 0.125rem; /* 2px, the button's icon box */
   --radius-card: 1.25rem;
   --radius-lg: 2rem;
@@ -508,6 +517,8 @@
   --color-tool-shape-peach: var(--color-tool-shape-peach);
   --color-tool-shape-blue: var(--color-tool-shape-blue);
   --color-tool-shape-lavender: var(--color-tool-shape-lavender);
+  --color-contact-panel: var(--color-contact-panel);
+  --color-contact-mark: var(--color-contact-mark);
   --color-mission-blue: var(--color-mission-blue);
   --color-mission-green: var(--color-mission-green);
   --color-mission-lavender: var(--color-mission-lavender);
@@ -588,6 +599,7 @@
 
   --radius-sm: var(--radius-sm);
   --radius-button: var(--radius-button);
+  --radius-input: var(--radius-input);
   --radius-icon: var(--radius-icon);
   --radius-card: var(--radius-card);
   --radius-lg: var(--radius-lg);
