@@ -41,15 +41,26 @@ implies. A dark section wrongly marked `white` gets dark ink, and its heading
 reveals into a colour it cannot be read in — a heading that is simply not there
 with nothing in the console.
 
-## A dark opening pins, and what follows rides over it
+## A dark opening pins when — and only when — white follows it
 
-This is the site's handover and the owner's design style, not a home-page
-flourish. Any page shaped as a dark opening with content under it gets it: wrap
-both in `<div data-scroll-stack>`, make the opening `sticky top-0`, and give
-what follows `relative z-10` and its own opaque fill. Anything pinned that
-carries a `Parallax` must track `[data-scroll-stack]` rather than its own
-section — keyed to a pinned element the drift freezes for exactly the stretch
-it should be moving.
+The site's handover, and the owner's design style. What triggers it is the
+**change of surface**, not the dark opening on its own:
+
+| Page | Shape | Stack? |
+| --- | --- | --- |
+| Home, about | dark green opening → white | **yes** |
+| Privacy, terms | dark green opening → white | **yes** |
+| Contact | dark green opening → dark green | no |
+| Case studies, case study, pricing | one surface throughout | no |
+
+A page that holds one colour from top to bottom has nothing to hand over, and
+pinning its opening is motion for its own sake. Do not add it there.
+
+Where it does apply: wrap both sections in `<div data-scroll-stack>`, make the
+opening `sticky top-0`, and give what follows `relative z-10` and its own opaque
+fill. Anything pinned that carries a `Parallax` must track
+`[data-scroll-stack]` rather than its own section — keyed to a pinned element
+the drift freezes for exactly the stretch it should be moving.
 
 **Only the opening is sticky.** A section taller than the viewport cannot be:
 `sticky` pins its top and its own content then stops scrolling, which freezes
