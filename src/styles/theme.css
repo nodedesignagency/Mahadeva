@@ -255,6 +255,11 @@
   --color-border-compare: var(--mh-grey-250);
   /* The comparison button's icon frame: a quiet grey, no border of its own. */
   --color-icon-box-quiet: var(--mh-grey-100);
+  /* The same frame, one step deeper, for the careers list's arrows. The quiet
+   * one is tuned for the comparison table's pastel column heads; on beige it
+   * is within three points of the surface and the frame simply is not there.
+   * Two greys rather than one because the object appears on both. */
+  --color-icon-box: var(--mh-grey-200);
   /* The billing toggle's off-state track and the grey of the pricing cards'
    * "PLAN INCLUDES:" labels. */
   --color-track: var(--mh-grey-250);
@@ -556,6 +561,7 @@
   --color-compare-cell: var(--color-compare-cell);
   --color-border-compare: var(--color-border-compare);
   --color-icon-box-quiet: var(--color-icon-box-quiet);
+  --color-icon-box: var(--color-icon-box);
   --color-track: var(--color-track);
   --color-fg-label: var(--color-fg-label);
   --color-accent: var(--color-accent);

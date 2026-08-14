@@ -476,6 +476,41 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Careers photo fan
+ *
+ * Seven frames turned into a shallow arc and overlapped. Both the turn and the
+ * overlap are here rather than in the component's inline styles, because both
+ * belong to the tablet breakpoint and up: below it the same list is a plain
+ * scroll rail, and an inline `transform` cannot be undone by a media query —
+ * it outranks every stylesheet rule at any width.
+ *
+ * Each card's own numbers arrive as custom properties, which inline styles may
+ * set freely; see `FAN` in GrowWithUs.tsx.
+ *
+ * The origin is the card's centre. Turning about the foot is the obvious
+ * choice and it is wrong: the feet stay level in theory, but each card's lower
+ * outside corner rises past its neighbour's and the row's bottom edge comes
+ * out as a staircase of notches. About the centre the corners splay
+ * symmetrically and the overlap closes them.
+ *
+ * Turning also throws the outermost cards out past their own column — the
+ * section clips that overhang horizontally so it cannot put a scrollbar on the
+ * page.
+ * ------------------------------------------------------------------------- */
+@media (min-width: 810px) {
+  .mh-fan-card {
+    margin-inline-start: var(--mh-fan-overlap);
+    transform: translateY(var(--mh-fan-drop)) rotate(var(--mh-fan-rotate));
+  }
+
+  /* The first card has nothing to overlap. Without this the whole row is
+   * pulled off its own left edge by one card's worth of overlap. */
+  .mh-fan-card:first-child {
+    margin-inline-start: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Testimonial carousel
  *
  * The rectangles' trigger is state, not a pointer: a card plays them when it
