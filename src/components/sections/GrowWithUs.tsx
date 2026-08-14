@@ -54,9 +54,13 @@ export function GrowWithUs({ content }: GrowWithUsProps) {
         />
       </Container>
 
-      <Container className="mt-12 tablet:mt-16">
+      {/* Outside the container on purpose. The fan is a fixed 1104 wide at
+          every width, so it must be free to run past the text column's gutter
+          and be clipped by the section rather than squeezed by it. At the
+          width the design was drawn at the two happen to coincide. */}
+      <div className="mt-12 tablet:mt-16">
         <PhotoFan photos={content.photos} imagePending={content.imagePending} />
-      </Container>
+      </div>
 
       <Container className="mt-12 tablet:mt-16">
         <p className="mx-auto max-w-[52ch] text-center font-body text-body-md text-fg-on-light">

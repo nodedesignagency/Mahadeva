@@ -21,21 +21,21 @@ import { photoFan } from "@/config/animation";
  * and for why the turn and the scale belong to the container rather than to
  * the frames.
  *
+ * ── One arrangement, every width ───────────────────────────────────────────
+ *
+ * There is no phone layout. The fan is one object of a fixed size — seven
+ * 184px frames, 1104 wide in total — and a narrow window simply clips it at
+ * both edges, which is the owner's design. So the sequence runs at every
+ * width and there is no breakpoint anywhere in this component or its CSS.
+ *
  * ── Why React holds only the stage ─────────────────────────────────────────
  *
- * Every transform is CSS, driven off one `data-fan` attribute. That is not
- * shorter than doing it with motion values — it is the only version that is
- * correct at both breakpoints.
- *
- * Below the tablet breakpoint the same seven frames are a plain scroll rail:
- * no arc, no pile, nothing to assemble. Seven overlapping squares on a phone
- * are a smudge, and animating them into one is a smudge that moves. An inline
- * `transform` cannot be undone by a media query — it outranks every stylesheet
- * rule at every width — so a JS-driven transform would have to know which
- * breakpoint it was on, and reading the viewport during render is exactly the
- * thing that makes the server and the client disagree. In CSS the whole
- * arrangement simply lives inside `@media (min-width: 810px)` and the phone
- * never sees it.
+ * Every transform is CSS, driven off one `data-fan` attribute, and React only
+ * ever says which of the four states is current. The states are static — four
+ * fixed arrangements with a duration between them, not values scrubbed against
+ * a scroll position — so a stylesheet expresses them directly and the browser
+ * runs all nine transforms on the compositor without a frame of JS. It is the
+ * same division the button sweep and the nav overlay already make.
  *
  * ── Why the sequence has to arm itself ─────────────────────────────────────
  *
@@ -135,13 +135,15 @@ export function PhotoFan({ photos, imagePending }: PhotoFanProps) {
 
   return (
     <div ref={band}>
+      {/* `justify-center` is what puts the overflow on both edges rather than
+          only the right one, so a narrow window clips the fan evenly. */}
       <ul
         data-fan={stage}
-        className="mh-rail mh-fan flex items-center gap-4 overflow-x-auto tablet:justify-center tablet:gap-0 tablet:overflow-visible"
+        className="mh-fan flex items-center justify-center"
         style={
           {
-            "--mh-fan-width": `${photoFan.cardWidth}%`,
-            "--mh-fan-overlap": `-${photoFan.overlap}%`,
+            "--mh-fan-width": `${photoFan.card}px`,
+            "--mh-fan-overlap": `-${photoFan.overlap}px`,
             "--mh-fan-advance": `${photoFan.advance}%`,
             "--mh-fan-lift": `${photoFan.lift}px`,
             "--mh-fan-rotate-out": `${photoFan.rotate.out}deg`,
@@ -159,7 +161,7 @@ export function PhotoFan({ photos, imagePending }: PhotoFanProps) {
           return (
             <li
               key={photo.alt}
-              className="mh-fan-card w-[62%] shrink-0 tablet:w-(--mh-fan-width)"
+              className="mh-fan-card w-(--mh-fan-width) shrink-0"
               style={
                 {
                   // How many places this frame is from the middle of the row.

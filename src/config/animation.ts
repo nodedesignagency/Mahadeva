@@ -333,29 +333,35 @@ export const markParallax = {
  * reads as a transition; a stack that draws breath first and *then* opens
  * reads as a gesture, and the shrink is that breath.
  *
- * ── Why the geometry is in sixths ──────────────────────────────────────────
+ * ── The geometry ───────────────────────────────────────────────────────────
  *
- * The frames are 184x184 in the Framer file, and 184 is not an arbitrary
- * number: the content row at the design width is 1104, and 1104/6 is exactly
- * 184. Seven frames at a sixth of the row, each lapping the one before it by a
- * sixth of its own width, span the row to the pixel.
+ * The frames are 184x184 and Fixed in the Framer file, and they stay 184 at
+ * every width — the fan is one object of a fixed size that the section simply
+ * clips as the window narrows, rather than an arrangement that reflows. On a
+ * phone that means the outermost frames are cut off by the window's edges,
+ * which is the owner's design and not an overflow to be solved.
  *
- * That is worth keeping as fractions rather than as pixels, because it is what
- * makes the motion correct at every width. A percentage `translate` resolves
- * against the element's own box, so "move to where the middle frame is" is
- * `advance x (3 - index)` — a constant multiple of the card's width at every
- * breakpoint. Pinned to 184 literal pixels it would be right on a 1440 screen
- * and wrong on all the others, and the pile would land off-centre.
+ * 184 is not arbitrary. The content row at the design width is 1104, and
+ * 1104/6 is exactly 184: seven frames at a sixth of the row, each lapping the
+ * one before it by a sixth of its own width, span the row to the pixel. So the
+ * fan is 1104 wide, centred, and lines up with the column of text above and
+ * below it at the width the design was drawn at.
  */
 export const photoFan = {
-  /** A frame's share of the row, and how much of it the next one covers. */
-  cardWidth: 100 / 6,
-  overlap: 100 / 36,
+  /** A frame's side, in px. Fixed, as in the file. */
+  card: 184,
+
+  /** How much of a frame the next one covers, in px — a sixth of it. */
+  overlap: 184 / 6,
 
   /**
    * How far apart two frames sit, as a share of one frame's own width. The
    * distance each frame travels to reach the middle of the pile is this times
    * how many places it is from the middle.
+   *
+   * A share rather than the 153.33px it works out to, because a percentage
+   * `translate` resolves against the element's own box: changing `card` alone
+   * then keeps the pile centred instead of leaving this to be recalculated.
    */
   advance: 500 / 6,
 
