@@ -1,5 +1,8 @@
+import type { CSSProperties } from "react";
+
 import { Container } from "@/components/layout/Container";
 import { ContactForm } from "@/components/sections/ContactForm";
+import { featureMarquee } from "@/config/animation";
 import type { contactContent } from "@/content/contact";
 
 /**
@@ -18,7 +21,37 @@ type ContactPanelProps = {
   content: typeof contactContent;
 };
 
+/**
+ * The logo row's geometry, in px. Fixed rather than measured: the travel has to
+ * equal one copy's width exactly or the loop shows a seam, and a slot that
+ * sizes to its contents cannot be known at render.
+ */
+const LOGO_SLOT = 110;
+const LOGO_GAP = 32;
+
 export function ContactPanel({ content }: ContactPanelProps) {
+  const cycle = content.logos.length * (LOGO_SLOT + LOGO_GAP);
+  // The same rate the trust strip runs at, so the site has one marquee speed
+  // rather than two that nearly match.
+  const duration = Math.round((cycle / featureMarquee.speed) * 1000);
+
+  const logos = (
+    <ul className="flex items-center" style={{ gap: `${LOGO_GAP}px`, paddingRight: `${LOGO_GAP}px` }}>
+      {content.logos.map((logo, i) => (
+        <li
+          key={`${logo.name}-${i}`}
+          // Names until the marks land, at the weight a logo sits at in a row
+          // like this — the same stand-in the trust strip uses, so the two are
+          // replaced the same way.
+          className="shrink-0 truncate font-ui text-body-sm font-light text-fg-on-light/45"
+          style={{ width: `${LOGO_SLOT}px` }}
+        >
+          {logo.name}
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <section data-bg="dark" className="bg-bg pb-20 tablet:pb-30">
       <Container>
@@ -63,21 +96,36 @@ export function ContactPanel({ content }: ContactPanelProps) {
                 </span>
               </figcaption>
 
-              {/* Marks the logos as a footnote to the quote rather than a
-                  second block of content. */}
-              <ul className="flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-fg-on-light/15 pt-8">
-                {content.logos.map((logo, i) => (
-                  <li
-                    key={`${logo.name}-${i}`}
-                    // Names until the marks land, at the weight a logo sits at
-                    // in a row like this — the same stand-in the trust strip
-                    // uses, so the two are replaced the same way.
-                    className="font-ui text-body-sm font-light text-fg-on-light/45"
+              {/* The rule marks the logos as a footnote to the quote rather
+                  than a second block of content.
+
+                  The row travels right to left, and never stops — so it is
+                  clipped by a frame narrower than itself and holds two copies
+                  of the set, sliding by exactly one. The moment it loops, the
+                  second copy is where the first began and the seam cannot be
+                  seen. Distance and duration are derived from the logo count,
+                  so adding a mark changes how long a lap takes and never how
+                  fast it travels. */}
+              <div className="border-t border-fg-on-light/15 pt-8">
+                <div className="mh-marquee-frame no-scrollbar overflow-hidden">
+                  <div
+                    className="mh-marquee flex w-max items-center"
+                    style={
+                      {
+                        "--mh-marquee-cycle": `${cycle}px`,
+                        "--mh-marquee-duration": `${duration}ms`,
+                      } as CSSProperties
+                    }
                   >
-                    {logo.name}
-                  </li>
-                ))}
-              </ul>
+                    {logos}
+                    {/* The second copy is what makes the loop seamless. Same
+                        marks, so it is hidden from assistive tech. */}
+                    <div aria-hidden="true" className="contents">
+                      {logos}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 

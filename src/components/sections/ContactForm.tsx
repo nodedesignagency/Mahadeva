@@ -27,13 +27,22 @@ type ContactFormProps = {
 
 type Status = "idle" | "sending" | "sent" | "failed";
 
-/** One field's shell: white, hairline, and the ink of the surface it sits on. */
+/**
+ * One field's shell: white, hairline, and the ink of the surface it sits on.
+ *
+ * No height here — the two kinds differ. A single-line field is 41 and a text
+ * area 100, both the owner's, and both set where they are used rather than
+ * overridden from a shared default.
+ */
 const field =
   "w-full rounded-(--radius-input) border border-border-on-light bg-bg-white " +
-  "px-4 py-3 font-body text-body-md text-fg-on-light " +
+  "px-4 font-body text-body-md text-fg-on-light " +
   "placeholder:text-fg-on-light-muted " +
   "transition-colors duration-(--duration-hover) ease-(--ease-out) " +
   "focus:border-fg-on-light focus:outline-none";
+
+/** 41px, borders included. An input centres its own text, so no padding. */
+const line = "h-[41px]";
 
 const label = "font-body text-body-md text-fg-on-light";
 
@@ -99,7 +108,7 @@ export function ContactForm({ content }: ContactFormProps) {
           required
           autoComplete="name"
           placeholder={content.fields.name.placeholder}
-          className={field}
+          className={cn(field, line)}
         />
       </div>
 
@@ -117,7 +126,7 @@ export function ContactForm({ content }: ContactFormProps) {
             required
             autoComplete="email"
             placeholder={content.fields.email.placeholder}
-            className={field}
+            className={cn(field, line)}
           />
         </div>
 
@@ -131,7 +140,7 @@ export function ContactForm({ content }: ContactFormProps) {
             type="text"
             autoComplete="organization"
             placeholder={content.fields.company.placeholder}
-            className={field}
+            className={cn(field, line)}
           />
         </div>
       </div>
@@ -150,7 +159,7 @@ export function ContactForm({ content }: ContactFormProps) {
             name="budget"
             required
             defaultValue=""
-            className={cn(field, "appearance-none pe-11")}
+            className={cn(field, line, "appearance-none pe-11")}
           >
             <option value="" disabled>
               {content.fields.budget.placeholder}
@@ -168,9 +177,7 @@ export function ContactForm({ content }: ContactFormProps) {
         </div>
       </div>
 
-      {/* Grows with the panel rather than taking a fixed height: it is the last
-          field, so the room the rest of the form leaves is the room it gets. */}
-      <div className="flex flex-1 flex-col gap-2">
+      <div className="flex flex-col gap-2">
         <label htmlFor={`${id}-message`} className={label}>
           {content.fields.message.label}
         </label>
@@ -180,7 +187,9 @@ export function ContactForm({ content }: ContactFormProps) {
           required
           rows={4}
           placeholder={content.fields.message.placeholder}
-          className={cn(field, "min-h-[120px] flex-1 resize-y")}
+          // 100 to the owner. `py-3` because a text area, unlike an input,
+          // sets its first line hard against the top edge.
+          className={cn(field, "h-[100px] resize-y py-3")}
         />
       </div>
 
@@ -192,7 +201,7 @@ export function ContactForm({ content }: ContactFormProps) {
 
       <Button
         type="submit"
-        variant="secondary"
+        variant="plan"
         withArrow
         disabled={status === "sending"}
         className="w-full justify-between"
