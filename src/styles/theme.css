@@ -187,6 +187,20 @@
    * the site — it belongs to this row and nothing else. */
   --color-team-panel: var(--mh-amber);
 
+  /* Blog cards. One tint per card, cycling through the palette's pastels in
+   * the order the index lays them out — the tint is what distinguishes a card,
+   * so it is assigned in content rather than picked in the component.
+   *
+   * A step lighter than the case study panels: a case card is one wide panel
+   * carrying a whole argument, where these are six small heads above six
+   * photographs and a fill that strong would be all anyone saw. */
+  --color-post-sky: var(--mh-blue-25); /* D8F1FF */
+  --color-post-lavender: var(--mh-lavender-50); /* EADFFF */
+  --color-post-rose: var(--mh-rose-50); /* FCE1E9 */
+  --color-post-mint: var(--mh-green-25); /* D9FAE7 */
+  --color-post-peach: var(--mh-peach-50); /* FFF1DF */
+  --color-post-magenta: var(--mh-magenta-25); /* FCDCFA */
+
   /* The facts card on a role's page: salary, location, and the apply button.
    * A step deeper than the feature-card tints, which are drawn to sit
    * six-across on a dark field — this is one panel on white, where a 50 tint
@@ -569,6 +583,12 @@
   --color-principle-magenta: var(--color-principle-magenta);
   --color-team-panel: var(--color-team-panel);
   --color-facts-panel: var(--color-facts-panel);
+  --color-post-sky: var(--color-post-sky);
+  --color-post-lavender: var(--color-post-lavender);
+  --color-post-rose: var(--color-post-rose);
+  --color-post-mint: var(--color-post-mint);
+  --color-post-peach: var(--color-post-peach);
+  --color-post-magenta: var(--color-post-magenta);
   --color-plan-sky: var(--color-plan-sky);
   --color-plan-lavender: var(--color-plan-lavender);
   --color-plan-peach: var(--color-plan-peach);

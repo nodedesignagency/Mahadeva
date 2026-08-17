@@ -878,6 +878,46 @@ export const caseHover = {
 } as const;
 
 /**
+ * Blog card hover.
+ *
+ * The case cards' gesture on a smaller object: blocks in the card's own tint
+ * slide in from the edges and sit over the photograph while the pointer is on
+ * it, then retreat. Same curve, same duration, same growing image behind them.
+ *
+ * Its own rectangles rather than a reuse of `caseHover.rects`, and that is the
+ * whole reason this exists. Those are written in the pixels of a 560-wide
+ * frame; a blog card's picture is barely half that, so the same numbers land
+ * as blocks nearly twice the size relative to what they sit on — a scatter
+ * over the artwork becomes a wall across it. These are percentages of the
+ * picture, so the arrangement holds at whatever width the grid gives a card.
+ *
+ * Uneven on purpose, like the case cards': an even stagger reads as a
+ * mechanical sweep, and clustering arrivals reads as scatter.
+ */
+export const postHover = {
+  /** Shared with the case cards: bezier 0.8, 0, 0.2, 1 over 0.7s. */
+  duration: 700,
+
+  /** The picture grows behind the blocks. */
+  imageScale: 1.05,
+
+  /**
+   * Three enter from the left and stack into the top corner, two drop into the
+   * top right, and two rise into the foot — so the picture is framed from
+   * three sides and never from all four, which would read as a border closing.
+   */
+  rects: [
+    { w: "34%", h: "9%", left: 0, top: 0, dx: "-100%", dy: 0 },
+    { w: "12%", h: "19%", left: 0, top: "9%", dx: "-100%", dy: 0 },
+    { w: "22%", h: "7%", left: 0, top: "28%", dx: "-100%", dy: 0 },
+    { w: "25%", h: "8%", right: "10%", top: 0, dx: 0, dy: "-100%" },
+    { w: "10%", h: "17%", right: 0, top: 0, dx: 0, dy: "-100%" },
+    { w: "12%", h: "18%", left: 0, bottom: 0, dx: "-100%", dy: 0 },
+    { w: "26%", h: "8%", left: "12%", bottom: 0, dx: 0, dy: "100%" },
+  ],
+} as const;
+
+/**
  * Background bar-pattern field.
  *
  * The original is not a continuous loop of bars growing from zero. It is a set
