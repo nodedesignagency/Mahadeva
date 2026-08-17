@@ -44,7 +44,9 @@ export function JobApply({ content, role }: JobApplyProps) {
           as="h2"
           lines={content.apply.headingLines}
           settings={sectionTextReveal}
-          className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-md leading-(--leading-display) tracking-(--tracking-display) font-normal"
+          // 48 at desktop, which is what `display-lg` resolves to — the size
+          // every other section heading on the site is set at.
+          className="flex flex-col items-center gap-(--space-heading-line) text-center text-display-lg leading-(--leading-display) tracking-(--tracking-display) font-normal"
         />
 
         <div className="mt-15 flex flex-col overflow-clip border border-border-on-light desktop:flex-row">

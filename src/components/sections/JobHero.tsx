@@ -63,7 +63,13 @@ export function JobHero({ content, title }: JobHeroProps) {
         className="relative z-10 w-full"
       >
         <Container className="flex flex-col items-center text-center">
-          <p className="eyebrow font-ui">{content.eyebrow}</p>
+          {/* Not the site's `eyebrow` utility: that is 12px Geist tracked out
+              in the muted ink, and this is 16px Almarai at its own tracking,
+              in the pale green — the same DCFFE4 the careers hero's "Hiring
+              Now" and the footer's column labels settle into. */}
+          <p className="font-body text-body-md uppercase text-green-soft">
+            {content.eyebrow}
+          </p>
 
           {/* `wraps` because the title is the role's name and nobody writes
               line breaks into it: the bars become a band per row, so a long
