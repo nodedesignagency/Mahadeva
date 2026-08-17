@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { pageWipe } from "@/config/animation";
@@ -24,8 +24,16 @@ import { pageWipe } from "@/config/animation";
  * arrived at through the wipe has to render already covered on its first
  * paint, and the server cannot know whether it was — that fact is in
  * sessionStorage. `WipeScript` below runs before the body is painted and sets
- * the attribute; React never owns it, so there is nothing for the server and
- * the client to disagree about.
+ * the attribute.
+ *
+ * It does not survive on its own, though. Hydration reconciles `<html>` against
+ * what the layout rendered and removes everything else on it — measured: both
+ * `data-wipe` and a control attribute set beside it were gone the frame
+ * hydration finished. So the script also raises a flag on `window`, which is
+ * out of React's reach, and the mount effect below re-asserts the attribute
+ * from it. That effect is a layout effect for the same reason the script is
+ * blocking: it has to land in the commit that hydration itself paints, or the
+ * page shows through uncovered for a frame.
  *
  * ── Two kinds of navigation, and why both are handled ──────────────────────
  *
@@ -39,6 +47,9 @@ import { pageWipe } from "@/config/animation";
  */
 
 const FLAG = "mh-wipe";
+
+/** A layout effect where there is a layout, and quiet about it where there is not. */
+const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /** How long the whole climb takes: one card's travel plus every stagger. */
 const sweep = pageWipe.duration + pageWipe.stagger * (pageWipe.cards - 1);
@@ -59,6 +70,7 @@ export function WipeScript() {
         __html:
           `try{if(sessionStorage.getItem(${JSON.stringify(FLAG)})){` +
           `sessionStorage.removeItem(${JSON.stringify(FLAG)});` +
+          `window[${JSON.stringify(FLAG)}]=1;` +
           `document.documentElement.dataset.wipe="covered"}}catch(e){}`,
       }}
     />
@@ -101,13 +113,18 @@ export function PageTransition() {
     });
   }
 
-  // Arriving through a real page load: the script has already set the
-  // attribute, so this only has to open it again.
-  useEffect(() => {
+  // Arriving through a real page load. The attribute the script set has just
+  // been reconciled away, so put it back from the flag — which hydration cannot
+  // touch — and then open it.
+  useBeforePaint(() => {
+    const flagged = window as Window & { [FLAG]?: unknown };
+    if (flagged[FLAG]) {
+      delete flagged[FLAG];
+      document.documentElement.dataset.wipe = "covered";
+    }
     reveal();
     return clearTimers;
     // Once, on mount. A soft navigation is the effect below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Arriving through a soft navigation: the document survived, so the pathname
