@@ -276,6 +276,11 @@
   --color-border-compare: var(--mh-grey-250);
   /* The comparison button's icon frame: a quiet grey, no border of its own. */
   --color-icon-box-quiet: var(--mh-grey-100);
+  /* The meta chips on a post's page — its category and its date. The same
+   * grey as the icon frame above and its own name all the same: the two are
+   * unrelated objects, and retuning the frame behind an arrow should not
+   * quietly restyle the date on every post. */
+  --color-chip: var(--mh-grey-100);
   /* The same frame, one step deeper, for the careers list's arrows. The quiet
    * one is tuned for the comparison table's pastel column heads; on beige it
    * is within three points of the surface and the frame simply is not there.
@@ -617,6 +622,7 @@
   --color-border-compare: var(--color-border-compare);
   --color-icon-box-quiet: var(--color-icon-box-quiet);
   --color-icon-box: var(--color-icon-box);
+  --color-chip: var(--color-chip);
   --color-track: var(--color-track);
   --color-fg-label: var(--color-fg-label);
   --color-accent: var(--color-accent);

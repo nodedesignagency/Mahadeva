@@ -93,13 +93,19 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
         </p>
       </div>
 
-      {/* The picture, and the whole of the hover. Square, and `mt-auto` so a
-          card whose title runs to three lines keeps its picture flush with the
-          foot instead of leaving a band of tint under it — the grid stretches
-          every card to the tallest, and without this they would not agree on
-          where the artwork starts. */}
+      {/* The picture, and the whole of the hover.
+
+          720x695 is the frame's proportion in the design — very slightly wider
+          than tall, not the square it reads as. It matters: at this ratio a
+          359 card gives a 346 picture, which is the exact height at which the
+          hover's left bar and its square meet. See `postHover.rects`.
+
+          `mt-auto` so a card whose title runs to three lines keeps its picture
+          flush with the foot instead of leaving a band of tint under it — the
+          grid stretches every card to the tallest, and without this they would
+          not agree on where the artwork starts. */}
       <div
-        className="relative mt-auto aspect-square overflow-clip"
+        className="relative mt-auto aspect-[720/695] overflow-clip"
         style={
           {
             "--mh-case-duration": `${postHover.duration}ms`,

@@ -920,10 +920,23 @@ export const postHover = {
     { w: 37, h: 32, top: 0, right: 0, dx: 0, dy: -40 },
     { w: 96, h: 32, top: 32, right: 37, dx: 0, dy: -80 },
     { w: 96, h: 32, top: 0, right: 133, dx: 0, dy: -40 },
-    // A tall bar into the left edge, on the picture's centreline. Centred by
-    // an anchor rather than a transform, since `translate` is spoken for.
-    { w: 32, h: 140, left: 0, top: "calc(50% - 70px)", dx: -40, dy: 0 },
-    // And a square rising into the foot, clear of the corner.
+    /**
+     * A tall bar into the left edge, and a square rising into the foot beside
+     * it. The bar's foot rests exactly on the square's head, and its right
+     * edge on the square's left — the two meet at a corner, which is the shape
+     * the file draws.
+     *
+     * The file calls the bar centred, and at the design's picture height it
+     * is: solve (H + 140)/2 = H − 103 and H is 346, which is what a 359 card
+     * gives at this picture's proportion. But the grid hands a card 346, 359
+     * or 405 depending on the breakpoint, and a centred bar only lands on the
+     * square at one of those — at 405 it stops 22px short and the join opens.
+     *
+     * So the bar is anchored to the square instead. At the design height that
+     * is the same position to a third of a pixel; everywhere else it is the
+     * one that keeps them together.
+     */
+    { w: 32, h: 140, left: 0, bottom: 103, dx: -40, dy: 0 },
     { w: 103, h: 103, left: 32, bottom: 0, dx: 0, dy: 110 },
   ],
 

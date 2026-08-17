@@ -23,12 +23,15 @@
  *              wrappers under it.
  *  - `beige` — the light strip in the page's own beige, so the header reads as
  *              the top of the surface rather than a white band laid over it.
- *
- * A page that declares nothing gets the light strip on white.
+ *  - `light` — white the whole way down. The same strip a page that declares
+ *              nothing gets, and that is the point of having it: the rule is
+ *              that every page says what it is, and a page left silent is
+ *              indistinguishable from one that forgot. It needs no rule in
+ *              globals.css, because white is what `.mh-nav-shell` already is.
  */
 
 type PageSurfaceProps = {
-  value: "dark" | "hero" | "beige";
+  value: "dark" | "hero" | "beige" | "light";
 };
 
 export function PageSurface({ value }: PageSurfaceProps) {
