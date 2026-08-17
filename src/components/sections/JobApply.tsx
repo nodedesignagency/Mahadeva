@@ -49,7 +49,9 @@ export function JobApply({ content, role }: JobApplyProps) {
 
         <div className="mt-15 flex flex-col overflow-clip border border-border-on-light desktop:flex-row">
           {/* The quote half. */}
-          <div className="relative flex flex-col justify-between gap-10 bg-contact-panel p-8 tablet:p-12 desktop:w-1/2">
+          {/* 40 on every side, against the form's 20 — the quote is a block of
+              reading matter and wants the room; the fields want the width. */}
+          <div className="relative flex flex-col justify-between gap-10 bg-contact-panel p-10 desktop:w-1/2">
             {/* The mark is the panel's decoration, not a character anyone
                 should hear read out — the quotation itself is already marked
                 up as one. Set rather than drawn: four bars of my own read as

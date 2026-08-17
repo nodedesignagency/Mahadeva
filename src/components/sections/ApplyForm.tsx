@@ -83,7 +83,7 @@ export function ApplyForm({ content, role }: ApplyFormProps) {
         // Announced without stealing focus — the reader is told it worked
         // whether or not they can see the panel change.
         role="status"
-        className="flex h-full flex-col justify-center gap-4 p-8 tablet:p-12"
+        className="flex h-full flex-col justify-center gap-4 px-5 py-8"
       >
         <p className="text-display-md leading-(--leading-display) tracking-(--tracking-display) font-normal text-fg-on-light">
           {content.sent.title}
@@ -99,7 +99,11 @@ export function ApplyForm({ content, role }: ApplyFormProps) {
     <form
       aria-label={content.label}
       onSubmit={onSubmit}
-      className="flex h-full flex-col gap-6 p-8 tablet:p-12"
+      // The owner's measurements: 32 top and bottom, 20 either side, and 20
+      // between one field and the next. Flat rather than growing at the tablet
+      // breakpoint — the fields are what should get the width, and the panel
+      // beside it carries the generous padding instead.
+      className="flex h-full flex-col gap-5 px-5 py-8"
     >
       <div className="flex flex-col gap-2">
         <label htmlFor={`${id}-name`} className={label}>
