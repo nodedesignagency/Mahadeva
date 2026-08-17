@@ -66,7 +66,9 @@ export function JobApply({ content, role }: JobApplyProps) {
               &ldquo;
             </span>
 
-            <blockquote className="relative pt-10 font-body text-body-lg leading-[1.6] text-fg-on-light tablet:pt-14">
+            {/* The same measure as the description opposite it, and now the
+                same token rather than a literal that happens to match. */}
+            <blockquote className="relative pt-10 font-body text-body-lg leading-(--leading-prose) text-fg-on-light tablet:pt-14">
               {`"${content.apply.quote.body}"`}
             </blockquote>
 

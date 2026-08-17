@@ -26,14 +26,22 @@ type JobDescriptionProps = {
   role: Role;
 };
 
-/** One labelled fact. The value is Geist wherever it is a figure. */
-function Fact({ label, value, figure }: { label: string; value: string; figure?: boolean }) {
+/**
+ * One labelled fact: the label over the value, 8px apart.
+ *
+ * Not the site's `eyebrow` — that is 12px Geist tracked out, and these labels
+ * are 14px Almarai at its normal tracking. The values are all Geist, including
+ * the ones that are not figures: the card is read as a block of specifications
+ * rather than as five separate lines, and a location set in one face beside a
+ * salary set in another reads as a mistake.
+ */
+function Fact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1">
-      <dt className="eyebrow font-ui text-fg-on-light-muted">{label}</dt>
-      <dd
-        className={`text-body-lg text-fg-on-light ${figure ? "font-ui" : "font-body"}`}
-      >
+    <div className="flex flex-col gap-2">
+      <dt className="font-body text-body-sm uppercase text-fg-on-light-muted">
+        {label}
+      </dt>
+      <dd className="font-ui text-fact font-medium leading-(--leading-heading) text-fg-on-light">
         {value}
       </dd>
     </div>
@@ -47,14 +55,16 @@ function Block({ heading, children }: { heading: string; children: ReactNode }) 
       <h2 className="font-display text-heading-lg leading-(--leading-heading) tracking-(--tracking-display) font-normal text-fg-on-light">
         {heading}
       </h2>
-      <div className="mt-6 flex flex-col gap-6">{children}</div>
+      <div className="mt-4 flex flex-col gap-6">{children}</div>
     </section>
   );
 }
 
 function Paragraph({ children }: { children: ReactNode }) {
   return (
-    <p className="max-w-[76ch] font-body text-body-md text-fg-on-light">{children}</p>
+    <p className="max-w-[76ch] font-body text-body-md leading-(--leading-prose) text-fg-on-light">
+      {children}
+    </p>
   );
 }
 
@@ -65,7 +75,7 @@ function Points({ items }: { items: readonly string[] }) {
       {items.map((item) => (
         <li
           key={item}
-          className="flex max-w-[76ch] gap-3 font-body text-body-md text-fg-on-light"
+          className="flex max-w-[76ch] gap-3 font-body text-body-md leading-(--leading-prose) text-fg-on-light"
         >
           {/* The bullet is drawn rather than left to the list style, so it can
               be sized and coloured with the copy and sit on its first line
@@ -98,14 +108,10 @@ export function JobDescription({ content, role }: JobDescriptionProps) {
           <div className="desktop:sticky desktop:top-[calc(var(--header-height)+2rem)] desktop:self-start">
             <div className="flex flex-col gap-6 bg-facts-panel p-6">
               <dl className="flex flex-col gap-6">
-                <Fact label={content.facts.salary} value={role.salary} figure />
+                <Fact label={content.facts.salary} value={role.salary} />
                 <Fact label={content.facts.location} value={role.location} />
                 <Fact label={content.facts.type} value={role.type} />
-                <Fact
-                  label={content.facts.experience}
-                  value={role.experience}
-                  figure
-                />
+                <Fact label={content.facts.experience} value={role.experience} />
                 <Fact label={content.facts.department} value={role.department} />
               </dl>
 
@@ -121,7 +127,8 @@ export function JobDescription({ content, role }: JobDescriptionProps) {
             </div>
           </div>
 
-          <div className="flex flex-col gap-15">
+          {/* 40px between blocks, to the owner's measurement. */}
+          <div className="flex flex-col gap-10">
             <Block heading={content.aboutUs.heading}>
               {content.aboutUs.paragraphs.map((paragraph) => (
                 <Paragraph key={paragraph}>{paragraph}</Paragraph>

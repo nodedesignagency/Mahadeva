@@ -358,6 +358,11 @@
    * flat 22, not the heading clamp beside it, which would set them at 20 on a
    * phone. */
   --text-meta: 1.375rem; /* 22 */
+  /* The facts card on a role's page — salary, location, job type. `--text-meta`
+   * is the same object one page over, and this is its smaller sibling: five
+   * values stacked in a narrow column rather than three across a full row.
+   * Flat, and Geist at medium, for the same reason the meta row is. */
+  --text-fact: 1.25rem; /* 20 */
   --text-body-md: 1rem; /* 16 */
   --text-body-sm: 0.875rem; /* 14 */
   --text-label: 0.75rem; /* 12 */
@@ -378,6 +383,20 @@
    * paragraph and answered to nothing in the design.
    */
   --leading-card: 1.75;
+  /**
+   * Long-form reading matter: a role's description, and the quotation beside
+   * its form.
+   *
+   * 1.75 is right for a paragraph or two on a marketing page, where the copy
+   * is spaced to be scanned. It is loose for a page someone reads top to
+   * bottom — four paragraphs, then two lists — where the eye has to find the
+   * next line rather than the next block.
+   *
+   * A token and not a literal in a class, which is the whole point of the note
+   * above: the moment one paragraph carries its own number, the paragraph
+   * beside it drifts. Anything set at this measure uses this.
+   */
+  --leading-prose: 1.6;
 
   /** Gap between the display heading's lines. */
   --space-heading-line: 4px;
@@ -615,6 +634,7 @@
   --text-nav-mobile: var(--text-nav-mobile);
   --text-body-lg: var(--text-body-lg);
   --text-meta: var(--text-meta);
+  --text-fact: var(--text-fact);
   --text-body-md: var(--text-body-md);
   --text-body-sm: var(--text-body-sm);
   --text-label: var(--text-label);
