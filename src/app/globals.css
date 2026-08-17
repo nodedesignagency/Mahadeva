@@ -476,6 +476,65 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Page transition
+ *
+ * Three cards that climb the screen on the way out of a page and carry on
+ * climbing on the way into the next, so the two halves read as one pass.
+ *
+ * The state lives on the document element rather than on the overlay, and that
+ * is what makes the whole thing possible. A page arrived at through the wipe
+ * has to render *already covered*, on its very first paint — and the server
+ * cannot know that, because whether it happened is in sessionStorage. So a
+ * small script sets the attribute before the body is painted, the overlay
+ * itself is plain server-rendered markup parked below the fold, and React never
+ * owns the attribute. There is no state for the server and the client to
+ * disagree about, and no frame of the page showing through.
+ *
+ * `--mh-wipe-index` is the card's place in the stack, set inline. The stagger
+ * is arithmetic in CSS rather than three delays computed in JS — and it runs
+ * *backwards* on the way out. The last card in is the first card out, so the
+ * stack is peeled in the order it was laid; the same order twice reads as a
+ * curtain dropped and then dropped again.
+ * ------------------------------------------------------------------------- */
+.mh-wipe {
+  position: absolute;
+  inset: 0;
+  translate: 0 100%;
+  transition: translate var(--mh-wipe-duration) var(--ease-wipe);
+}
+
+/* Covering: the cards climb into place, first to last. */
+[data-wipe="covering"] .mh-wipe {
+  translate: 0 0;
+  transition-delay: calc(var(--mh-wipe-index) * var(--mh-wipe-stagger));
+}
+
+/* Covered, and holding. No transition — this is where a page arrived at
+ * through the wipe begins, not something it travels to. */
+[data-wipe="covered"] .mh-wipe {
+  translate: 0 0;
+  transition: none;
+}
+
+/* And out the top, last to first. */
+[data-wipe="revealing"] .mh-wipe {
+  translate: 0 -100%;
+  transition-delay: calc(
+    (var(--mh-wipe-count) - 1 - var(--mh-wipe-index)) * var(--mh-wipe-stagger)
+  );
+}
+
+/* Asked for less motion, the wipe simply does not happen: it carries no
+ * information, and a full-screen colour crossing the view is the single most
+ * disturbing thing on the site for anyone who asked not to see movement.
+ * Navigation still works — the component skips the animation and goes. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-wipe {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
  * Careers photo fan
  *
  * Seven frames that rise from below, settle, and open into a shallow arc. A

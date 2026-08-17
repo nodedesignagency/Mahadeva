@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { BackgroundTransition } from "@/components/motion/BackgroundTransition";
+import { PageTransition, WipeScript } from "@/components/motion/PageTransition";
 
 /**
  * Everything the site wears around a page: the fixed header, the footer, the
@@ -23,8 +24,13 @@ import { BackgroundTransition } from "@/components/motion/BackgroundTransition";
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
+      {/* First, and blocking. A page arrived at through the wipe has to render
+          already covered on its very first paint, and this is the only thing
+          that runs early enough to say so. */}
+      <WipeScript />
       <SmoothScroll />
       <BackgroundTransition />
+      <PageTransition />
       <SkipLink />
       <Header />
       <main id="main">{children}</main>

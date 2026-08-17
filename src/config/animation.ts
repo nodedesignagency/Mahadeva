@@ -878,6 +878,42 @@ export const caseHover = {
 } as const;
 
 /**
+ * The page transition — three cards that wipe the screen between routes.
+ *
+ * A port of the owner's `StackedCardsTransition`. Leaving a page, the cards
+ * climb from below one after another until the screen is covered; arriving,
+ * they carry on upward in the order they landed, so the two halves read as one
+ * pass rather than a cover and an uncover.
+ *
+ * The reversal is the whole effect. The last card in is the first card out, so
+ * the stack is peeled in the order it was laid — run the same order twice and
+ * it reads as a curtain dropped and then dropped again.
+ *
+ * Colours are the site's three accents. That is not decoration: the wipe is the
+ * only thing on screen for half a second, and three colours from anywhere else
+ * would be the one moment the site looked like a different site.
+ */
+export const pageWipe = {
+  /** Milliseconds for one card's travel, on the owner's curve. */
+  duration: 700,
+
+  /** Milliseconds between one card leaving and the next. */
+  stagger: 90,
+
+  /**
+   * Milliseconds the covered screen is held before it opens again.
+   *
+   * Not a flourish. The new page's first paint happens somewhere in here, and
+   * the hold is what keeps that paint behind the cards instead of showing
+   * through the gap between the two animations.
+   */
+  hold: 160,
+
+  /** Cards, so `stagger` can be multiplied without a magic number. */
+  cards: 3,
+} as const;
+
+/**
  * Blog card hover.
  *
  * The case cards' gesture on a smaller object: blocks in the card's own tint
