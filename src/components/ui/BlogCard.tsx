@@ -72,7 +72,7 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
         aria-label={`${readLabel}: ${post.title}`}
       />
 
-      <div className="flex flex-col items-start gap-5 p-6">
+      <div className="flex flex-col items-start gap-5 p-7">
         {/* White on the tint rather than a border: the chip is a label sitting
             on the card's colour, and an outline here would be a third edge in
             a card that already has two. */}
@@ -146,12 +146,17 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
           ))}
         </div>
 
-        {/* The card's one affordance, and the only thing here that is not the
-            tint: white, so it reads against both the photograph and the blocks
-            that slide over it. */}
+        {/* Part of the hover, not of the card. The owner's base variant has no
+            arrow at all, so this waits off the right edge and arrives with the
+            blocks. White, because it lands on the photograph and on the blocks
+            alike and would disappear into either.
+
+            Nothing is lost where there is no pointer to hover with: the whole
+            card is a link and announces itself as one. */}
         <span
           aria-hidden="true"
-          className="absolute right-0 bottom-0 z-30 flex size-12 items-center justify-center bg-bg-white text-fg-on-light"
+          className="mh-post-arrow absolute right-0 bottom-0 z-30 flex size-12 items-center justify-center bg-bg-white text-fg-on-light"
+          style={{ "--mh-post-arrow-from": postHover.arrow.from } as CSSProperties}
         >
           <ArrowUpRight className="size-5" />
         </span>

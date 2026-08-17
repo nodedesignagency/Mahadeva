@@ -902,19 +902,27 @@ export const postHover = {
   imageScale: 1.05,
 
   /**
-   * Three enter from the left and stack into the top corner, two drop into the
-   * top right, and two rise into the foot — so the picture is framed from
-   * three sides and never from all four, which would read as a border closing.
+   * The owner's arrangement: a bar across the top left, a block dropping into
+   * the top right short of the corner, and an L up the left edge — a narrow
+   * strip through the middle that steps out into a wide block at the foot.
+   *
+   * Nothing enters from the right, and that is what keeps it a scatter: a
+   * block on every edge closes a border around the picture instead of
+   * interrupting it.
    */
   rects: [
-    { w: "34%", h: "9%", left: 0, top: 0, dx: "-100%", dy: 0 },
-    { w: "12%", h: "19%", left: 0, top: "9%", dx: "-100%", dy: 0 },
-    { w: "22%", h: "7%", left: 0, top: "28%", dx: "-100%", dy: 0 },
-    { w: "25%", h: "8%", right: "10%", top: 0, dx: 0, dy: "-100%" },
-    { w: "10%", h: "17%", right: 0, top: 0, dx: 0, dy: "-100%" },
-    { w: "12%", h: "18%", left: 0, bottom: 0, dx: "-100%", dy: 0 },
-    { w: "26%", h: "8%", left: "12%", bottom: 0, dx: 0, dy: "100%" },
+    { w: "36%", h: "10%", left: 0, top: 0, dx: "-100%", dy: 0 },
+    { w: "27%", h: "19%", right: "13%", top: 0, dx: 0, dy: "-100%" },
+    { w: "8%", h: "38%", left: 0, top: "29%", dx: "-100%", dy: 0 },
+    { w: "37%", h: "33%", left: 0, bottom: 0, dx: 0, dy: "100%" },
   ],
+
+  /**
+   * The arrow, which belongs to the hover and not to the card. It waits off
+   * the right edge and arrives with the blocks — the resting card carries no
+   * affordance of its own, which is the owner's base variant.
+   */
+  arrow: { from: "100% 0" },
 } as const;
 
 /**
