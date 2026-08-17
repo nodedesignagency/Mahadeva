@@ -884,15 +884,16 @@ export const caseHover = {
  * slide in from the edges and sit over the photograph while the pointer is on
  * it, then retreat. Same curve, same duration, same growing image behind them.
  *
- * Its own rectangles rather than a reuse of `caseHover.rects`, and that is the
- * whole reason this exists. Those are written in the pixels of a 560-wide
- * frame; a blog card's picture is barely half that, so the same numbers land
- * as blocks nearly twice the size relative to what they sit on — a scatter
- * over the artwork becomes a wall across it. These are percentages of the
- * picture, so the arrangement holds at whatever width the grid gives a card.
+ * Its own rectangles rather than a reuse of `caseHover.rects`: those are the
+ * arrangement for a 560-wide frame, and a blog card's picture is barely half
+ * that.
  *
- * Uneven on purpose, like the case cards': an even stagger reads as a
- * mechanical sweep, and clustering arrivals reads as scatter.
+ * Every number below is the owner's, in the pixels of a card at the design
+ * width — where a three-across grid gives each card about 355. Kept as pixels
+ * rather than converted to shares of the picture, because the grid's card is
+ * within a whisker of that at every breakpoint it has: 346 on a phone, 405 on
+ * a tablet, 355 on a desktop. A percentage would be a conversion that buys
+ * nothing and loses the ability to check these against the file.
  */
 export const postHover = {
   /** Shared with the case cards: bezier 0.8, 0, 0.2, 1 over 0.7s. */
@@ -902,27 +903,38 @@ export const postHover = {
   imageScale: 1.05,
 
   /**
-   * The owner's arrangement: a bar across the top left, a block dropping into
-   * the top right short of the corner, and an L up the left edge — a narrow
-   * strip through the middle that steps out into a wide block at the foot.
+   * Each rectangle is given at its *hovered* position — the edges it is
+   * anchored to and the offsets from them — with `dx`/`dy` back to where it
+   * waits. See lib/hoverRect for why that way round.
    *
-   * Nothing enters from the right, and that is what keeps it a scatter: a
-   * block on every edge closes a border around the picture instead of
-   * interrupting it.
+   * The first three are one run along the top right rather than a scatter:
+   * 133, 37 and 0 from the right edge, so they meet exactly, and the middle
+   * one rests a row lower than its neighbours. That offset is the whole shape
+   * — three blocks landing flush would be a bar, and it is the step down and
+   * back up that reads as blocks.
+   *
+   * They also fall different distances, 40 / 80 / 40, so the run assembles
+   * rather than arriving as one piece.
    */
   rects: [
-    { w: "36%", h: "10%", left: 0, top: 0, dx: "-100%", dy: 0 },
-    { w: "27%", h: "19%", right: "13%", top: 0, dx: 0, dy: "-100%" },
-    { w: "8%", h: "38%", left: 0, top: "29%", dx: "-100%", dy: 0 },
-    { w: "37%", h: "33%", left: 0, bottom: 0, dx: 0, dy: "100%" },
+    { w: 37, h: 32, top: 0, right: 0, dx: 0, dy: -40 },
+    { w: 96, h: 32, top: 32, right: 37, dx: 0, dy: -80 },
+    { w: 96, h: 32, top: 0, right: 133, dx: 0, dy: -40 },
+    // A tall bar into the left edge, on the picture's centreline. Centred by
+    // an anchor rather than a transform, since `translate` is spoken for.
+    { w: 32, h: 140, left: 0, top: "calc(50% - 70px)", dx: -40, dy: 0 },
+    // And a square rising into the foot, clear of the corner.
+    { w: 103, h: 103, left: 32, bottom: 0, dx: 0, dy: 110 },
   ],
 
   /**
-   * The arrow, which belongs to the hover and not to the card. It waits off
-   * the right edge and arrives with the blocks — the resting card carries no
-   * affordance of its own, which is the owner's base variant.
+   * The arrow, which belongs to the hover and not to the card: the owner's
+   * base variant carries no affordance of its own. It waits off the right
+   * edge and arrives with the blocks, in the card's own tint — so it is one of
+   * them that happens to hold a mark, which is why it takes their class rather
+   * than carrying a second set of rules.
    */
-  arrow: { from: "100% 0" },
+  arrow: { size: 48, from: "100% 0" },
 } as const;
 
 /**

@@ -146,17 +146,24 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
           ))}
         </div>
 
-        {/* Part of the hover, not of the card. The owner's base variant has no
+        {/* Part of the hover, not of the card: the owner's base variant has no
             arrow at all, so this waits off the right edge and arrives with the
-            blocks. White, because it lands on the photograph and on the blocks
-            alike and would disappear into either.
+            blocks. It is one of them — same class, same tint, same curve —
+            that happens to hold a mark, which is why it carries no rules of
+            its own.
 
             Nothing is lost where there is no pointer to hover with: the whole
             card is a link and announces itself as one. */}
         <span
           aria-hidden="true"
-          className="mh-post-arrow absolute right-0 bottom-0 z-30 flex size-12 items-center justify-center bg-bg-white text-fg-on-light"
-          style={{ "--mh-post-arrow-from": postHover.arrow.from } as CSSProperties}
+          className="mh-case-block right-0 bottom-0 z-30 flex items-center justify-center text-fg-on-light"
+          style={
+            {
+              width: postHover.arrow.size,
+              height: postHover.arrow.size,
+              "--mh-case-from": postHover.arrow.from,
+            } as CSSProperties
+          }
         >
           <ArrowUpRight className="size-5" />
         </span>

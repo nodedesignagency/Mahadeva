@@ -423,18 +423,6 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
   transition: scale var(--mh-case-duration) var(--ease-case-hover);
 }
 
-/* The blog card's arrow. It belongs to the hover rather than to the card —
- * the owner's base variant carries no affordance of its own — so it waits off
- * the right edge and arrives with the blocks, on their curve and duration.
- *
- * Its own class rather than `.mh-case-block`, which paints itself in the
- * card's tint: this one has to be white, because it lands on the photograph
- * and on the blocks alike and would disappear into either. */
-.mh-post-arrow {
-  translate: var(--mh-post-arrow-from);
-  transition: translate var(--mh-case-duration) var(--ease-case-hover);
-}
-
 @media (hover: hover) {
   .group:hover .mh-case-block {
     translate: 0 0;
@@ -442,10 +430,6 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 
   .group:hover .mh-case-cover {
     scale: var(--mh-case-scale);
-  }
-
-  .group:hover .mh-post-arrow {
-    translate: 0 0;
   }
 }
 
