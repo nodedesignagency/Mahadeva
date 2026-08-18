@@ -881,9 +881,9 @@ export const caseHover = {
  * The page transition — three cards that wipe the screen between routes.
  *
  * A port of the owner's `StackedCardsTransition`. Leaving a page, the cards
- * climb from below one after another until the screen is covered; arriving,
- * they carry on upward in the order they landed, so the two halves read as one
- * pass rather than a cover and an uncover.
+ * cross in from the right one after another until the screen is covered;
+ * arriving, they carry on past the left edge in the order they landed, so the
+ * two halves read as one pass rather than a cover and an uncover.
  *
  * The reversal is the whole effect. The last card in is the first card out, so
  * the stack is peeled in the order it was laid — run the same order twice and

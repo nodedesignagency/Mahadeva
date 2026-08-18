@@ -10,7 +10,7 @@ import { pageWipe } from "@/config/animation";
  * Three cards that wipe the screen between pages.
  *
  * A port of the owner's `StackedCardsTransition`. Leaving a page the cards
- * climb from below one after another until the screen is covered; arriving,
+ * cross in from the right one after another until the screen is covered; arriving,
  * they carry on upward in the order they landed. See `pageWipe` for the
  * numbers and `.mh-wipe` in globals.css for the movement.
  *
@@ -51,7 +51,7 @@ const FLAG = "mh-wipe";
 /** A layout effect where there is a layout, and quiet about it where there is not. */
 const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
-/** How long the whole climb takes: one card's travel plus every stagger. */
+/** How long the whole cross takes: one card's travel plus every stagger. */
 const sweep = pageWipe.duration + pageWipe.stagger * (pageWipe.cards - 1);
 
 /**
@@ -98,7 +98,7 @@ export function PageTransition() {
    *
    * Held covered first — the page underneath paints during that hold, which is
    * the point of it — then swept out, and finally the attribute is dropped so
-   * the cards return to waiting below the fold with no transition to watch.
+   * the cards return to waiting off the right edge with no transition to watch.
    */
   function reveal() {
     const root = document.documentElement;
