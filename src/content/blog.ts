@@ -49,6 +49,20 @@ export type PostSection = {
 export type Post = {
   slug: string;
   title: string;
+  /**
+   * The title broken into the lines the post page sets it on.
+   *
+   * The reveal is why this exists rather than letting the column wrap it. A
+   * line's bar is one box sized to that line, so authored breaks give each
+   * line a bar the width of its own words; a title left to wrap is one block,
+   * and every row gets a bar as wide as the longest — bare colour running past
+   * the end of the short line. The case studies carry the same field for the
+   * same reason.
+   *
+   * Optional: a post that arrives without breaks still renders, falling back
+   * to the wrapped block.
+   */
+  titleLines?: readonly string[];
   summary: string;
   category: BlogCategory;
   tone: PostTone;
@@ -104,6 +118,7 @@ export const posts: readonly Post[] = [
   {
     slug: "how-ai-is-changing-everyday-workflows",
     title: "How AI Is Changing Everyday Workflows",
+    titleLines: ["How AI Is Changing", "Everyday Workflows"],
     summary:
       "AI-driven lead scoring boosted conversions by 40% for a growing business.",
     category: "AI Automation",
@@ -141,6 +156,7 @@ export const posts: readonly Post[] = [
   {
     slug: "building-better-processes-with-automation",
     title: "Building Better Processes With Automation",
+    titleLines: ["Building Better Processes", "With Automation"],
     summary:
       "See how automation improves operations and supports business growth.",
     category: "Growth Strategy",
@@ -172,6 +188,7 @@ export const posts: readonly Post[] = [
   {
     slug: "what-automation-looks-like-in-practice",
     title: "What Automation Looks Like in Practice",
+    titleLines: ["What Automation Looks", "Like in Practice"],
     summary: "A practical look at how real teams use automation every day.",
     category: "Marketing AI",
     tone: "rose",
@@ -202,6 +219,7 @@ export const posts: readonly Post[] = [
   {
     slug: "turning-pipeline-admin-into-pipeline-time",
     title: "Turning Pipeline Admin Into Pipeline Time",
+    titleLines: ["Turning Pipeline Admin", "Into Pipeline Time"],
     summary:
       "What a sales team stopped doing by hand, and what it bought them back.",
     category: "Sales Automation",
@@ -233,6 +251,7 @@ export const posts: readonly Post[] = [
   {
     slug: "the-handover-problem-nobody-measures",
     title: "The Handover Problem Nobody Measures",
+    titleLines: ["The Handover Problem", "Nobody Measures"],
     summary:
       "Most delay sits between steps, not inside them. Here is how to see it.",
     category: "Operations",
@@ -264,6 +283,7 @@ export const posts: readonly Post[] = [
   {
     slug: "writing-briefs-a-model-can-actually-use",
     title: "Writing Briefs A Model Can Actually Use",
+    titleLines: ["Writing Briefs A Model", "Can Actually Use"],
     summary:
       "Better output is usually a better brief. A short guide for marketing teams.",
     category: "Marketing AI",

@@ -2,7 +2,7 @@ import { Container } from "@/components/layout/Container";
 import { Parallax } from "@/components/motion/Parallax";
 import { PatternField } from "@/components/motion/PatternField";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { heroParallax, heroTextReveal } from "@/config/animation";
+import { heroParallax, sectionTextRevealDark } from "@/config/animation";
 import type { aboutHeroContent } from "@/content/about";
 
 /**
@@ -60,7 +60,8 @@ export function AboutHero({ content }: AboutHeroProps) {
             as="h1"
             lines={content.headingLines}
             mobileLines={content.headingLinesMobile}
-            settings={heroTextReveal}
+            settings={sectionTextRevealDark}
+            lineStagger={sectionTextRevealDark.lineStagger}
             className="flex flex-col items-start gap-(--space-heading-line) text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
 

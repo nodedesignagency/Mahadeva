@@ -3,7 +3,7 @@ import { Parallax } from "@/components/motion/Parallax";
 import { PatternField } from "@/components/motion/PatternField";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { Button } from "@/components/ui/Button";
-import { heroParallax, heroTextReveal } from "@/config/animation";
+import { heroParallax, sectionTextRevealDark } from "@/config/animation";
 import type { careersHeroContent } from "@/content/careers";
 
 /**
@@ -83,7 +83,8 @@ export function CareersHero({ content }: CareersHeroProps) {
             as="h1"
             lines={content.headingLines}
             mobileLines={content.headingLinesMobile}
-            settings={heroTextReveal}
+            settings={sectionTextRevealDark}
+            lineStagger={sectionTextRevealDark.lineStagger}
             className="mt-6 flex flex-col items-start gap-(--space-heading-line) text-display-xl leading-(--leading-display) tracking-(--tracking-display) font-normal"
           />
 
