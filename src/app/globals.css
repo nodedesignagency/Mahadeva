@@ -500,21 +500,36 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
  * stack is peeled in the order it was laid; the same order twice reads as a
  * curtain dropped and then dropped again.
  * ------------------------------------------------------------------------- */
+/* The resting position, off the right edge, and deliberately without a
+ * transition of its own.
+ *
+ * This is where the cards return to when the attribute is dropped at the end
+ * of a pass — and they are sitting off the *left* edge at that moment, having
+ * just swept out that way. A transition declared here is a transition on that
+ * return, so the cards travel the whole width of the screen a second time and
+ * the wipe appears to run twice.
+ *
+ * A transition is a property of the state being moved *to*, so the two states
+ * that move carry their own and the two that are only ever arrived at
+ * instantly carry none. */
 .mh-wipe {
   position: absolute;
   inset: 0;
   translate: 100% 0;
-  transition: translate var(--mh-wipe-duration) var(--ease-wipe);
 }
 
 /* Covering: the cards cross into place, first to last. */
 [data-wipe="covering"] .mh-wipe {
   translate: 0 0;
+  /* Shorthand first: it resets `transition-delay`, so the stagger below has to
+   * come after it or it is thrown away. */
+  transition: translate var(--mh-wipe-duration) var(--ease-wipe);
   transition-delay: calc(var(--mh-wipe-index) * var(--mh-wipe-stagger));
 }
 
-/* Covered, and holding. No transition — this is where a page arrived at
- * through the wipe begins, not something it travels to. */
+/* Covered, and holding. This is where a page arrived at through the wipe
+ * begins, not something it travels to — stated explicitly so it stays true if
+ * a transition is ever added to the resting rule above. */
 [data-wipe="covered"] .mh-wipe {
   translate: 0 0;
   transition: none;
@@ -523,6 +538,7 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 /* And out past the left edge, last to first. */
 [data-wipe="revealing"] .mh-wipe {
   translate: -100% 0;
+  transition: translate var(--mh-wipe-duration) var(--ease-wipe);
   transition-delay: calc(
     (var(--mh-wipe-count) - 1 - var(--mh-wipe-index)) * var(--mh-wipe-stagger)
   );
