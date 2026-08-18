@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 /**
  * Section-linked page background.
@@ -35,6 +36,15 @@ import { useEffect, useRef } from "react";
  * the machinery is delivering — handing everything back on unmount. If the
  * script never runs, the page is the hard-edged version, never light text
  * stranded on the wrong surface.
+ *
+ * REBUILT PER ROUTE, and that is not an optimisation. This component lives in
+ * the chrome, which outlives the page inside it, so a client-side navigation
+ * swaps every `[data-bg]` section under an observer still watching the old
+ * ones. Nothing then reports, the ink token keeps the surface the *previous*
+ * page ended on, and the new page — which paints its own fill in CSS
+ * regardless — gets the wrong ink on it. Arriving at a dark page from a light
+ * one that way puts ink #0e1e1d on ground #0e1e1d: the text is not dim, it is
+ * absent. It reads as correct on a hard load, which is exactly how it hides.
  */
 
 /**
@@ -56,6 +66,7 @@ const thresholds = Array.from({ length: 21 }, (_, i) => i / 20);
 
 export function BackgroundTransition() {
   const ref = useRef<HTMLSpanElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const marker = ref.current;
@@ -149,7 +160,9 @@ export function BackgroundTransition() {
         rootStyle.removeProperty("--color-fg-dynamic");
       }
     };
-  }, []);
+    // `pathname`: tear the observer down and build it again against the
+    // sections the new page brought with it.
+  }, [pathname]);
 
   // Nothing visual — an inert marker whose only job is locating the tree
   // this component was mounted into.
