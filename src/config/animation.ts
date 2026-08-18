@@ -890,3 +890,50 @@ export const patternField = {
     footerBottom: 16180339,
   },
 } as const;
+
+/**
+ * The page transition — three cards that sweep over the outgoing page and off
+ * the incoming one.
+ *
+ * The owner's component drives this from a Framer project, where every
+ * navigation is a document load: it had to bank a flag in `sessionStorage`,
+ * cover the screen, let the browser load, and then read the flag back on the
+ * new page to know it should sweep off. None of that applies here. The App
+ * Router changes the page in place, so the cover, the route change and the
+ * sweep off are one uninterrupted sequence in a component that never unmounts,
+ * and the flag, the cold-load guard and the stuck-card fallback it needed all
+ * go away with it.
+ *
+ * The colours are the site's, not the component's defaults — those are a
+ * different brand's black, orange and cream. Going pale green → brand green →
+ * ink means the cover lands on the surface most pages open on, so the last
+ * card lifting reads as the new page's own opening rather than a curtain over
+ * it.
+ */
+/** Which way the cards travel across the screen. */
+export type PageTransitionDirection = "vertical" | "horizontal";
+
+export const pageTransition = {
+  /** Cards sweep bottom → top. `horizontal` sends them right → left instead. */
+  direction: "vertical" as PageTransitionDirection,
+
+  /**
+   * In paint order: `cards[0]` leads the cover and is last to leave, so the
+   * one named last is what the screen settles on.
+   */
+  cards: ["var(--mh-green-100)", "var(--mh-green)", "var(--mh-ink)"],
+
+  /** Seconds per card sweep, and the owner's easing curve. */
+  duration: 0.7,
+  ease: [0.76, 0, 0.24, 1],
+
+  /** Milliseconds each card waits behind the one before it. */
+  stagger: 90,
+
+  /**
+   * How long to wait for a route to commit before sweeping off regardless.
+   * A navigation that never arrives would otherwise leave the cards parked
+   * over the page with no way back.
+   */
+  commitTimeout: 4000,
+} as const;

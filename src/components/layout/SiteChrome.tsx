@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { BackgroundTransition } from "@/components/motion/BackgroundTransition";
+import { PageTransition } from "@/components/motion/PageTransition";
 
 /**
  * Everything the site wears around a page: the fixed header, the footer, the
@@ -25,6 +26,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     <>
       <SmoothScroll />
       <BackgroundTransition />
+      <PageTransition />
       <SkipLink />
       <Header />
       <main id="main">{children}</main>
