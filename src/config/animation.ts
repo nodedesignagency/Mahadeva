@@ -895,10 +895,10 @@ export const caseHover = {
  */
 export const pageWipe = {
   /** Milliseconds for one card's travel, on the owner's curve. */
-  duration: 700,
+  duration: 400,
 
   /** Milliseconds between one card leaving and the next. */
-  stagger: 90,
+  stagger: 40,
 
   /**
    * Milliseconds the covered screen is held before it opens again.
