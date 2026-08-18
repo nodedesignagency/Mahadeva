@@ -72,15 +72,10 @@ export function PostHero({ content, index, post }: PostHeroProps) {
                 makes that a 60px face. */}
             <TextReveal
               as="h1"
-              /* Authored breaks where the post has them, so each line's bar is
-                 the width of its own words. `wraps` is the fallback for a post
-                 written without them — one block, a band per row — and it is
-                 wrong to leave on when the breaks exist, since the block is
-                 then the column and every bar runs past the short line. */
-              wraps={!post.titleLines}
-              lines={post.titleLines ? [...post.titleLines] : [post.title]}
+              wraps
+              lines={[post.title]}
               settings={sectionTextReveal}
-              className="flex w-fit max-w-full flex-col items-start gap-(--space-heading-line) text-display-xl leading-[calc(1em+var(--space-heading-line))] tracking-(--tracking-display) font-normal"
+              className="flex flex-col items-start gap-(--space-heading-line) text-display-xl leading-[calc(1em+var(--space-heading-line))] tracking-(--tracking-display) font-normal"
             />
 
             <p className="max-w-[52ch] font-body text-body-md leading-(--leading-prose) text-fg-on-light-muted">
