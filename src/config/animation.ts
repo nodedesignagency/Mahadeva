@@ -914,18 +914,14 @@ export const patternField = {
 export type PageTransitionDirection = "vertical" | "horizontal";
 
 export const pageTransition = {
-  /** Cards sweep right → left. `vertical` sends them bottom → top instead. */
-  direction: "horizontal" as PageTransitionDirection,
+  /** Cards sweep bottom → top. `horizontal` sends them right → left instead. */
+  direction: "vertical" as PageTransitionDirection,
 
   /**
    * In paint order: `cards[0]` leads the cover and is last to leave, so the
-   * one named last is what the screen settles on — peach here.
-   *
-   * The owner's three, as tokens rather than hexes: no component and no config
-   * carries a literal colour, and all three of these already exist in the
-   * palette because the site is built from them.
+   * one named last is what the screen settles on.
    */
-  cards: ["var(--mh-green)", "var(--mh-blue)", "var(--mh-peach)"],
+  cards: ["var(--mh-green-100)", "var(--mh-green)", "var(--mh-ink)"],
 
   /** Seconds per card sweep, and the owner's easing curve. */
   duration: 0.7,
