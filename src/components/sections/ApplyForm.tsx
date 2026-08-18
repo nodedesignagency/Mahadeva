@@ -1,38 +1,42 @@
 "use client";
 
 import { useId, useState } from "react";
-import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
-import type { contactContent } from "@/content/contact";
-import { sendEnquiry } from "@/lib/contact";
+import type { jobDetailContent } from "@/content/careers";
+import { sendApplication } from "@/lib/careers";
 import { cn } from "@/lib/cn";
 
 /**
- * The enquiry form — the white half of the contact panel.
+ * The application form — the white half of the apply panel.
  *
- * A real `<form>` with real labels and a real submit: the browser's own
- * validation does the work, so an empty required field is caught and announced
- * without a line of JavaScript, and the page still submits sensibly if the
- * script never runs.
+ * A real `<form>` with real labels and a real submit, like the enquiry form on
+ * the contact page: the browser's own validation does the work, so an empty
+ * required field is caught and announced without a line of JavaScript.
  *
- * What it collects is here; where it goes is `src/lib/contact.ts`. The split
- * matters — connecting this to a provider should never mean opening a
+ * What it collects is here; where it goes is `src/lib/careers.ts`, which also
+ * carries the warning about an unconfigured endpoint. The split matters —
+ * connecting this to an applicant tracker should never mean opening a
  * component.
+ *
+ * The role travels with the answers, so one endpoint serves all six postings.
  */
 
-type ContactFormProps = {
-  content: typeof contactContent.form;
+type ApplyFormProps = {
+  content: typeof jobDetailContent.apply.form;
+  /** Which posting this is. Submitted alongside the answers. */
+  role: string;
 };
 
 type Status = "idle" | "sending" | "sent" | "failed";
 
 /**
  * One field's shell: white, hairline, and the ink of the surface it sits on.
+ * The contact form's, deliberately — these are inputs on a light panel and
+ * there is no reason for the site to have two kinds.
  *
- * No height here — the two kinds differ. A single-line field is 41 and a text
- * area 100, both the owner's, and both set where they are used rather than
- * overridden from a shared default.
+ * No height here: a single-line field is 41 and a text area taller, and both
+ * are set where they are used rather than overridden from a shared default.
  */
 const field =
   "w-full rounded-(--radius-input) border border-border-on-light bg-bg-white " +
@@ -46,7 +50,7 @@ const line = "h-[41px]";
 
 const label = "font-body text-body-md text-fg-on-light";
 
-export function ContactForm({ content }: ContactFormProps) {
+export function ApplyForm({ content, role }: ApplyFormProps) {
   const id = useId();
   const [status, setStatus] = useState<Status>("idle");
 
@@ -56,22 +60,23 @@ export function ContactForm({ content }: ContactFormProps) {
 
     setStatus("sending");
     try {
-      await sendEnquiry({
+      await sendApplication({
+        role,
         name: String(data.get("name") ?? ""),
         email: String(data.get("email") ?? ""),
-        company: String(data.get("company") ?? ""),
-        budget: String(data.get("budget") ?? ""),
-        message: String(data.get("message") ?? ""),
+        phone: String(data.get("phone") ?? ""),
+        resume: String(data.get("resume") ?? ""),
+        why: String(data.get("why") ?? ""),
       });
       setStatus("sent");
     } catch (error) {
-      console.error("[contact] enquiry failed to send.", error);
+      console.error("[careers] application failed to send.", error);
       setStatus("failed");
     }
   }
 
   // The form is replaced rather than covered: leaving the fields on screen
-  // behind a message invites a second submission of the same enquiry.
+  // behind a message invites a second application for the same role.
   if (status === "sent") {
     return (
       <div
@@ -94,11 +99,10 @@ export function ContactForm({ content }: ContactFormProps) {
     <form
       aria-label={content.label}
       onSubmit={onSubmit}
-      noValidate={false}
-      // The owner's measurements, shared with the application form on a role's
-      // page: 32 top and bottom, 20 either side, and 20 between one field and
-      // the next. The two panels are the same object on two pages and should
-      // not drift apart.
+      // The owner's measurements: 32 top and bottom, 20 either side, and 20
+      // between one field and the next. Flat rather than growing at the tablet
+      // breakpoint — the fields are what should get the width, and the panel
+      // beside it carries the generous padding instead.
       className="flex h-full flex-col gap-5 px-5 py-8"
     >
       <div className="flex flex-col gap-2">
@@ -116,7 +120,7 @@ export function ContactForm({ content }: ContactFormProps) {
         />
       </div>
 
-      {/* Email and company share a row from tablet up, as in the design, and
+      {/* Email and phone share a row from tablet up, as in the design, and
           stack below it — two half-width fields on a phone are unusable. */}
       <div className="flex flex-col gap-6 tablet:flex-row tablet:gap-5">
         <div className="flex flex-1 flex-col gap-2">
@@ -135,64 +139,49 @@ export function ContactForm({ content }: ContactFormProps) {
         </div>
 
         <div className="flex flex-1 flex-col gap-2">
-          <label htmlFor={`${id}-company`} className={label}>
-            {content.fields.company.label}
+          <label htmlFor={`${id}-phone`} className={label}>
+            {content.fields.phone.label}
           </label>
           <input
-            id={`${id}-company`}
-            name="company"
-            type="text"
-            autoComplete="organization"
-            placeholder={content.fields.company.placeholder}
+            id={`${id}-phone`}
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            placeholder={content.fields.phone.placeholder}
             className={cn(field, line)}
           />
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor={`${id}-budget`} className={label}>
-          {content.fields.budget.label}
+        <label htmlFor={`${id}-resume`} className={label}>
+          {content.fields.resume.label}
         </label>
-        {/* The native select, restyled rather than rebuilt. A custom listbox
-            here would be a keyboard and screen-reader surface to maintain for
-            five options, and on a phone the platform picker is better than
-            anything a page can draw. */}
-        <div className="relative">
-          <select
-            id={`${id}-budget`}
-            name="budget"
-            required
-            defaultValue=""
-            className={cn(field, line, "appearance-none pe-11")}
-          >
-            <option value="" disabled>
-              {content.fields.budget.placeholder}
-            </option>
-            {content.budgets.map((budget) => (
-              <option key={budget} value={budget}>
-                {budget}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            aria-hidden="true"
-            className="pointer-events-none absolute end-4 top-1/2 size-5 -translate-y-1/2 text-fg-on-light-muted"
-          />
-        </div>
+        {/* A link rather than an upload. A file input needs somewhere to put
+            the file, and this form posts JSON to an endpoint the owner
+            chooses — a URL is the one thing every provider can take. */}
+        <input
+          id={`${id}-resume`}
+          name="resume"
+          type="url"
+          required
+          placeholder={content.fields.resume.placeholder}
+          className={cn(field, line)}
+        />
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor={`${id}-message`} className={label}>
-          {content.fields.message.label}
+        <label htmlFor={`${id}-why`} className={label}>
+          {content.fields.why.label}
         </label>
         <textarea
-          id={`${id}-message`}
-          name="message"
+          id={`${id}-why`}
+          name="why"
           required
           rows={4}
-          placeholder={content.fields.message.placeholder}
-          // 100 to the owner. `py-3` because a text area, unlike an input,
-          // sets its first line hard against the top edge.
+          placeholder={content.fields.why.placeholder}
+          // `py-3` because a text area, unlike an input, sets its first line
+          // hard against the top edge.
           className={cn(field, "h-[100px] resize-y py-3")}
         />
       </div>

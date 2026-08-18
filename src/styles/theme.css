@@ -187,6 +187,35 @@
    * the site — it belongs to this row and nothing else. */
   --color-team-panel: var(--mh-amber);
 
+  /* The three cards that wipe the screen between pages, in the order they
+   * climb. The site's own accents rather than colours of their own: the wipe
+   * is the only thing on screen for half a second, and anything else would be
+   * the one moment the site looked like a different site. */
+  --color-wipe-1: var(--mh-green); /* 8CFFA7 */
+  --color-wipe-2: var(--mh-blue); /* 80CEFF */
+  --color-wipe-3: var(--mh-peach); /* FFD9A8 */
+
+  /* Blog cards. One tint per card, cycling through the palette's pastels in
+   * the order the index lays them out — the tint is what distinguishes a card,
+   * so it is assigned in content rather than picked in the component.
+   *
+   * A step lighter than the case study panels: a case card is one wide panel
+   * carrying a whole argument, where these are six small heads above six
+   * photographs and a fill that strong would be all anyone saw. */
+  --color-post-sky: var(--mh-blue-25); /* D8F1FF */
+  --color-post-lavender: var(--mh-lavender-50); /* EADFFF */
+  --color-post-rose: var(--mh-rose-50); /* FCE1E9 */
+  --color-post-mint: var(--mh-green-25); /* D9FAE7 */
+  --color-post-peach: var(--mh-peach-50); /* FFF1DF */
+  --color-post-magenta: var(--mh-magenta-25); /* FCDCFA */
+
+  /* The facts card on a role's page: salary, location, and the apply button.
+   * A step deeper than the feature-card tints, which are drawn to sit
+   * six-across on a dark field — this is one panel on white, where a 50 tint
+   * lands within a few points of the page and the card stops reading as a
+   * card at all. */
+  --color-facts-panel: var(--mh-green-75);
+
   /* The checkerboard that slides in on hover: one step deeper than the tile,
    * the same relationship the trust panels' blocks have to theirs. */
   --color-tool-shape-rose: var(--mh-rose-200);
@@ -255,6 +284,16 @@
   --color-border-compare: var(--mh-grey-250);
   /* The comparison button's icon frame: a quiet grey, no border of its own. */
   --color-icon-box-quiet: var(--mh-grey-100);
+  /* The meta chips on a post's page — its category and its date. The same
+   * grey as the icon frame above and its own name all the same: the two are
+   * unrelated objects, and retuning the frame behind an arrow should not
+   * quietly restyle the date on every post. */
+  --color-chip: var(--mh-grey-100);
+  /* The same frame, one step deeper, for the careers list's arrows. The quiet
+   * one is tuned for the comparison table's pastel column heads; on beige it
+   * is within three points of the surface and the frame simply is not there.
+   * Two greys rather than one because the object appears on both. */
+  --color-icon-box: var(--mh-grey-200);
   /* The billing toggle's off-state track and the grey of the pricing cards'
    * "PLAN INCLUDES:" labels. */
   --color-track: var(--mh-grey-250);
@@ -346,6 +385,11 @@
    * flat 22, not the heading clamp beside it, which would set them at 20 on a
    * phone. */
   --text-meta: 1.375rem; /* 22 */
+  /* The facts card on a role's page — salary, location, job type. `--text-meta`
+   * is the same object one page over, and this is its smaller sibling: five
+   * values stacked in a narrow column rather than three across a full row.
+   * Flat, and Geist at medium, for the same reason the meta row is. */
+  --text-fact: 1.25rem; /* 20 */
   --text-body-md: 1rem; /* 16 */
   --text-body-sm: 0.875rem; /* 14 */
   --text-label: 0.75rem; /* 12 */
@@ -366,6 +410,20 @@
    * paragraph and answered to nothing in the design.
    */
   --leading-card: 1.75;
+  /**
+   * Long-form reading matter: a role's description, and the quotation beside
+   * its form.
+   *
+   * 1.75 is right for a paragraph or two on a marketing page, where the copy
+   * is spaced to be scanned. It is loose for a page someone reads top to
+   * bottom — four paragraphs, then two lists — where the eye has to find the
+   * next line rather than the next block.
+   *
+   * A token and not a literal in a class, which is the whole point of the note
+   * above: the moment one paragraph carries its own number, the paragraph
+   * beside it drifts. Anything set at this measure uses this.
+   */
+  --leading-prose: 1.6;
 
   /** Gap between the display heading's lines. */
   --space-heading-line: 4px;
@@ -440,6 +498,19 @@
    * the header's scroll flip; its own token because the two are unrelated and
    * retuning one should not move the other. */
   --ease-case-hover: cubic-bezier(0.8, 0, 0.2, 1);
+
+  /* The careers photo fan, from the owner's transition panel: Framer's "Ease
+   * In Out" preset, bezier 0.44, 0, 0.56, 1, on all four of its states.
+   *
+   * The same curve as --ease-nav-hover, and deliberately not that token: the
+   * nav hover and a four-state entrance have nothing to do with each other,
+   * and retuning one should not silently move the other. */
+  --ease-fan: cubic-bezier(0.44, 0, 0.56, 1);
+
+  /* The page wipe, from the owner's transition panel. Steep through the middle
+   * and almost flat at both ends, which is what lets a card cross the whole
+   * screen in 0.7s without reading as a swipe. */
+  --ease-wipe: cubic-bezier(0.76, 0, 0.24, 1);
 
   --duration-word: 250ms; /* per-word heading reveal, from the original */
   --duration-fast: 180ms;
@@ -529,6 +600,16 @@
   --color-principle-green: var(--color-principle-green);
   --color-principle-magenta: var(--color-principle-magenta);
   --color-team-panel: var(--color-team-panel);
+  --color-facts-panel: var(--color-facts-panel);
+  --color-post-sky: var(--color-post-sky);
+  --color-post-lavender: var(--color-post-lavender);
+  --color-post-rose: var(--color-post-rose);
+  --color-post-mint: var(--color-post-mint);
+  --color-post-peach: var(--color-post-peach);
+  --color-post-magenta: var(--color-post-magenta);
+  --color-wipe-1: var(--color-wipe-1);
+  --color-wipe-2: var(--color-wipe-2);
+  --color-wipe-3: var(--color-wipe-3);
   --color-plan-sky: var(--color-plan-sky);
   --color-plan-lavender: var(--color-plan-lavender);
   --color-plan-peach: var(--color-plan-peach);
@@ -556,6 +637,8 @@
   --color-compare-cell: var(--color-compare-cell);
   --color-border-compare: var(--color-border-compare);
   --color-icon-box-quiet: var(--color-icon-box-quiet);
+  --color-icon-box: var(--color-icon-box);
+  --color-chip: var(--color-chip);
   --color-track: var(--color-track);
   --color-fg-label: var(--color-fg-label);
   --color-accent: var(--color-accent);
@@ -593,6 +676,7 @@
   --text-nav-mobile: var(--text-nav-mobile);
   --text-body-lg: var(--text-body-lg);
   --text-meta: var(--text-meta);
+  --text-fact: var(--text-fact);
   --text-body-md: var(--text-body-md);
   --text-body-sm: var(--text-body-sm);
   --text-label: var(--text-label);
@@ -611,6 +695,8 @@
   --ease-nav-hover: var(--ease-nav-hover);
   --ease-nav-flip: var(--ease-nav-flip);
   --ease-border-reveal: var(--ease-border-reveal);
+  --ease-fan: var(--ease-fan);
+  --ease-wipe: var(--ease-wipe);
   --ease-button-spring: var(--ease-button-spring);
 
   --spacing-section-sm: var(--space-section-sm);

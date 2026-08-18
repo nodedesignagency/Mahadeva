@@ -476,6 +476,169 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Page transition
+ *
+ * Three cards that climb the screen on the way out of a page and carry on
+ * climbing on the way into the next, so the two halves read as one pass.
+ *
+ * The state lives on the document element rather than on the overlay, and that
+ * is what makes the whole thing possible. A page arrived at through the wipe
+ * has to render *already covered*, on its very first paint — and the server
+ * cannot know that, because whether it happened is in sessionStorage. So a
+ * small script sets the attribute before the body is painted, the overlay
+ * itself is plain server-rendered markup parked below the fold, and React never
+ * owns the attribute. There is no state for the server and the client to
+ * disagree about, and no frame of the page showing through.
+ *
+ * `--mh-wipe-index` is the card's place in the stack, set inline. The stagger
+ * is arithmetic in CSS rather than three delays computed in JS — and it runs
+ * *backwards* on the way out. The last card in is the first card out, so the
+ * stack is peeled in the order it was laid; the same order twice reads as a
+ * curtain dropped and then dropped again.
+ * ------------------------------------------------------------------------- */
+.mh-wipe {
+  position: absolute;
+  inset: 0;
+  translate: 0 100%;
+  transition: translate var(--mh-wipe-duration) var(--ease-wipe);
+}
+
+/* Covering: the cards climb into place, first to last. */
+[data-wipe="covering"] .mh-wipe {
+  translate: 0 0;
+  transition-delay: calc(var(--mh-wipe-index) * var(--mh-wipe-stagger));
+}
+
+/* Covered, and holding. No transition — this is where a page arrived at
+ * through the wipe begins, not something it travels to. */
+[data-wipe="covered"] .mh-wipe {
+  translate: 0 0;
+  transition: none;
+}
+
+/* And out the top, last to first. */
+[data-wipe="revealing"] .mh-wipe {
+  translate: 0 -100%;
+  transition-delay: calc(
+    (var(--mh-wipe-count) - 1 - var(--mh-wipe-index)) * var(--mh-wipe-stagger)
+  );
+}
+
+/* Asked for less motion, the wipe simply does not happen: it carries no
+ * information, and a full-screen colour crossing the view is the single most
+ * disturbing thing on the site for anyone who asked not to see movement.
+ * Navigation still works — the component skips the animation and goes. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-wipe {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Careers photo fan
+ *
+ * Seven frames that rise from below, settle, and open into a shallow arc. A
+ * port of the owner's `Image Animation` component; its four variants are the
+ * four `[data-fan]` states below, and every number arrives as a custom
+ * property from `photoFan` in src/config/animation.ts.
+ *
+ * There is no breakpoint here, deliberately. The fan is one object of a fixed
+ * size — seven 184px frames, 1104 wide — and a narrow window clips it at both
+ * edges rather than reflowing it, so the same arrangement and the same
+ * sequence serve every width.
+ *
+ * Two things about the transforms are load-bearing, and both were got wrong
+ * before they were looked at in a browser.
+ *
+ * Every state lists the same functions in the same order. A transition between
+ * two transform lists only interpolates if they match function for function;
+ * drop `scale` from one state and the pile jumps instead of travelling.
+ *
+ * And each frame turns about its own centre. Turning about the foot is the
+ * obvious choice and it is wrong: the feet stay level in theory, but each
+ * frame's lower outside corner rises past its neighbour's and the row's bottom
+ * edge comes out as a staircase of notches. About the centre the corners splay
+ * symmetrically and the overlap closes them.
+ * ------------------------------------------------------------------------- */
+
+/* ── The container ──────────────────────────────────────────────────────────
+ *
+ * The rise, the turn and the scale are all here, on the row itself, because in
+ * the owner's file they belong to the Image Container and not to the frames
+ * inside it.
+ *
+ * Turning the row is only the same thing as turning the pile because the pile
+ * sits on the middle frame, and the middle frame's centre is the row's centre —
+ * which is exactly where the default `transform-origin` is. By the time the
+ * frames leave that spot the row is back at zero degrees, so the two transforms
+ * never fight.
+ *
+ * The resting state is the finished fan: upright, true size, in place. */
+.mh-fan {
+  transform: translateY(0) rotate(0deg) scale(1);
+  transition: transform var(--mh-fan-duration, 0ms) var(--ease-fan);
+}
+
+/* Below its place and turned hard over. No transition — this is where the
+ * sequence starts, not something it travels from. */
+[data-fan="out"] {
+  transform: translateY(var(--mh-fan-lift)) rotate(var(--mh-fan-rotate-out))
+    scale(var(--mh-fan-scale-piled));
+  transition: none;
+}
+
+/* Risen and unwound, still oversized. */
+[data-fan="piled"] {
+  --mh-fan-duration: var(--mh-fan-rise);
+  transform: translateY(0) rotate(var(--mh-fan-rotate-piled))
+    scale(var(--mh-fan-scale-piled));
+}
+
+/* Upright and down to its true size. `open` inherits the same resting
+ * transform, so the settle simply runs on underneath the spread. */
+[data-fan="settled"],
+[data-fan="open"] {
+  --mh-fan-duration: var(--mh-fan-settle);
+}
+
+/* ── The frames ─────────────────────────────────────────────────────────────
+ *
+ * These only ever change position. Each keeps its own angle from the arc at
+ * every stage, piled and fanned alike — that is what shows the pile's edges
+ * and stops seven identical squares reading as one photograph. */
+.mh-fan-card {
+  margin-inline-start: var(--mh-fan-overlap);
+  transform: translateX(0) translateY(var(--mh-fan-drop))
+    rotate(var(--mh-fan-rotate));
+  transition: transform var(--mh-fan-card-duration, 0ms) var(--ease-fan);
+}
+
+/* The first frame has nothing to overlap. Without this the whole row is pulled
+ * off its own left edge by one frame's worth of overlap. */
+.mh-fan-card:first-child {
+  margin-inline-start: 0;
+}
+
+/* Piled: every frame carried back onto the middle one, which is the only one
+ * that never moves — its step is zero. */
+[data-fan="out"] .mh-fan-card,
+[data-fan="piled"] .mh-fan-card,
+[data-fan="settled"] .mh-fan-card {
+  transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
+    translateY(0) rotate(var(--mh-fan-rotate));
+}
+
+[data-fan="out"] .mh-fan-card {
+  transition: none;
+}
+
+/* Opening. All seven together — one container, one transition, no stagger. */
+[data-fan="open"] .mh-fan-card {
+  --mh-fan-card-duration: var(--mh-fan-open);
+}
+
+
+/* ---------------------------------------------------------------------------
  * Testimonial carousel
  *
  * The rectangles' trigger is state, not a pointer: a card plays them when it
