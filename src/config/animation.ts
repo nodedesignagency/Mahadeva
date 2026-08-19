@@ -911,6 +911,23 @@ export const pageWipe = {
 
   /** Cards, so `stagger` can be multiplied without a magic number. */
   cards: 3,
+
+  /**
+   * Milliseconds the cards may stay across the screen with no arrival before
+   * they are opened anyway.
+   *
+   * The wipe covers the screen and then waits to be told the new page is here.
+   * If that never comes — a navigation that stalls, a payload that does not
+   * arrive, anything at all — there is nothing else in the sequence that ever
+   * runs, and the reader is left looking at a full screen of one flat colour
+   * with no way out but a reload. It is the only state this component has that
+   * it cannot leave on its own, and a cover with no way out is the worst thing
+   * it can do.
+   *
+   * Long enough that it never fires on a navigation that is merely slow: the
+   * hold is 160ms and an arrival on a soft navigation is immediate.
+   */
+  rescue: 2500,
 } as const;
 
 /**

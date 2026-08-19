@@ -113,6 +113,25 @@ export function PageTransition() {
     });
   }
 
+  /**
+   * Opens the screen back up when the arrival never came.
+   *
+   * `covered` is the one state this component cannot leave by itself: it waits
+   * to be told the new page is here, and if that never happens — a navigation
+   * that stalls, a payload that never lands — the cards stay across the whole
+   * screen and the only way out is a reload. Reported as a page that simply
+   * would not open, showing one flat colour.
+   *
+   * So entering `covered` always arms this. It is not a substitute for a
+   * navigation working; it is the guarantee that failing to navigate never
+   * costs the reader the page they are already on.
+   */
+  function armRescue() {
+    after(pageWipe.rescue, () => {
+      if (document.documentElement.dataset.wipe === "covered") reveal();
+    });
+  }
+
   // Arriving through a real page load. The attribute the script set has just
   // been reconciled away, so put it back from the flag — which hydration cannot
   // touch — and then open it.
@@ -121,6 +140,7 @@ export function PageTransition() {
     if (flagged[FLAG]) {
       delete flagged[FLAG];
       document.documentElement.dataset.wipe = "covered";
+      armRescue();
     }
     reveal();
     return clearTimers;
@@ -198,8 +218,10 @@ export function PageTransition() {
 
       after(sweep, () => {
         // Covered. Held there by the arriving page, whichever way it arrives:
-        // the flag for a real load, the attribute itself for a soft one.
+        // the flag for a real load, the attribute itself for a soft one — and
+        // by the rescue below if it never arrives at all.
         root.dataset.wipe = "covered";
+        armRescue();
         try {
           sessionStorage.setItem(FLAG, "1");
         } catch {
@@ -218,6 +240,9 @@ export function PageTransition() {
     // Capture, so a link that stops its own bubbling is still caught.
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
+    // `armRescue` closes over nothing that changes, and re-binding the click
+    // listener on every render is what this dependency list exists to avoid.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   return (
