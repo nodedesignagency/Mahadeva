@@ -140,6 +140,27 @@ export function Preloader() {
     }
   }, []);
 
+  // Whatever else happens, the page is left scrollable and the deadline is
+  // taken down.
+  //
+  // Not a detail. A reader who clicks a link while the sheet is still up
+  // unmounts this component mid-run, and every other path out of it — the
+  // decision changing, the last tile landing — is a path this component is
+  // still mounted for. Without this the lock went with them: the page they
+  // arrived at rendered fine and would not scroll, which reads as the page
+  // being stuck rather than as anything to do with the home page they just
+  // left. Reloading cleared it, which is exactly what makes it hard to catch.
+  //
+  // The deadline goes too, or the next page's headings sit and wait out the
+  // remains of a preloader that is no longer on screen.
+  useEffect(
+    () => () => {
+      document.body.style.removeProperty("overflow");
+      delete (window as Flagged)[PRELOAD_UNTIL];
+    },
+    [],
+  );
+
   useEffect(() => {
     // The pass belonging to the render before the decision was made. React
     // still runs it, after the layout effect above; it must touch nothing.
@@ -196,7 +217,15 @@ export function Preloader() {
       // Above the wipe's cards, which are the only other thing that covers the
       // whole screen. On the one frame both exist, the preloader is the outer
       // of the two.
-      className="mh-preload pointer-events-none fixed inset-0 z-[10000] flex flex-col overflow-hidden"
+      //
+      // And it takes the clicks, rather than letting them through as most
+      // decorative overlays here do. A full-screen cover that can be clicked
+      // through is a page whose links can be hit while nobody can see them —
+      // and they are hit before the app has hydrated, when a link is still a
+      // plain anchor and a click on it is a whole page load rather than a
+      // navigation. Blocking for the second it is up costs nothing; the
+      // reader has nothing to aim at yet.
+      className="mh-preload fixed inset-0 z-[10000] flex flex-col overflow-hidden"
       style={
         {
           "--mh-preload-start": `${preloader.start}ms`,
