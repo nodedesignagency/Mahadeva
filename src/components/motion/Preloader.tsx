@@ -37,11 +37,10 @@ import { PRELOAD_UNTIL, preloadHold } from "@/lib/preloadHold";
  *
  * ── Why only the skip has a state ──────────────────────────────────────────
  *
- * Two things must be true before the browser's first paint, and neither is
- * something the server can know: whether this reader has already seen the
- * preloader this session, and whether they have asked for less motion. Both
- * live in the browser, so a blocking script decides and — when the answer is
- * no — writes `data-preloader="skip"` onto `<html>` where CSS can act on it.
+ * One thing must be true before the browser's first paint and the server
+ * cannot know it: whether this reader has asked for less motion. That lives in
+ * the browser, so a blocking script decides and — when the answer is yes —
+ * writes `data-preloader="skip"` onto `<html>` where CSS can act on it.
  *
  * Only that direction. Holding the *run* behind an attribute is the obvious
  * shape and it is wrong: hydration reconciles `<html>` against what the layout
@@ -53,22 +52,39 @@ import { PRELOAD_UNTIL, preloadHold } from "@/lib/preloadHold";
  * never conditional.
  */
 
-/** sessionStorage key, and the window flag. Present means: shown already, don't again. */
-const SEEN = "mh-preload-seen";
+/**
+ * Window flag carrying the blocking script's verdict, for the component to
+ * pick up. Deleted once read: its absence is exactly how the component knows
+ * it is mounting on a soft navigation, where no script ran.
+ */
+const VERDICT = "mh-preload-verdict";
 
 /** A layout effect where there is a layout, and quiet about it where there is not. */
 const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 type Decision = "run" | "skip";
-type Flagged = Window & { [PRELOAD_UNTIL]?: number; [SEEN]?: Decision };
+type Flagged = Window & { [PRELOAD_UNTIL]?: number; [VERDICT]?: Decision };
+
+/** The one thing that stops it running. Read where it is needed, not cached. */
+const asksForLessMotion = () => {
+  try {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch {
+    return false;
+  }
+};
 
 /**
  * Decides, before the body paints, whether the preloader runs.
  *
  * Inline and blocking on purpose. Anything deferred — an effect, a module —
  * runs after the first paint, and on the skip path the first paint is exactly
- * what must not show: the reader would get a flash of a full green screen on
- * their way back to a page they have already seen.
+ * what must not show: a flash of full-screen green at someone who asked for
+ * less motion.
+ *
+ * This only fires on a real page load. A script inserted by React is inserted,
+ * not executed, so arriving at the home page through a link runs none of it —
+ * the component decides for itself in that case. See the layout effect.
  */
 export function PreloaderScript() {
   return (
@@ -77,14 +93,13 @@ export function PreloaderScript() {
       dangerouslySetInnerHTML={{
         __html:
           `(function(){var s="run";try{` +
-          `if(sessionStorage.getItem(${JSON.stringify(SEEN)})||` +
-          `matchMedia("(prefers-reduced-motion: reduce)").matches)s="skip";` +
-          `else sessionStorage.setItem(${JSON.stringify(SEEN)},"1")}catch(e){}` +
+          `if(matchMedia("(prefers-reduced-motion: reduce)").matches)s="skip"` +
+          `}catch(e){}` +
           // Only the skip is written to the document. See the note above.
           `if(s==="skip")document.documentElement.dataset.preloader=s;` +
           // The flag hydration cannot reach: what was decided, and — when it
           // runs — when the cover lifts, so an entrance underneath can wait.
-          `window[${JSON.stringify(SEEN)}]=s;` +
+          `window[${JSON.stringify(VERDICT)}]=s;` +
           `if(s==="run")window[${JSON.stringify(PRELOAD_UNTIL)}]=` +
           `performance.now()+${preloader.run};})();`,
       }}
@@ -99,7 +114,21 @@ export function Preloader() {
   const [decision, setDecision] = useState<Decision | null>(null);
 
   useBeforePaint(() => {
-    const decided = (window as Flagged)[SEEN] === "skip" ? "skip" : "run";
+    const flagged = window as Flagged;
+
+    // Two ways to arrive, and the verdict tells them apart. On a real load the
+    // blocking script left one here; on a soft navigation nothing ran, because
+    // React inserts that script without executing it — so decide now, and
+    // stamp the deadline from here, since here is where the sheet's own
+    // animations are about to start.
+    let decided = flagged[VERDICT];
+    if (decided) {
+      delete flagged[VERDICT];
+    } else {
+      decided = asksForLessMotion() ? "skip" : "run";
+      if (decided === "run") flagged[PRELOAD_UNTIL] = performance.now() + preloader.run;
+    }
+
     setDecision(decided);
 
     if (decided === "run") {

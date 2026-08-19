@@ -931,7 +931,7 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
   }
 }
 
-/* Skipped — already seen this session, or the reader asked for less motion.
+/* Skipped, which now means one thing only: the reader asked for less motion.
  * The attribute is set by a blocking script, so the sheet is out of the way
  * before the first paint rather than removed after one. Hydration takes the
  * attribute off again, but the component unmounts the sheet in that same

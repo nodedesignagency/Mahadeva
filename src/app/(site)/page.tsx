@@ -37,9 +37,10 @@ export default async function HomePage() {
   return (
     <>
       {/* First, and blocking: it decides before the body paints whether the
-          preloader runs at all, and the sheet must not flash on the visit
-          where it does not. Home only — a preloader on the fifth page a
-          reader opens is a door held shut on someone already inside. */}
+          preloader runs at all, and the sheet must not flash at a reader who
+          asked for less motion. Home only — a preloader on the fifth page a
+          reader opens is a door held shut on someone already inside — but
+          every time home is opened, including through a link back to it. */}
       <PreloaderScript />
       <Preloader />
 
