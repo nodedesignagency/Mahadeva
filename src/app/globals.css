@@ -958,3 +958,66 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * The strategy-call card's hover.
+ *
+ * Two things move, and the card is neither of them. Numbers in `ctaCardHover`,
+ * set on the card as custom properties.
+ * ------------------------------------------------------------------------- */
+
+/* The fill, as its own layer.
+ *
+ * It cannot be the card's own background: a background is exactly the box it
+ * paints, so there is nothing there to grow. A layer can be told to sit two
+ * pixels outside its parent on every side, which is what the file asks for —
+ * 378x80 at inset 0 becoming 382x84 at inset -2. Stated as the overhang rather
+ * than the size, since the card is fluid here and only the overhang is fixed. */
+.mh-cta-fill {
+  inset: 0;
+  transition: inset var(--mh-cta-duration) var(--ease-out);
+}
+
+.mh-cta-card:hover .mh-cta-fill,
+.mh-cta-card:focus-visible .mh-cta-fill {
+  inset: calc(var(--mh-cta-grow) * -1);
+}
+
+/* The arrow is replaced, not moved.
+ *
+ * One leaves through the top right corner while another arrives from the
+ * bottom left, each travelling the same distance, so the corner is never empty
+ * and never shows the same mark twice. The corner clips them, which is what
+ * makes it read as a swap rather than as two arrows sliding around. */
+.mh-cta-arrow-out {
+  transform: translate(0, 0);
+  transition: transform var(--mh-cta-duration) var(--ease-out);
+}
+
+.mh-cta-arrow-in {
+  transform: translate(
+    calc(var(--mh-cta-travel) * -1),
+    var(--mh-cta-travel)
+  );
+  transition: transform var(--mh-cta-duration) var(--ease-out);
+}
+
+.mh-cta-card:hover .mh-cta-arrow-out,
+.mh-cta-card:focus-visible .mh-cta-arrow-out {
+  transform: translate(var(--mh-cta-travel), calc(var(--mh-cta-travel) * -1));
+}
+
+.mh-cta-card:hover .mh-cta-arrow-in,
+.mh-cta-card:focus-visible .mh-cta-arrow-in {
+  transform: translate(0, 0);
+}
+
+/* Asked for less motion, the card still answers the pointer — the fill and the
+ * arrow simply arrive rather than travelling. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-cta-fill,
+  .mh-cta-arrow-out,
+  .mh-cta-arrow-in {
+    transition-duration: 1ms;
+  }
+}

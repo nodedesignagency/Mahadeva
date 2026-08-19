@@ -1033,6 +1033,37 @@ export const preloader = {
 } as const;
 
 /**
+ * The strategy-call card's hover.
+ *
+ * Two things move, and neither is the card itself. Every number is the
+ * owner's, off the component's panels.
+ *
+ * The fill grows. At rest it is the card exactly — 378 x 80 at inset 0 — and
+ * on hover it is 382 x 84 at inset -2, so it swells two pixels past every
+ * edge. Stated as the inset rather than the size, because the card is fluid
+ * here and only the overhang is fixed.
+ *
+ * And the arrow is replaced rather than moved. One leaves through the top
+ * right corner while a second arrives from the bottom left, both travelling
+ * the same 15px the file gives them, so the corner is never empty and never
+ * shows the same mark twice.
+ */
+export const ctaCardHover = {
+  /** Pixels the fill overhangs each edge on hover. Framer: inset 0 to -2. */
+  grow: 2,
+
+  /**
+   * Pixels each arrow travels. The one leaving goes up and to the right by
+   * this much; the one arriving starts down and to the left by the same, and
+   * lands on centre.
+   */
+  arrowTravel: 15,
+
+  /** Milliseconds, shared by both. The site's hover duration. */
+  duration: 250,
+} as const;
+
+/**
  * Blog card hover.
  *
  * The case cards' gesture on a smaller object: blocks in the card's own tint

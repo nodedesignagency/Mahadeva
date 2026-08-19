@@ -186,7 +186,16 @@ export const trustContent = {
       tone: "magenta",
     },
   ],
-  logosCaption: "Trusted by leading companies in tech, finance and e-commerce.",
+  /**
+   * The strip's caption, broken where the owner's file breaks it rather than
+   * where the measure happens to run out. Two lines at every width: it sits
+   * beside a marquee whose height it sets, and a third line on a narrow
+   * laptop pushed the row out of true.
+   */
+  logosCaptionLines: [
+    "Trusted by leading companies in",
+    "tech, finance and e-commerce.",
+  ],
   /**
    * Client marks. `src` is absent until the files land, and the strip draws a
    * named placeholder at the right height in the meantime, so the row's rhythm
