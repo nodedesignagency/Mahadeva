@@ -181,6 +181,14 @@ export function PageTransition() {
       // them.
       if (url.pathname === window.location.pathname) return;
 
+      // The home page brings its own cover. Running both means the cards
+      // cross, and then the preloader's sheet appears over them from a
+      // standing start while they are still on screen — the wipe visibly
+      // stops half way and something else takes over. The preloader is the
+      // better handover of the two, and it is the one the reader is meant to
+      // see, so this one steps aside.
+      if (url.pathname === "/") return;
+
       const root = document.documentElement;
       if (root.dataset.wipe) return;
 
