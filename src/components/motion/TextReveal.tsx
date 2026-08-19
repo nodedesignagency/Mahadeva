@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "motion/react";
 import type { TextRevealSettings } from "@/config/animation";
+import { preloadHold } from "@/lib/preloadHold";
 import { cn } from "@/lib/cn";
 
 /**
@@ -349,7 +350,12 @@ function RevealLine({ text, settings, reduced, extraDelay, wraps = false, classN
       };
     };
 
-    const start = () => timers.push(setTimeout(run, delay + extraDelay));
+    // Plus whatever is left of the preloader. A heading behind a full-screen
+    // cover is in view immediately, so left alone it reveals itself while
+    // nobody can see it and the cover lifts on a heading that has already
+    // arrived. Zero on every page and every navigation that is not covered.
+    const start = () =>
+      timers.push(setTimeout(run, delay + extraDelay + preloadHold()));
     let observer: IntersectionObserver | undefined;
 
     if (trigger === "inView") {

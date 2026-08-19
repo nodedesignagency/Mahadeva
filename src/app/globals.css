@@ -827,3 +827,125 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
     inset 0 1px 0 rgb(255 255 255 / 0.95),
     inset 0 -2px 3px rgb(0 0 0 / 0.06);
 }
+
+/* ---------------------------------------------------------------------------
+ * The preloader.
+ *
+ * A sheet of green over the whole page, tiled into rectangles that each swipe
+ * themselves out along their own axis. Every position and every timing is
+ * here; the component holds only the decision about whether it runs at all.
+ *
+ * It is CSS and not the motion library for one reason, and it is the reason
+ * the whole component exists: a preloader has to be finished 1.7 seconds after
+ * the reader sees it, and everything JavaScript can start begins at hydration
+ * instead — a few hundred milliseconds later on this bundle, and later still
+ * on a cold connection, which is exactly the case a preloader is for. An
+ * animation declared here starts when the sheet paints.
+ *
+ * ── Why nothing below is behind a state ────────────────────────────────────
+ *
+ * The obvious shape is to hold the run behind `[data-preloader="run"]` on the
+ * document, set by a blocking script. It does not work, and the way it fails
+ * is worth recording: hydration reconciles `<html>` against what the layout
+ * rendered and takes anything else on it away, which *cancels* every animation
+ * below, and putting the attribute back *restarts* them from zero. The whole
+ * run silently re-anchors itself to hydration — measured at 2.0s end to end
+ * instead of 1.7s, with the sheet cut off a quarter of the way through its
+ * swipe because the component was still counting from the first paint.
+ *
+ * So the run is unconditional and it is the *skip* that carries a state. An
+ * animation nothing can cancel keeps the clock it started on.
+ *
+ * `--mh-preload-delay` is the tile's own offset, set inline. Everything else
+ * is set once on the overlay from the config.
+ * ------------------------------------------------------------------------- */
+
+/* The sheet at rest: whole, and covering. This is what the server renders and
+ * what the first paint shows, so no state has to be reached for the page to be
+ * hidden — only for it to be uncovered.
+ *
+ * The outline is not decoration. Tiles divide the viewport by flex weight, so
+ * their edges land on fractional pixels and the page shows through the
+ * rounding as a hairline between every pair of them — a dark grid ruled across
+ * the cover, plainly visible on the measured frame. A one-pixel outline in the
+ * tile's own colour closes the gaps, and being an outline it scales away with
+ * the transform instead of surviving as a hairline of its own. */
+.mh-preload-tile {
+  transform: scale(1);
+  outline: 1px solid var(--color-preloader);
+}
+
+.mh-preload-tile-x {
+  animation: mh-preload-out-x var(--mh-preload-collapse) var(--ease-preload)
+    calc(var(--mh-preload-start) + var(--mh-preload-delay)) forwards;
+}
+
+.mh-preload-tile-y {
+  animation: mh-preload-out-y var(--mh-preload-collapse) var(--ease-preload)
+    calc(var(--mh-preload-start) + var(--mh-preload-delay)) forwards;
+}
+
+@keyframes mh-preload-out-x {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes mh-preload-out-y {
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/* The wordmark arrives, holds, and is gone before the sheet starts to come
+ * apart — so the two never move at once.
+ *
+ * Two animations rather than one set of keyframes because the hold between
+ * them is a configured number, not a percentage: expressing it as keyframe
+ * stops would mean computing them from the run and rewriting them whenever the
+ * run changed. `forwards` and no backwards fill is what makes the pair
+ * compose — the second contributes nothing until its delay elapses, and then
+ * wins by being later in the list. */
+.mh-preload-word {
+  animation:
+    mh-preload-word-in var(--mh-preload-word-fade) var(--ease-out) forwards,
+    mh-preload-word-out var(--mh-preload-word-fade) var(--ease-out)
+      var(--mh-preload-word-out) forwards;
+}
+
+@keyframes mh-preload-word-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mh-preload-word-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Skipped — already seen this session, or the reader asked for less motion.
+ * The attribute is set by a blocking script, so the sheet is out of the way
+ * before the first paint rather than removed after one. Hydration takes the
+ * attribute off again, but the component unmounts the sheet in that same
+ * commit, so nothing is uncovered between the two. */
+[data-preloader="skip"] .mh-preload {
+  display: none;
+}
+
+/* A full-screen colour is the most disturbing thing this site can do to
+ * someone who asked for less motion, and a preloader carries no information
+ * they would lose. The script already skips it; this is the backstop for a
+ * preference that changes while the page is open. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-preload {
+    display: none;
+  }
+}

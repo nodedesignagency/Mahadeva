@@ -914,6 +914,96 @@ export const pageWipe = {
 } as const;
 
 /**
+ * The preloader.
+ *
+ * A sheet of green over the whole page with the wordmark on it, which then
+ * comes apart: the sheet is tiled into rectangles of unequal size and each one
+ * swipes itself out of existence along its own axis, in its own direction, a
+ * moment after its neighbours. The page is underneath the whole time.
+ *
+ * The four numbers below are the owner's Framer component, read off its
+ * panels rather than guessed:
+ *
+ *   Start  ──(On Appear, delay 0.7s)──▶  Variant 3  ──(delay 0.5s)──▶  End
+ *
+ * Start is the sheet with the wordmark, Variant 3 is the sheet without it, and
+ * End is the tiles gone. So the wordmark leaves at 0.7s, the tiles begin
+ * leaving at 1.2s, and the whole thing is over at 1.7s — the run the owner
+ * gives it.
+ *
+ * That last figure is the constraint the rest has to satisfy, and it is why
+ * the stagger is bounded rather than free: the last tile to start still has to
+ * finish inside the run, so `start + maxStagger + collapse` is exactly `run`.
+ * Widening the stagger without shortening the swipe pushes the end past 1.7s,
+ * which is visible as a lone rectangle hanging over the hero.
+ */
+export const preloader = {
+  /** Milliseconds from first paint to the overlay being gone. */
+  run: 1700,
+
+  /** Milliseconds the wordmark takes to arrive, and later to leave. */
+  wordmarkFade: 340,
+
+  /** Framer: On Appear → delay 0.7s → Variant 3. The wordmark starts leaving. */
+  wordmarkOut: 700,
+
+  /** Framer: Variant 3 → delay 0.5s → End. The first tile starts leaving. */
+  start: 1200,
+
+  /** Milliseconds one tile takes to swipe from full to nothing. */
+  collapse: 340,
+
+  /**
+   * Milliseconds a tile's start may be offset by.
+   *
+   * Bounded by the run, as above. The offsets themselves are spread evenly
+   * across this window and then shuffled rather than sampled independently —
+   * see `lib/preloader`.
+   */
+  maxStagger: 160,
+
+  /**
+   * The same 0.3/0.7 pair as the heading wipe and the pattern field, and a
+   * bezier rather than a spring for the same reason the field gives: a spring
+   * approaches zero asymptotically and leaves a hairline of green behind on
+   * every tile.
+   */
+  ease: [0.3, 0, 0.7, 1] as const,
+
+  /** Rows the sheet is divided into, top to bottom. */
+  rows: 6,
+
+  /** Tiles laid along each row, sampled per row. */
+  tilesPerRow: { min: 4, max: 6 },
+
+  /**
+   * Relative row heights and tile widths. Sampled per row and per tile and
+   * used as flex weights, so the sheet fills whatever viewport it is given and
+   * the tiles keep their proportions rather than their pixels. The spread is
+   * wide on purpose — the reference has rectangles from roughly a twelfth of
+   * the screen to nearly a third, and a narrow spread reads as a grid.
+   */
+  rowWeight: { min: 0.6, max: 1.5 },
+  tileWeight: { min: 0.6, max: 1.8 },
+
+  /**
+   * Milliseconds past the run before the sheet is taken out of the document
+   * regardless.
+   *
+   * A backstop and not the normal path: the component retires the sheet when
+   * the tile that lands last says it has landed, and falls back to this only
+   * where that never arrives — reduced motion switched on mid-run, or
+   * animations disabled outright. Generous on purpose, since by then the sheet
+   * is transparent and takes no clicks, and the only thing still riding on it
+   * is the scroll lock.
+   */
+  settle: 500,
+
+  /** Fixed, so the server and the client lay out the same sheet. */
+  seed: 20260819,
+} as const;
+
+/**
  * Blog card hover.
  *
  * The case cards' gesture on a smaller object: blocks in the card's own tint

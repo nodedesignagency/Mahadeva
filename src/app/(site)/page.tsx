@@ -9,6 +9,7 @@ import { BeforeAfter } from "@/components/sections/BeforeAfter";
 import { Pricing } from "@/components/sections/Pricing";
 import { Faq } from "@/components/sections/Faq";
 import { PageSurface } from "@/components/layout/PageSurface";
+import { Preloader, PreloaderScript } from "@/components/motion/Preloader";
 import {
   aboutContent,
   beforeAfterContent,
@@ -35,6 +36,13 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* First, and blocking: it decides before the body paints whether the
+          preloader runs at all, and the sheet must not flash on the visit
+          where it does not. Home only — a preloader on the fifth page a
+          reader opens is a door held shut on someone already inside. */}
+      <PreloaderScript />
+      <Preloader />
+
       {/* Dark over the hero, light from the moment the reader is past it. */}
       <PageSurface value="hero" />
 
