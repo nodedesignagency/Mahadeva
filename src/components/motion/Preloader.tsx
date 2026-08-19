@@ -234,7 +234,7 @@ export function Preloader() {
       ))}
 
       <div className="absolute inset-0 grid place-items-center">
-        <span className="mh-preload-word font-display text-display-md tracking-(--tracking-display) text-preloader-fg opacity-0">
+        <span className="mh-preload-word font-display text-display-md tracking-(--tracking-display) text-preloader-fg">
           {siteConfig.shortName}
         </span>
       </div>
