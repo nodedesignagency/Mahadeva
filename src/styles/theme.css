@@ -527,6 +527,26 @@
    * green for the frames it took to get there. */
   --ease-preload: cubic-bezier(0.3, 0, 0.7, 1);
 
+  /* The preloader wordmark's entrance. The owner's Enter Effect is a spring —
+   * Based On Time, Time 1s, Bounce 0.2 — and a bezier cannot be one: the
+   * overshoot past the resting position and the settle back are the whole
+   * character of it.
+   *
+   * So the curve is the spring itself, sampled from the same motion library
+   * the rest of the site animates with (`spring({duration: 1000, bounce:
+   * 0.2})`) and thinned to the stops below, which track it to within 0.003.
+   * It peaks at 1.0142 — that is the bounce, and it is why the values run
+   * past 1. */
+  --ease-preload-word: linear(
+    0 0%, 0.001 0.5%, 0.0039 1%, 0.0085 1.5%, 0.0147 2%, 0.0224 2.5%,
+    0.0315 3%, 0.0418 3.5%, 0.0533 4%, 0.0659 4.5%, 0.0937 5.5%,
+    0.1247 6.5%, 0.1581 7.5%, 0.2115 9%, 0.4375 15%, 0.5096 17%,
+    0.5608 18.5%, 0.6093 20%, 0.6548 21.5%, 0.6971 23%, 0.7361 24.5%,
+    0.7718 26%, 0.8044 27.5%, 0.8338 29%, 0.8602 30.5%, 0.8838 32%,
+    0.9111 34%, 0.9341 36%, 0.9532 38%, 0.9722 40.5%, 0.9891 43.5%,
+    1.0036 47.5%, 1.0142 54.5%, 1 100%
+  );
+
   --duration-word: 250ms; /* per-word heading reveal, from the original */
   --duration-fast: 180ms;
   --duration-hover: 250ms;
@@ -714,6 +734,7 @@
   --ease-border-reveal: var(--ease-border-reveal);
   --ease-fan: var(--ease-fan);
   --ease-preload: var(--ease-preload);
+  --ease-preload-word: var(--ease-preload-word);
   --ease-wipe: var(--ease-wipe);
   --ease-button-spring: var(--ease-button-spring);
 

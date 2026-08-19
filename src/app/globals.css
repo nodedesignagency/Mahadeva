@@ -897,17 +897,38 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
   }
 }
 
-/* The wordmark is on the sheet from the first frame, and leaves before the
- * sheet starts to come apart — so the two never move at once.
+/* The wordmark arrives, holds, and is gone before the sheet starts to come
+ * apart — so the two never move at once.
  *
- * It does not fade in. The first thing on screen is the cover *with the name
- * on it*, which is the opening the owner's component holds as its Start
- * variant; fading it up means the first frame is a bare green field and the
- * name arrives late, which reads as the page still loading rather than as the
- * site introducing itself. */
+ * It rises into place rather than fading on the spot: the owner's Enter
+ * Effect, opacity 0 and 80 on Y, on the spring in `--ease-preload-word`. A
+ * plain fade at the same duration read as the page being slow to draw; the
+ * movement is what makes it an entrance.
+ *
+ * Two animations rather than one set of keyframes because the hold between
+ * them is a configured number, not a percentage: expressing it as keyframe
+ * stops would mean computing them from the run and rewriting them whenever
+ * any of it changed. `forwards` and no backwards fill is what makes the pair
+ * compose — the second contributes nothing until its delay elapses, and then
+ * wins on opacity by being later in the list, while the transform stays where
+ * the first one left it. */
 .mh-preload-word {
-  animation: mh-preload-word-out var(--mh-preload-word-fade) var(--ease-out)
-    var(--mh-preload-word-out) forwards;
+  animation:
+    mh-preload-word-in var(--mh-preload-word-in) var(--ease-preload-word)
+      forwards,
+    mh-preload-word-out var(--mh-preload-word-fade) var(--ease-out)
+      var(--mh-preload-word-out) forwards;
+}
+
+@keyframes mh-preload-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--mh-preload-word-rise));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes mh-preload-word-out {

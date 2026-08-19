@@ -201,6 +201,8 @@ export function Preloader() {
         {
           "--mh-preload-start": `${preloader.start}ms`,
           "--mh-preload-collapse": `${preloader.collapse}ms`,
+          "--mh-preload-word-in": `${preloader.wordmarkIn}ms`,
+          "--mh-preload-word-rise": `${preloader.wordmarkRise}px`,
           "--mh-preload-word-fade": `${preloader.wordmarkFade}ms`,
           "--mh-preload-word-out": `${preloader.wordmarkOut}ms`,
         } as CSSProperties

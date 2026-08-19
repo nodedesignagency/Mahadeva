@@ -941,7 +941,19 @@ export const preloader = {
   /** Milliseconds from first paint to the overlay being gone. */
   run: 1700,
 
-  /** Milliseconds the wordmark takes to arrive, and later to leave. */
+  /**
+   * The wordmark's entrance, from the owner's Enter Effect panel: opacity 0,
+   * offset 80 on Y, on a spring of Time 1s and Bounce 0.2.
+   *
+   * The spring is `--ease-preload-word`; these are the two numbers it drives.
+   * A second is the spring's *settle*, not its reading — it is past 0.6 by
+   * 200ms and past 0.85 by 300ms, so the name is legible almost at once and
+   * only the last of the overshoot is still moving when it starts to leave.
+   */
+  wordmarkIn: 1000,
+  wordmarkRise: 80,
+
+  /** Milliseconds the wordmark takes to leave. */
   wordmarkFade: 340,
 
   /** Framer: On Appear → delay 0.7s → Variant 3. The wordmark starts leaving. */
