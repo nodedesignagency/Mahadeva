@@ -42,7 +42,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Self-contained preview bundles from scripts/build-preview.mjs. The script
-# takes an outfile, so match the shape rather than the two default names — a
-# 80MB bundle for another route is exactly as unwelcome in a commit.
+# Self-contained preview bundles from scripts/build-preview.mjs and
+# scripts/build-artifact.mjs. Both take an outfile, so match the shape rather
+# than the default names — a 12MB bundle is exactly as unwelcome in a commit.
 /preview*.html
+/site*.html
