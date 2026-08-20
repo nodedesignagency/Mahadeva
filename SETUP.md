@@ -1,7 +1,8 @@
 # Connecting the CMS
 
-The site runs without this. Out of the box it renders three demo case studies,
-so you can install, start it, and see the finished design immediately:
+The site runs without this. Out of the box it renders demo case studies and
+demo posts, so you can install, start it, and see the finished design
+immediately:
 
 ```
 npm install
@@ -15,13 +16,21 @@ about twenty minutes and you only do it once.
 
 ## What you are setting up
 
-Case studies are stored in **Sanity**, a hosted CMS with a free tier. The
-editing interface is not a separate site — it is served from this project at
-`/studio`, so it deploys with everything else and can never fall out of step
-with the code.
+Case studies and blog posts are stored in **Sanity**, a hosted CMS with a free
+tier. The editing interface is not a separate site — it is served from this
+project at `/studio`, so it deploys with everything else and can never fall out
+of step with the code.
 
-The fields you will see there are defined in `sanity/schema.ts`. They already
-exist; nothing about the schema needs importing or configuring.
+The two live in **two datasets**: `production` for the case studies and `blog`
+for the posts. A dataset is a separate content database, and keeping the blog in
+its own means it can be exported, restored or handed to a writer without
+touching anything else. Both fit inside the free plan's two.
+
+`/studio` therefore opens on a workspace picker — **Case studies** and **Blog** —
+and you can switch between them at any time from the menu at the top left.
+
+The fields you will see are defined in `sanity/schema/`, one file per dataset.
+They already exist; nothing about the schema needs importing or configuring.
 
 ---
 
@@ -42,6 +51,12 @@ npx sanity init --create-project "Your Site Name" --dataset production
 When it asks whether to add configuration files, say **no** — this project
 already has them.
 
+Then add the second dataset, which is where the blog lives:
+
+```
+npx sanity dataset create blog
+```
+
 Note the **project ID** it prints. It looks like `7k3n2p9x`. You can find it
 again any time at [sanity.io/manage](https://www.sanity.io/manage).
 
@@ -56,6 +71,9 @@ Open `.env.local` and set:
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
 ```
+
+The two dataset names are already filled in and only need changing if you named
+yours something else.
 
 ## 4. Allow your site to talk to Sanity
 
@@ -72,8 +90,9 @@ wrong.
 
 ## 5. Load the demo content
 
-Your new project is empty. This copies the three demo case studies into it so
-you have something to edit rather than a blank screen.
+Your new project is empty. This copies the demo case studies and the demo posts
+into it — each into its own dataset — so you have something to edit rather than a
+blank screen.
 
 Create a token at [sanity.io/manage](https://www.sanity.io/manage) → your
 project → **API** → **Tokens** → **Add API token**, with **Editor**
@@ -98,16 +117,18 @@ and the site never reads it.
 npm run dev
 ```
 
-Go to <http://localhost:3000/studio>. Your case studies are there. Edit one,
-press **Publish**, and the change appears on the site.
+Go to <http://localhost:3000/studio>. Pick **Case studies** or **Blog**. Your
+content is there — edit something, press **Publish**, and the change appears on
+the site.
 
 ## 7. Deploying
 
-Set the same two variables in your hosting provider's environment settings:
+Set the same variables in your hosting provider's environment settings:
 
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID
 NEXT_PUBLIC_SANITY_DATASET
+NEXT_PUBLIC_SANITY_BLOG_DATASET
 ```
 
 A local `.env.local` file is not uploaded, so missing this is why a site works
@@ -117,7 +138,8 @@ on your machine and shows demo content once deployed.
 
 ## Editing case studies
 
-At `/studio`, **Case Study** in the sidebar. Each one has:
+At `/studio`, the **Case studies** workspace, then **Case Study** in the
+sidebar. Each one has:
 
 | Field | Notes |
 | --- | --- |
@@ -135,11 +157,35 @@ Changes appear on the live site within a minute of publishing.
 
 ---
 
+## Editing posts
+
+At `/studio`, the **Blog** workspace, then **Post** in the sidebar. Each one has:
+
+| Field | Notes |
+| --- | --- |
+| **Title** | The headline on the card and at the top of the post. |
+| **URL** | Generated from the title. Press *Generate* if it is blank. |
+| **Summary** | Two lines on the card. Over ~140 characters it pushes the card's foot down. |
+| **Category** | Which filter chip the post answers to. The row is set in `src/content/blog.ts`. |
+| **Card colour** | The tint behind the card. |
+| **Published** | Sets the order of the index — newest first. |
+| **Date, as it is written** | Optional. Left empty, the date above is written out as `Jan 2, 2026`. |
+| **Author** | A name, and optionally a portrait. |
+| **Cover** | The picture in the card and at the head of the post. |
+| **Body** | The post itself, as a run of headed sections. |
+
+---
+
 ## If something is wrong
 
-**The site shows demo case studies after I set everything up.**
+**The site shows demo content after I set everything up.**
 The project ID is missing or wrong in the environment. On a deployed site,
 check the host's environment variables, not `.env.local`.
+
+**The case studies are mine but the blog is still the demo posts.**
+The `blog` dataset is missing, empty, or named something else. The site falls
+back to the demo posts whenever it cannot read any, and says so in the server
+log as `[blog] Sanity query failed`.
 
 **`/studio` says the CMS is not connected.**
 `NEXT_PUBLIC_SANITY_PROJECT_ID` is not set. Restart the dev server after
@@ -149,9 +195,11 @@ editing `.env.local` — environment variables are read at startup.
 Step 4. Add the exact origin you are visiting, including `http://` or
 `https://` and the port.
 
-**`npm run seed` says the dataset does not exist.**
+**`npm run seed` says a dataset does not exist.**
+It names the one it could not write to. Create it and run the seed again:
 ```
 npx sanity dataset create production
+npx sanity dataset create blog
 ```
 
 **I want to start over.**

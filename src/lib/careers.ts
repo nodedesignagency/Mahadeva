@@ -3,11 +3,10 @@ import { openingsContent, type Role } from "@/content/careers";
 /**
  * The one place the rest of the app asks about open roles.
  *
- * Deliberately not the CMS. Sanity's free tier carries two datasets and the
- * case studies already hold one; the second is being kept for the blog, which
- * is the thing on this site that will actually be written to weekly. A role
- * opens a handful of times a year and closing one is a commit — see the note
- * in src/content/careers.ts.
+ * Deliberately not the CMS, and not for want of room: a dataset holds as many
+ * document types as it likes, so roles could sit beside either the case studies
+ * or the posts. They are here because a role opens a handful of times a year
+ * and closing one is a commit — see the note in src/content/careers.ts.
  *
  * The shape here is the same as `lib/case-studies` presents, so if a role ever
  * does move into a CMS this file changes and no component does.
