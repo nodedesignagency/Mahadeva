@@ -49,7 +49,7 @@ export function Faq({ content }: FaqProps) {
               are `.mh-cta-*` in globals.css; the numbers are `ctaCardHover`. */}
           <Link
             href={content.cta.href}
-            className="mh-cta-card group relative mt-16 flex w-full max-w-[26rem] items-center gap-5 p-4 pr-14 desktop:mt-auto"
+            className="mh-cta-card relative mt-16 flex w-full max-w-[26rem] items-center gap-4 p-2 desktop:mt-auto"
             style={
               {
                 "--mh-cta-grow": `${ctaCardHover.grow}px`,
@@ -71,13 +71,19 @@ export function Faq({ content }: FaqProps) {
             />
 
             {/* Portrait placeholder until the photo lands — it keeps the
-                card's geometry so the file is a drop-in. */}
+                card's geometry so the file is a drop-in. Square, and the
+                height of the content box: 64 inside 8px of padding is the
+                card's 80, and it is the portrait that sets that rather than
+                the words beside it. */}
             <span
               aria-hidden="true"
-              className="relative block size-14 shrink-0 bg-placeholder"
+              className="relative block size-16 shrink-0 bg-placeholder"
             />
-            <span className="relative flex flex-col gap-1">
-              <span className="font-display text-heading-md text-fg-on-light">
+            <span className="relative flex flex-col gap-2">
+              {/* A heading at the body's leading is half a line taller than it
+                  should be, which is enough to push this column past the
+                  portrait and make the card set its own height. */}
+              <span className="font-display text-heading-md leading-(--leading-heading) text-fg-on-light">
                 {content.cta.title}
               </span>
               <span className="font-body text-body-md text-fg-on-light">
