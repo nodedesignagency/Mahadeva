@@ -40,7 +40,8 @@ export function Faq({ content }: FaqProps) {
           </p>
 
           {/* The whole card is the link. The arrow rides its top right corner
-              in a bordered box, the same cut-out language as the buttons.
+              in a box of its own, filled with the ink at a tenth rather than
+              outlined — the same cut-out language as the buttons.
 
               Two things move on hover and the card is neither: the fill swells
               a couple of pixels past every edge, and the arrow is replaced —
@@ -59,8 +60,15 @@ export function Faq({ content }: FaqProps) {
           >
             {/* The fill is its own layer because it has to be able to outgrow
                 the card. On the card itself there is nothing to grow — a
-                background is the box. */}
-            <span aria-hidden="true" className="mh-cta-fill absolute bg-bg-white" />
+                background is the box.
+
+                Which is also why the card's radius lives here: this layer is
+                the card as far as the eye is concerned, and rounding the link
+                instead would round nothing. */}
+            <span
+              aria-hidden="true"
+              className="mh-cta-fill absolute rounded-(--radius-button) bg-bg-white"
+            />
 
             {/* Portrait placeholder until the photo lands — it keeps the
                 card's geometry so the file is a drop-in. */}
@@ -78,10 +86,15 @@ export function Faq({ content }: FaqProps) {
             </span>
 
             {/* The corner clips both arrows, which is what makes one leave and
-                the other arrive rather than both simply sliding about. */}
+                the other arrive rather than both simply sliding about.
+
+                It carries the card's radius on the one corner it shares with
+                it. The card cannot clip its own children — the fill has to be
+                free to grow past it — so the corner is rounded here instead of
+                inherited. */}
             <span
               aria-hidden="true"
-              className="absolute top-0 right-0 flex size-8 items-center justify-center overflow-hidden border border-border-on-light bg-bg-white"
+              className="absolute top-0 right-0 flex size-8 items-center justify-center overflow-hidden rounded-tr-(--radius-button) bg-fg-on-light/10"
             >
               <ArrowUpRight className="mh-cta-arrow-out absolute size-4 text-fg-on-light" />
               <ArrowUpRight className="mh-cta-arrow-in absolute size-4 text-fg-on-light" />

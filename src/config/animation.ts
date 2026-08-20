@@ -1056,8 +1056,14 @@ export const ctaCardHover = {
    * Pixels each arrow travels. The one leaving goes up and to the right by
    * this much; the one arriving starts down and to the left by the same, and
    * lands on centre.
+   *
+   * Far enough to park the arriving arrow outside the corner box entirely,
+   * which is the whole point of clipping it: at 15 a corner of it sat in the
+   * box's own corner at rest and the card showed two arrows. A 16px arrow
+   * centred in a 32px box clears at 24 — the 8px of slack on that side plus
+   * its own width.
    */
-  arrowTravel: 15,
+  arrowTravel: 24,
 
   /** Milliseconds, shared by both. The site's hover duration. */
   duration: 250,
