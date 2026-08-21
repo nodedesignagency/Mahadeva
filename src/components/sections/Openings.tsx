@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useId, useMemo, useState } from "react";
-import { ArrowUpRight, ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
+import { ButtonArrow } from "@/components/ui/SiteIcons";
 
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -240,7 +241,7 @@ function RoleRow({ role, applyLabel }: { role: Role; applyLabel: string }) {
         aria-hidden="true"
         className="flex size-11 shrink-0 items-center justify-center rounded-(--radius-icon) bg-icon-box text-fg-on-light"
       >
-        <ArrowUpRight className="size-5" />
+        <ButtonArrow className="size-5" />
       </span>
     </Link>
   );

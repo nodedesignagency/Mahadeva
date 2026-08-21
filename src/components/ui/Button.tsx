@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ButtonArrow } from "@/components/ui/SiteIcons";
 import { cn } from "@/lib/cn";
 import { buttonSweep } from "@/config/animation";
 
@@ -161,7 +161,7 @@ function Inner({
             iconBoxes[variant],
           )}
         >
-          <ArrowUpRight className="size-4" />
+          <ButtonArrow className="size-4" />
         </span>
       ) : null}
     </>

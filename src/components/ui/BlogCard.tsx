@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ButtonArrow } from "@/components/ui/SiteIcons";
 
 import { postHover } from "@/config/animation";
 import type { Post, PostTone } from "@/content/blog";
@@ -171,7 +171,7 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
             } as CSSProperties
           }
         >
-          <ArrowUpRight className="size-5" />
+          <ButtonArrow className="size-5" />
         </span>
       </div>
     </article>

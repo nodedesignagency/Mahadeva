@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { CarouselArrowLeft, CarouselArrowRight } from "@/components/ui/SiteIcons";
 import { useInView } from "motion/react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -84,13 +84,13 @@ export function Testimonials({ content }: TestimonialsProps) {
             {[
               {
                 label: content.controls.previous,
-                Icon: ArrowLeft,
+                Icon: CarouselArrowLeft,
                 to: shown - 1,
                 off: shown === 0,
               },
               {
                 label: content.controls.next,
-                Icon: ArrowRight,
+                Icon: CarouselArrowRight,
                 to: shown + 1,
                 off: shown === last,
               },

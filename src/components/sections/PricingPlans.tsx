@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, CircleCheck, Rocket, Zap } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import Image, { type StaticImageData } from "next/image";
 import NumberFlow from "@number-flow/react";
+// Named for the plan they belong to rather than what they show, as the feature
+// card artwork is: launch is the bolt, scale the rocket, enterprise the
+// building.
+import enterpriseMark from "@public/uploads/icons/plan-enterprise.png";
+import launchMark from "@public/uploads/icons/plan-launch.png";
+import scaleMark from "@public/uploads/icons/plan-scale.png";
+import tick from "@public/uploads/icons/tick-circled-ink.png";
 import { BillingToggle } from "@/components/ui/BillingToggle";
 import { Button } from "@/components/ui/Button";
 import type { PlanIcon, PlanTone, pricingContent } from "@/content/pricing";
@@ -32,19 +38,25 @@ const tones: Record<PlanTone, { strip: string; border: string }> = {
   peach: { strip: "bg-plan-peach", border: "border-plan-peach" },
 };
 
-const icons: Record<PlanIcon, LucideIcon> = {
-  launch: Zap,
-  scale: Rocket,
-  enterprise: Building2,
+/**
+ * Plan to mark. These are the owner's exports rather than icon-font glyphs, so
+ * unlike everything else on the page they carry their own colour — ink, fixed.
+ * That holds here because a plan header is a pastel strip and the includes list
+ * a white card; both are light, and neither ever inverts. An icon that has to
+ * follow the surface has to be inline instead — see `SiteIcons`.
+ */
+const icons: Record<PlanIcon, StaticImageData> = {
+  launch: launchMark,
+  scale: scaleMark,
+  enterprise: enterpriseMark,
 };
 
 /** The coloured strip both cards and the enterprise panel open with. */
 function PlanHeader({ name, tone, icon }: { name: string; tone: PlanTone; icon: PlanIcon }) {
-  const Icon = icons[icon];
   return (
     <header className={cn("flex items-center justify-between px-4 py-3", tones[tone].strip)}>
       <p className="font-body text-body-md text-fg-on-light">{name}</p>
-      <Icon aria-hidden="true" className="size-5 text-fg-on-light" />
+      <Image src={icons[icon]} alt="" aria-hidden sizes="20px" className="size-5" />
     </header>
   );
 }
@@ -53,7 +65,7 @@ function PlanHeader({ name, tone, icon }: { name: string; tone: PlanTone; icon: 
 function Feature({ children }: { children: string }) {
   return (
     <li className="flex items-center gap-3">
-      <CircleCheck aria-hidden="true" className="size-5 shrink-0 text-fg-on-light" />
+      <Image src={tick} alt="" aria-hidden sizes="20px" className="size-5 shrink-0" />
       <span className="font-body text-[1rem] font-normal text-fg-on-light">{children}</span>
     </li>
   );

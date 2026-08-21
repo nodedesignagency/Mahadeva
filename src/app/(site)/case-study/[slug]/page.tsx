@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
-import { ArrowUpRight } from "lucide-react";
+import { ButtonArrow } from "@/components/ui/SiteIcons";
 import { Container } from "@/components/layout/Container";
 import { PageSurface } from "@/components/layout/PageSurface";
 import { PatternField } from "@/components/motion/PatternField";
@@ -248,7 +248,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                     className="inline-flex items-center gap-1.5 font-body text-body-md transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-60"
                   >
                     {t.livePreview}
-                    <ArrowUpRight aria-hidden="true" className="size-4" />
+                    <ButtonArrow aria-hidden="true" className="size-4" />
                   </a>
                 ) : null}
               </div>

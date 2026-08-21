@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ButtonArrow } from "@/components/ui/SiteIcons";
 import { Container } from "@/components/layout/Container";
 import { Accordion } from "@/components/motion/Accordion";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -102,8 +102,8 @@ export function Faq({ content }: FaqProps) {
               aria-hidden="true"
               className="absolute top-0 right-0 flex size-8 items-center justify-center overflow-hidden rounded-tr-(--radius-button) bg-fg-on-light/10"
             >
-              <ArrowUpRight className="mh-cta-arrow-out absolute size-4 text-fg-on-light" />
-              <ArrowUpRight className="mh-cta-arrow-in absolute size-4 text-fg-on-light" />
+              <ButtonArrow className="mh-cta-arrow-out absolute size-4 text-fg-on-light" />
+              <ButtonArrow className="mh-cta-arrow-in absolute size-4 text-fg-on-light" />
             </span>
           </Link>
         </div>

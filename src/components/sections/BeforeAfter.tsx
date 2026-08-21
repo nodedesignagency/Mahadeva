@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Check, X } from "lucide-react";
+import Image, { type StaticImageData } from "next/image";
 import {
   motion,
   useReducedMotion,
   useScroll,
   useTransform,
 } from "motion/react";
+import cross from "@public/uploads/icons/cross-circled-white.png";
+import tick from "@public/uploads/icons/tick-circled-ink.png";
 import { beforeAfter } from "@/config/animation";
 import type { CompareTone, beforeAfterContent } from "@/content/home";
 import { cn } from "@/lib/cn";
@@ -42,10 +44,18 @@ const surfaces: Record<CompareTone, string> = {
   light: "bg-quote-green text-fg-on-light",
 };
 
-/** And the ring each item's icon sits in, which follows the surface. */
-const rings: Record<CompareTone, string> = {
-  dark: "border-fg/20 text-fg",
-  light: "border-fg-on-light/20 text-fg-on-light",
+/**
+ * And the mark each item carries. The owner's exports draw their own ring, so
+ * these replace the bordered circle that used to hold a bare tick rather than
+ * sitting inside it — nesting one in the other gives two concentric rings.
+ *
+ * One is white and one is ink, which is the whole reason there are two files:
+ * the columns never swap surfaces, so each mark only ever has to be the one
+ * colour it was exported at.
+ */
+const marks: Record<CompareTone, StaticImageData> = {
+  dark: cross,
+  light: tick,
 };
 
 /**
@@ -190,18 +200,13 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                   <ul className="flex flex-col gap-7">
                     {column.items.map((item) => (
                       <li key={item.title} className="flex items-start gap-4">
-                        <span
-                          className={cn(
-                            "flex size-10 shrink-0 items-center justify-center rounded-full border",
-                            rings[column.tone],
-                          )}
-                        >
-                          {column.tone === "dark" ? (
-                            <X aria-hidden="true" className="size-4" />
-                          ) : (
-                            <Check aria-hidden="true" className="size-4" />
-                          )}
-                        </span>
+                        <Image
+                          src={marks[column.tone]}
+                          alt=""
+                          aria-hidden
+                          sizes="40px"
+                          className="size-10 shrink-0"
+                        />
 
                         <div className="flex flex-col gap-1.5">
                           <p className="font-body text-heading-md">
