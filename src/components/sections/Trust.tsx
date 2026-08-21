@@ -154,8 +154,13 @@ export function Trust({ content }: TrustProps) {
         </ul>
 
         <div className="mt-15 flex flex-col gap-8 tablet:flex-row tablet:items-center tablet:gap-16">
-          <p className="text-ink-dynamic max-w-[24ch] shrink-0 font-body text-body-sm">
-            {content.logosCaption}
+          {/* Broken where the file breaks it, not where the measure runs out:
+              the caption sets this row's height beside the marquee, and a
+              line more or less moves the marquee with it. */}
+          <p className="text-ink-dynamic flex shrink-0 flex-col font-body text-body-sm">
+            {content.logosCaptionLines.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
           </p>
 
           <div className="mh-marquee-frame no-scrollbar min-w-0 flex-1 overflow-hidden">

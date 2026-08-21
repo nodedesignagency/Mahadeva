@@ -476,6 +476,189 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
 }
 
 /* ---------------------------------------------------------------------------
+ * Page transition
+ *
+ * Three cards that cross the screen on the way out of a page and carry on
+ * crossing on the way into the next, so the two halves read as one pass.
+ *
+ * Right to left, and the axis is the only thing that decides it: the cards
+ * wait off the right edge, come to rest over the page, and leave past the
+ * left. Nothing else in here knows which way they travel.
+ *
+ * The state lives on the document element rather than on the overlay, and that
+ * is what makes the whole thing possible. A page arrived at through the wipe
+ * has to render *already covered*, on its very first paint — and the server
+ * cannot know that, because whether it happened is in sessionStorage. So a
+ * small script sets the attribute before the body is painted, the overlay
+ * itself is plain server-rendered markup parked off the right edge, and React never
+ * owns the attribute. There is no state for the server and the client to
+ * disagree about, and no frame of the page showing through.
+ *
+ * `--mh-wipe-index` is the card's place in the stack, set inline. The stagger
+ * is arithmetic in CSS rather than three delays computed in JS — and it runs
+ * *backwards* on the way out. The last card in is the first card out, so the
+ * stack is peeled in the order it was laid; the same order twice reads as a
+ * curtain dropped and then dropped again.
+ * ------------------------------------------------------------------------- */
+/* The resting position, off the right edge, and deliberately without a
+ * transition of its own.
+ *
+ * This is where the cards return to when the attribute is dropped at the end
+ * of a pass — and they are sitting off the *left* edge at that moment, having
+ * just swept out that way. A transition declared here is a transition on that
+ * return, so the cards travel the whole width of the screen a second time and
+ * the wipe appears to run twice.
+ *
+ * A transition is a property of the state being moved *to*, so the two states
+ * that move carry their own and the two that are only ever arrived at
+ * instantly carry none. */
+.mh-wipe {
+  position: absolute;
+  inset: 0;
+  translate: 100% 0;
+}
+
+/* Covering: the cards cross into place, first to last. */
+[data-wipe="covering"] .mh-wipe {
+  translate: 0 0;
+  /* Shorthand first: it resets `transition-delay`, so the stagger below has to
+   * come after it or it is thrown away. */
+  transition: translate var(--mh-wipe-duration) var(--ease-wipe);
+  transition-delay: calc(var(--mh-wipe-index) * var(--mh-wipe-stagger));
+}
+
+/* Covered, and holding. This is where a page arrived at through the wipe
+ * begins, not something it travels to — stated explicitly so it stays true if
+ * a transition is ever added to the resting rule above. */
+[data-wipe="covered"] .mh-wipe {
+  translate: 0 0;
+  transition: none;
+}
+
+/* And out past the left edge, last to first. */
+[data-wipe="revealing"] .mh-wipe {
+  translate: -100% 0;
+  transition: translate var(--mh-wipe-duration) var(--ease-wipe);
+  transition-delay: calc(
+    (var(--mh-wipe-count) - 1 - var(--mh-wipe-index)) * var(--mh-wipe-stagger)
+  );
+}
+
+/* Asked for less motion, the wipe simply does not happen: it carries no
+ * information, and a full-screen colour crossing the view is the single most
+ * disturbing thing on the site for anyone who asked not to see movement.
+ * Navigation still works — the component skips the animation and goes. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-wipe {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Careers photo fan
+ *
+ * Seven frames that rise from below, settle, and open into a shallow arc. A
+ * port of the owner's `Image Animation` component; its four variants are the
+ * four `[data-fan]` states below, and every number arrives as a custom
+ * property from `photoFan` in src/config/animation.ts.
+ *
+ * There is no breakpoint here, deliberately. The fan is one object of a fixed
+ * size — seven 184px frames, 1104 wide — and a narrow window clips it at both
+ * edges rather than reflowing it, so the same arrangement and the same
+ * sequence serve every width.
+ *
+ * Two things about the transforms are load-bearing, and both were got wrong
+ * before they were looked at in a browser.
+ *
+ * Every state lists the same functions in the same order. A transition between
+ * two transform lists only interpolates if they match function for function;
+ * drop `scale` from one state and the pile jumps instead of travelling.
+ *
+ * And each frame turns about its own centre. Turning about the foot is the
+ * obvious choice and it is wrong: the feet stay level in theory, but each
+ * frame's lower outside corner rises past its neighbour's and the row's bottom
+ * edge comes out as a staircase of notches. About the centre the corners splay
+ * symmetrically and the overlap closes them.
+ * ------------------------------------------------------------------------- */
+
+/* ── The container ──────────────────────────────────────────────────────────
+ *
+ * The rise, the turn and the scale are all here, on the row itself, because in
+ * the owner's file they belong to the Image Container and not to the frames
+ * inside it.
+ *
+ * Turning the row is only the same thing as turning the pile because the pile
+ * sits on the middle frame, and the middle frame's centre is the row's centre —
+ * which is exactly where the default `transform-origin` is. By the time the
+ * frames leave that spot the row is back at zero degrees, so the two transforms
+ * never fight.
+ *
+ * The resting state is the finished fan: upright, true size, in place. */
+.mh-fan {
+  transform: translateY(0) rotate(0deg) scale(1);
+  transition: transform var(--mh-fan-duration, 0ms) var(--ease-fan);
+}
+
+/* Below its place and turned hard over. No transition — this is where the
+ * sequence starts, not something it travels from. */
+[data-fan="out"] {
+  transform: translateY(var(--mh-fan-lift)) rotate(var(--mh-fan-rotate-out))
+    scale(var(--mh-fan-scale-piled));
+  transition: none;
+}
+
+/* Risen and unwound, still oversized. */
+[data-fan="piled"] {
+  --mh-fan-duration: var(--mh-fan-rise);
+  transform: translateY(0) rotate(var(--mh-fan-rotate-piled))
+    scale(var(--mh-fan-scale-piled));
+}
+
+/* Upright and down to its true size. `open` inherits the same resting
+ * transform, so the settle simply runs on underneath the spread. */
+[data-fan="settled"],
+[data-fan="open"] {
+  --mh-fan-duration: var(--mh-fan-settle);
+}
+
+/* ── The frames ─────────────────────────────────────────────────────────────
+ *
+ * These only ever change position. Each keeps its own angle from the arc at
+ * every stage, piled and fanned alike — that is what shows the pile's edges
+ * and stops seven identical squares reading as one photograph. */
+.mh-fan-card {
+  margin-inline-start: var(--mh-fan-overlap);
+  transform: translateX(0) translateY(var(--mh-fan-drop))
+    rotate(var(--mh-fan-rotate));
+  transition: transform var(--mh-fan-card-duration, 0ms) var(--ease-fan);
+}
+
+/* The first frame has nothing to overlap. Without this the whole row is pulled
+ * off its own left edge by one frame's worth of overlap. */
+.mh-fan-card:first-child {
+  margin-inline-start: 0;
+}
+
+/* Piled: every frame carried back onto the middle one, which is the only one
+ * that never moves — its step is zero. */
+[data-fan="out"] .mh-fan-card,
+[data-fan="piled"] .mh-fan-card,
+[data-fan="settled"] .mh-fan-card {
+  transform: translateX(calc(var(--mh-fan-step) * var(--mh-fan-advance)))
+    translateY(0) rotate(var(--mh-fan-rotate));
+}
+
+[data-fan="out"] .mh-fan-card {
+  transition: none;
+}
+
+/* Opening. All seven together — one container, one transition, no stagger. */
+[data-fan="open"] .mh-fan-card {
+  --mh-fan-card-duration: var(--mh-fan-open);
+}
+
+
+/* ---------------------------------------------------------------------------
  * Testimonial carousel
  *
  * The rectangles' trigger is state, not a pointer: a card plays them when it
@@ -643,4 +826,198 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
     0 1px 2px rgb(0 0 0 / 0.16),
     inset 0 1px 0 rgb(255 255 255 / 0.95),
     inset 0 -2px 3px rgb(0 0 0 / 0.06);
+}
+
+/* ---------------------------------------------------------------------------
+ * The preloader.
+ *
+ * A sheet of green over the whole page, tiled into rectangles that each swipe
+ * themselves out along their own axis. Every position and every timing is
+ * here; the component holds only the decision about whether it runs at all.
+ *
+ * It is CSS and not the motion library for one reason, and it is the reason
+ * the whole component exists: a preloader has to be finished 1.7 seconds after
+ * the reader sees it, and everything JavaScript can start begins at hydration
+ * instead — a few hundred milliseconds later on this bundle, and later still
+ * on a cold connection, which is exactly the case a preloader is for. An
+ * animation declared here starts when the sheet paints.
+ *
+ * ── Why nothing below is behind a state ────────────────────────────────────
+ *
+ * The obvious shape is to hold the run behind `[data-preloader="run"]` on the
+ * document, set by a blocking script. It does not work, and the way it fails
+ * is worth recording: hydration reconciles `<html>` against what the layout
+ * rendered and takes anything else on it away, which *cancels* every animation
+ * below, and putting the attribute back *restarts* them from zero. The whole
+ * run silently re-anchors itself to hydration — measured at 2.0s end to end
+ * instead of 1.7s, with the sheet cut off a quarter of the way through its
+ * swipe because the component was still counting from the first paint.
+ *
+ * So the run is unconditional and it is the *skip* that carries a state. An
+ * animation nothing can cancel keeps the clock it started on.
+ *
+ * `--mh-preload-delay` is the tile's own offset, set inline. Everything else
+ * is set once on the overlay from the config.
+ * ------------------------------------------------------------------------- */
+
+/* The sheet at rest: whole, and covering. This is what the server renders and
+ * what the first paint shows, so no state has to be reached for the page to be
+ * hidden — only for it to be uncovered.
+ *
+ * The outline is not decoration. Tiles divide the viewport by flex weight, so
+ * their edges land on fractional pixels and the page shows through the
+ * rounding as a hairline between every pair of them — a dark grid ruled across
+ * the cover, plainly visible on the measured frame. A one-pixel outline in the
+ * tile's own colour closes the gaps, and being an outline it scales away with
+ * the transform instead of surviving as a hairline of its own. */
+.mh-preload-tile {
+  transform: scale(1);
+  outline: 1px solid var(--color-preloader);
+}
+
+.mh-preload-tile-x {
+  animation: mh-preload-out-x var(--mh-preload-collapse) var(--ease-preload)
+    calc(var(--mh-preload-start) + var(--mh-preload-delay)) forwards;
+}
+
+.mh-preload-tile-y {
+  animation: mh-preload-out-y var(--mh-preload-collapse) var(--ease-preload)
+    calc(var(--mh-preload-start) + var(--mh-preload-delay)) forwards;
+}
+
+@keyframes mh-preload-out-x {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes mh-preload-out-y {
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/* The wordmark arrives, holds, and is gone before the sheet starts to come
+ * apart — so the two never move at once.
+ *
+ * It rises into place rather than fading on the spot: the owner's Enter
+ * Effect, opacity 0 and 80 on Y, on the spring in `--ease-preload-word`. A
+ * plain fade at the same duration read as the page being slow to draw; the
+ * movement is what makes it an entrance.
+ *
+ * Two animations rather than one set of keyframes because the hold between
+ * them is a configured number, not a percentage: expressing it as keyframe
+ * stops would mean computing them from the run and rewriting them whenever
+ * any of it changed. `forwards` and no backwards fill is what makes the pair
+ * compose — the second contributes nothing until its delay elapses, and then
+ * wins on opacity by being later in the list, while the transform stays where
+ * the first one left it. */
+.mh-preload-word {
+  animation:
+    mh-preload-word-in var(--mh-preload-word-in) var(--ease-preload-word)
+      forwards,
+    mh-preload-word-out var(--mh-preload-word-fade) var(--ease-out)
+      var(--mh-preload-word-out) forwards;
+}
+
+@keyframes mh-preload-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--mh-preload-word-rise));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mh-preload-word-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Skipped, which now means one thing only: the reader asked for less motion.
+ * The attribute is set by a blocking script, so the sheet is out of the way
+ * before the first paint rather than removed after one. Hydration takes the
+ * attribute off again, but the component unmounts the sheet in that same
+ * commit, so nothing is uncovered between the two. */
+[data-preloader="skip"] .mh-preload {
+  display: none;
+}
+
+/* A full-screen colour is the most disturbing thing this site can do to
+ * someone who asked for less motion, and a preloader carries no information
+ * they would lose. The script already skips it; this is the backstop for a
+ * preference that changes while the page is open. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-preload {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * The strategy-call card's hover.
+ *
+ * Two things move, and the card is neither of them. Numbers in `ctaCardHover`,
+ * set on the card as custom properties.
+ * ------------------------------------------------------------------------- */
+
+/* The fill, as its own layer.
+ *
+ * It cannot be the card's own background: a background is exactly the box it
+ * paints, so there is nothing there to grow. A layer can be told to sit two
+ * pixels outside its parent on every side, which is what the file asks for —
+ * 378x80 at inset 0 becoming 382x84 at inset -2. Stated as the overhang rather
+ * than the size, since the card is fluid here and only the overhang is fixed. */
+.mh-cta-fill {
+  inset: 0;
+  transition: inset var(--mh-cta-duration) var(--ease-out);
+}
+
+.mh-cta-card:hover .mh-cta-fill,
+.mh-cta-card:focus-visible .mh-cta-fill {
+  inset: calc(var(--mh-cta-grow) * -1);
+}
+
+/* The arrow is replaced, not moved.
+ *
+ * One leaves through the top right corner while another arrives from the
+ * bottom left, each travelling the same distance, so the corner is never empty
+ * and never shows the same mark twice. The corner clips them, which is what
+ * makes it read as a swap rather than as two arrows sliding around. */
+.mh-cta-arrow-out {
+  transform: translate(0, 0);
+  transition: transform var(--mh-cta-duration) var(--ease-out);
+}
+
+.mh-cta-arrow-in {
+  transform: translate(
+    calc(var(--mh-cta-travel) * -1),
+    var(--mh-cta-travel)
+  );
+  transition: transform var(--mh-cta-duration) var(--ease-out);
+}
+
+.mh-cta-card:hover .mh-cta-arrow-out,
+.mh-cta-card:focus-visible .mh-cta-arrow-out {
+  transform: translate(var(--mh-cta-travel), calc(var(--mh-cta-travel) * -1));
+}
+
+.mh-cta-card:hover .mh-cta-arrow-in,
+.mh-cta-card:focus-visible .mh-cta-arrow-in {
+  transform: translate(0, 0);
+}
+
+/* Asked for less motion, the card still answers the pointer — the fill and the
+ * arrow simply arrive rather than travelling. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-cta-fill,
+  .mh-cta-arrow-out,
+  .mh-cta-arrow-in {
+    transition-duration: 1ms;
+  }
 }

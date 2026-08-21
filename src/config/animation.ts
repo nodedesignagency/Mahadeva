@@ -319,6 +319,125 @@ export const markParallax = {
 } as const;
 
 /**
+ * The careers page's photo fan, assembling itself.
+ *
+ * A port of the owner's `Image Animation` component, which is four variants
+ * stepped through on appear:
+ *
+ *   Out         the frames are not there
+ *   In          all seven land in one square, stacked on top of one another
+ *   Scale Down  the pile shrinks
+ *   Expand      the frames spread out into the arc
+ *
+ * The third beat is the point of the whole thing. A stack that simply opens
+ * reads as a transition; a stack that draws breath first and *then* opens
+ * reads as a gesture, and the shrink is that breath.
+ *
+ * ── The geometry ───────────────────────────────────────────────────────────
+ *
+ * The frames are 184x184 and Fixed in the Framer file, and they stay 184 at
+ * every width — the fan is one object of a fixed size that the section simply
+ * clips as the window narrows, rather than an arrangement that reflows. On a
+ * phone that means the outermost frames are cut off by the window's edges,
+ * which is the owner's design and not an overflow to be solved.
+ *
+ * 184 is not arbitrary. The content row at the design width is 1104, and
+ * 1104/6 is exactly 184: seven frames at a sixth of the row, each lapping the
+ * one before it by a sixth of its own width, span the row to the pixel. So the
+ * fan is 1104 wide, centred, and lines up with the column of text above and
+ * below it at the width the design was drawn at.
+ */
+export const photoFan = {
+  /** A frame's side, in px. Fixed, as in the file. */
+  card: 184,
+
+  /** How much of a frame the next one covers, in px — a sixth of it. */
+  overlap: 184 / 6,
+
+  /**
+   * How far apart two frames sit, as a share of one frame's own width. The
+   * distance each frame travels to reach the middle of the pile is this times
+   * how many places it is from the middle.
+   *
+   * A share rather than the 153.33px it works out to, because a percentage
+   * `translate` resolves against the element's own box: changing `card` alone
+   * then keeps the pile centred instead of leaving this to be recalculated.
+   */
+  advance: 500 / 6,
+
+  /**
+   * The arc, left to right: how far each frame is turned and how far it hangs
+   * below the middle one. The drop is a share of the frame's own height rather
+   * than a pixel figure, so the arc keeps its shape as the frames narrow.
+   *
+   * Small on purpose. At ±9 degrees the row read as a hand of cards being
+   * dealt; the design is a set of prints laid down slightly askew.
+   */
+  arc: [
+    { rotate: -7, drop: 10 },
+    { rotate: -5, drop: 4.5 },
+    { rotate: -3, drop: 1.5 },
+    { rotate: 0, drop: 0 },
+    { rotate: 3, drop: 1.5 },
+    { rotate: 5, drop: 4.5 },
+    { rotate: 7, drop: 10 },
+  ],
+
+  /**
+   * ── What actually moves ───────────────────────────────────────────────────
+   *
+   * The turn and the scale belong to the *container*, not to the frames. The
+   * pile is one object that rises, unwinds and settles; the frames inside it
+   * only ever change position — piled, then fanned — and each keeps its own
+   * angle from the arc above throughout. That is what gives the pile its
+   * edges: seven frames at the same spot but at seven slightly different
+   * angles read as a stack of prints rather than as one photograph.
+   *
+   * Turning the container is only equivalent to turning the pile because the
+   * pile sits on the middle frame, and the middle frame's centre is the row's
+   * centre. By the time the frames leave that spot the container is back at
+   * zero, so the two never fight.
+   *
+   * Nothing fades. The entrance is the rise.
+   */
+
+  /** How far below its place the pile starts, in px. Absolute, in the file. */
+  lift: 1200,
+
+  /** The container's turn at each state, in degrees. */
+  rotate: { out: -40, piled: -14, settled: 0 },
+
+  /** And its scale: held oversized until the pile settles. */
+  scale: { piled: 1.2, settled: 1 },
+
+  /**
+   * ── The sequence ─────────────────────────────────────────────────────────
+   *
+   * `delay` is the trigger — Appear for the first, After Delay for the rest,
+   * each counted from the moment the state before it was entered. `duration`
+   * is that state's own transition time.
+   *
+   *   0.0s  out → piled     0.4s   rises 1200 and unwinds -40 to -14
+   *   0.4s  piled → settled 1.0s   -14 to 0, and 1.2 down to 1
+   *   0.8s  settled → open  1.0s   the frames spread
+   *
+   * The delays are shorter than the durations, and that is the point rather
+   * than an oversight. The rise lands exactly as the settle begins, and the
+   * frames start spreading while the container is still settling — they are
+   * different elements, so the two overlap instead of interrupting, and the
+   * whole thing reads as one gesture rather than three.
+   *
+   * No stagger. All seven frames are one container with one transition in the
+   * owner's file, so they move together.
+   */
+  steps: {
+    piled: { delay: 0, duration: 400 },
+    settled: { delay: 400, duration: 1000 },
+    open: { delay: 400, duration: 1000 },
+  },
+} as const;
+
+/**
  * Feature strip marquee.
  *
  * Expressed as a rate rather than a duration on purpose: the row renders the
@@ -756,6 +875,271 @@ export const caseHover = {
     { w: 40, h: 40, left: 40, bottom: 40, dx: 0, dy: 220 },
     { w: 40, h: 40, left: 80, bottom: 0, dx: 0, dy: 100 },
   ],
+} as const;
+
+/**
+ * The page transition — three cards that wipe the screen between routes.
+ *
+ * A port of the owner's `StackedCardsTransition`. Leaving a page, the cards
+ * cross in from the right one after another until the screen is covered;
+ * arriving, they carry on past the left edge in the order they landed, so the
+ * two halves read as one pass rather than a cover and an uncover.
+ *
+ * The reversal is the whole effect. The last card in is the first card out, so
+ * the stack is peeled in the order it was laid — run the same order twice and
+ * it reads as a curtain dropped and then dropped again.
+ *
+ * Colours are the site's three accents. That is not decoration: the wipe is the
+ * only thing on screen for half a second, and three colours from anywhere else
+ * would be the one moment the site looked like a different site.
+ */
+export const pageWipe = {
+  /** Milliseconds for one card's travel, on the owner's curve. */
+  duration: 400,
+
+  /** Milliseconds between one card leaving and the next. */
+  stagger: 40,
+
+  /**
+   * Milliseconds the covered screen is held before it opens again.
+   *
+   * Not a flourish. The new page's first paint happens somewhere in here, and
+   * the hold is what keeps that paint behind the cards instead of showing
+   * through the gap between the two animations.
+   */
+  hold: 160,
+
+  /** Cards, so `stagger` can be multiplied without a magic number. */
+  cards: 3,
+
+  /**
+   * Milliseconds the cards may stay across the screen with no arrival before
+   * they are opened anyway.
+   *
+   * The wipe covers the screen and then waits to be told the new page is here.
+   * If that never comes — a navigation that stalls, a payload that does not
+   * arrive, anything at all — there is nothing else in the sequence that ever
+   * runs, and the reader is left looking at a full screen of one flat colour
+   * with no way out but a reload. It is the only state this component has that
+   * it cannot leave on its own, and a cover with no way out is the worst thing
+   * it can do.
+   *
+   * Long enough that it never fires on a navigation that is merely slow: the
+   * hold is 160ms and an arrival on a soft navigation is immediate.
+   */
+  rescue: 2500,
+} as const;
+
+/**
+ * The preloader.
+ *
+ * A sheet of green over the whole page with the wordmark on it, which then
+ * comes apart: the sheet is tiled into rectangles of unequal size and each one
+ * swipes itself out of existence along its own axis, in its own direction, a
+ * moment after its neighbours. The page is underneath the whole time.
+ *
+ * The four numbers below are the owner's Framer component, read off its
+ * panels rather than guessed:
+ *
+ *   Start  ──(On Appear, delay 0.7s)──▶  Variant 3  ──(delay 0.5s)──▶  End
+ *
+ * Start is the sheet with the wordmark, Variant 3 is the sheet without it, and
+ * End is the tiles gone. So the wordmark leaves at 0.7s, the tiles begin
+ * leaving at 1.2s, and the whole thing is over at 1.7s — the run the owner
+ * gives it.
+ *
+ * That last figure is the constraint the rest has to satisfy, and it is why
+ * the stagger is bounded rather than free: the last tile to start still has to
+ * finish inside the run, so `start + maxStagger + collapse` is exactly `run`.
+ * Widening the stagger without shortening the swipe pushes the end past 1.7s,
+ * which is visible as a lone rectangle hanging over the hero.
+ */
+export const preloader = {
+  /** Milliseconds from first paint to the overlay being gone. */
+  run: 1700,
+
+  /**
+   * The wordmark's entrance, from the owner's Enter Effect panel: opacity 0,
+   * offset 80 on Y, on a spring of Time 1s and Bounce 0.2.
+   *
+   * The spring is `--ease-preload-word`; these are the two numbers it drives.
+   * A second is the spring's *settle*, not its reading — it is past 0.6 by
+   * 200ms and past 0.85 by 300ms, so the name is legible almost at once and
+   * only the last of the overshoot is still moving when it starts to leave.
+   */
+  wordmarkIn: 1000,
+  wordmarkRise: 80,
+
+  /** Milliseconds the wordmark takes to leave. */
+  wordmarkFade: 340,
+
+  /** Framer: On Appear → delay 0.7s → Variant 3. The wordmark starts leaving. */
+  wordmarkOut: 700,
+
+  /** Framer: Variant 3 → delay 0.5s → End. The first tile starts leaving. */
+  start: 1200,
+
+  /** Milliseconds one tile takes to swipe from full to nothing. */
+  collapse: 340,
+
+  /**
+   * Milliseconds a tile's start may be offset by.
+   *
+   * Bounded by the run, as above. The offsets themselves are spread evenly
+   * across this window and then shuffled rather than sampled independently —
+   * see `lib/preloader`.
+   */
+  maxStagger: 160,
+
+  /**
+   * The same 0.3/0.7 pair as the heading wipe and the pattern field, and a
+   * bezier rather than a spring for the same reason the field gives: a spring
+   * approaches zero asymptotically and leaves a hairline of green behind on
+   * every tile.
+   */
+  ease: [0.3, 0, 0.7, 1] as const,
+
+  /** Rows the sheet is divided into, top to bottom. */
+  rows: 6,
+
+  /** Tiles laid along each row, sampled per row. */
+  tilesPerRow: { min: 4, max: 6 },
+
+  /**
+   * Relative row heights and tile widths. Sampled per row and per tile and
+   * used as flex weights, so the sheet fills whatever viewport it is given and
+   * the tiles keep their proportions rather than their pixels. The spread is
+   * wide on purpose — the reference has rectangles from roughly a twelfth of
+   * the screen to nearly a third, and a narrow spread reads as a grid.
+   */
+  rowWeight: { min: 0.6, max: 1.5 },
+  tileWeight: { min: 0.6, max: 1.8 },
+
+  /**
+   * Milliseconds past the run before the sheet is taken out of the document
+   * regardless.
+   *
+   * A backstop and not the normal path: the component retires the sheet when
+   * the tile that lands last says it has landed, and falls back to this only
+   * where that never arrives — reduced motion switched on mid-run, or
+   * animations disabled outright. Generous on purpose, since by then the sheet
+   * is transparent and takes no clicks, and the only thing still riding on it
+   * is the scroll lock.
+   */
+  settle: 500,
+
+  /** Fixed, so the server and the client lay out the same sheet. */
+  seed: 20260819,
+} as const;
+
+/**
+ * The strategy-call card's hover.
+ *
+ * Two things move, and neither is the card itself. Every number is the
+ * owner's, off the component's panels.
+ *
+ * The fill grows. At rest it is the card exactly — 378 x 80 at inset 0 — and
+ * on hover it is 382 x 84 at inset -2, so it swells two pixels past every
+ * edge. Stated as the inset rather than the size, because the card is fluid
+ * here and only the overhang is fixed.
+ *
+ * And the arrow is replaced rather than moved. One leaves through the top
+ * right corner while a second arrives from the bottom left, both travelling
+ * the same 15px the file gives them, so the corner is never empty and never
+ * shows the same mark twice.
+ */
+export const ctaCardHover = {
+  /** Pixels the fill overhangs each edge on hover. Framer: inset 0 to -2. */
+  grow: 2,
+
+  /**
+   * Pixels each arrow travels. The one leaving goes up and to the right by
+   * this much; the one arriving starts down and to the left by the same, and
+   * lands on centre.
+   *
+   * Far enough to park the arriving arrow outside the corner box entirely,
+   * which is the whole point of clipping it: at 15 a corner of it sat in the
+   * box's own corner at rest and the card showed two arrows. A 16px arrow
+   * centred in a 32px box clears at 24 — the 8px of slack on that side plus
+   * its own width.
+   */
+  arrowTravel: 24,
+
+  /** Milliseconds, shared by both. The site's hover duration. */
+  duration: 250,
+} as const;
+
+/**
+ * Blog card hover.
+ *
+ * The case cards' gesture on a smaller object: blocks in the card's own tint
+ * slide in from the edges and sit over the photograph while the pointer is on
+ * it, then retreat. Same curve, same duration, same growing image behind them.
+ *
+ * Its own rectangles rather than a reuse of `caseHover.rects`: those are the
+ * arrangement for a 560-wide frame, and a blog card's picture is barely half
+ * that.
+ *
+ * Every number below is the owner's, in the pixels of a card at the design
+ * width — where a three-across grid gives each card about 355. Kept as pixels
+ * rather than converted to shares of the picture, because the grid's card is
+ * within a whisker of that at every breakpoint it has: 346 on a phone, 405 on
+ * a tablet, 355 on a desktop. A percentage would be a conversion that buys
+ * nothing and loses the ability to check these against the file.
+ */
+export const postHover = {
+  /** Shared with the case cards: bezier 0.8, 0, 0.2, 1 over 0.7s. */
+  duration: 700,
+
+  /** The picture grows behind the blocks. */
+  imageScale: 1.05,
+
+  /**
+   * Each rectangle is given at its *hovered* position — the edges it is
+   * anchored to and the offsets from them — with `dx`/`dy` back to where it
+   * waits. See lib/hoverRect for why that way round.
+   *
+   * The first three are one run along the top right rather than a scatter:
+   * 133, 37 and 0 from the right edge, so they meet exactly, and the middle
+   * one rests a row lower than its neighbours. That offset is the whole shape
+   * — three blocks landing flush would be a bar, and it is the step down and
+   * back up that reads as blocks.
+   *
+   * They also fall different distances, 40 / 80 / 40, so the run assembles
+   * rather than arriving as one piece.
+   */
+  rects: [
+    { w: 37, h: 32, top: 0, right: 0, dx: 0, dy: -40 },
+    { w: 96, h: 32, top: 32, right: 37, dx: 0, dy: -80 },
+    { w: 96, h: 32, top: 0, right: 133, dx: 0, dy: -40 },
+    /**
+     * A tall bar into the left edge, and a square rising into the foot beside
+     * it. The bar's foot rests exactly on the square's head, and its right
+     * edge on the square's left — the two meet at a corner, which is the shape
+     * the file draws.
+     *
+     * The file calls the bar centred, and at the design's picture height it
+     * is: solve (H + 140)/2 = H − 103 and H is 346, which is what a 359 card
+     * gives at this picture's proportion. But the grid hands a card 346, 359
+     * or 405 depending on the breakpoint, and a centred bar only lands on the
+     * square at one of those — at 405 it stops 22px short and the join opens.
+     *
+     * So the bar is anchored to the square instead. At the design height that
+     * is the same position to a third of a pixel; everywhere else it is the
+     * one that keeps them together.
+     */
+    { w: 32, h: 140, left: 0, bottom: 103, dx: -40, dy: 0 },
+    { w: 103, h: 103, left: 32, bottom: 0, dx: 0, dy: 110 },
+  ],
+
+  /**
+   * The arrow, which belongs to the hover and not to the card: the owner's
+   * base variant carries no affordance of its own. It waits off the right
+   * edge and arrives with the blocks, in the card's own tint — so it is one of
+   * them that happens to hold a mark, which is why it takes their class rather
+   * than carrying a second set of rules.
+   */
+  arrow: { size: 48, from: "100% 0" },
 } as const;
 
 /**

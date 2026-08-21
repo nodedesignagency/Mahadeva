@@ -186,7 +186,16 @@ export const trustContent = {
       tone: "magenta",
     },
   ],
-  logosCaption: "Trusted by leading companies in tech, finance and e-commerce.",
+  /**
+   * The strip's caption, broken where the owner's file breaks it rather than
+   * where the measure happens to run out. Two lines at every width: it sits
+   * beside a marquee whose height it sets, and a third line on a narrow
+   * laptop pushed the row out of true.
+   */
+  logosCaptionLines: [
+    "Trusted by leading companies in",
+    "tech, finance and e-commerce.",
+  ],
   /**
    * Client marks. `src` is absent until the files land, and the strip draws a
    * named placeholder at the right height in the meantime, so the row's rhythm
@@ -248,7 +257,7 @@ export type ToolMark = (typeof techStackContent.tools)[number]["mark"];
  * One card at a time with the next peeking past the right gutter, advanced by
  * the pair of arrows beside the heading.
  *
- * `portrait` names a file in `src/assets/portraits`; the cut-out sits on the
+ * `portrait` names a file in `public/uploads/images`; the cut-out sits on the
  * card's own fill. Until the photographs land the column is left empty rather
  * than filled with a stand-in — a grey box beside a testimonial reads as a
  * broken image, where empty space reads as a wide quote.

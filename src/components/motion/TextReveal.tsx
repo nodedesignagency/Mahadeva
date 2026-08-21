@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "motion/react";
 import type { TextRevealSettings } from "@/config/animation";
+import { preloadHold } from "@/lib/preloadHold";
 import { cn } from "@/lib/cn";
 
 /**
@@ -184,13 +185,116 @@ function RevealLine({ text, settings, reduced, extraDelay, wraps = false, classN
     const timers: ReturnType<typeof setTimeout>[] = [];
     let cancelled = false;
 
-    const sweep = (el: HTMLElement, from: number, to: number) => {
-      const animation = el.animate(
-        [{ transform: `scaleX(${from})` }, { transform: `scaleX(${to})` }],
-        { duration, fill: "forwards", easing },
+    /**
+     * The rendered rows of this block, in its own coordinates.
+     *
+     * Each word reports its own rect, so they are merged by their top edge to
+     * give one rect per line. This is the only way to learn where a line
+     * actually broke: the block itself only knows the column it was given.
+     */
+    const rows = () => {
+      const origin = block.getBoundingClientRect();
+      const merged = new Map<number, { left: number; right: number; top: number; bottom: number }>();
+
+      // The words themselves, not a Range over the block: the bars live inside
+      // this block too, and a Range would measure them as well — an extra rect
+      // the width of the whole box, which is the very thing being avoided.
+      const rects = [...block.querySelectorAll<HTMLElement>("[data-reveal-word]")].flatMap(
+        (word) => [...word.getClientRects()],
       );
-      animations.push(animation);
-      return animation;
+
+      for (const rect of rects) {
+        if (rect.width < 1 || rect.height < 1) continue;
+        // Rounded, because sub-pixel tops differ between spans on one line.
+        const key = Math.round(rect.top);
+        const row = merged.get(key);
+        if (row) {
+          row.left = Math.min(row.left, rect.left);
+          row.right = Math.max(row.right, rect.right);
+          row.top = Math.min(row.top, rect.top);
+          row.bottom = Math.max(row.bottom, rect.bottom);
+        } else {
+          merged.set(key, { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom });
+        }
+      }
+
+      return [...merged.values()].map((row) => ({
+        left: row.left - origin.left,
+        top: row.top - origin.top,
+        width: row.right - row.left,
+        height: row.bottom - row.top,
+      }));
+    };
+
+    /**
+     * Give an overlay one bar per rendered row, each the width of its own row.
+     *
+     * The alternative — one box with a repeating gradient — bands the rows
+     * vertically but is still as wide as the block, so every row gets a bar
+     * the width of the column and bare colour runs past the end of a short
+     * line. Only the wrapping path needs this: a heading with authored lines
+     * is one row per block already, and its single box is exactly right.
+     */
+    const fillRows = (container: HTMLElement, color: string) => {
+      container.textContent = "";
+      container.style.background = "none";
+      // The container starts collapsed — that inline `scaleX(0)` is the resting
+      // state for the single-box path. Left on, it scales the row bars inside
+      // it to nothing and the whole reveal is invisible. Here the bars carry
+      // their own transform and the container only positions them.
+      container.style.transform = "none";
+
+      /*
+       * The gutter between rows is the site's own `--space-heading-line`, the
+       * same 4px a pair of authored lines sits apart — so a wrapped heading and
+       * a broken one have the same rhythm.
+       *
+       * Height comes from the pitch between rows rather than the word rect: a
+       * word's box carries its leading and overlaps the row beneath it, which
+       * closes the gutter and then some. Pitch minus the gutter is exact, and
+       * the last row has no next row to measure against, so it borrows the one
+       * above it.
+       */
+      const gutter =
+        parseFloat(getComputedStyle(block).getPropertyValue("--space-heading-line")) || 0;
+      const list = rows();
+
+      list.forEach((row, i) => {
+        const next = list[i + 1];
+        const previous = list[i - 1];
+        const pitch = next
+          ? next.top - row.top
+          : previous
+            ? row.top - previous.top
+            : row.height + gutter;
+        const height = Math.max(0, pitch - gutter);
+
+        const bar = document.createElement("span");
+        bar.style.cssText =
+          `position:absolute;left:${row.left}px;top:${row.top - vPad}px;` +
+          `width:${row.width}px;height:${height + vPad * 2}px;` +
+          `background:${color};transform:scaleX(0);` +
+          `transform-origin:${isLeft ? "left center" : "right center"}`;
+        container.append(bar);
+      });
+    };
+
+    /** Every bar inside an overlay, or the overlay itself when it has none. */
+    const barsOf = (el: HTMLElement) =>
+      el.children.length ? ([...el.children] as HTMLElement[]) : [el];
+
+    const sweep = (el: HTMLElement, from: number, to: number) => {
+      // One animation per bar, on one clock. The first is returned for
+      // chaining: they share a duration and an easing, so they land together.
+      const started = barsOf(el).map((bar) => {
+        const animation = bar.animate(
+          [{ transform: `scaleX(${from})` }, { transform: `scaleX(${to})` }],
+          { duration, fill: "forwards", easing },
+        );
+        animations.push(animation);
+        return animation;
+      });
+      return started[0];
     };
 
     const run = () => {
@@ -199,14 +303,19 @@ function RevealLine({ text, settings, reduced, extraDelay, wraps = false, classN
 
       // Size the bars to the text box plus vertical padding, matching the
       // original's measure-then-position approach.
-      const { offsetWidth: width, offsetHeight: height } = block;
-      for (const el of [overlay, overlay2]) {
-        el.style.left = "0px";
-        el.style.top = `-${vPad}px`;
-        el.style.width = `${width}px`;
-        el.style.height = `${height + vPad * 2}px`;
-        el.style.transform = "scaleX(0)";
-        el.style.transformOrigin = isLeft ? "left center" : "right center";
+      if (wraps) {
+        fillRows(overlay, settings.revealColor);
+        fillRows(overlay2, settings.revealColor2);
+      } else {
+        const { offsetWidth: width, offsetHeight: height } = block;
+        for (const el of [overlay, overlay2]) {
+          el.style.left = "0px";
+          el.style.top = `-${vPad}px`;
+          el.style.width = `${width}px`;
+          el.style.height = `${height + vPad * 2}px`;
+          el.style.transform = "scaleX(0)";
+          el.style.transformOrigin = isLeft ? "left center" : "right center";
+        }
       }
 
       // Flush the reset so the first animated frame starts from scaleX(0).
@@ -224,8 +333,9 @@ function RevealLine({ text, settings, reduced, extraDelay, wraps = false, classN
           });
 
           const exitOrigin = isLeft ? "right center" : "left center";
-          overlay.style.transformOrigin = exitOrigin;
-          overlay2.style.transformOrigin = exitOrigin;
+          for (const el of [overlay, overlay2]) {
+            for (const bar of barsOf(el)) bar.style.transformOrigin = exitOrigin;
+          }
 
           timers.push(
             setTimeout(() => {
@@ -240,7 +350,12 @@ function RevealLine({ text, settings, reduced, extraDelay, wraps = false, classN
       };
     };
 
-    const start = () => timers.push(setTimeout(run, delay + extraDelay));
+    // Plus whatever is left of the preloader. A heading behind a full-screen
+    // cover is in view immediately, so left alone it reveals itself while
+    // nobody can see it and the cover lifts on a heading that has already
+    // arrived. Zero on every page and every navigation that is not covered.
+    const start = () =>
+      timers.push(setTimeout(run, delay + extraDelay + preloadHold()));
     let observer: IntersectionObserver | undefined;
 
     if (trigger === "inView") {
@@ -267,7 +382,7 @@ function RevealLine({ text, settings, reduced, extraDelay, wraps = false, classN
       timers.forEach(clearTimeout);
       animations.forEach((animation) => animation.cancel());
     };
-  }, [reduced, settings, extraDelay]);
+  }, [reduced, settings, extraDelay, wraps]);
 
   // Reduced motion paints the final state immediately.
   const initialColor = reduced ? settings.afterColor : settings.beforeColor;

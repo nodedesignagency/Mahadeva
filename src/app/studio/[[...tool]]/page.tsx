@@ -24,8 +24,9 @@ export default function StudioPage() {
       <main className="mx-auto flex min-h-screen max-w-[40rem] flex-col justify-center gap-4 px-6 py-24">
         <h1 className="font-display text-heading-lg">The CMS is not connected yet</h1>
         <p className="font-body text-body-md text-fg-muted">
-          The site is running on its demo case studies. To edit content here, add
-          your Sanity project ID to <code>.env.local</code> and restart.
+          The site is running on its demo case studies and posts. To edit
+          content here, add your Sanity project ID to <code>.env.local</code>{" "}
+          and restart.
         </p>
         <p className="font-body text-body-md text-fg-muted">
           The steps are in <code>SETUP.md</code> at the root of the project.

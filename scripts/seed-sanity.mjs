@@ -1,5 +1,5 @@
 /**
- * Push the demo case studies into a freshly created Sanity dataset.
+ * Push the demo content into a buyer's freshly created Sanity datasets.
  *
  * The schema travels as code, so a new project already has the right fields.
  * The documents do not — they live in whichever project created them — which is
@@ -22,7 +22,9 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 // Read .env.local by hand rather than adding a dependency for six lines. Only
 // KEY=value, which is all this file ever holds.
 try {
-  for (const line of readFileSync(join(root, ".env.local"), "utf8").split("\n")) {
+  for (const line of readFileSync(join(root, ".env.local"), "utf8").split(
+    "\n",
+  )) {
     const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/);
     if (match && !process.env[match[1]]) {
       process.env[match[1]] = match[2].replace(/^["']|["']$/g, "");
@@ -34,6 +36,7 @@ try {
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
+const blogDataset = process.env.NEXT_PUBLIC_SANITY_BLOG_DATASET ?? "blog";
 const token = process.env.SANITY_WRITE_TOKEN;
 
 if (!projectId || !token) {
@@ -48,21 +51,24 @@ if (!projectId || !token) {
 
 // The same records the site falls back to before a CMS exists, so what gets
 // seeded and what a fresh clone shows are the same words.
-const studies = JSON.parse(
-  readFileSync(join(root, "src/content/case-studies.json"), "utf8"),
+const read = (file) => JSON.parse(readFileSync(join(root, file), "utf8"));
+const studies = read("src/content/case-studies.json");
+const posts = read("src/content/blog.json");
+
+const clientFor = (name) =>
+  createClient({
+    projectId,
+    dataset: name,
+    token,
+    apiVersion: "2024-10-01",
+    useCdn: false,
+  });
+
+console.log(
+  `Seeding ${studies.length} case studies into ${projectId}/${dataset}…`,
 );
 
-const client = createClient({
-  projectId,
-  dataset,
-  token,
-  apiVersion: "2024-10-01",
-  useCdn: false,
-});
-
-console.log(`Seeding ${studies.length} case studies into ${projectId}/${dataset}…`);
-
-const transaction = client.transaction();
+const transaction = clientFor(dataset).transaction();
 
 studies.forEach((study, index) => {
   // A deterministic ID means running this twice updates rather than duplicates,
@@ -95,17 +101,63 @@ studies.forEach((study, index) => {
   });
 });
 
-try {
-  await transaction.commit();
-  console.log(
-    "\nDone. Open /studio to edit them.\n\n" +
-      "Screenshots are not seeded — upload one per case study in the Studio.\n",
-  );
-} catch (error) {
-  console.error("\nSeeding failed:", error.message);
-  console.error(
-    "\nIf this says the dataset does not exist, create it first:\n" +
-      "  npx sanity dataset create production\n",
-  );
-  process.exit(1);
+/**
+ * The posts, into their own dataset.
+ *
+ * A second transaction on a second client rather than one on both: a
+ * transaction belongs to a dataset, and these are two. It also means a buyer
+ * who has created only one of the two datasets gets the half that can be
+ * written and a clear message about the other, rather than neither.
+ */
+console.log(`Seeding ${posts.length} posts into ${projectId}/${blogDataset}…`);
+
+const blogTransaction = clientFor(blogDataset).transaction();
+
+posts.forEach((post) => {
+  blogTransaction.createOrReplace({
+    _id: `post-${post.slug}`,
+    _type: "post",
+    title: post.title,
+    slug: { _type: "slug", current: post.slug },
+    summary: post.summary,
+    category: post.category,
+    tone: post.tone,
+    published: post.published,
+    date: post.date,
+    author: { name: post.author.name },
+    body: post.body.map((section, i) => ({
+      _type: "section",
+      _key: `section-${i}`,
+      heading: section.heading,
+      paragraphs: section.paragraphs,
+    })),
+  });
+});
+
+/** Which dataset a failure was about, so the advice can name the right one. */
+async function commit(transaction, name, what) {
+  try {
+    await transaction.commit();
+    return true;
+  } catch (error) {
+    console.error(`\nSeeding ${what} into ${name} failed:`, error.message);
+    console.error(
+      "\nIf this says the dataset does not exist, create it first:\n" +
+        `  npx sanity dataset create ${name}\n`,
+    );
+    return false;
+  }
 }
+
+const seeded = [
+  await commit(transaction, dataset, "case studies"),
+  await commit(blogTransaction, blogDataset, "posts"),
+];
+
+if (seeded.some((ok) => !ok)) process.exit(1);
+
+console.log(
+  "\nDone. Open /studio to edit them.\n\n" +
+    "Pictures are not seeded — upload them in the Studio, one screenshot per\n" +
+    "case study and one cover per post.\n",
+);

@@ -1,24 +1,19 @@
-import {
-  defineArrayMember,
-  defineField,
-  defineType,
-  type SchemaTypeDefinition,
-} from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 /**
- * Content model.
+ * The case studies' content model — the `production` dataset's whole schema.
  *
- * This is the whole schema, and it is code — the Studio builds its editing UI
- * from this file at runtime. A buyer pointing the app at their own empty Sanity
- * project gets these exact fields with no copying, no importing and nothing to
- * keep in sync. Only the documents themselves travel separately, via the seed.
+ * It is code, and the Studio builds its editing UI from this file at runtime. A
+ * buyer pointing the app at their own empty Sanity project gets these exact
+ * fields with no copying, no importing and nothing to keep in sync. Only the
+ * documents themselves travel separately, via the seed.
  *
  * Field names match `CaseStudy` in src/content/case-studies.ts one for one, so
  * the query in src/lib/case-studies.ts is a projection rather than a
  * translation layer.
  */
 
-const caseStudy = defineType({
+export const caseStudy = defineType({
   name: "caseStudy",
   title: "Case Study",
   type: "document",
@@ -27,7 +22,8 @@ const caseStudy = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      description: "The headline on the card, e.g. “AI Agent Website Built for Automation Startups”.",
+      description:
+        "The headline on the card, e.g. “AI Agent Website Built for Automation Startups”.",
       validation: (rule) => rule.required().max(90),
     }),
     defineField({
@@ -50,7 +46,8 @@ const caseStudy = defineType({
       name: "slug",
       title: "URL",
       type: "slug",
-      description: "Generated from the title. This becomes /case-study/your-slug.",
+      description:
+        "Generated from the title. This becomes /case-study/your-slug.",
       options: { source: "title", maxLength: 64 },
       validation: (rule) => rule.required(),
     }),
@@ -81,27 +78,34 @@ const caseStudy = defineType({
       title: "Year",
       type: "string",
       description: "Shown in the chip at the top right of the card.",
-      validation: (rule) => rule.required().regex(/^\d{4}$/, { name: "four digits" }),
+      validation: (rule) =>
+        rule.required().regex(/^\d{4}$/, { name: "four digits" }),
     }),
     defineField({
       name: "summary",
       title: "Summary",
       type: "text",
       rows: 3,
-      description: "Two lines on the card. Keep it under ~140 characters or it will push the stats down.",
+      description:
+        "Two lines on the card. Keep it under ~140 characters or it will push the stats down.",
       validation: (rule) => rule.required().max(200),
     }),
     defineField({
       name: "stats",
       title: "Stats",
       type: "array",
-      description: "Exactly four. They are laid out in a 2x2 grid — fewer leaves a gap, more will not fit.",
+      description:
+        "Exactly four. They are laid out in a 2x2 grid — fewer leaves a gap, more will not fit.",
       of: [
         defineArrayMember({
           name: "stat",
           type: "object",
           fields: [
-            defineField({ name: "label", type: "string", validation: (rule) => rule.required() }),
+            defineField({
+              name: "label",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
             defineField({
               name: "value",
               type: "string",
@@ -138,14 +142,16 @@ const caseStudy = defineType({
       name: "image",
       title: "Screenshot",
       type: "image",
-      description: "The product shot filling the right half. Drag the hotspot to choose what stays visible when it crops.",
+      description:
+        "The product shot filling the right half. Drag the hotspot to choose what stays visible when it crops.",
       options: { hotspot: true },
       fields: [
         defineField({
           name: "alt",
           title: "Alternative text",
           type: "string",
-          description: "Describes the image for screen readers and when it fails to load.",
+          description:
+            "Describes the image for screen readers and when it fails to load.",
           validation: (rule) => rule.required(),
         }),
       ],
@@ -154,20 +160,23 @@ const caseStudy = defineType({
       name: "timeline",
       title: "Timeline",
       type: "string",
-      description: "How long the work ran, as the page states it, e.g. “3 Months”.",
+      description:
+        "How long the work ran, as the page states it, e.g. “3 Months”.",
     }),
     defineField({
       name: "services",
       title: "Services",
       type: "array",
-      description: "Read as one dot-separated run under a single heading. Three or four keeps it to two lines.",
+      description:
+        "Read as one dot-separated run under a single heading. Three or four keeps it to two lines.",
       of: [defineArrayMember({ type: "string" })],
     }),
     defineField({
       name: "liveUrl",
       title: "Live site",
       type: "url",
-      description: "The finished site. Leave empty and the “Live Preview” link is simply not drawn.",
+      description:
+        "The finished site. Leave empty and the “Live Preview” link is simply not drawn.",
     }),
     defineField({
       name: "challenge",
@@ -187,7 +196,8 @@ const caseStudy = defineType({
       name: "gallery",
       title: "Gallery",
       type: "array",
-      description: "The grid under the prose, two across. Four looks right; any even number works.",
+      description:
+        "The grid under the prose, two across. Four looks right; any even number works.",
       of: [
         defineArrayMember({
           type: "image",
@@ -207,7 +217,8 @@ const caseStudy = defineType({
       name: "order",
       title: "Order",
       type: "number",
-      description: "Lowest first. Only the first three appear on the home page.",
+      description:
+        "Lowest first. Only the first three appear on the home page.",
       initialValue: 0,
     }),
   ],
@@ -222,5 +233,3 @@ const caseStudy = defineType({
     select: { title: "title", subtitle: "client", media: "image" },
   },
 });
-
-export const schemaTypes: SchemaTypeDefinition[] = [caseStudy];
