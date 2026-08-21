@@ -1,13 +1,16 @@
 import type { CSSProperties } from "react";
 import type { StaticImageData } from "next/image";
 
-// The filenames carried over from the export do not describe what is in them:
-// card-custom-ai-agents is the lightning bolt, card-data-intelligence is the
-// robot, card-workflow-automation is the database. Imported under what each
-// picture actually is, so the map below reads true.
+// Every file is named for the card it belongs to, which for four of the six is
+// not what the picture shows: card-custom-ai-agents is the lightning bolt,
+// card-data-intelligence is the robot, card-workflow-automation is the
+// database. Imported under what each picture actually is, so the map below
+// reads true.
+import arrows from "@public/uploads/images/card-continuous-improvement.png";
 import lightning from "@public/uploads/images/card-custom-ai-agents.png";
 import robot from "@public/uploads/images/card-data-intelligence.png";
 import coin from "@public/uploads/images/card-revenue-optimization.png";
+import puzzle from "@public/uploads/images/card-smart-integrations.png";
 import database from "@public/uploads/images/card-workflow-automation.png";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -36,14 +39,18 @@ const CARD_WIDTH = 265;
 const CARD_GAP = 20;
 
 /**
- * Card key to picture. `integrations` (puzzle) and `improvement` (arrows) are
- * still to come and are absent on purpose — those two cards render a
- * placeholder until the files land.
+ * Card key to picture, and every card has one — the record is total rather
+ * than partial, so a seventh card added without artwork is a build error and
+ * not a dashed box someone notices on the live site. `FeatureCard` still draws
+ * that box; making the set complete here is what stops it being reached by
+ * accident.
  */
-const artwork: Partial<Record<FeatureImage, StaticImageData>> = {
+const artwork: Record<FeatureImage, StaticImageData> = {
   agents: robot,
   data: database,
   workflow: lightning,
+  integrations: puzzle,
+  improvement: arrows,
   revenue: coin,
 };
 
