@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { Check } from "lucide-react";
 import {
   motion,
   useReducedMotion,
@@ -11,6 +10,7 @@ import {
   useTransform,
 } from "motion/react";
 import cross from "@public/uploads/icons/before-cross-white.png";
+import tick from "@public/uploads/icons/tick-circled-ink.png";
 import { beforeAfter } from "@/config/animation";
 import type { CompareTone, beforeAfterContent } from "@/content/home";
 import { cn } from "@/lib/cn";
@@ -219,29 +219,24 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                             )}
                           />
 
-                          {/* The cross is the owner's export; the tick is
-                              Lucide's, because only the cross was supplied.
-
-                              The cross fills the badge rather than taking the
-                              tick's size, and that is what sets the tick's:
-                              the file keeps a third of its canvas clear on
-                              every side, so at 40 the mark itself lands at 14
-                              and the tick is matched to it by hand. */}
-                          {column.tone === "dark" ? (
-                            <Image
-                              src={cross}
-                              alt=""
-                              aria-hidden
-                              sizes="40px"
-                              className="relative size-full"
-                            />
-                          ) : (
-                            <Check
-                              aria-hidden="true"
-                              strokeWidth={3}
-                              className="relative size-3.5"
-                            />
-                          )}
+                          {/* Both marks are the owner's exports, and the two
+                              boxes differ because the files do. The cross
+                              keeps a third of its canvas clear on every side
+                              and the tick almost none, so filling the badge
+                              with one and giving the other 16 is what lands
+                              both marks at the same 14 on screen. Matching the
+                              boxes instead would make the tick half again the
+                              size of the cross beside it. */}
+                          <Image
+                            src={column.tone === "dark" ? cross : tick}
+                            alt=""
+                            aria-hidden
+                            sizes="40px"
+                            className={cn(
+                              "relative",
+                              column.tone === "dark" ? "size-full" : "size-4",
+                            )}
+                          />
                         </span>
 
                         <div className="flex flex-col gap-1.5">
