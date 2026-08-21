@@ -44,10 +44,23 @@ const surfaces: Record<CompareTone, string> = {
   light: "bg-quote-green text-fg-on-light",
 };
 
-/** And the ring each item's icon sits in, which follows the surface. */
+/**
+ * And the badge each item's mark sits in, which follows the surface.
+ *
+ * Three rings deep, as the owner's reference has it: a hairline circle at the
+ * full size, a filled disc a little inside it, and the mark in the middle of
+ * that. The disc is the surface's own ink at a twentieth rather than a colour
+ * of its own, so it lifts off the dark panel and settles into the light one
+ * without either being named here.
+ */
 const rings: Record<CompareTone, string> = {
   dark: "border-fg/20 text-fg",
   light: "border-fg-on-light/20 text-fg-on-light",
+};
+
+const discs: Record<CompareTone, string> = {
+  dark: "bg-fg/5",
+  light: "bg-fg-on-light/5",
 };
 
 /**
@@ -194,29 +207,40 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                       <li key={item.title} className="flex items-start gap-4">
                         <span
                           className={cn(
-                            "flex size-10 shrink-0 items-center justify-center rounded-full border",
+                            "relative flex size-10 shrink-0 items-center justify-center rounded-full border",
                             rings[column.tone],
                           )}
                         >
-                          {/* The cross is the owner's export and the tick is
-                              not, because only the cross was supplied. It is a
-                              bare diagonal stroke — the ring around it is this
-                              span, which is what turns the two into a "no".
+                          <span
+                            aria-hidden="true"
+                            className={cn(
+                              "absolute inset-[15%] rounded-full",
+                              discs[column.tone],
+                            )}
+                          />
 
-                              It fills the ring rather than sitting at the
-                              tick's 16px: the file carries its own padding,
-                              about a third of its canvas either side, so a
-                              16px box would leave a 5px mark. */}
+                          {/* The cross is the owner's export; the tick is
+                              Lucide's, because only the cross was supplied.
+
+                              The cross fills the badge rather than taking the
+                              tick's size, and that is what sets the tick's:
+                              the file keeps a third of its canvas clear on
+                              every side, so at 40 the mark itself lands at 14
+                              and the tick is matched to it by hand. */}
                           {column.tone === "dark" ? (
                             <Image
                               src={cross}
                               alt=""
                               aria-hidden
                               sizes="40px"
-                              className="size-full"
+                              className="relative size-full"
                             />
                           ) : (
-                            <Check aria-hidden="true" className="size-4" />
+                            <Check
+                              aria-hidden="true"
+                              strokeWidth={3}
+                              className="relative size-3.5"
+                            />
                           )}
                         </span>
 
