@@ -37,8 +37,21 @@ defaults there are fine.
 
 ## What happens next
 
-Files here are served as-is. Once one is actually used on the page I move it to
-`src/assets/`, where the build sizes it, converts it, and hashes the filename
-for caching — so don't be surprised when a file you uploaded moves. If a file
-is only ever referenced by a fixed URL (a favicon, an OG image, something a
-third party fetches), it stays here.
+Files stay where you put them. This is the one home for artwork in the project
+— nothing moves out of here once it is in use, so a file you uploaded is at the
+path you uploaded it to, for good.
+
+Being in `public/` they are also served as-is, at `/uploads/logos/acme.svg` and
+so on, which is what a favicon or an OG image needs. But a file used on a page
+is *imported* rather than linked, through the `@public/` alias:
+
+```tsx
+import acme from "@public/uploads/logos/acme.svg";
+```
+
+That hands it to the build, which sizes it, converts it, and hashes the
+filename for caching, and it means a typo in the path fails the build instead
+of showing a broken image to a visitor.
+
+The one exception is the favicon, which Next.js requires at
+`src/app/favicon.ico` and serves from there.

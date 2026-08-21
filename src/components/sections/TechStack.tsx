@@ -1,12 +1,12 @@
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import type { CSSProperties } from "react";
-import airtable from "@/assets/logos/airtable.avif";
-import chatgpt from "@/assets/logos/chatgpt.avif";
-import claude from "@/assets/logos/claude.avif";
-import langchain from "@/assets/logos/langchain.avif";
-import python from "@/assets/logos/python.avif";
-import zapier from "@/assets/logos/zapier.avif";
+import airtable from "@public/uploads/logos/airtable.avif";
+import chatgpt from "@public/uploads/logos/chatgpt.avif";
+import claude from "@public/uploads/logos/claude.avif";
+import langchain from "@public/uploads/logos/langchain.avif";
+import python from "@public/uploads/logos/python.avif";
+import zapier from "@public/uploads/logos/zapier.avif";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextRevealDynamic, toolHover } from "@/config/animation";

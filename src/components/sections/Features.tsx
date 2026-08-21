@@ -5,10 +5,10 @@ import type { StaticImageData } from "next/image";
 // card-custom-ai-agents is the lightning bolt, card-data-intelligence is the
 // robot, card-workflow-automation is the database. Imported under what each
 // picture actually is, so the map below reads true.
-import lightning from "@/assets/card-custom-ai-agents.png";
-import robot from "@/assets/card-data-intelligence.png";
-import coin from "@/assets/card-revenue-optimization.png";
-import database from "@/assets/card-workflow-automation.png";
+import lightning from "@public/uploads/images/card-custom-ai-agents.png";
+import robot from "@public/uploads/images/card-data-intelligence.png";
+import coin from "@public/uploads/images/card-revenue-optimization.png";
+import database from "@public/uploads/images/card-workflow-automation.png";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { FeatureCard } from "@/components/ui/FeatureCard";

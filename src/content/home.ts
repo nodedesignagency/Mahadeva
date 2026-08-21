@@ -257,7 +257,7 @@ export type ToolMark = (typeof techStackContent.tools)[number]["mark"];
  * One card at a time with the next peeking past the right gutter, advanced by
  * the pair of arrows beside the heading.
  *
- * `portrait` names a file in `src/assets/portraits`; the cut-out sits on the
+ * `portrait` names a file in `public/uploads/images`; the cut-out sits on the
  * card's own fill. Until the photographs land the column is left empty rather
  * than filled with a stand-in — a grey box beside a testimonial reads as a
  * broken image, where empty space reads as a wide quote.

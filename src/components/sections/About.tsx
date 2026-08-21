@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-import ornamentLeft from "@/assets/badge-ornament-left.svg";
-import ornamentRight from "@/assets/badge-ornament-right.svg";
-import mark from "@/assets/hero-mahadeva.png";
+import ornamentLeft from "@public/uploads/icons/badge-ornament-left.svg";
+import ornamentRight from "@public/uploads/icons/badge-ornament-right.svg";
+import mark from "@public/uploads/images/hero-mahadeva.png";
 import { Container } from "@/components/layout/Container";
 import { Parallax } from "@/components/motion/Parallax";
 import { TextReveal } from "@/components/motion/TextReveal";
