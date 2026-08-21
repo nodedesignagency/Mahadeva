@@ -14,9 +14,14 @@ import { blogDataset, dataset, projectId } from "./src/lib/sanity/env";
  *
  * Two workspaces, because the site's content is in two datasets: the case
  * studies in `production` and the posts in `blog`. Each is given only its own
- * dataset's types — see the note in sanity/schema/index.ts. Sanity requires a
- * distinct `basePath` per workspace, which is why neither of them is plain
- * `/studio`: that address now lists the two and lets an editor pick.
+ * dataset's types — see the note in sanity/schema/index.ts.
+ *
+ * Sanity requires a distinct `basePath` per workspace, so neither of them is
+ * plain `/studio`. That address is not a workspace and does not offer a choice
+ * either: Sanity redirects an unknown studio path to the first visible
+ * workspace in config order, so `/studio` lands on the case studies and the
+ * blog is reached from the Workspaces menu or at `/studio/blog`. Which is why
+ * `production` is written first here — it is the one an editor opens on.
  *
  * `projectId` is asserted here — unlike the read path, which falls back to demo
  * content, there is nothing sensible for an editor to do without a project, and

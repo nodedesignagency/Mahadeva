@@ -15,33 +15,15 @@
 import demoPosts from "./blog.json";
 
 /**
- * The filter row, in the order it is shown.
- *
- * Declared rather than derived from the posts. The openings list derives its
- * filters, and that is right there — the facts come from the roles. Here the
- * order is the design's and does not follow the order posts happen to be
- * written in, so it is stated once and a post's `category` is typed against
- * it: a typo, or a category the row never offers, is then a build error rather
- * than a filter that quietly matches nothing.
+ * The categories and the tones live in `blogTerms.ts`, which the Studio schema
+ * reads too, and are passed straight through here so that everything on the
+ * site can keep asking this file for them.
  */
-export const blogCategories = [
-  "Growth Strategy",
-  "AI Automation",
-  "Marketing AI",
-  "Sales Automation",
-  "Operations",
-] as const;
+export { blogCategories, postTones } from "./blogTerms";
+export type { BlogCategory, PostTone } from "./blogTerms";
 
-export type BlogCategory = (typeof blogCategories)[number];
-
-/** The card's fill. One per post, cycling through the palette's pastels. */
-export type PostTone =
-  | "sky"
-  | "lavender"
-  | "rose"
-  | "mint"
-  | "peach"
-  | "magenta";
+// Imported as well as passed on, because `Post` below is typed against them.
+import type { BlogCategory, PostTone } from "./blogTerms";
 
 /** A titled block of a post. The whole body is a run of these. */
 export type PostSection = {

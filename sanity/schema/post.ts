@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { blogCategories, postTones } from "../../src/content/blogTerms";
 
 /**
  * The blog's content model — the `blog` dataset's whole schema.
@@ -11,6 +12,11 @@ import { defineArrayMember, defineField, defineType } from "sanity";
  *
  * Field names match `Post` in src/content/blog.ts one for one, so the query in
  * src/lib/blog.ts is a projection rather than a translation layer.
+ *
+ * The category and tone dropdowns are built from `src/content/blogTerms.ts`
+ * rather than listed again here. They were listed twice, and two lists that
+ * have to agree eventually do not: a category the Studio offered but the
+ * filter row did not would leave a post that no chip ever shows.
  */
 
 export const post = defineType({
@@ -47,15 +53,9 @@ export const post = defineType({
       title: "Category",
       type: "string",
       description:
-        "Picks which filter chip the post answers to. The row itself is set in src/content/blog.ts — a category that is not on this list would filter to nothing.",
+        "Picks which filter chip the post answers to. This list is the filter row itself, so there is no category here that the site would filter to nothing.",
       options: {
-        list: [
-          { title: "Growth Strategy", value: "Growth Strategy" },
-          { title: "AI Automation", value: "AI Automation" },
-          { title: "Marketing AI", value: "Marketing AI" },
-          { title: "Sales Automation", value: "Sales Automation" },
-          { title: "Operations", value: "Operations" },
-        ],
+        list: blogCategories.map((value) => ({ title: value, value })),
       },
       validation: (rule) => rule.required(),
     }),
@@ -65,17 +65,13 @@ export const post = defineType({
       type: "string",
       description: "The tint behind the card.",
       options: {
-        list: [
-          { title: "Sky", value: "sky" },
-          { title: "Lavender", value: "lavender" },
-          { title: "Rose", value: "rose" },
-          { title: "Mint", value: "mint" },
-          { title: "Peach", value: "peach" },
-          { title: "Magenta", value: "magenta" },
-        ],
+        list: postTones.map((value) => ({
+          title: value[0].toUpperCase() + value.slice(1),
+          value,
+        })),
         layout: "radio",
       },
-      initialValue: "sky",
+      initialValue: postTones[0],
       validation: (rule) => rule.required(),
     }),
     defineField({

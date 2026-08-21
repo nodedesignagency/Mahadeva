@@ -26,8 +26,10 @@ for the posts. A dataset is a separate content database, and keeping the blog in
 its own means it can be exported, restored or handed to a writer without
 touching anything else. Both fit inside the free plan's two.
 
-`/studio` therefore opens on a workspace picker — **Case studies** and **Blog** —
-and you can switch between them at any time from the menu at the top left.
+Each dataset is a **workspace** in the Studio. `/studio` opens the first of
+them, **Case studies**; **Blog** is one click away, under **Workspaces** in the
+top-left menu. You can also go straight to either — they live at
+`/studio/production` and `/studio/blog`.
 
 The fields you will see are defined in `sanity/schema/`, one file per dataset.
 They already exist; nothing about the schema needs importing or configuring.
@@ -117,9 +119,10 @@ and the site never reads it.
 npm run dev
 ```
 
-Go to <http://localhost:3000/studio>. Pick **Case studies** or **Blog**. Your
-content is there — edit something, press **Publish**, and the change appears on
-the site.
+Go to <http://localhost:3000/studio>. It opens on **Case studies**; the posts
+are under **Workspaces → Blog** in the top-left menu, or directly at
+<http://localhost:3000/studio/blog>. Your content is there — edit something,
+press **Publish**, and the change appears on the site.
 
 ## 7. Deploying
 
@@ -138,8 +141,8 @@ on your machine and shows demo content once deployed.
 
 ## Editing case studies
 
-At `/studio`, the **Case studies** workspace, then **Case Study** in the
-sidebar. Each one has:
+At `/studio`, which opens on the **Case studies** workspace, then **Case
+Study** in the sidebar. Each one has:
 
 | Field | Notes |
 | --- | --- |
@@ -159,7 +162,8 @@ Changes appear on the live site within a minute of publishing.
 
 ## Editing posts
 
-At `/studio`, the **Blog** workspace, then **Post** in the sidebar. Each one has:
+At `/studio/blog`, or **Workspaces → Blog** from anywhere in the Studio, then
+**Post** in the sidebar. Each one has:
 
 | Field | Notes |
 | --- | --- |
