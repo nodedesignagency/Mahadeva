@@ -56,7 +56,11 @@ function PlanHeader({ name, tone, icon }: { name: string; tone: PlanTone; icon: 
   return (
     <header className={cn("flex items-center justify-between px-4 py-3", tones[tone].strip)}>
       <p className="font-body text-body-md text-fg-on-light">{name}</p>
-      <Image src={icons[icon]} alt="" aria-hidden sizes="20px" className="size-5" />
+      {/* size-10, where the Lucide glyph it replaced was size-5. The export
+          keeps about a quarter of its canvas as clear space on every side, so
+          the mark inside a 20px box came out at 9px — half what stood there
+          before. Twice the box puts the mark itself back at 20. */}
+      <Image src={icons[icon]} alt="" aria-hidden sizes="40px" className="size-10" />
     </header>
   );
 }

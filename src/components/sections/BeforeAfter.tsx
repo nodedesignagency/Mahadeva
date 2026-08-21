@@ -2,15 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
+import { Check } from "lucide-react";
 import {
   motion,
   useReducedMotion,
   useScroll,
   useTransform,
 } from "motion/react";
-import cross from "@public/uploads/icons/cross-circled-white.png";
-import tick from "@public/uploads/icons/tick-circled-ink.png";
+import cross from "@public/uploads/icons/before-cross-white.png";
 import { beforeAfter } from "@/config/animation";
 import type { CompareTone, beforeAfterContent } from "@/content/home";
 import { cn } from "@/lib/cn";
@@ -44,18 +44,10 @@ const surfaces: Record<CompareTone, string> = {
   light: "bg-quote-green text-fg-on-light",
 };
 
-/**
- * And the mark each item carries. The owner's exports draw their own ring, so
- * these replace the bordered circle that used to hold a bare tick rather than
- * sitting inside it — nesting one in the other gives two concentric rings.
- *
- * One is white and one is ink, which is the whole reason there are two files:
- * the columns never swap surfaces, so each mark only ever has to be the one
- * colour it was exported at.
- */
-const marks: Record<CompareTone, StaticImageData> = {
-  dark: cross,
-  light: tick,
+/** And the ring each item's icon sits in, which follows the surface. */
+const rings: Record<CompareTone, string> = {
+  dark: "border-fg/20 text-fg",
+  light: "border-fg-on-light/20 text-fg-on-light",
 };
 
 /**
@@ -200,13 +192,33 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                   <ul className="flex flex-col gap-7">
                     {column.items.map((item) => (
                       <li key={item.title} className="flex items-start gap-4">
-                        <Image
-                          src={marks[column.tone]}
-                          alt=""
-                          aria-hidden
-                          sizes="40px"
-                          className="size-10 shrink-0"
-                        />
+                        <span
+                          className={cn(
+                            "flex size-10 shrink-0 items-center justify-center rounded-full border",
+                            rings[column.tone],
+                          )}
+                        >
+                          {/* The cross is the owner's export and the tick is
+                              not, because only the cross was supplied. It is a
+                              bare diagonal stroke — the ring around it is this
+                              span, which is what turns the two into a "no".
+
+                              It fills the ring rather than sitting at the
+                              tick's 16px: the file carries its own padding,
+                              about a third of its canvas either side, so a
+                              16px box would leave a 5px mark. */}
+                          {column.tone === "dark" ? (
+                            <Image
+                              src={cross}
+                              alt=""
+                              aria-hidden
+                              sizes="40px"
+                              className="size-full"
+                            />
+                          ) : (
+                            <Check aria-hidden="true" className="size-4" />
+                          )}
+                        </span>
 
                         <div className="flex flex-col gap-1.5">
                           <p className="font-body text-heading-md">
