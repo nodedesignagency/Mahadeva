@@ -10,7 +10,7 @@ import {
   useTransform,
 } from "motion/react";
 import cross from "@public/uploads/icons/before-cross-white.png";
-import tick from "@public/uploads/icons/tick-circled-ink.png";
+import tick from "@public/uploads/icons/after-tick-ink.png";
 import { beforeAfter } from "@/config/animation";
 import type { CompareTone, beforeAfterContent } from "@/content/home";
 import { cn } from "@/lib/cn";
@@ -220,13 +220,12 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                           />
 
                           {/* Both marks are the owner's exports, and the two
-                              boxes differ because the files do. The cross
+                              boxes differ because the files do: the cross
                               keeps a third of its canvas clear on every side
-                              and the tick almost none, so filling the badge
-                              with one and giving the other 16 is what lands
-                              both marks at the same 14 on screen. Matching the
-                              boxes instead would make the tick half again the
-                              size of the cross beside it. */}
+                              and the tick half. Filling the badge with one and
+                              giving the other 28 is what puts both marks at
+                              the same 14 across. Matching the boxes instead
+                              would leave the tick the smaller of the two. */}
                           <Image
                             src={column.tone === "dark" ? cross : tick}
                             alt=""
@@ -234,7 +233,7 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                             sizes="40px"
                             className={cn(
                               "relative",
-                              column.tone === "dark" ? "size-full" : "size-4",
+                              column.tone === "dark" ? "size-full" : "w-7",
                             )}
                           />
                         </span>
