@@ -113,6 +113,17 @@ npm run seed
 Delete the token from `.env.local` afterwards. It is only needed for this step,
 and the site never reads it.
 
+**Adding one dataset to a site that is already live?** Name it, and the other
+is left alone:
+
+```
+npm run seed -- blog
+```
+
+Seeding writes to fixed document IDs, which is what makes a rerun safe after a
+mistake. It is also what would put the demo case studies back over a set you
+have since edited, so if only the blog is new, seed only the blog.
+
 ## 6. Open the Studio
 
 ```

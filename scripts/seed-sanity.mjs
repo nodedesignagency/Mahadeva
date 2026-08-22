@@ -34,6 +34,24 @@ try {
   // No .env.local — the values may be in the environment already.
 }
 
+/**
+ * Which of the two to write. Both by default, or one by name:
+ *
+ *   npm run seed            both
+ *   npm run seed -- blog    the posts only
+ *
+ * Worth having because seeding is `createOrReplace` against fixed IDs, which
+ * is what makes a rerun safe after a mistake — and also what would put the
+ * demo case studies back over a set someone has since edited. Adding the blog
+ * to a project that has been live for a while should not cost them that.
+ */
+const target = process.argv[2];
+if (target && target !== "blog" && target !== "production") {
+  console.error(`\nUnknown target "${target}". Use "blog", "production", or nothing for both.\n`);
+  process.exit(1);
+}
+const wants = (which) => !target || target === which;
+
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
 const blogDataset = process.env.NEXT_PUBLIC_SANITY_BLOG_DATASET ?? "blog";
@@ -64,9 +82,9 @@ const clientFor = (name) =>
     useCdn: false,
   });
 
-console.log(
-  `Seeding ${studies.length} case studies into ${projectId}/${dataset}…`,
-);
+if (wants("production")) {
+  console.log(`Seeding ${studies.length} case studies into ${projectId}/${dataset}…`);
+}
 
 const transaction = clientFor(dataset).transaction();
 
@@ -109,7 +127,9 @@ studies.forEach((study, index) => {
  * who has created only one of the two datasets gets the half that can be
  * written and a clear message about the other, rather than neither.
  */
-console.log(`Seeding ${posts.length} posts into ${projectId}/${blogDataset}…`);
+if (wants("blog")) {
+  console.log(`Seeding ${posts.length} posts into ${projectId}/${blogDataset}…`);
+}
 
 const blogTransaction = clientFor(blogDataset).transaction();
 
@@ -150,9 +170,9 @@ async function commit(transaction, name, what) {
 }
 
 const seeded = [
-  await commit(transaction, dataset, "case studies"),
-  await commit(blogTransaction, blogDataset, "posts"),
-];
+  wants("production") && (await commit(transaction, dataset, "case studies")),
+  wants("blog") && (await commit(blogTransaction, blogDataset, "posts")),
+].filter((ran) => ran !== false);
 
 if (seeded.some((ok) => !ok)) process.exit(1);
 
