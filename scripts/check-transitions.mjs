@@ -56,7 +56,35 @@ const failures = [];
 }
 
 /**
- * 2. The artifact keeps the wipe.
+ * 2. The wipe sits above the preloader's sheet.
+ *
+ * The sheet goes up while the cards are still covering, so whichever of the
+ * two is on top decides whether the sweep is seen at all. Under the sheet it
+ * happens out of sight and the wipe reads as playing half way before the
+ * preloader takes over — which is exactly how it was reported, twice, and it
+ * is invisible to every other check because both animations are running
+ * correctly. Only the order is wrong.
+ */
+{
+  const wipe = read("src/components/motion/PageTransition.tsx").match(/z-\[(\d+)\]/);
+  const sheet = read("src/components/motion/Preloader.tsx").match(/z-\[(\d+)\]/);
+  if (!wipe || !sheet) {
+    failures.push(
+      "Could not find the z-index on the wipe or the preloader's sheet.\n" +
+        "    Their order is load-bearing — see the note in PageTransition.",
+    );
+  } else if (Number(wipe[1]) <= Number(sheet[1])) {
+    failures.push(
+      `The wipe (z-${wipe[1]}) is not above the preloader's sheet (z-${sheet[1]}).\n` +
+        "    The sheet is up before the cards sweep, so underneath it the sweep\n" +
+        "    is never seen: the wipe plays half and the preloader appears to\n" +
+        "    interrupt it. The cards have to sweep off the sheet, not under it.",
+    );
+  }
+}
+
+/**
+ * 3. The artifact keeps the wipe.
  *
  * The bundler once hid `.mh-wipe` to stop a stalled navigation painting the
  * screen one flat colour. It cured the symptom by removing the animation from

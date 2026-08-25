@@ -225,7 +225,10 @@ export function Preloader() {
       // plain anchor and a click on it is a whole page load rather than a
       // navigation. Blocking for the second it is up costs nothing; the
       // reader has nothing to aim at yet.
-      className="mh-preload fixed inset-0 z-[10000] flex flex-col overflow-hidden"
+      // Below the wipe. See the note on the wipe's own layer: on the way in
+      // from another page the cards have to sweep off *this*, so the sheet
+      // cannot be the thing on top.
+      className="mh-preload fixed inset-0 z-[9999] flex flex-col overflow-hidden"
       style={
         {
           "--mh-preload-start": `${preloader.start}ms`,

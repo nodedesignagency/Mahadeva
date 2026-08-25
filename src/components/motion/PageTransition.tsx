@@ -247,7 +247,15 @@ export function PageTransition() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden"
+      // Above the preloader's sheet, and that ordering is the handover.
+      //
+      // The sheet goes up the moment the home page mounts, which is while the
+      // cards are still covering. Under it, the sweep that follows happens out
+      // of sight: the reader watches the cards cross in, the screen turns
+      // green, and the wipe appears to play only half before something else
+      // takes over. Over it, the sweep is the thing that uncovers the sheet,
+      // which is the join every other page gets.
+      className="pointer-events-none fixed inset-0 z-[10000] overflow-hidden"
       style={
         {
           "--mh-wipe-duration": `${pageWipe.duration}ms`,
