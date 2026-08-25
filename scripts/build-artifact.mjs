@@ -221,7 +221,14 @@ const origin = `
 <script>
 (function(){
   var RSC=${JSON.stringify(rsc)};
-  var SEG=${JSON.stringify(segments)};
+  /* Deliberately empty. The segment payloads are still collected — the chunk
+     union below is derived from them — but shipping them doubled the file for
+     nothing: a prefetch is an optimisation, and a miss here answers 404, which
+     Next takes as "not prefetched" and follows with the ordinary fetch that
+     RSC above already serves in full.
+     4.2MB of a 14.5MB file, parsed and held in memory by a frame that has the
+     whole site inlined into it already. */
+  var SEG={};
   var META=${JSON.stringify(meta)};
   var NOTFOUND=${JSON.stringify(notFound)};
   var CSS=${JSON.stringify([...styles.keys()])};
