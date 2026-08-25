@@ -4,15 +4,6 @@
     "client": "Ragnarok AI",
     "year": "2023",
     "title": "AI Agent Website Built for Automation Startups",
-    "titleLines": [
-      "AI Agent Website Built",
-      "for Automation Startups"
-    ],
-    "titleLinesMobile": [
-      "AI Agent Website",
-      "Built for",
-      "Automation Startups"
-    ],
     "summary": "AI-driven automation systems improved engagement and conversion clarity for a SaaS company, reducing friction.",
     "stats": [
       {
@@ -54,15 +45,6 @@
     "client": "Northwind Labs",
     "year": "2024",
     "title": "Lead Qualification Rebuilt Around a Scoring Model",
-    "titleLines": [
-      "Lead Qualification Rebuilt",
-      "Around a Scoring Model"
-    ],
-    "titleLinesMobile": [
-      "Lead Qualification",
-      "Rebuilt Around a",
-      "Scoring Model"
-    ],
     "summary": "Automated scoring cut wasted sales time and doubled recurring revenue for a mid-market SaaS team.",
     "stats": [
       {
@@ -104,15 +86,6 @@
     "client": "Atlas Logistics",
     "year": "2024",
     "title": "Forecasting Agents for a Freight Network",
-    "titleLines": [
-      "Forecasting Agents",
-      "for a Freight Network"
-    ],
-    "titleLinesMobile": [
-      "Forecasting Agents",
-      "for a Freight",
-      "Network"
-    ],
     "summary": "Demand forecasting and route planning agents trimmed empty miles and steadied delivery windows across the fleet.",
     "stats": [
       {
@@ -154,15 +127,6 @@
     "client": "Meridian Retail",
     "year": "2025",
     "title": "Inventory Agents Across Forty Store Rooms",
-    "titleLines": [
-      "Inventory Agents Across",
-      "Forty Store Rooms"
-    ],
-    "titleLinesMobile": [
-      "Inventory Agents",
-      "Across Forty",
-      "Store Rooms"
-    ],
     "summary": "Stock agents watch every shelf and reorder before a line runs dry, ending the weekly count that four regions used to run by hand.",
     "stats": [
       {
@@ -204,15 +168,6 @@
     "client": "Halden Health",
     "year": "2025",
     "title": "Patient Intake Rebuilt as One Clean Handover",
-    "titleLines": [
-      "Patient Intake Rebuilt",
-      "as One Clean Handover"
-    ],
-    "titleLinesMobile": [
-      "Patient Intake",
-      "Rebuilt as One",
-      "Clean Handover"
-    ],
     "summary": "Intake, triage notes and scheduling meet in a single flow, so a clinic books the right appointment on the first call rather than the third.",
     "stats": [
       {

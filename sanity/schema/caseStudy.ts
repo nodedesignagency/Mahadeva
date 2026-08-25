@@ -27,22 +27,6 @@ export const caseStudy = defineType({
       validation: (rule) => rule.required().max(90),
     }),
     defineField({
-      name: "titleLines",
-      title: "Title, line by line",
-      type: "array",
-      description:
-        "How the title is set on its own page — one entry per line. The reveal draws a bar per line, sized to that line, so this is where the breaks are decided. Leave empty and the page sets the whole title and lets it wrap.",
-      of: [defineArrayMember({ type: "string" })],
-    }),
-    defineField({
-      name: "titleLinesMobile",
-      title: "Title, line by line (phone)",
-      type: "array",
-      description:
-        "The same break for a narrow screen, where the lines above run past the column. Leave empty to use the same ones.",
-      of: [defineArrayMember({ type: "string" })],
-    }),
-    defineField({
       name: "slug",
       title: "URL",
       type: "slug",

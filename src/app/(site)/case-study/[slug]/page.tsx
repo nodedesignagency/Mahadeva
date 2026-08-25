@@ -195,24 +195,16 @@ export default async function CaseStudyPage({ params }: PageProps) {
               desktop up and under it below, where a column that narrow would
               set four words to a line. */}
           <div className="grid items-end gap-8 desktop:grid-cols-[8fr_5fr] desktop:gap-20">
-            {/* Authored lines where the study has them, which is what makes
-                each bar the width of its own line — a heading left to wrap
-                gets one bar as wide as the column, since a line's bar is one
-                box and the column is what the box fills.
+            {/* Plain, where every other heading on the site is revealed. The
+                reveal needs to be told where the lines break — it draws a bar
+                per line — and that was two more fields for an editor to fill
+                in on every study. Left to wrap, the title costs them nothing.
 
-                `wraps` is the fallback for a study written without them: the
-                bar becomes a band per row so the gap between rows stays open,
-                and the leading gives that gap the same 4 that
-                `--space-heading-line` puts between a pair of authored lines. */}
-            <TextReveal
-              as="h1"
-              wraps
-              lines={study.titleLines ?? [study.title]}
-              mobileLines={study.titleLinesMobile}
-              settings={sectionTextRevealDynamic}
-              lineStagger={sectionTextRevealDynamic.lineStagger}
-              className="flex flex-col items-start gap-(--space-heading-line) text-display-xl leading-[calc(1em+var(--space-heading-line))] tracking-(--tracking-display) font-normal"
-            />
+                The leading carries `--space-heading-line` so wrapped rows sit
+                the same distance apart as the authored lines used to. */}
+            <h1 className="font-display text-display-xl leading-[calc(1em+var(--space-heading-line))] tracking-(--tracking-display) font-normal text-ink-dynamic">
+              {study.title}
+            </h1>
             <p className="text-ink-dynamic max-w-[46ch] font-body text-body-md">
               {study.summary}
             </p>

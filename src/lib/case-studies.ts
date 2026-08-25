@@ -20,8 +20,6 @@ const CASE_STUDIES = groq`
     client,
     year,
     title,
-    titleLines,
-    titleLinesMobile,
     summary,
     stats[]{ label, value },
     tone,

@@ -37,13 +37,11 @@ export type CaseStudy = {
    * whole title and copes — but the breaks are a design decision, not the
    * column's to make.
    */
-  titleLines?: string[];
   /**
    * The same title broken for a phone, where the desktop break runs past the
    * column and wraps — which puts the bar back to the column's width for the
    * line that wrapped. The hero does the same thing for the same reason.
    */
-  titleLinesMobile?: string[];
   summary: string;
   /**
    * Exactly four, laid out 2x2. Fewer would leave a hole in the grid, more
