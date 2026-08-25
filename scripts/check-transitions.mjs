@@ -38,17 +38,19 @@ const failures = [];
     );
   }
 
-  /* And the other half of that handover. Arriving home, the cards are dropped
-     under the preloader's sheet rather than swept off over it — sweeping is
-     what made the sequence read as stopping half way. */
-  const dropsUnderSheet =
-    /pathname\s*===\s*["']\/["']/.test(src) &&
-    /delete\s+document\.documentElement\.dataset\.wipe/.test(src);
-  if (!dropsUnderSheet) {
+  /* And the other half of that handover: the sweep has to run in full. The
+     preloader's sheet is up behind the cards, so the sweep is what uncovers
+     it — cut it short and the preloader appears from nowhere again, which is
+     the same complaint by another route. */
+  const cutsTheSweepShort =
+    /pathname\s*===\s*["']\/["'][\s\S]{0,200}delete\s+document\.documentElement\.dataset\.wipe/.test(
+      src,
+    );
+  if (cutsTheSweepShort) {
     failures.push(
-      "PageTransition no longer drops the wipe cards on arrival at the home page.\n" +
-        "    They will sweep off over the preloader's sheet, which reads as the\n" +
-        "    transition stopping half way and something else taking over.",
+      "PageTransition drops the wipe cards instead of sweeping them on arrival home.\n" +
+        "    The sweep is what uncovers the preloader's sheet. Without it the wipe\n" +
+        "    only half plays and the preloader arrives unannounced.",
     );
   }
 }

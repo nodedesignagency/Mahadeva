@@ -156,22 +156,12 @@ export function PageTransition() {
       return;
     }
 
-    // The home page brings its own cover, and the two must not both be seen
-    // uncovering. The preloader's sheet is already over the whole screen by
-    // the time this runs, so the cards are dropped where they stand instead of
-    // being swept off: they go out of existence underneath it, unwatched, and
-    // the preloader does the one uncovering the reader sees.
-    //
-    // Sweeping them here is what the wipe used to be skipped for. It runs
-    // *over* the sheet — the reader watches the cards leave and is then left
-    // looking at the preloader that was behind them, which reads as the
-    // transition stopping half way and something else starting.
-    if (pathname === "/") {
-      clearTimers();
-      delete document.documentElement.dataset.wipe;
-      return;
-    }
-
+    // Home is no different here, and that is the whole handover: the
+    // preloader's sheet is already up behind the cards by the time they sweep,
+    // so what the sweep uncovers is the sheet, and the preloader carries on
+    // from there. Cutting the sweep short — or skipping the wipe for home,
+    // which this page did for a while — takes the join away and leaves a
+    // preloader that appears from nowhere.
     reveal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
