@@ -214,9 +214,12 @@ export function Preloader() {
   return (
     <div
       aria-hidden="true"
-      // Above the wipe's cards, which are the only other thing that covers the
-      // whole screen. On the one frame both exist, the preloader is the outer
-      // of the two.
+      // Below the wipe's cards, which are the only other thing that covers the
+      // whole screen. On the frames where both exist the sheet is the inner of
+      // the two: arriving from another page the cards sweep off *this*, and
+      // that sweep is the join, so the sheet cannot be the thing on top. The
+      // note on the wipe's own layer says the same thing from the other side,
+      // and `check-transitions.mjs` fails the build if the two ever cross.
       //
       // And it takes the clicks, rather than letting them through as most
       // decorative overlays here do. A full-screen cover that can be clicked
@@ -225,9 +228,6 @@ export function Preloader() {
       // plain anchor and a click on it is a whole page load rather than a
       // navigation. Blocking for the second it is up costs nothing; the
       // reader has nothing to aim at yet.
-      // Below the wipe. See the note on the wipe's own layer: on the way in
-      // from another page the cards have to sweep off *this*, so the sheet
-      // cannot be the thing on top.
       className="mh-preload fixed inset-0 z-[9999] flex flex-col overflow-hidden"
       style={
         {

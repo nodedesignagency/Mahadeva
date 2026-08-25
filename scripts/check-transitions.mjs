@@ -1,10 +1,14 @@
 /**
- * Guards the two transition regressions that have actually happened.
+ * Guards the transition regressions that have actually happened.
  *
- * Both were invisible to every other check: the types were fine, the build was
- * green, the lint passed, and the site rendered. Each was found by a reader
- * watching the screen and reporting it, twice, days apart. That is the case a
- * test exists for.
+ * Every one was invisible to every other check: the types were fine, the build
+ * was green, the lint passed, and the site rendered. Each was found by a reader
+ * watching the screen and reporting it, days apart. That is the case a test
+ * exists for.
+ *
+ * The last of them did not even happen on the site — it only showed in the
+ * published artifact, because the site and the artifact disagree about what
+ * the address bar means. A rule here is worth having for that too.
  *
  * Run by `npm run lint`, so it fails the build rather than the page.
  *
@@ -103,6 +107,34 @@ const failures = [];
       "build-artifact.mjs hides the page wipe.\n" +
         "    The artifact is how the site's motion gets looked at; a preview\n" +
         "    without the transition is not a preview of this site.",
+    );
+  }
+}
+
+/**
+ * 4. The same-page guard asks the router, not the address bar.
+ *
+ * The wipe refuses to run for a link to the page already open — otherwise the
+ * cards close over the screen with no arrival coming to open them again. That
+ * test used to be `url.pathname === window.location.pathname`, which is right
+ * on the site and wrong everywhere the address is not the route.
+ *
+ * In a published artifact it is not: the bundle freezes the address at the
+ * host's own path on purpose, so `location.pathname` is `/_f/<id>/` for every
+ * route and the guard never matched. Three of six navigations sat on one flat
+ * colour for the full 2.5s of the rescue. `usePathname()` is the router's own
+ * answer and is correct in both places.
+ */
+{
+  const src = read("src/components/motion/PageTransition.tsx");
+  if (/window\.location\.pathname/.test(src)) {
+    failures.push(
+      "PageTransition reads window.location.pathname.\n" +
+        "    The address is not the route wherever the page is not served at it —\n" +
+        "    a published artifact freezes it at the host's path — so the guard\n" +
+        "    against wiping to the page already open silently stops working, and\n" +
+        "    every such link covers the screen until the rescue fires. Ask the\n" +
+        "    router: usePathname().",
     );
   }
 }

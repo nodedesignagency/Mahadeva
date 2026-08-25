@@ -55,6 +55,16 @@ const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffe
 const sweep = pageWipe.duration + pageWipe.stagger * (pageWipe.cards - 1);
 
 /**
+ * Whether two paths are the same page.
+ *
+ * A link written with a trailing slash and the route without one are the same
+ * page to a reader, and telling them apart here would start a wipe with
+ * nothing at the other end of it.
+ */
+const samePath = (a: string, b: string) =>
+  a.replace(/(.)\/+$/, "$1") === b.replace(/(.)\/+$/, "$1");
+
+/**
  * Sets the attribute before the body paints.
  *
  * Inline and blocking on purpose. Anything deferred — an effect, a module —
@@ -147,10 +157,22 @@ export function PageTransition() {
     // Once, on mount. A soft navigation is the effect below.
   }, []);
 
+  /**
+   * Where the router thinks it is.
+   *
+   * Kept in a ref because the click handler below is bound once and would
+   * otherwise close over the route that was current when it was bound. The
+   * effect that keeps it current is the arrival effect itself — the two ask
+   * the same question, and a soft navigation is the only thing that changes
+   * the answer.
+   */
+  const here = useRef(pathname);
+
   // Arriving through a soft navigation: the document survived, so the pathname
   // changing is what says the new page is here.
   const first = useRef(true);
   useEffect(() => {
+    here.current = pathname;
     if (first.current) {
       first.current = false;
       return;
@@ -206,7 +228,19 @@ export function PageTransition() {
       // where you already are is the one case that reads as a bug, and it is
       // also the case that would leave the cards up with no arrival to open
       // them.
-      if (url.pathname === window.location.pathname) return;
+      //
+      // Asked of the router and not of the address bar. On the site the two
+      // are the same string and it made no difference; in a published artifact
+      // they are not. That bundle freezes the address at whatever path the
+      // host serves it from — deliberately, because it is one file with no
+      // server behind it and a router that writes /about into the address
+      // sends the next reload to a page nothing can answer for. So
+      // `location.pathname` there is `/_f/<id>/` and never equals any route,
+      // this never matched, and every link to the page already open started a
+      // wipe that no arrival could ever end: the cards closed over the screen
+      // and sat there, one flat colour, until the rescue below let them go
+      // 2.5 seconds later. Measured on three of six navigations.
+      if (samePath(url.pathname, here.current)) return;
 
       const root = document.documentElement;
       if (root.dataset.wipe) return;

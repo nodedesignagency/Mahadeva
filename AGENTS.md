@@ -163,8 +163,9 @@ heights has been wrong here more than once.
 
 Broken four times in a day, three different ways, each of which looked like a
 different bug and none of which any check caught. `npm run lint` now runs
-`scripts/check-transitions.mjs`, which fails the build on all three. **If it
-fails, fix the code. Do not edit the guard to agree with you.**
+`scripts/check-transitions.mjs`, which fails the build on all three — and on a
+fourth, below, that never once showed on the site. **If it fails, fix the code.
+Do not edit the guard to agree with you.**
 
 Going to the home page from anywhere inside the site, the sequence is:
 
@@ -215,6 +216,31 @@ been reproduced in a plain file, behind a host-style path prefix with a
 `<base href>`, and inside a sandboxed frame where `sessionStorage` throws, and
 every route opened in all three. Check the viewer, or check the real site with
 `npm run build && npx next start`, before changing anything the site renders.
+
+### In the artifact the address is not the route
+
+Almost never the bundle — but once, it was the site, and only the artifact
+could show it. Worth reading before the next stuck screen sends someone into
+`build-artifact.mjs`.
+
+The bundle freezes the address at whatever path the host serves the file from,
+and does it on purpose: one file with no server behind it, so a router that
+writes `/about` into the address sends the next reload somewhere nothing can
+answer for. The cost is that `location.pathname` is `/_f/<id>/` on every route.
+
+Anything on the site that asks the address where it is therefore gets a wrong
+answer in the artifact, and gets it silently. The wipe's guard against running
+for a link to the page already open was `url.pathname === location.pathname`,
+which is the same string on the site and never matches in the artifact — so
+those links covered the screen with no arrival coming to open it, and it sat on
+one flat colour for the full 2.5s of `pageWipe.rescue`. Three of six
+navigations, measured: every current-page link, which is the header logo on
+home and the nav item for whatever page you are on.
+
+**Ask the router, not the address** — `usePathname()` is right in both places.
+The rescue is what makes this survivable rather than fatal, and that is the
+only reason it read as a slow page rather than a broken one. Do not treat it as
+a licence to leave a cover without a way out.
 
 ## Content lives in Sanity, assets live in `public/uploads`
 
