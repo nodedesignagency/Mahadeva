@@ -847,28 +847,7 @@ const throughOptimiser = /\/_next\/image\?url=([^"&]+)(?:&amp;|&)[^"]*/g;
 html = html.replace(throughOptimiser, (whole, enc) => artwork.get(decodeURIComponent(enc)) ?? whole);
 for (const [file, uri] of artwork) html = html.split(file).join(uri);
 
-/* The page wipe, which the artifact cannot afford.
- *
- * On the site the three cards cover the screen, the next page arrives, and
- * they sweep off. Here the arrival is the one part that is not guaranteed:
- * the frame is sandboxed, and a navigation that stalls inside it leaves the
- * cards across the whole screen until `pageWipe.rescue` opens them 2.5s later
- * — onto the page the reader started from, because that is the one that is
- * still rendered. A full screen of flat peach, and then their own page back:
- * indistinguishable from the link being broken, and alarming in a way the
- * failure itself is not.
- *
- * So the cards are hidden here and nothing else is touched. The state machine
- * runs exactly as it does on the site, `data-wipe` drives nothing but these
- * three elements (globals.css:522), and the rescue still returns the page. A
- * navigation that works now swaps straight to the new page; one that stalls
- * does nothing visible at all, which is the honest picture of what happened.
- *
- * Only in the artifact. The site keeps its wipe.
- */
-const noWipe = "<style>.mh-wipe{display:none!important}</style>";
-
-html = html.replace(/<head([^>]*)>/, (m) => m + origin + noWipe);
+html = html.replace(/<head([^>]*)>/, (m) => m + origin);
 
 const already = new Set([...html.matchAll(/var a="(\/_next\/[^"]+)"/g)].map((m) => m[1]));
 const extra = [...needed].filter((u) => !already.has(u));
