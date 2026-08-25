@@ -155,6 +155,23 @@ export function PageTransition() {
       first.current = false;
       return;
     }
+
+    // The home page brings its own cover, and the two must not both be seen
+    // uncovering. The preloader's sheet is already over the whole screen by
+    // the time this runs, so the cards are dropped where they stand instead of
+    // being swept off: they go out of existence underneath it, unwatched, and
+    // the preloader does the one uncovering the reader sees.
+    //
+    // Sweeping them here is what the wipe used to be skipped for. It runs
+    // *over* the sheet — the reader watches the cards leave and is then left
+    // looking at the preloader that was behind them, which reads as the
+    // transition stopping half way and something else starting.
+    if (pathname === "/") {
+      clearTimers();
+      delete document.documentElement.dataset.wipe;
+      return;
+    }
+
     reveal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
@@ -200,14 +217,6 @@ export function PageTransition() {
       // also the case that would leave the cards up with no arrival to open
       // them.
       if (url.pathname === window.location.pathname) return;
-
-      // The home page brings its own cover. Running both means the cards
-      // cross, and then the preloader's sheet appears over them from a
-      // standing start while they are still on screen — the wipe visibly
-      // stops half way and something else takes over. The preloader is the
-      // better handover of the two, and it is the one the reader is meant to
-      // see, so this one steps aside.
-      if (url.pathname === "/") return;
 
       const root = document.documentElement;
       if (root.dataset.wipe) return;

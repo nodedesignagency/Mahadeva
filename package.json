@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint && node scripts/check-arbitrary-vars.mjs",
+    "lint": "eslint && node scripts/check-arbitrary-vars.mjs && node scripts/check-transitions.mjs",
     "preview": "next build && node scripts/build-preview.mjs",
     "seed": "node scripts/seed-sanity.mjs",
     "artifact": "next build && node scripts/build-artifact.mjs"
