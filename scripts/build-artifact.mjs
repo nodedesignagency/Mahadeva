@@ -867,16 +867,37 @@ const fontVars = [...html.matchAll(/\.[A-Za-z0-9_-]*__variable\{([^}]*)\}/g)]
 const headInner = html.match(/<head[^>]*>([\s\S]*?)<\/head>/)[1];
 const bodyInner = html.match(/<body[^>]*>([\s\S]*?)<\/body>/)[1];
 
+/* A second copy that owns its own document.
+ *
+ * `site.html` is a fragment because the artifact host supplies <html>, <head>
+ * and <body> — and with them a frame, a runtime and a sandbox that the file
+ * has no say over. When a navigation stalls in there it is not reproducible
+ * from outside it, which leaves nothing to fix and no way to show the site.
+ *
+ * So the same bundle is also written as a whole document, which opens from
+ * disk in any browser with nothing between it and the page: same routes, same
+ * payloads, same wipe. It is the copy to send someone when the artifact is
+ * being difficult, and the one to check against when it is.
+ */
 const out = process.argv[2] ?? "site.html";
-fs.writeFileSync(
-  out,
+
+const fragment =
   `<title>Mahadeva</title>\n` +
-    headInner +
-    `\n<style>${fontVars ? `:root{${fontVars}}` : ""}\n` +
-    `html,body{margin:0;padding:0;background:#0e1e1d;` +
-    `font-family:var(--font-body);font-size:var(--text-body-md);` +
-    `line-height:var(--leading-body);color:var(--color-fg)}</style>\n` +
-    `<div class="${[cls, bodyCls].filter(Boolean).join(" ")}">\n${bodyInner}\n</div>`,
+  headInner +
+  `\n<style>${fontVars ? `:root{${fontVars}}` : ""}\n` +
+  `html,body{margin:0;padding:0;background:#0e1e1d;` +
+  `font-family:var(--font-body);font-size:var(--text-body-md);` +
+  `line-height:var(--leading-body);color:var(--color-fg)}</style>\n` +
+  `<div class="${[cls, bodyCls].filter(Boolean).join(" ")}">\n${bodyInner}\n</div>`;
+
+fs.writeFileSync(out, fragment);
+
+const standalone = out.replace(/\.html$/, "") + ".standalone.html";
+fs.writeFileSync(
+  standalone,
+  `<!doctype html>\n<html lang="en" class="${cls}">\n<head>\n<meta charset="utf-8">\n` +
+    `<meta name="viewport" content="width=device-width,initial-scale=1">\n` +
+    `${fragment}\n</head>\n<body class="${bodyCls}"></body>\n</html>`,
 );
 
 console.log(
