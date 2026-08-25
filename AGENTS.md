@@ -158,3 +158,84 @@ Chromium is available and the project builds to a real server. When a change is
 dimensional — a fixed box, a hover sequence, a font that has to fill a width —
 build it, serve it, and measure the rendered result. Reasoning about line
 heights has been wrong here more than once.
+
+## The wipe and the preloader are one handover, in this order
+
+Broken four times in a day, three different ways, each of which looked like a
+different bug and none of which any check caught. `npm run lint` now runs
+`scripts/check-transitions.mjs`, which fails the build on all three. **If it
+fails, fix the code. Do not edit the guard to agree with you.**
+
+Going to the home page from anywhere inside the site, the sequence is:
+
+```
+cards cross in  →  screen covered  →  cards sweep off  →  preloader sheet  →  home
+                                          ↑
+                             this is what uncovers the sheet
+```
+
+Three things make that work, and each has been removed at least once by
+someone reasoning about it sensibly and being wrong:
+
+**The wipe runs to the home page.** It was once skipped there, on the entirely
+reasonable ground that the preloader covers the screen anyway. It does — but it
+is the *second half* of a handover, not a replacement for one. Skip the wipe
+and the link appears to do nothing, then a green sheet arrives from nowhere,
+where every other link on the site has a join.
+
+**The sweep runs in full.** Dropping the cards on arrival instead of sweeping
+them looks like the tidier thing — the preloader is about to cover everything,
+so why animate them off? Because the sweep is the join. Cut it and the wipe
+plays half and the preloader still arrives unannounced, which is the same
+complaint by another route.
+
+**The wipe sits above the sheet.** `PageTransition` is `z-[10000]` and
+`Preloader` is `z-[9999]`, and that order is load-bearing. The sheet goes up
+the moment the home page mounts, which is *while the cards are still
+covering* — so underneath it the sweep happens out of sight. Both animations
+run correctly, in the right order, and the reader sees the wipe stop half way.
+This one cost the longest to find because every trace of `data-wipe` came back
+correct; only the layering was wrong.
+
+That last one is the general lesson, and it is worth more than the specific
+fix: **a transition bug is not proved absent by the state being right.** Read
+the pixels. `page.screenshot()` in a loop and the centre row of each frame told
+the truth in one run, after a day of state traces that were all green.
+
+## The artifact is how the motion gets looked at
+
+`npm run artifact` bundles every route into one file for preview. It is
+tempting, when a navigation stalls in the artifact viewer and paints the screen
+one flat colour, to hide `.mh-wipe` in the bundle and call the symptom cured.
+That removes the animation from the only place anyone looks at it. The guard
+fails on it.
+
+If the artifact is misbehaving, the fault is almost never the bundle: it has
+been reproduced in a plain file, behind a host-style path prefix with a
+`<base href>`, and inside a sandboxed frame where `sessionStorage` throws, and
+every route opened in all three. Check the viewer, or check the real site with
+`npm run build && npx next start`, before changing anything the site renders.
+
+## Content lives in Sanity, assets live in `public/uploads`
+
+Two datasets in one project: `production` for case studies, `blog` for posts.
+Datasets are databases, not CMSes — one holds as many document types as you
+like, and the split here is because the two are written on different rhythms,
+not because it was forced. The Studio opens on `production`; the blog is at
+`/studio/blog` or under **Workspaces**. There is no picker at `/studio`, Sanity
+redirects an unknown studio path to the first workspace in config order.
+
+The categories and tones a post can take are declared once, in
+`src/content/blogTerms.ts`, and the Studio dropdowns are built from it. Do not
+list them again in the schema: a category the Studio offers and the filter row
+does not is a post no chip ever shows.
+
+Every image, icon and logo is under `public/uploads/{icons,logos,images}` —
+`src/assets` no longer exists. They are still *imported* rather than linked,
+through the `@public/` alias, because that is what hands them to the build and
+makes a wrong path a compile error instead of a broken image someone finds
+later. `src/app/favicon.ico` is the one exception and has to stay where it is.
+
+Two icons are inline components in `src/components/ui/SiteIcons.tsx` rather
+than files, because an `<img>` paints an SVG in the colour it was exported at.
+Anything that has to follow the surface it sits on belongs there.
