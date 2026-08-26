@@ -108,9 +108,9 @@ export const teamContent = {
    * handle on it simply shows the line and no icons.
    *
    * `photo` names the portrait and the section imports it. The eight files the
-   * owner supplied are numbered rather than named, so they are paired with the
-   * four members in the order they arrived — swap two values here to re-pair
-   * them, and four are still spare.
+   * owner supplied are numbered rather than named, so a name is paired with a
+   * file here and nowhere else — swapping two values re-pairs them, and that
+   * is the only edit it takes.
    */
   members: [
     {
@@ -151,6 +151,50 @@ export const teamContent = {
       photo: "james",
       role: "Growth Strategist",
       bio: "Connects automation to revenue, measuring what each system returns and where the next one should go.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
+    {
+      name: "Olivia Carter",
+      photo: "olivia",
+      role: "Operations Lead",
+      bio: "Keeps delivery predictable: scopes the work, sequences it, and makes sure what ships is what was agreed.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
+    {
+      name: "Nathan Cole",
+      photo: "nathan",
+      role: "AI Consultant",
+      bio: "Turns what a business actually needs into the model and tooling that will do it, and says so when automation is the wrong answer.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
+    {
+      name: "Ryan Lee",
+      photo: "ryan",
+      role: "Systems Engineer",
+      bio: "Builds and runs what the automation sits on, so a workflow that holds up in a demo still holds up at volume.",
+      links: {
+        x: "https://x.com/",
+        instagram: "https://instagram.com/",
+        linkedin: "https://linkedin.com/",
+      },
+    },
+    {
+      name: "Sophia Reed",
+      photo: "sophia",
+      role: "Client Success Lead",
+      bio: "Stays with an engagement past launch, measuring what the system returns and feeding that back into the next build.",
       links: {
         x: "https://x.com/",
         instagram: "https://instagram.com/",
