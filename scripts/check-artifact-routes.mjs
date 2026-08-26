@@ -111,49 +111,95 @@ if (!executablePath) {
 
 const browser = await chromium.launch({ executablePath, headless: true });
 const failures = [];
+const verified = [];
 
-try {
-  for (const route of routes) {
-    if (route === "/") continue; // where the bundle boots; nothing to navigate to
-    const context = await browser.newContext({
-      viewport: { width: 1280, height: 800 },
-      // A reader's conditions, wipe and all. Turning the wipe off makes a
-      // failure show a couple of seconds sooner and costs the check the one
-      // class of bug that only appears when the wipe is the thing driving the
-      // navigation — which is most of them, since the wipe is what calls the
-      // router on every internal link.
-      reducedMotion: "no-preference",
+/* A detail page is not linked from the home page — the blog index links its
+   posts, the careers index its openings — so reaching one is two hops, the
+   same two a reader makes. A route this cannot reach is reported, never
+   skipped: a check that goes quiet about what it did not look at is how the
+   thing it guards got out in the first place. */
+const indexOf = (route) => {
+  const cut = route.lastIndexOf("/");
+  return cut > 0 ? route.slice(0, cut) : "/";
+};
+
+const clickTo = (frame, want) =>
+  frame.evaluate((route) => {
+    const hit = [...document.querySelectorAll("a[href]")].find((a) => {
+      try { return new URL(a.getAttribute("href"), location.href).pathname === route && a.isConnected; }
+      catch { return false; }
     });
+    if (!hit) return false;
+    hit.click();
+    return true;
+  }, want);
+
+async function check(route) {
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    // A reader's conditions, wipe and all. Turning the wipe off makes a
+    // failure show a couple of seconds sooner and costs the check the one
+    // class of bug that only appears when the wipe is the thing driving the
+    // navigation — which is most of them, since the wipe is what calls the
+    // router on every internal link.
+    reducedMotion: "no-preference",
+  });
+  try {
     const page = await context.newPage();
     await page.goto(origin + "/", { waitUntil: "load" });
     const frame = page.frames().find((f) => f.url().includes("/_f/"));
-    if (!frame) { failures.push([route, "the artifact frame never loaded"]); await context.close(); continue; }
+    if (!frame) return [route, "the artifact frame never loaded"];
     await frame.waitForLoadState("load");
     await page.waitForTimeout(3500); // boot, hydrate, and let the preloader finish
 
-    const clicked = await frame.evaluate((want) => {
-      const hit = [...document.querySelectorAll("a[href]")].find((a) => {
-        try { return new URL(a.getAttribute("href"), location.href).pathname === want && a.isConnected; }
-        catch { return false; }
-      });
-      if (!hit) return false;
-      hit.click();
-      return true;
-    }, route);
+    if (!(await clickTo(frame, route))) {
+      // Not on the home page. Go through its index, the way a reader would.
+      const index = indexOf(route);
+      if (index === route || !(await clickTo(frame, index))) {
+        return [route, "nothing on the site links to it, and neither does its index"];
+      }
+      await page.waitForTimeout(5200);
+      if ((await frame.evaluate(() => window.__mhRoute)) !== index) {
+        return [route, `its index ${index} does not open either`];
+      }
+      if (!(await clickTo(frame, route))) {
+        return [route, `${index} opened but carries no link to it`];
+      }
+    }
 
-    if (!clicked) { await context.close(); continue; } // nothing links to it from home; not this check's business
     await page.waitForTimeout(5200); // cover, hold, sweep, and the rescue past it
-
     const arrived = await frame.evaluate(() => window.__mhRoute).catch(() => null);
     if (arrived !== route) {
-      failures.push([route, `clicking its link left the router at ${JSON.stringify(arrived)}`]);
+      return [route, `clicking its link left the router at ${JSON.stringify(arrived)}`];
     }
+    return null;
+  } finally {
     await context.close();
   }
+}
+
+/* A few at a time. One at a time is nine seconds a route and nobody waits for
+   that on every build; all at once starves them and they time out on a laptop. */
+const queue = routes.filter((r) => r !== "/");
+const LANES = 4;
+try {
+  await Promise.all(
+    Array.from({ length: LANES }, async () => {
+      for (;;) {
+        const route = queue.shift();
+        if (route === undefined) return;
+        const bad = await check(route);
+        if (bad) failures.push(bad);
+        else verified.push(route);
+      }
+    }),
+  );
 } finally {
   await browser.close();
   server.close();
 }
+
+failures.sort((a, b) => a[0].localeCompare(b[0]));
 
 if (failures.length) {
   console.error("\n  Artifact route check failed — the bundle cannot open its own pages:\n");
@@ -170,4 +216,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`  Artifact route check: ${routes.length - 1} routes open.`);
+console.log(`  Artifact route check: ${verified.length} of ${routes.length - 1} routes open.`);
