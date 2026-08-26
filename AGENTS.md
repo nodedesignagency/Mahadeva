@@ -242,6 +242,50 @@ The rescue is what makes this survivable rather than fatal, and that is the
 only reason it read as a slow page rather than a broken one. Do not treat it as
 a licence to leave a cover without a way out.
 
+## A route can be alive on the site and dead in the bundle
+
+`npm run artifact` ends with `scripts/check-artifact-routes.mjs`, which opens
+every route in the built bundle and fails the build if one will not open. **If
+it fails, the bundle is broken for a reader. Do not publish it and do not
+weaken the check.**
+
+It exists because `/pricing` was exactly that, and nothing caught it. Under
+`npm run build && npx next start` the page rendered, navigated and
+screenshotted perfectly. In the artifact the router fetched its payload,
+refused it, and stopped — no console error, no failed request, no rejected
+promise, no chunk left loading. What a reader saw was the wipe closing over the
+screen and staying there for the full 2.5s of `pageWipe.rescue`, and then the
+same page they started on. Every other check this project has looks at the
+site, so it shipped that way.
+
+What is known about it, so the next person does not spend the day re-deriving
+it:
+
+- **It is the payload, not the page.** Serving another route's payload under a
+  `/pricing` navigation works; serving `/pricing`'s payload under any other
+  navigation fails. Stripping the page to a single heading does not help.
+- **It is not the content, the assets, the images, or the wipe.** It fails with
+  the wipe disabled entirely, with the page emptied, with `Impact`, `Compare`
+  and `Faq` removed one at a time, and on a clean `rm -rf .next` build.
+- **It is not the plumbing.** The payload is complete, valid UTF-8, every id it
+  references is defined, every chunk it names is inlined, its `.meta`,
+  `.segments` and router tree are structurally identical to routes that work,
+  and it carries no postponed/PPR state.
+
+So it is something React's Flight client rejects about that one payload, and
+finding it needs the router's own error path rather than more bisecting from
+the outside. Until then the check is what stands between it and a buyer.
+
+Two things that make investigating this bearable:
+
+- **Reproduce it in the viewer's conditions, not in a plain file.** Serve the
+  bundle behind a host-style path prefix with a `<base href>`, inside a
+  sandboxed frame. The check script already does this and is the fastest
+  harness to borrow.
+- **`window.__mhRoute` is the truth about where the router is.** The address is
+  frozen at the host's path on purpose, so `location.pathname` cannot answer
+  it — see the section above.
+
 ## Content lives in Sanity, assets live in `public/uploads`
 
 Two datasets in one project: `production` for case studies, `blog` for posts.
