@@ -146,6 +146,36 @@ for (const { name, pathname } of routes) {
 for (const m of notFound.rsc.matchAll(/\/_next\/static\/chunks\/[A-Za-z0-9_.-]+\.js/g))
   needed.add(m[0]);
 
+/* Every chunk the site needs is inlined above and has run before the reader
+   can click anything — so the chunk lists the payloads carry are not merely
+   redundant here, they are the one thing that can hang a navigation.
+ *
+ * React reads them and asks its loader for anything it does not already
+ * consider loaded. On a server that is a fetch; here `/_next` is walled off,
+ * so the request is answered by nothing and the promise it is waiting on never
+ * settles. React suspends, for ever, without throwing: no console error, no
+ * failed request, no chunk in flight. The route simply never arrives and the
+ * wipe sits over the screen until its rescue fires.
+ *
+ * `/pricing` was the page it happened to, because it was the only route whose
+ * modules named two chunks that no earlier route had already caused to be
+ * recorded as loaded. Nothing about the page was wrong, which is why removing
+ * its sections, its images and its content one at a time changed nothing.
+ *
+ * So the lists are emptied. The modules resolve straight out of the registry
+ * the inlined chunks already filled, which is where they were always going to
+ * come from. This is done after `needed` is computed — that set is derived
+ * from these very lists, and emptying them first would inline nothing.
+ *
+ * Only the navigation payloads. The shell's own flight data is left alone: it
+ * is parsed while the document is still streaming, when "already loaded" is
+ * not yet true of everything. */
+const withoutChunkLists = (payload) =>
+  payload.replace(/:I\[(\d+),\[[^\]]*\]/g, ":I[$1,[]");
+for (const key of Object.keys(rsc)) rsc[key] = withoutChunkLists(rsc[key]);
+for (const key of Object.keys(segments)) segments[key] = withoutChunkLists(segments[key]);
+notFound.rsc = withoutChunkLists(notFound.rsc);
+
 // Stylesheets, with fonts folded in. One sheet covers the whole site.
 const styles = new Map();
 for (const { name } of routes) {

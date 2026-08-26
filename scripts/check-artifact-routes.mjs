@@ -117,9 +117,12 @@ try {
     if (route === "/") continue; // where the bundle boots; nothing to navigate to
     const context = await browser.newContext({
       viewport: { width: 1280, height: 800 },
-      // The wipe is not what is being tested here, and without it a failure to
-      // navigate is immediate rather than hidden behind the rescue.
-      reducedMotion: "reduce",
+      // A reader's conditions, wipe and all. Turning the wipe off makes a
+      // failure show a couple of seconds sooner and costs the check the one
+      // class of bug that only appears when the wipe is the thing driving the
+      // navigation — which is most of them, since the wipe is what calls the
+      // router on every internal link.
+      reducedMotion: "no-preference",
     });
     const page = await context.newPage();
     await page.goto(origin + "/", { waitUntil: "load" });
@@ -139,7 +142,7 @@ try {
     }, route);
 
     if (!clicked) { await context.close(); continue; } // nothing links to it from home; not this check's business
-    await page.waitForTimeout(4000);
+    await page.waitForTimeout(5200); // cover, hold, sweep, and the rescue past it
 
     const arrived = await frame.evaluate(() => window.__mhRoute).catch(() => null);
     if (arrived !== route) {

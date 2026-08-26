@@ -245,46 +245,60 @@ a licence to leave a cover without a way out.
 ## A route can be alive on the site and dead in the bundle
 
 `npm run artifact` ends with `scripts/check-artifact-routes.mjs`, which opens
-every route in the built bundle and fails the build if one will not open. **If
-it fails, the bundle is broken for a reader. Do not publish it and do not
-weaken the check.**
+every route in the built bundle — behind a host-style path prefix, inside a
+sandboxed frame, with the wipe running — and fails the build if one does not
+arrive. **If it fails, the bundle is broken for a reader. Do not publish it and
+do not weaken the check.**
 
-It exists because `/pricing` was exactly that, and nothing caught it. Under
-`npm run build && npx next start` the page rendered, navigated and
-screenshotted perfectly. In the artifact the router fetched its payload,
-refused it, and stopped — no console error, no failed request, no rejected
-promise, no chunk left loading. What a reader saw was the wipe closing over the
-screen and staying there for the full 2.5s of `pageWipe.rescue`, and then the
-same page they started on. Every other check this project has looks at the
-site, so it shipped that way.
+It exists because `/pricing` was exactly that, and nothing else could have
+caught it. Under `npm run build && npx next start` the page rendered and
+navigated perfectly. In the bundle the router fetched its payload and stopped:
+no console error, no failed request, no rejected promise, no chunk in flight.
+What the reader saw was the wipe closing over the screen and sitting there for
+the full 2.5s of `pageWipe.rescue`, then the page they started on.
 
-What is known about it, so the next person does not spend the day re-deriving
-it:
+### Payloads must not carry chunk lists
 
-- **It is the payload, not the page.** Serving another route's payload under a
-  `/pricing` navigation works; serving `/pricing`'s payload under any other
-  navigation fails. Stripping the page to a single heading does not help.
-- **It is not the content, the assets, the images, or the wipe.** It fails with
-  the wipe disabled entirely, with the page emptied, with `Impact`, `Compare`
-  and `Faq` removed one at a time, and on a clean `rm -rf .next` build.
-- **It is not the plumbing.** The payload is complete, valid UTF-8, every id it
-  references is defined, every chunk it names is inlined, its `.meta`,
-  `.segments` and router tree are structurally identical to routes that work,
-  and it carries no postponed/PPR state.
+The cause, and the reason it hit one page and not the others.
 
-So it is something React's Flight client rejects about that one payload, and
-finding it needs the router's own error path rather than more bisecting from
-the outside. Until then the check is what stands between it and a buyer.
+Every RSC payload declares its client modules as `I[<id>,[…chunks…],"Name"]`.
+React reads that list and asks its loader for any chunk it does not already
+consider loaded. On a server that is a fetch. Here `/_next` is walled off — see
+the fetch shim — so nothing answers, and the promise React is waiting on never
+settles. It suspends for ever without throwing, which is why every trace came
+back clean: nothing failed, something simply never finished.
 
-Two things that make investigating this bearable:
+Every chunk is inlined into the file and has run long before a reader can click
+anything, so those lists are not merely redundant here — they are the only
+thing in the payload that can hang a navigation. `build-artifact.mjs` empties
+them, after `needed` is computed, because that set is derived from these very
+lists and emptying them first would inline nothing. The modules then resolve
+straight out of the registry the inlined chunks already filled.
 
-- **Reproduce it in the viewer's conditions, not in a plain file.** Serve the
-  bundle behind a host-style path prefix with a `<base href>`, inside a
-  sandboxed frame. The check script already does this and is the fastest
-  harness to borrow.
+`/pricing` was the page it happened to only because it was the only route whose
+modules named two chunks no earlier route had already caused to be recorded as
+loaded. Nothing about the page was wrong. That is worth remembering: removing
+its sections, its images and its content one at a time changed nothing, and a
+page stripped to a single heading failed just the same. **When one route hangs
+in the bundle and the same page is fine on the site, suspect what the payload
+asks the loader for, not what the page renders.**
+
+The shell's own flight data is deliberately left alone. It is parsed while the
+document is still streaming, when "already loaded" is not yet true of
+everything.
+
+### Reproducing one of these
+
+- **Use the viewer's conditions, not a plain file.** Host-style path prefix, a
+  `<base href>`, a sandboxed frame. `check-artifact-routes.mjs` sets all three
+  up and is the fastest harness to borrow.
 - **`window.__mhRoute` is the truth about where the router is.** The address is
   frozen at the host's path on purpose, so `location.pathname` cannot answer
-  it — see the section above.
+  it.
+- **Serve one route's payload under another's navigation to split payload from
+  route.** If the payload fails wherever it is served, it is the payload; if a
+  relabelled working payload enters the route fine, the route is not the
+  problem. That one experiment turned a day of guessing into a bisect.
 
 ## Content lives in Sanity, assets live in `public/uploads`
 
