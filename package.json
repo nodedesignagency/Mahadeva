@@ -6,10 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint && node scripts/check-arbitrary-vars.mjs && node scripts/check-transitions.mjs",
+    "lint": "eslint && node scripts/check-arbitrary-vars.mjs && node scripts/check-transitions.mjs && node scripts/check-navigation-lock.mjs",
     "preview": "next build && node scripts/build-preview.mjs",
     "seed": "node scripts/seed-sanity.mjs",
-    "artifact": "next build && node scripts/build-artifact.mjs && node scripts/check-artifact-routes.mjs"
+    "artifact": "next build && node scripts/build-artifact.mjs && node scripts/check-pages.mjs && node scripts/check-artifact-routes.mjs",
+    "bless-navigation": "node scripts/check-navigation-lock.mjs --bless"
   },
   "dependencies": {
     "@number-flow/react": "^0.6.2",

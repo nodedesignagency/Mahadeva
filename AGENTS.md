@@ -242,6 +242,63 @@ The rescue is what makes this survivable rather than fatal, and that is the
 only reason it read as a slow page rather than a broken one. Do not treat it as
 a licence to leave a cover without a way out.
 
+## Do not touch what moves the reader between pages
+
+It works. It is also the part of this codebase that has broken the most, and
+every single time it was a side effect of a change aimed at something else —
+never a change to the transition itself. The wipe covering the screen and never
+lifting; the preloader arriving with no join; a route that fetches its payload
+and silently stops. Each cost a day, and each reached a reader before anyone
+here noticed.
+
+So `npm run lint` runs `scripts/check-navigation-lock.mjs`, which hashes the
+following and **fails the build if any of it changes**:
+
+| Locked | Why |
+| --- | --- |
+| `motion/PageTransition.tsx` | the click handler, the state machine, the rescue |
+| `motion/Preloader.tsx` | the sheet, and its handover with the wipe |
+| `layout/SiteChrome.tsx` | mount order — the wipe above the sheet, both above the page |
+| `scripts/build-artifact.mjs` | the bundle's router: fetch shim, frozen address, chunk-list strip |
+| `pageWipe` and `preloader` in `config/animation.ts` | the numbers the sequence runs on |
+| `check-transitions`, `check-artifact-routes`, `check-pages` | so a failing guard cannot be quietly softened |
+
+It is not a correctness check. It makes no claim that your new version is
+worse — it is a stop, so that touching this takes a decision instead of
+happening by accident.
+
+**If the build fails on it and you did not mean to change that file**, put it
+back: `git checkout -- <file>`.
+
+**If you did mean to**, prove it still works and record it:
+
+```
+npm run artifact          # rebuilds and opens all 26 routes in the bundle
+npm run bless-navigation  # re-records the lock, refusing unless that passed
+```
+
+`bless-navigation` will not record anything while a route fails to open. That
+refusal is the point: changing this is allowed, changing it without opening
+every page afterwards is not.
+
+## A new page is covered without anyone remembering to cover it
+
+Both checks that matter enumerate what they check rather than being told:
+
+- `scripts/check-artifact-routes.mjs` reads the route list **out of the built
+  bundle**, so a page added today is opened by the next build. Ones not linked
+  from the home page — every blog post, job opening and case study — are
+  reached through their index, the same two hops a reader makes. A route it
+  cannot reach at all is a failure, not a silence.
+- `scripts/check-pages.mjs` walks the **built HTML** and requires each page to
+  carry exactly one valid `data-page-surface`. It reads the output rather than
+  `page.tsx` on purpose: the 404 and both legal pages declare their surface
+  inside the view component they share, which is correct, and a check that
+  grepped the page file would call all three broken.
+
+So neither needs a list kept up to date, and neither can be satisfied by a page
+that merely compiles.
+
 ## A route can be alive on the site and dead in the bundle
 
 `npm run artifact` ends with `scripts/check-artifact-routes.mjs`, which opens
