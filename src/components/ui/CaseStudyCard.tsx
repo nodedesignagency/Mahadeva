@@ -135,15 +135,22 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
           </dl>
         </div>
 
-        {/* The artwork half, and the whole of the hover. `aspect-[560/552]` is
-            the Framer frame's proportion, which is what makes the rectangles'
-            pixel positions convertible to percentages at all.
+        {/* The artwork half, and the whole of the hover.
 
             Stacked under the panel on a phone, where it takes the owner's flat
-            424 instead: the square this proportion gives would be most of a
-            screen on its own. */}
+            424: the square the frame's proportion gives would be most of a
+            screen on its own.
+
+            From `lg` the proportion is a floor rather than a lock — see the
+            spacer below. Held as a lock it set this half's height from its own
+            width, and the panel beside it does not shrink at the same rate:
+            past about 1280 the text wraps to more lines than the artwork
+            loses, so the row grew taller than the artwork and left a band of
+            the card's own fill under it. 70px of it at 1024, widening as the
+            window narrows. Stretching is also what the grid would have done on
+            its own; `aspect-ratio` on an auto height is what stopped it. */}
         <div
-          className="relative h-[424px] overflow-clip bg-bg-light lg:aspect-[560/552] lg:h-auto"
+          className="relative h-[424px] overflow-clip bg-bg-light lg:h-auto"
           style={
             {
               "--mh-case-duration": `${caseHover.duration}ms`,
@@ -151,6 +158,13 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             } as CSSProperties
           }
         >
+          {/* The Framer frame's proportion, 560:552, and the only thing here
+              still in normal flow. It gives the half a height to be when the
+              panel beside it is shorter — which is what it always had — and
+              gets stretched past when the panel is taller, which is what it
+              never did. The artwork and the rectangles are laid over it. */}
+          <div aria-hidden="true" className="hidden lg:block lg:aspect-[560/552]" />
+
           {study.image?.url ? (
             // Not next/image: the URL is already sized and format-negotiated by
             // Sanity's pipeline, so routing it through the optimiser would be a
@@ -164,11 +178,11 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
               // wider than this box every time, so the part an editor cared
               // about was the part being cut. Centre is also what the hotspot
               // falls back to, so the two agree when none is set.
-              className="mh-case-cover size-full object-cover object-center"
+              className="mh-case-cover absolute inset-0 size-full object-cover object-center"
               loading="lazy"
             />
           ) : (
-            <div className="mh-case-cover flex size-full items-center justify-center p-7">
+            <div className="mh-case-cover absolute inset-0 flex size-full items-center justify-center p-7">
               <p className="font-body text-body-sm text-fg-on-light/40">
                 Screenshot to come
               </p>
