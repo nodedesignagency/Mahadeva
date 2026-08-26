@@ -1,5 +1,7 @@
+import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { clientMarks, MARK_HEIGHT } from "@/components/ui/clientMarks";
 import { Container } from "@/components/layout/Container";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { featureMarquee } from "@/config/animation";
@@ -40,13 +42,17 @@ export function ContactPanel({ content }: ContactPanelProps) {
       {content.logos.map((logo, i) => (
         <li
           key={`${logo.name}-${i}`}
-          // Names until the marks land, at the weight a logo sits at in a row
-          // like this — the same stand-in the trust strip uses, so the two are
-          // replaced the same way.
-          className="shrink-0 truncate font-ui text-body-sm font-light text-fg-on-light/45"
+          // The same five the trust strip carries, at the same drawn height, so
+          // the two rows read as one row in two places rather than two that
+          // nearly match — which is the reason they already share a speed.
+          className={`flex shrink-0 items-center justify-center ${MARK_HEIGHT}`}
           style={{ width: `${LOGO_SLOT}px` }}
         >
-          {logo.name}
+          <Image
+            src={clientMarks[logo.mark]}
+            alt={logo.name}
+            className="h-full w-full object-contain"
+          />
         </li>
       ))}
     </ul>

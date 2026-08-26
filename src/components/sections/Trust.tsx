@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -8,6 +9,7 @@ import {
   statHover,
 } from "@/config/animation";
 import type { TrustTone, trustContent } from "@/content/home";
+import { clientMarks, MARK_HEIGHT } from "@/components/ui/clientMarks";
 import { cn } from "@/lib/cn";
 import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
 
@@ -53,13 +55,20 @@ export function Trust({ content }: TrustProps) {
   const logos = content.logos.map((logo, i) => (
     <li
       key={`${logo.name}-${i}`}
-      className="flex h-4 w-[140px] shrink-0 items-center justify-center"
+      className={cn(
+        "flex w-[140px] shrink-0 items-center justify-center",
+        MARK_HEIGHT,
+      )}
     >
-      {/* Placeholder until the files land: the name at the mark's height, so
-          the row's rhythm and spacing are already right when they arrive. */}
-      <span className="text-ink-dynamic truncate font-ui text-body-sm font-light opacity-35">
-        {logo.name}
-      </span>
+      {/* `contain` inside the slot: the five marks are different widths, and
+          stretching each to fill would set them at five different weights. The
+          slot's width and the gap beside it are the marquee's arithmetic and
+          do not change — only what sits in them. */}
+      <Image
+        src={clientMarks[logo.mark]}
+        alt={logo.name}
+        className="h-full w-full object-contain"
+      />
     </li>
   ));
 

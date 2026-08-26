@@ -197,19 +197,20 @@ export const trustContent = {
     "tech, finance and e-commerce.",
   ],
   /**
-   * Client marks. `src` is absent until the files land, and the strip draws a
-   * named placeholder at the right height in the meantime, so the row's rhythm
-   * is correct before the artwork exists.
+   * Client marks. `mark` names the file and the strip imports it, from the one
+   * set both this row and the contact page's row draw on.
+   *
+   * Five, where the row once listed eight names: five is what the owner
+   * supplied, and the strip renders the list twice to close the loop, so ten
+   * marks go past and the row is no thinner for it. `name` is what a screen
+   * reader gets, since a mark in a marquee says nothing on its own.
    */
   logos: [
-    { name: "Logoipsum" },
-    { name: "Lumin" },
-    { name: "Looo" },
-    { name: "Logoipsum Brand Standard" },
-    { name: "Ipsum" },
-    { name: "Logoipsum Mark" },
-    { name: "Lumin Type" },
-    { name: "Looo Wide" },
+    { name: "Logoipsum", mark: "logoipsum" },
+    { name: "Logoipsum Brand Standard", mark: "brandStandard" },
+    { name: "Lojo Ipsum", mark: "lojoIpsum" },
+    { name: "Loqo", mark: "loqo" },
+    { name: "Ipsum Logo", mark: "ipsumLogo" },
   ],
 } as const;
 

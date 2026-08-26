@@ -21,12 +21,13 @@ export const contactContent = {
   },
 
   /** Under the quote. Names until the marks land, as the trust strip does. */
+  /** The same five the trust strip carries; `mark` names the file. */
   logos: [
-    { name: "Logoipsum" },
-    { name: "Brand Standard" },
-    { name: "Ipsum" },
-    { name: "Loqo" },
-    { name: "Logoipsum" },
+    { name: "Logoipsum", mark: "logoipsum" },
+    { name: "Logoipsum Brand Standard", mark: "brandStandard" },
+    { name: "Lojo Ipsum", mark: "lojoIpsum" },
+    { name: "Loqo", mark: "loqo" },
+    { name: "Ipsum Logo", mark: "ipsumLogo" },
   ],
 
   form: {
