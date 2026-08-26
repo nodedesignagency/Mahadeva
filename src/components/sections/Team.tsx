@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
-import teamDaniel from "@public/uploads/images/team-1.png";
-import teamEmma from "@public/uploads/images/team-3.png";
-import teamJames from "@public/uploads/images/team-4.png";
-import teamSarah from "@public/uploads/images/team-2.png";
+import teamDaniel from "@public/uploads/images/team-1.avif";
+import teamEmma from "@public/uploads/images/team-3.avif";
+import teamJames from "@public/uploads/images/team-4.avif";
+import teamSarah from "@public/uploads/images/team-2.avif";
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import faqPortrait from "@public/uploads/images/faq-portrait.png";
+import faqPortrait from "@public/uploads/images/faq-portrait.avif";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ButtonArrow } from "@/components/ui/SiteIcons";

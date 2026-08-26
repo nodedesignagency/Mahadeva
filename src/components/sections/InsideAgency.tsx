@@ -1,5 +1,5 @@
 import Image from "next/image";
-import insideTheAgency from "@public/uploads/images/inside-the-agency.png";
+import insideTheAgency from "@public/uploads/images/inside-the-agency.avif";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextReveal } from "@/config/animation";

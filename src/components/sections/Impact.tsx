@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
-import markCosts from "@public/uploads/logos/impact-operational-costs.png";
-import markHours from "@public/uploads/logos/impact-hours-saved-monthly.png";
-import markRevenue from "@public/uploads/logos/impact-revenue-efficiency.png";
-import markSuccess from "@public/uploads/logos/impact-project-success.png";
+import markCosts from "@public/uploads/logos/impact-operational-costs.avif";
+import markHours from "@public/uploads/logos/impact-hours-saved-monthly.avif";
+import markRevenue from "@public/uploads/logos/impact-revenue-efficiency.avif";
+import markSuccess from "@public/uploads/logos/impact-project-success.avif";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { StatCounter } from "@/components/ui/StatCounter";
