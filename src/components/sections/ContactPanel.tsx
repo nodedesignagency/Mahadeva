@@ -77,8 +77,14 @@ export function ContactPanel({ content }: ContactPanelProps) {
                 clears the type reads as a small ornament above the quote, and
                 this one reads as the corner the quote is set into.
 
-                The file is trimmed to its own ink, so it needs no bearing
-                compensating for — `top-0` is the panel's edge.
+                Pulled above the panel's top edge so the tops of the commas
+                are cut off by it, which is the owner's drawing of it: whole,
+                the mark reads as a sticker laid on the corner; cut, it reads
+                as something the panel is a window onto. About three tenths of
+                its height goes. The clip belongs to the panel wrapper, not to
+                this half — the half has the padding and no overflow of its
+                own — and the half's top is the panel's top, so the cut lands
+                exactly on the edge.
 
                 ⚠️ It arrived filled in `--mh-blue-200`, which is the panel's
                 own colour and would have been invisible on it, so the shape is
@@ -89,7 +95,7 @@ export function ContactPanel({ content }: ContactPanelProps) {
               src={contactQuoteMark}
               alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute top-0 left-6 w-[86px] select-none tablet:left-8 tablet:w-[115px]"
+              className="pointer-events-none absolute -top-[22px] left-6 w-[86px] select-none tablet:-top-[30px] tablet:left-8 tablet:w-[115px]"
             />
 
             {/* No top padding: the type starts at the panel's own inset and the
