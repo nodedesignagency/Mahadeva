@@ -2,6 +2,11 @@
 
 import { useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
+import testimonialJames from "@public/uploads/images/testimonial-2.png";
+import testimonialPriya from "@public/uploads/images/testimonial-3.png";
+import testimonialRyan from "@public/uploads/images/testimonial-1.png";
 import { CarouselArrowLeft, CarouselArrowRight } from "@/components/ui/SiteIcons";
 import { useInView } from "motion/react";
 import { Container } from "@/components/layout/Container";
@@ -10,7 +15,11 @@ import {
   sectionTextRevealDynamic,
   testimonialCarousel,
 } from "@/config/animation";
-import type { TestimonialTone, testimonialsContent } from "@/content/home";
+import type {
+  TestimonialPhoto,
+  TestimonialTone,
+  testimonialsContent,
+} from "@/content/home";
 import { cn } from "@/lib/cn";
 import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
 import { viewport } from "@/lib/motion";
@@ -30,6 +39,13 @@ import { viewport } from "@/lib/motion";
  *
  * A client component: it holds which card is showing.
  */
+
+/** The cut-out a quote names. Content says which; this says what it is. */
+const portraits: Record<TestimonialPhoto, StaticImageData> = {
+  ryan: testimonialRyan,
+  james: testimonialJames,
+  priya: testimonialPriya,
+};
 
 /** Fills come from theme.css; the section never names a colour itself. */
 const tones: Record<TestimonialTone, string> = {
@@ -175,10 +191,24 @@ export function Testimonials({ content }: TestimonialsProps) {
               {/* The portrait: a 40% column beside the quote from tablet up,
                   and a 300px band under it on a phone — which is why it is
                   ordered last there and first above. It is a cut-out standing
-                  on the card's own fill, so it has no frame of its own, and
-                  while the photographs are outstanding it is simply empty
-                  rather than a grey box standing in for one. */}
-              <div className="relative order-last h-[300px] w-full shrink-0 tablet:order-first tablet:h-auto tablet:w-2/5" />
+                  on the card's own fill, so it has no frame of its own.
+
+                  `contain` and not `cover`: the file is a person cut out of
+                  their background, and cropping one to fill a column takes the
+                  top of their head off. Anchored to the bottom so they stand
+                  on the card's floor rather than floating in the middle of it.
+
+                  Decorative: the caption below names them, and an alt here
+                  would have a screen reader say it twice. */}
+              <div className="relative order-last h-[300px] w-full shrink-0 tablet:order-first tablet:h-auto tablet:w-2/5">
+                <Image
+                  src={portraits[item.photo]}
+                  alt=""
+                  fill
+                  sizes="(max-width: 810px) 100vw, 40vw"
+                  className="object-contain object-bottom"
+                />
+              </div>
 
               <div className="relative flex w-full flex-col justify-between gap-10 p-10 tablet:w-3/5">
                 {/* The owner's L breakpoint: 48px, -0.05em, 1.2 line. Tighter

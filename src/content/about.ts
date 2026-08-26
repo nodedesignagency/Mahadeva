@@ -23,8 +23,9 @@ export const insideAgencyContent = {
   headingLines: ["Inside The Agency"],
   subheading:
     "We combine design thinking, automation expertise, and strategic execution to deliver systems that actually work in the real world.",
-  /** Stands in the frame until the photograph lands. */
-  imagePending: "Photograph to come",
+  /** What the frame holds, for anything reading the page rather than seeing it. */
+  imageAlt:
+    "Five of the team around the meeting-room table, laptops open, a pipeline on the wall screen behind them",
 } as const;
 
 /** The tint behind a principle's mark, and the mark itself. */
@@ -105,10 +106,16 @@ export const teamContent = {
    * `bio` and `links` are the back of the card — what the portrait slides up
    * to reveal. Every member carries their own three, so a card with nobody's
    * handle on it simply shows the line and no icons.
+   *
+   * `photo` names the portrait and the section imports it. The eight files the
+   * owner supplied are numbered rather than named, so they are paired with the
+   * four members in the order they arrived — swap two values here to re-pair
+   * them, and four are still spare.
    */
   members: [
     {
       name: "Daniel Cruz",
+      photo: "daniel",
       role: "CEO & Founder",
       bio: "Leads AI strategy and builds scalable automation systems designed to drive measurable business growth.",
       links: {
@@ -119,6 +126,7 @@ export const teamContent = {
     },
     {
       name: "Sarah Kim",
+      photo: "sarah",
       role: "Automation Engineer",
       bio: "Designs and ships the workflow automation behind every engagement, from first integration to steady state.",
       links: {
@@ -129,6 +137,7 @@ export const teamContent = {
     },
     {
       name: "Emma Watson",
+      photo: "emma",
       role: "Product Lead",
       bio: "Turns operational complexity into systems teams can actually use, and keeps every build aimed at the outcome.",
       links: {
@@ -139,6 +148,7 @@ export const teamContent = {
     },
     {
       name: "James Cooper",
+      photo: "james",
       role: "Growth Strategist",
       bio: "Connects automation to revenue, measuring what each system returns and where the next one should go.",
       links: {
@@ -149,6 +159,9 @@ export const teamContent = {
     },
   ],
 } as const;
+
+/** Which portrait a team member wears. */
+export type TeamPhoto = (typeof teamContent.members)[number]["photo"];
 
 /** The card's fill. One per variant, in the order they are scrolled through. */
 export type MissionTone = "blue" | "green" | "lavender";

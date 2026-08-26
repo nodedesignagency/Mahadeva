@@ -85,19 +85,51 @@ export type PlanIcon = "launch" | "scale" | "enterprise";
  * number is a number the counter can climb to rather than a string: "-45%" is
  * a minus, forty-five and a percent sign.
  *
- * ⚠️ Client names are placeholders — the owner's reference shows four logo
- * marks, and the files have not landed yet. `client` is what will label each
- * slot when they do.
+ * ⚠️ Client names are placeholders: the owner's four marks are logoipsum
+ * stand-ins, so `client` labels every slot the same. `mark` names the file and
+ * the section imports it — content that held the artwork itself could not be
+ * moved to a CMS.
  */
 export const impactContent = {
   headingLines: ["Mahadeva speeds up", "teams with automation."],
   stats: [
-    { client: "Logoipsum", prefix: "", value: 98, unit: "%", label: "Project Success" },
-    { client: "Logoipsum", prefix: "", value: 10, unit: "x", label: "Revenue Efficiency" },
-    { client: "Logoipsum", prefix: "-", value: 45, unit: "%", label: "Operational Costs" },
-    { client: "Logoipsum", prefix: "", value: 300, unit: "+", label: "Hours Saved Monthly" },
+    {
+      client: "Logoipsum",
+      mark: "success",
+      prefix: "",
+      value: 98,
+      unit: "%",
+      label: "Project Success",
+    },
+    {
+      client: "Logoipsum",
+      mark: "revenue",
+      prefix: "",
+      value: 10,
+      unit: "x",
+      label: "Revenue Efficiency",
+    },
+    {
+      client: "Logoipsum",
+      mark: "costs",
+      prefix: "-",
+      value: 45,
+      unit: "%",
+      label: "Operational Costs",
+    },
+    {
+      client: "Logoipsum",
+      mark: "hours",
+      prefix: "",
+      value: 300,
+      unit: "+",
+      label: "Hours Saved Monthly",
+    },
   ],
 } as const;
+
+/** Which client mark heads an impact figure. */
+export type ImpactMark = (typeof impactContent.stats)[number]["mark"];
 
 /**
  * Plan comparison — "Find The Right Plan".

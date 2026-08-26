@@ -1,5 +1,11 @@
 "use client";
 
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
+import teamDaniel from "@public/uploads/images/team-1.png";
+import teamEmma from "@public/uploads/images/team-3.png";
+import teamJames from "@public/uploads/images/team-4.png";
+import teamSarah from "@public/uploads/images/team-2.png";
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
@@ -12,7 +18,7 @@ import {
   XIcon,
 } from "@/components/ui/BrandIcons";
 import { sectionTextRevealBeige, teamCard } from "@/config/animation";
-import type { teamContent } from "@/content/about";
+import type { TeamPhoto, teamContent } from "@/content/about";
 import { cn } from "@/lib/cn";
 
 /**
@@ -141,6 +147,14 @@ export function Team({ content }: TeamProps) {
 /** The three windows the portrait is cut into, left to right. */
 const STRIPS = ["left", "center", "right"] as const;
 
+/** The portrait a member names. Content says which; this says what it is. */
+const portraits: Record<TeamPhoto, StaticImageData> = {
+  daniel: teamDaniel,
+  sarah: teamSarah,
+  emma: teamEmma,
+  james: teamJames,
+};
+
 
 /**
  * One portrait, and the bio it lifts to show.
@@ -166,6 +180,7 @@ function TeamCard({
 }) {
   const [open, setOpen] = useState(false);
   const reduced = useReducedMotion() ?? false;
+  const portrait = portraits[member.photo];
 
   const socials = [
     { label: "X", href: member.links.x, Icon: XIcon },
@@ -217,7 +232,7 @@ function TeamCard({
         {STRIPS.map((strip, i) => (
           <div
             key={strip}
-            className="h-full w-1/3 shrink-0 bg-team-panel transition-transform ease-(--ease-out)"
+            className="relative h-full w-1/3 shrink-0 overflow-clip bg-team-panel transition-transform ease-(--ease-out)"
             style={{
               transform: open && !reduced ? "translateY(-100%)" : undefined,
               transitionDuration: `${teamCard.slide}ms`,
@@ -226,7 +241,29 @@ function TeamCard({
               // three landing together.
               transitionDelay: `${(open ? i : STRIPS.length - 1 - i) * teamCard.stagger}ms`,
             }}
-          />
+          >
+            {/* The window, and the whole reason the seams do not show: the
+                photograph is laid at the *card's* width inside every strip and
+                shifted left by the strips before it, so the three are looking
+                at one picture through three holes. A third of the picture
+                scaled to fit each strip would be three squeezed copies of it,
+                and the moment a strip lifted it would be obvious.
+
+                `left` is a percentage of the strip, which is why it steps by
+                100 rather than by a third. */}
+            <div
+              className="absolute inset-y-0 w-[300%]"
+              style={{ left: `-${i * 100}%` }}
+            >
+              <Image
+                src={portrait}
+                alt=""
+                fill
+                sizes="(max-width: 810px) 78vw, (max-width: 1280px) 50vw, 25vw"
+                className="object-cover object-top"
+              />
+            </div>
+          </div>
         ))}
       </div>
 

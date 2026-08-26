@@ -1,3 +1,5 @@
+import Image from "next/image";
+import faqPortrait from "@public/uploads/images/faq-portrait.png";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ButtonArrow } from "@/components/ui/SiteIcons";
@@ -70,15 +72,25 @@ export function Faq({ content }: FaqProps) {
               className="mh-cta-fill absolute rounded-(--radius-button) bg-bg-white"
             />
 
-            {/* Portrait placeholder until the photo lands — it keeps the
-                card's geometry so the file is a drop-in. Square, and the
-                height of the content box: 64 inside 8px of padding is the
-                card's 80, and it is the portrait that sets that rather than
-                the words beside it. */}
+            {/* The portrait. Square, and the height of the content box: 64
+                inside 8px of padding is the card's 80, and it is the portrait
+                that sets that rather than the words beside it.
+
+                The file is a cut-out at 825x1024, so `cover` is what fills a
+                square with it; the head is at the top of the frame, so the
+                crop is anchored there rather than at the middle. */}
             <span
               aria-hidden="true"
-              className="relative block size-16 shrink-0 bg-placeholder"
-            />
+              className="relative block size-16 shrink-0 overflow-clip bg-placeholder"
+            >
+              <Image
+                src={faqPortrait}
+                alt=""
+                fill
+                sizes="64px"
+                className="object-cover object-top"
+              />
+            </span>
             <span className="relative flex flex-col gap-2">
               {/* A heading at the body's leading is half a line taller than it
                   should be, which is enough to push this column past the

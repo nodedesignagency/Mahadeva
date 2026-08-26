@@ -264,6 +264,10 @@ export type ToolMark = (typeof techStackContent.tools)[number]["mark"];
  *
  * ⚠️ The third quote is written to the same brief as the two the owner
  * supplied, and is a placeholder until the real one arrives.
+ *
+ * `photo` names the cut-out beside the quote; the section imports it. The
+ * three the owner supplied are unlabelled, so they are paired with the names
+ * in the order they arrived — swap two values here to re-pair them.
  */
 export const testimonialsContent = {
   headingLines: ["Testimonials"],
@@ -276,6 +280,7 @@ export const testimonialsContent = {
       quote:
         "This system saved our team hours every week and made our workflows faster, clearer, and much easier to manage.",
       name: "Ryan Mitchell",
+      photo: "ryan",
       role: "CEO @ Growth SaaS",
       tone: "blue",
     },
@@ -283,6 +288,7 @@ export const testimonialsContent = {
       quote:
         "This tool saved me hours every week — and made me sound like I actually know what I’m doing.",
       name: "James Cooper",
+      photo: "james",
       role: "CEO @ Ragnarok AI",
       tone: "green",
     },
@@ -290,6 +296,7 @@ export const testimonialsContent = {
       quote:
         "We replaced three manual handoffs with one system, and the work simply arrives finished now.",
       name: "Priya Raman",
+      photo: "priya",
       role: "COO @ Northwind Labs",
       tone: "yellow",
     },
@@ -298,6 +305,9 @@ export const testimonialsContent = {
 
 /** Which pastel a testimonial card is filled with. */
 export type TestimonialTone = (typeof testimonialsContent.items)[number]["tone"];
+
+/** Which cut-out stands beside a quote. */
+export type TestimonialPhoto = (typeof testimonialsContent.items)[number]["photo"];
 
 /**
  * Before vs After.

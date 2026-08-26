@@ -1,8 +1,14 @@
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
+import markCosts from "@public/uploads/logos/impact-operational-costs.png";
+import markHours from "@public/uploads/logos/impact-hours-saved-monthly.png";
+import markRevenue from "@public/uploads/logos/impact-revenue-efficiency.png";
+import markSuccess from "@public/uploads/logos/impact-project-success.png";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { StatCounter } from "@/components/ui/StatCounter";
 import { sectionTextRevealBeige } from "@/config/animation";
-import type { impactContent } from "@/content/pricing";
+import type { ImpactMark, impactContent } from "@/content/pricing";
 
 /**
  * Impact — the proof band under the plans.
@@ -18,6 +24,14 @@ import type { impactContent } from "@/content/pricing";
  * boundary, the same ones the trust stats use, so a figure climbs to its
  * value once when the row is scrolled to.
  */
+
+/** The client's mark. Content says which; this says what it is. */
+const marks: Record<ImpactMark, StaticImageData> = {
+  success: markSuccess,
+  revenue: markRevenue,
+  costs: markCosts,
+  hours: markHours,
+};
 
 type ImpactProps = {
   content: typeof impactContent;
@@ -58,17 +72,27 @@ export function Impact({ content }: ImpactProps) {
               key={stat.label}
               className="flex flex-col tablet:min-h-[200px] tablet:justify-between tablet:border-l tablet:border-border-on-light tablet:ps-6"
             >
-              {/* The client's mark. A placeholder at the slot's real size
-                  until the files land, so the row's rhythm is already right
-                  when they arrive and the artwork is a drop-in.
+              {/* The client's mark, at the slot's drawn size.
 
                   The transparent rule is not decoration: it is the same 1px
                   the figure's own rule takes below, so the two line up on a
-                  phone instead of sitting a hair apart. */}
+                  phone instead of sitting a hair apart.
+
+                  `contain` and left-aligned: the four marks are different
+                  widths, and stretching each to the slot would set them at
+                  four different weights. The name is carried by the
+                  screen-reader line below rather than by an alt, so the mark
+                  itself stays decorative. */}
               <span
                 aria-hidden="true"
-                className="block h-7 w-[150px] border-l border-transparent bg-clip-content bg-placeholder ps-6 tablet:border-0 tablet:bg-clip-border tablet:ps-0"
-              />
+                className="block h-7 w-[150px] border-l border-transparent bg-clip-content ps-6 tablet:border-0 tablet:bg-clip-border tablet:ps-0"
+              >
+                <Image
+                  src={marks[stat.mark]}
+                  alt=""
+                  className="h-full w-auto max-w-full object-contain object-left"
+                />
+              </span>
               <span className="sr-only">{stat.client}</span>
 
               <div className="mt-6 flex items-baseline-last gap-5 border-l border-border-on-light ps-6 tablet:mt-0 tablet:block tablet:border-0 tablet:ps-0">

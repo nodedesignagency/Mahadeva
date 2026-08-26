@@ -1,12 +1,11 @@
-import type { LucideIcon } from "lucide-react";
-import {
-  Infinity as InfinityMark,
-  Layers,
-  ShieldCheck,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react";
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
+import continuousGrowth from "@public/uploads/icons/continuous-growth.png";
+import humanFirst from "@public/uploads/icons/human-first.png";
+import realImpact from "@public/uploads/icons/real-impact.png";
+import reliableDelivery from "@public/uploads/icons/reliable-delivery.png";
+import scalableThinking from "@public/uploads/icons/scalable-thinking.png";
+import smartExecution from "@public/uploads/icons/smart-execution.png";
 
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -38,14 +37,21 @@ const tones: Record<PrincipleTone, string> = {
   magenta: "bg-principle-magenta",
 };
 
-/** The drawing a principle names. Content says which; this says what it is. */
-const marks: Record<PrincipleMark, LucideIcon> = {
-  people: Users,
-  bolt: Zap,
-  trend: TrendingUp,
-  layers: Layers,
-  shield: ShieldCheck,
-  loop: InfinityMark,
+/**
+ * The drawing a principle names. Content says which; this says what it is.
+ *
+ * The owner's own marks, which replaced a set of stand-ins from an icon
+ * library. They are drawn in ink on nothing, and the tinted square behind them
+ * is always one of six light pastels — so unlike the marks in `SiteIcons`,
+ * these never have to follow a surface and a file is the right form for them.
+ */
+const marks: Record<PrincipleMark, StaticImageData> = {
+  people: humanFirst,
+  bolt: smartExecution,
+  trend: realImpact,
+  layers: scalableThinking,
+  shield: reliableDelivery,
+  loop: continuousGrowth,
 };
 
 type HowWeWorkProps = {
@@ -68,7 +74,7 @@ export function HowWeWork({ content }: HowWeWorkProps) {
             and no cards, it is the space between rows that groups them. */}
         <ul className="mt-15 grid grid-cols-1 gap-x-10 gap-y-15 tablet:grid-cols-2 desktop:grid-cols-3">
           {content.principles.map((principle) => {
-            const Mark = marks[principle.mark];
+            const mark = marks[principle.mark];
 
             return (
               <li key={principle.title} className="flex flex-col items-start">
@@ -76,10 +82,13 @@ export function HowWeWork({ content }: HowWeWorkProps) {
                   aria-hidden="true"
                   className={`flex size-16 items-center justify-center ${tones[principle.tone]}`}
                 >
-                  {/* Ink, not the tint's own darker step: the drawing is the
-                      readable part of the mark and the square behind it is
-                      what carries the colour. */}
-                  <Mark className="size-6 text-fg-on-light" strokeWidth={1.75} />
+                  {/* Ink on the tint, not the tint's own darker step: the
+                      drawing is the readable part of the mark and the square
+                      behind it is what carries the colour.
+
+                      Decorative — the title beside it says the same thing, so
+                      an empty alt keeps it from being read out twice. */}
+                  <Image src={mark} alt="" width={24} height={24} className="size-6" />
                 </span>
 
                 <h3 className="mt-6 font-body text-heading-sm leading-(--leading-heading)">

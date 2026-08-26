@@ -1,3 +1,5 @@
+import Image from "next/image";
+import insideTheAgency from "@public/uploads/images/inside-the-agency.png";
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextReveal } from "@/config/animation";
@@ -37,12 +39,17 @@ export function InsideAgency({ content }: InsideAgencyProps) {
           </p>
         </div>
 
-        <div className="mt-15 aspect-[2/1] w-full overflow-clip bg-placeholder">
-          {/* Named rather than blank: an empty grey block reads as a layout
-              bug, and this reads as a slot waiting for its picture. */}
-          <p className="flex size-full items-center justify-center p-7 text-center font-body text-body-sm text-fg-on-light/40">
-            {content.imagePending}
-          </p>
+        {/* The photograph is 1376x768 and the frame is 2:1, so `cover` takes
+            a little off the top and foot rather than letterboxing it. The
+            frame's ratio is the owner's and stays as drawn. */}
+        <div className="relative mt-15 aspect-[2/1] w-full overflow-clip bg-placeholder">
+          <Image
+            src={insideTheAgency}
+            alt={content.imageAlt}
+            fill
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            className="object-cover"
+          />
         </div>
       </Container>
     </section>
