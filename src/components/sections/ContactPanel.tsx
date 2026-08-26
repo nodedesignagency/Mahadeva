@@ -1,4 +1,5 @@
 import Image from "next/image";
+import contactQuoteMark from "@public/uploads/images/contact-quote-mark.avif";
 import contactPortrait from "@public/uploads/images/contact-portrait.avif";
 import type { CSSProperties } from "react";
 
@@ -67,29 +68,29 @@ export function ContactPanel({ content }: ContactPanelProps) {
           {/* 40 on every side, against the form's 20 — the quote is a block of
               reading matter and wants the room; the fields want the width. */}
           <div className="relative flex flex-col justify-between gap-10 bg-contact-panel p-10 desktop:w-1/2">
-            {/* The mark is the panel's decoration, not a character anyone
-                should hear read out — the quotation itself is already marked
-                up as one. Set rather than drawn: four bars of my own read as
-                organ pipes, where the typeface's own glyph is the shape the
-                design is actually showing.
+            {/* The owner's mark, and no longer the typeface's — it is its own
+                drawing, so it is a file. Decorative: the quotation is already
+                marked up as one and a screen reader should not hear it twice.
 
                 Big, and the quote's first line runs over its foot rather than
-                starting underneath it — the owner's arrangement. That is the
-                whole reason the glyph is set this large: at a size that clears
-                the type it reads as a small ornament above the quote, and at
-                this one it reads as the corner the quote is set into.
+                starting underneath it. That is the point of the size: one that
+                clears the type reads as a small ornament above the quote, and
+                this one reads as the corner the quote is set into.
 
-                The negative offsets are the glyph's own bearing, not a nudge.
-                `leading-none` still leaves a band of empty box above the ink,
-                so the box is pulled up by roughly that band to bring the ink
-                itself to the panel's edge; the panel clips the empty part and
-                nothing of the mark is lost. */}
-            <span
+                The file is trimmed to its own ink, so it needs no bearing
+                compensating for — `top-0` is the panel's edge.
+
+                ⚠️ It arrived filled in `--mh-blue-200`, which is the panel's
+                own colour and would have been invisible on it, so the shape is
+                the owner's and the fill is `--color-contact-mark`. If the
+                panel is meant to be the lighter blue instead, change that and
+                re-fill this from the original rather than nudging both. */}
+            <Image
+              src={contactQuoteMark}
+              alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute -top-7 left-3 select-none font-display text-[15rem] leading-none text-contact-mark tablet:-top-9 tablet:left-2 tablet:text-[20rem]"
-            >
-              &ldquo;
-            </span>
+              className="pointer-events-none absolute top-0 left-6 w-[86px] select-none tablet:left-8 tablet:w-[115px]"
+            />
 
             {/* No top padding: the type starts at the panel's own inset and the
                 mark comes down over it. `relative` keeps it above the mark. */}
