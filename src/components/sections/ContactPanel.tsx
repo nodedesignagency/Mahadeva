@@ -1,4 +1,5 @@
 import Image from "next/image";
+import contactPortrait from "@public/uploads/images/contact-portrait.avif";
 import type { CSSProperties } from "react";
 
 import { clientMarks, MARK_HEIGHT } from "@/components/ui/clientMarks";
@@ -88,12 +89,26 @@ export function ContactPanel({ content }: ContactPanelProps) {
 
             <div className="relative flex flex-col gap-10">
               <figcaption className="flex items-center gap-4">
-                {/* The portrait's slot at its real size, so the row's rhythm
-                    is right before the photograph arrives. */}
+                {/* The portrait. Decorative: the name and the role sit right
+                    beside it, and an alt here would have a screen reader say
+                    them twice.
+
+                    The file is already cropped square to head and shoulders —
+                    it arrived as a 3300x4096 standing shot, which at 48px
+                    would have been a person too small to recognise — so
+                    `cover` has nothing left to decide. */}
                 <span
                   aria-hidden="true"
-                  className="block size-12 shrink-0 bg-placeholder"
-                />
+                  className="relative block size-12 shrink-0 overflow-clip bg-placeholder"
+                >
+                  <Image
+                    src={contactPortrait}
+                    alt=""
+                    fill
+                    sizes="48px"
+                    className="object-cover"
+                  />
+                </span>
                 <span className="flex flex-col">
                   <span className="font-body text-body-md text-fg-on-light">
                     {content.quote.name}
