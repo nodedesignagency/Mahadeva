@@ -200,14 +200,33 @@ export function Testimonials({ content }: TestimonialsProps) {
 
                   Decorative: the caption below names them, and an alt here
                   would have a screen reader say it twice. */}
-              <div className="relative order-last h-[300px] w-full shrink-0 tablet:order-first tablet:h-auto tablet:w-2/5">
-                <Image
-                  src={portraits[item.photo]}
-                  alt=""
-                  fill
-                  sizes="(max-width: 810px) 100vw, 40vw"
-                  className="object-contain object-bottom"
-                />
+              <div className="relative order-last h-[300px] w-full shrink-0 max-tablet:mt-auto tablet:order-first tablet:h-auto tablet:w-2/5">
+                {/* `mt-auto` below the tablet: stacked, the cards are a flex
+                    row and all of them stretch to the tallest, but this band is
+                    a fixed 300 and does not grow — so on every card with a
+                    shorter quote than the longest the leftover height collected
+                    underneath it and stood the picture off the card's floor.
+                    36px of it at 760, and none at all on the one card that sets
+                    the height, which is why only that one looked right. The
+                    margin sends the slack above the picture instead. */}
+
+                {/* Four fifths of the card's height, standing on its floor —
+                    the owner's proportion, and the space it leaves above the
+                    head is what keeps the quote beside it from feeling
+                    crowded. Given here rather than left to the file: each
+                    cut-out is trimmed to its subject, so without a height to
+                    fill they would each come out at whatever size their own
+                    framing implied, which is exactly the inconsistency
+                    between these three that had to be fixed once already. */}
+                <div className="absolute inset-x-0 bottom-0 h-[85%]">
+                  <Image
+                    src={portraits[item.photo]}
+                    alt=""
+                    fill
+                    sizes="(max-width: 810px) 100vw, 40vw"
+                    className="object-contain object-bottom"
+                  />
+                </div>
               </div>
 
               <div className="relative flex w-full flex-col justify-between gap-10 p-10 tablet:w-3/5">
