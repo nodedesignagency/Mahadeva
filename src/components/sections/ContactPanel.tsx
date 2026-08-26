@@ -73,17 +73,27 @@ export function ContactPanel({ content }: ContactPanelProps) {
                 organ pipes, where the typeface's own glyph is the shape the
                 design is actually showing.
 
-                `leading-none` puts the glyph's ink near the top of its own box,
-                which is what lets it sit this close to the panel's corner —
-                pulled any higher it is simply cut off by the panel's clip. */}
+                Big, and the quote's first line runs over its foot rather than
+                starting underneath it — the owner's arrangement. That is the
+                whole reason the glyph is set this large: at a size that clears
+                the type it reads as a small ornament above the quote, and at
+                this one it reads as the corner the quote is set into.
+
+                The negative offsets are the glyph's own bearing, not a nudge.
+                `leading-none` still leaves a band of empty box above the ink,
+                so the box is pulled up by roughly that band to bring the ink
+                itself to the panel's edge; the panel clips the empty part and
+                nothing of the mark is lost. */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute top-1 left-6 select-none font-display text-[9rem] leading-none text-contact-mark tablet:top-2 tablet:left-8 tablet:text-[12rem]"
+              className="pointer-events-none absolute -top-7 left-3 select-none font-display text-[15rem] leading-none text-contact-mark tablet:-top-9 tablet:left-2 tablet:text-[20rem]"
             >
               &ldquo;
             </span>
 
-            <blockquote className="relative pt-10 font-body text-body-lg leading-[1.6] text-fg-on-light tablet:pt-14">
+            {/* No top padding: the type starts at the panel's own inset and the
+                mark comes down over it. `relative` keeps it above the mark. */}
+            <blockquote className="relative font-body text-body-lg leading-[1.6] text-fg-on-light">
               {`"${content.quote.body}"`}
             </blockquote>
 
