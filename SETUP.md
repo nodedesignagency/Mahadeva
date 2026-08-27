@@ -185,8 +185,8 @@ At `/studio/blog`, or **Workspaces → Blog** from anywhere in the Studio, then
 | **Card colour** | The tint behind the card. |
 | **Published** | Sets the order of the index — newest first. |
 | **Date, as it is written** | Optional. Left empty, the date above is written out as `Jan 2, 2026`. |
-| **Author** | A name, and optionally a portrait. |
-| **Cover** | The picture in the card and at the head of the post. |
+| **Author** | A name. The byline is set as text. |
+| **Cover** | The post's one picture: the card's frame on the index, and the head of the post. |
 | **Body** | The post itself, as a run of headed sections. |
 
 ---

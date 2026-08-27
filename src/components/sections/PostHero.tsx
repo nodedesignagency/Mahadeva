@@ -83,27 +83,18 @@ export function PostHero({ content, index, post }: PostHeroProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            {post.author.avatar?.url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={post.author.avatar.url}
-                alt={post.author.avatar.alt}
-                className="size-12 shrink-0 object-cover"
-              />
-            ) : (
-              // The portrait's slot at its real size, so the row's rhythm is
-              // right before the photograph arrives.
-              <span aria-hidden="true" className="block size-12 shrink-0 bg-placeholder" />
-            )}
-
-            <span className="flex flex-col">
-              <span className="font-body text-body-sm text-fg-on-light-muted">
-                {content.authorLabel}
-              </span>
-              <span className="font-body text-body-lg text-fg-on-light">
-                {post.author.name}
-              </span>
+          {/* The byline, set as text. A post carries one picture — the cover
+              in the column beside this one, which is also the card's frame on
+              the index — and a portrait here would be a second one for an
+              editor to find, crop and keep current for the sake of a 48px
+              square. The label above the name is what marks it as a byline
+              now that nothing sits beside it. */}
+          <div className="flex flex-col">
+            <span className="font-body text-body-sm text-fg-on-light-muted">
+              {content.authorLabel}
+            </span>
+            <span className="font-body text-body-lg text-fg-on-light">
+              {post.author.name}
             </span>
           </div>
         </div>
