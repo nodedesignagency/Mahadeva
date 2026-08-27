@@ -18,7 +18,12 @@ import type { Post, blogIndexContent, postDetailContent } from "@/content/blog";
  *                   which is a proper gap below the header on a phone, where
  *                   the words come first and the picture is underneath
  *
- * With the picture 720 tall the row comes to 800, which is what the file says.
+ * The picture is the card's proportion, 720:695 — see `BlogCard`. One upload
+ * has to be the picture in both places, and two crops of it were two different
+ * pictures: near-square on the index, a tall portrait here, with whatever the
+ * hotspot kept in one of them cut out of the other. At the design's 564 wide
+ * that makes it 544 tall and the row 624, where a 47:60 crop made it 720 and
+ * the row the 800 the design file states.
  *
  * ── And why nothing bleeds ─────────────────────────────────────────────────
  *
@@ -83,29 +88,40 @@ export function PostHero({ content, index, post }: PostHeroProps) {
             </p>
           </div>
 
-          {/* The byline, set as text. A post carries one picture — the cover
-              in the column beside this one, which is also the card's frame on
-              the index — and a portrait here would be a second one for an
-              editor to find, crop and keep current for the sake of a 48px
-              square. The label above the name is what marks it as a byline
-              now that nothing sits beside it. */}
-          <div className="flex flex-col">
-            <span className="font-body text-body-sm text-fg-on-light-muted">
-              {content.authorLabel}
-            </span>
-            <span className="font-body text-body-lg text-fg-on-light">
-              {post.author.name}
+          <div className="flex items-center gap-4">
+            {post.author.avatar?.url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={post.author.avatar.url}
+                alt={post.author.avatar.alt}
+                className="size-12 shrink-0 object-cover"
+              />
+            ) : (
+              // The portrait's slot at its real size, so the row's rhythm is
+              // right before the photograph arrives.
+              <span aria-hidden="true" className="block size-12 shrink-0 bg-placeholder" />
+            )}
+
+            <span className="flex flex-col">
+              <span className="font-body text-body-sm text-fg-on-light-muted">
+                {content.authorLabel}
+              </span>
+              <span className="font-body text-body-lg text-fg-on-light">
+                {post.author.name}
+              </span>
             </span>
           </div>
         </div>
 
-        {/* 47/60 is the design's 564 by 720. Given as a proportion rather than
-            that fixed height, and it comes to the same thing where the design
-            specifies it: above the container's cap the picture's width cannot
-            change, so the height is 720 at every one of those widths. Below the
-            cap it scales, which is what a phone needs and a fixed 720 would
-            not give it. */}
-        <div className="aspect-[47/60] w-full overflow-clip bg-placeholder">
+        {/* The card's ratio, written out here as well rather than shared: a
+            class built from a variable is invisible to Tailwind's scanner and
+            compiles to nothing. If one of the two moves, move the other.
+
+            A proportion rather than a fixed height, so that above the
+            container's cap — where the picture's width cannot change — it is
+            the same height at every width, and below the cap it scales, which
+            is what a phone needs. */}
+        <div className="aspect-[720/695] w-full overflow-clip bg-placeholder">
           {post.image?.url ? (
             // Not next/image: the URL will already be sized and
             // format-negotiated by Sanity's pipeline.

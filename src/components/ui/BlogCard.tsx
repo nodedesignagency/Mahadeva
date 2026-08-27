@@ -100,6 +100,12 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
           359 card gives a 346 picture, which is the exact height at which the
           hover's left bar and its square meet. See `postHover.rects`.
 
+          `PostHero` draws the same upload at the same ratio, so the photograph
+          on the card and the one at the head of the post are the same picture
+          rather than two crops of one. The number is written out in both —
+          Tailwind cannot see a class assembled from a variable — so if this
+          moves, move that one.
+
           `mt-auto` so a card whose title runs to three lines keeps its picture
           flush with the foot instead of leaving a band of tint under it — the
           grid stretches every card to the tallest, and without this they would

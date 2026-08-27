@@ -45,12 +45,7 @@ export type Post = {
    */
   published: string;
   date: string;
-  /**
-   * A name, and nothing else. A post carries one picture — `image` below,
-   * which is the card's frame and the head of the post — so the byline is set
-   * as text rather than being a second picture to find and crop.
-   */
-  author: { name: string };
+  author: { name: string; avatar?: { url: string; alt: string } };
   body: readonly PostSection[];
   /** Sanity-shaped, and absent until the pictures land. */
   image?: { url: string; alt: string };

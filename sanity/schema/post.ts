@@ -92,14 +92,29 @@ export const post = defineType({
       name: "author",
       title: "Author",
       type: "object",
-      description:
-        "A name. The post's one picture is the cover below; the byline beside it is text.",
       fields: [
         defineField({
           name: "name",
           title: "Name",
           type: "string",
           validation: (rule) => rule.required(),
+        }),
+        defineField({
+          name: "avatar",
+          title: "Portrait",
+          type: "image",
+          description:
+            "Drawn small and round. Without one the post sets the name on its own.",
+          options: { hotspot: true },
+          fields: [
+            defineField({
+              name: "alt",
+              title: "Alternative text",
+              type: "string",
+              description: "Usually just the author's name.",
+              validation: (rule) => rule.required(),
+            }),
+          ],
         }),
       ],
       validation: (rule) => rule.required(),

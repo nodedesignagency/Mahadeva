@@ -23,7 +23,7 @@ const POSTS = groq`
     tone,
     published,
     date,
-    author{ name },
+    author{ name, avatar },
     body[]{ heading, paragraphs },
     image
   }
@@ -40,15 +40,15 @@ const POSTS = groq`
  */
 const IMAGE_WIDTH = 1128;
 
+/** The author's portrait is 48 square. */
+const AVATAR_WIDTH = 96;
+
 type SanityAsset = SanityImage & { alt?: string };
 
-/**
- * Only the cover and the written date differ from `Post`. The author is a name
- * and comes back as one, so it passes through the spread below untouched.
- */
-type SanityPost = Omit<Post, "image" | "date"> & {
+type SanityPost = Omit<Post, "image" | "author" | "date"> & {
   date?: string;
   image?: SanityAsset;
+  author: { name: string; avatar?: SanityAsset };
 };
 
 const MONTHS = [
@@ -94,6 +94,12 @@ function shape(doc: SanityPost): Post {
     ...doc,
     date: doc.date || writeDate(doc.published),
     image: doc.image ? resolve(doc.image, IMAGE_WIDTH) : undefined,
+    author: {
+      name: doc.author.name,
+      avatar: doc.author.avatar
+        ? resolve(doc.author.avatar, AVATAR_WIDTH)
+        : undefined,
+    },
   };
 }
 
