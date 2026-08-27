@@ -18,12 +18,7 @@ import type { Post, blogIndexContent, postDetailContent } from "@/content/blog";
  *                   which is a proper gap below the header on a phone, where
  *                   the words come first and the picture is underneath
  *
- * The picture is the card's proportion, 720:695 — see `BlogCard`. One upload
- * has to be the picture in both places, and two crops of it were two different
- * pictures: near-square on the index, a tall portrait here, with whatever the
- * hotspot kept in one of them cut out of the other. At the design's 564 wide
- * that makes it 544 tall and the row 624, where a 47:60 crop made it 720 and
- * the row the 800 the design file states.
+ * With the picture 720 tall the row comes to 800, which is what the file says.
  *
  * ── And why nothing bleeds ─────────────────────────────────────────────────
  *
@@ -113,15 +108,17 @@ export function PostHero({ content, index, post }: PostHeroProps) {
           </div>
         </div>
 
-        {/* The card's ratio, written out here as well rather than shared: a
-            class built from a variable is invisible to Tailwind's scanner and
-            compiles to nothing. If one of the two moves, move the other.
+        {/* 47/60 is the design's 564 by 720. Given as a proportion rather than
+            that fixed height, and it comes to the same thing where the design
+            specifies it: above the container's cap the picture's width cannot
+            change, so the height is 720 at every one of those widths. Below the
+            cap it scales, which is what a phone needs and a fixed 720 would
+            not give it.
 
-            A proportion rather than a fixed height, so that above the
-            container's cap — where the picture's width cannot change — it is
-            the same height at every width, and below the cap it scales, which
-            is what a phone needs. */}
-        <div className="aspect-[720/695] w-full overflow-clip bg-placeholder">
+            Deliberately not the card's near-square 720:695. The index frames a
+            thumbnail; this is the picture the post opens on, and the two are
+            allowed to be different shapes of the same upload. */}
+        <div className="aspect-[47/60] w-full overflow-clip bg-placeholder">
           {post.image?.url ? (
             // Not next/image: the URL will already be sized and
             // format-negotiated by Sanity's pipeline.

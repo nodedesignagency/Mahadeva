@@ -100,12 +100,6 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
           359 card gives a 346 picture, which is the exact height at which the
           hover's left bar and its square meet. See `postHover.rects`.
 
-          `PostHero` draws the same upload at the same ratio, so the photograph
-          on the card and the one at the head of the post are the same picture
-          rather than two crops of one. The number is written out in both —
-          Tailwind cannot see a class assembled from a variable — so if this
-          moves, move that one.
-
           `mt-auto` so a card whose title runs to three lines keeps its picture
           flush with the foot instead of leaving a band of tint under it — the
           grid stretches every card to the tallest, and without this they would
@@ -123,17 +117,28 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
           // Not next/image: the URL will already be sized and format-negotiated
           // by Sanity's pipeline, so routing it through the optimiser would be
           // a second transform of an image that has had one.
+
+          // `absolute`, and that is what holds the frame to its proportion.
+          // In flow it was a flex item's content, and a flex item's
+          // `min-height` is `auto`: `h-full` against a height the box had not
+          // settled yet resolved to the picture's own, so the frame took the
+          // upload's shape instead of the design's. A 192x238 photograph made
+          // a 355 card 440 tall where the ratio asks for 342 — every cover a
+          // different height, and only ever on the cards that had one.
+          // Out of flow it cannot push anything. See `CaseStudyCard`, which
+          // has always drawn its artwork this way.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={post.image.url}
             alt={post.image.alt}
-            className="mh-case-cover size-full object-cover object-center"
+            className="mh-case-cover absolute inset-0 size-full object-cover object-center"
             loading="lazy"
           />
         ) : (
           // Named rather than blank: an empty grey block reads as a layout bug,
-          // and this reads as a slot waiting for its picture.
-          <div className="mh-case-cover flex size-full items-center justify-center bg-placeholder p-6">
+          // and this reads as a slot waiting for its picture. Out of flow for
+          // the same reason as the picture it stands in for.
+          <div className="mh-case-cover absolute inset-0 flex size-full items-center justify-center bg-placeholder p-6">
             <p className="text-center font-body text-body-sm text-fg-on-light/40">
               {imagePending}
             </p>
