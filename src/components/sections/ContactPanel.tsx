@@ -65,9 +65,19 @@ export function ContactPanel({ content }: ContactPanelProps) {
       <Container>
         <div className="flex flex-col overflow-clip bg-bg-white desktop:flex-row">
           {/* The quote half. */}
-          {/* 40 on every side, against the form's 20 — the quote is a block of
-              reading matter and wants the room; the fields want the width. */}
-          <div className="relative flex flex-col justify-between gap-10 bg-contact-panel p-10 desktop:w-1/2">
+          {/* 40 on every side from the tablet up, against the form's 20 — the
+              quote is a block of reading matter and wants the room; the fields
+              want the width.
+
+              On a phone it is 32 at the head, foot and left, and 20 at the
+              right: the logo rail runs off that edge, and the shorter gutter
+              is what lets a mark reach it rather than stopping short.
+
+              Longhands on both sides of the breakpoint. Tailwind orders the
+              `p-*` shorthand and the per-side longhands by property rather
+              than by the order they are written, so mixing the two across a
+              breakpoint is a race that cannot be read off the class list. */}
+          <div className="relative flex flex-col justify-between gap-10 bg-contact-panel pt-8 pr-5 pb-8 pl-8 desktop:w-1/2 tablet:pt-10 tablet:pr-10 tablet:pb-10 tablet:pl-10">
             {/* The owner's mark, and no longer the typeface's — it is its own
                 drawing, so it is a file. Decorative: the quotation is already
                 marked up as one and a screen reader should not hear it twice.
