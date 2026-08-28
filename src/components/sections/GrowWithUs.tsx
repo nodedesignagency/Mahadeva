@@ -1,8 +1,34 @@
+import type { StaticImageData } from "next/image";
+import careersLounge from "@public/uploads/images/careers-4.avif";
+import careersMeeting from "@public/uploads/images/careers-6.avif";
+import careersNotebook from "@public/uploads/images/careers-2.avif";
+import careersPool from "@public/uploads/images/careers-3.avif";
+import careersStrategist from "@public/uploads/images/careers-1.avif";
+import careersTeam from "@public/uploads/images/careers-7.avif";
+import careersWhiteboard from "@public/uploads/images/careers-5.avif";
+
 import { Container } from "@/components/layout/Container";
 import { PhotoFan } from "@/components/motion/PhotoFan";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextReveal } from "@/config/animation";
-import type { growWithUsContent } from "@/content/careers";
+import type { FanPhoto, growWithUsContent } from "@/content/careers";
+
+/**
+ * The photograph a frame names. Content says which; this says what it is.
+ *
+ * The uploads are every shape — 1536x2048 and 1024x572 among them — and none
+ * of that reaches the fan: each frame is a fixed square and the picture is
+ * covered into it, so the arc keeps the seven equal sizes it is drawn from.
+ */
+const photos: Record<FanPhoto, StaticImageData> = {
+  strategist: careersStrategist,
+  notebook: careersNotebook,
+  pool: careersPool,
+  lounge: careersLounge,
+  whiteboard: careersWhiteboard,
+  meeting: careersMeeting,
+  team: careersTeam,
+};
 
 /**
  * Grow With Mahadeva — the room, fanned out.
@@ -59,7 +85,13 @@ export function GrowWithUs({ content }: GrowWithUsProps) {
           and be clipped by the section rather than squeezed by it. At the
           width the design was drawn at the two happen to coincide. */}
       <div className="mt-12 tablet:mt-16">
-        <PhotoFan photos={content.photos} imagePending={content.imagePending} />
+        <PhotoFan
+          photos={content.photos.map((frame) => ({
+            src: photos[frame.photo],
+            alt: frame.alt,
+          }))}
+          imagePending={content.imagePending}
+        />
       </div>
 
       <Container className="mt-12 tablet:mt-16">

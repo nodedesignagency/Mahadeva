@@ -28,6 +28,16 @@ export const careersHeroContent = {
   cta: { label: "See Openings", href: "#openings" },
 } as const;
 
+/** Which photograph a frame of the fan holds. See `GrowWithUs`. */
+export type FanPhoto =
+  | "strategist"
+  | "notebook"
+  | "pool"
+  | "lounge"
+  | "whiteboard"
+  | "meeting"
+  | "team";
+
 export const growWithUsContent = {
   headingLines: ["Grow With Mahadeva"],
 
@@ -35,20 +45,26 @@ export const growWithUsContent = {
     "We give ambitious people the space, trust, and tools needed to build impactful work that scales globally.",
 
   /**
-   * Seven frames, fanned. They carry no files yet, so each is a named slot —
-   * `alt` is what the photograph will be, and stands as its description the
-   * moment one lands.
+   * Seven frames, fanned, left to right.
+   *
+   * `photo` names the picture and the section imports it, the same division
+   * the About team cards and the principles make: a file in content could not
+   * be moved, and the content should not have to know where the file lives.
+   *
+   * `imagePending` is what a frame says before its picture arrives. Every one
+   * of the seven has one now, so nothing renders it — it stays because a
+   * frame added tomorrow will need it before its photograph is taken.
    */
   imagePending: "Photo to come",
   photos: [
-    { alt: "A strategist presenting at the window" },
-    { alt: "Hands over a workflow sketched in a notebook" },
-    { alt: "Two of the team at the pool table" },
-    { alt: "The lounge, mid-conversation" },
-    { alt: "An automation walkthrough at the whiteboard" },
-    { alt: "A pairing session in the meeting room" },
-    { alt: "The team together" },
-  ],
+    { photo: "strategist", alt: "A strategist presenting at the window" },
+    { photo: "notebook", alt: "Hands over a workflow sketched in a notebook" },
+    { photo: "pool", alt: "The team around the pool table" },
+    { photo: "lounge", alt: "The lounge, mid-conversation" },
+    { photo: "whiteboard", alt: "An automation walkthrough at the whiteboard" },
+    { photo: "meeting", alt: "A walkthrough on the meeting room screens" },
+    { photo: "team", alt: "The team together" },
+  ] satisfies readonly { photo: FanPhoto; alt: string }[],
 } as const;
 
 /**

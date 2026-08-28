@@ -1,5 +1,11 @@
-import type { LucideIcon } from "lucide-react";
-import { Crown, GraduationCap, Handshake, HeartPulse, Laptop, Layers } from "lucide-react";
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
+import highOwnership from "@public/uploads/icons/high-ownership.png";
+import learningBudget from "@public/uploads/icons/learning-budget.png";
+import modernStack from "@public/uploads/icons/modern-stack.png";
+import remoteFriendly from "@public/uploads/icons/remote-friendly.png";
+import teamWork from "@public/uploads/icons/team-work.png";
+import wellnessSupport from "@public/uploads/icons/wellness-support.png";
 
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
@@ -31,14 +37,22 @@ const tones: Record<BenefitTone, string> = {
   magenta: "bg-principle-magenta",
 };
 
-/** The drawing a benefit names. Content says which; this says what it is. */
-const marks: Record<BenefitMark, LucideIcon> = {
-  laptop: Laptop,
-  crown: Crown,
-  wellness: HeartPulse,
-  layers: Layers,
-  learning: GraduationCap,
-  team: Handshake,
+/**
+ * The drawing a benefit names. Content says which; this says what it is.
+ *
+ * The owner's own marks, which replaced a set of stand-ins from an icon
+ * library — the same swap the About principles have already made, and the same
+ * form: drawn in ink on nothing, with the tinted square behind them carrying
+ * the colour. Unlike the marks in `SiteIcons` these never have to follow a
+ * surface, so a file is the right form for them.
+ */
+const marks: Record<BenefitMark, StaticImageData> = {
+  laptop: remoteFriendly,
+  crown: highOwnership,
+  wellness: wellnessSupport,
+  layers: modernStack,
+  learning: learningBudget,
+  team: teamWork,
 };
 
 type WhyJoinProps = {
@@ -61,7 +75,7 @@ export function WhyJoin({ content }: WhyJoinProps) {
             and no cards, it is the space between rows that groups them. */}
         <ul className="mt-15 grid grid-cols-1 gap-x-10 gap-y-15 tablet:grid-cols-2 desktop:grid-cols-3">
           {content.benefits.map((benefit) => {
-            const Mark = marks[benefit.mark];
+            const mark = marks[benefit.mark];
 
             return (
               <li key={benefit.title} className="flex flex-col items-start">
@@ -69,10 +83,18 @@ export function WhyJoin({ content }: WhyJoinProps) {
                   aria-hidden="true"
                   className={`flex size-16 items-center justify-center ${tones[benefit.tone]}`}
                 >
-                  {/* Ink, not the tint's own darker step: the drawing is the
-                      readable part of the mark and the square behind it is
-                      what carries the colour. */}
-                  <Mark className="size-6 text-fg-on-light" strokeWidth={1.75} />
+                  {/* Ink on the tint, not the tint's own darker step: the
+                      drawing is the readable part of the mark and the square
+                      behind it is what carries the colour.
+
+                      Drawn at 24 inside the 64 square, which is where the
+                      About marks sit and what these files are cut for: each is
+                      64 square with the glyph inset, so it fills this box
+                      exactly and the two sections keep one scale.
+
+                      Decorative — the title beside it says the same thing, so
+                      an empty alt keeps it from being read out twice. */}
+                  <Image src={mark} alt="" width={24} height={24} className="size-6" />
                 </span>
 
                 <h3 className="mt-6 font-body text-heading-sm leading-(--leading-heading)">

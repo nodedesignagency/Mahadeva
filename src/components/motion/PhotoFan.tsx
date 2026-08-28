@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
 import type { CSSProperties } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
@@ -52,7 +54,7 @@ import { photoFan } from "@/config/animation";
  * needs no branch of its own: it simply stays at the arrangement.
  */
 
-type Photo = { alt: string };
+type Photo = { src?: StaticImageData; alt: string };
 
 type PhotoFanProps = {
   photos: readonly Photo[];
@@ -188,13 +190,34 @@ export function PhotoFan({ photos, imagePending }: PhotoFanProps) {
                 once the photographs land too — overlapping prints read as
                 stacked rather than collaged. `ring` rather than a border, so
                 it draws outside the frame and cannot shrink the picture. */}
-              <div className="flex aspect-square w-full items-center justify-center overflow-clip bg-placeholder p-3 text-center ring-2 ring-bg-white">
-                <p className="font-body text-label text-fg-on-light/40">
-                  {imagePending}
-                  {/* What this frame will hold, for anything reading the list
-                      rather than looking at it. */}
-                  <span className="sr-only">{` — ${photo.alt}`}</span>
-                </p>
+              <div className="relative flex aspect-square w-full items-center justify-center overflow-clip bg-placeholder p-3 text-center ring-2 ring-bg-white">
+                {photo.src ? (
+                  /* `fill` and `object-cover`, so the square is the frame's
+                     and never the upload's. The seven arrive at every shape —
+                     1536x2048 through 1024x572 — and a picture left in flow
+                     would carry its own proportion into the arc and break the
+                     one size all seven are drawn at. Out of flow it cannot:
+                     the frame keeps its square and the photograph is covered
+                     into it.
+
+                     `sizes` is the frame's real width, which never changes —
+                     the fan is one fixed object at every breakpoint — so the
+                     browser fetches one size rather than the whole ladder. */
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    fill
+                    sizes={`${photoFan.card}px`}
+                    className="object-cover object-center"
+                  />
+                ) : (
+                  <p className="font-body text-label text-fg-on-light/40">
+                    {imagePending}
+                    {/* What this frame will hold, for anything reading the list
+                        rather than looking at it. */}
+                    <span className="sr-only">{` — ${photo.alt}`}</span>
+                  </p>
+                )}
               </div>
             </li>
           );

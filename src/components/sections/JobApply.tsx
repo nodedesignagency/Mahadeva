@@ -1,3 +1,6 @@
+import Image from "next/image";
+import quotePortrait from "@public/uploads/images/careers-quote-portrait.avif";
+
 import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { ApplyForm } from "@/components/sections/ApplyForm";
@@ -77,11 +80,19 @@ export function JobApply({ content, role }: JobApplyProps) {
             </blockquote>
 
             <figcaption className="relative flex items-center gap-4">
-              {/* The portrait's slot at its real size, so the row's rhythm is
-                  right before the photograph arrives. */}
-              <span
-                aria-hidden="true"
-                className="block size-12 shrink-0 bg-placeholder"
+              {/* 48 square, and the photograph is covered into it rather than
+                  the box being cut to the photograph: the upload is 825x1024
+                  and the row's rhythm is set by the slot, not by what lands in
+                  it.
+
+                  Decorative — the name and the role are set beside it, so an
+                  empty alt keeps the same person from being announced twice. */}
+              <Image
+                src={quotePortrait}
+                alt=""
+                width={48}
+                height={48}
+                className="size-12 shrink-0 object-cover object-center"
               />
               <span className="flex flex-col">
                 <span className="font-body text-body-md text-fg-on-light">
