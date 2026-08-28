@@ -153,7 +153,9 @@ export function BeforeAfter({ content }: BeforeAfterProps) {
                   } as CSSProperties
                 }
                 className={cn(
-                  "relative overflow-clip p-8",
+                  // 24 at every width. The two columns are read side by side
+                  // and stacked, so one gutter is what keeps them a pair.
+                  "relative overflow-clip p-6",
                   surfaces[column.tone],
                 )}
               >
