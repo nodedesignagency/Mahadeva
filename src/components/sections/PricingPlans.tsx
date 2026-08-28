@@ -54,13 +54,22 @@ const icons: Record<PlanIcon, StaticImageData> = {
 /** The coloured strip both cards and the enterprise panel open with. */
 function PlanHeader({ name, tone, icon }: { name: string; tone: PlanTone; icon: PlanIcon }) {
   return (
-    <header className={cn("flex items-center justify-between px-4 py-3", tones[tone].strip)}>
+    // 4 on three sides and 10 at the left, which is what sets the strip's
+    // height: the mark is 36 and the two 4s above and below it make 44. The
+    // name is the only thing the left inset is for, and it is set closer in
+    // than the mark is because the mark's own export carries clear space.
+    <header
+      className={cn(
+        "flex items-center justify-between pt-1 pr-1 pb-1 pl-2.5",
+        tones[tone].strip,
+      )}
+    >
       <p className="font-body text-body-md text-fg-on-light">{name}</p>
-      {/* size-10, where the Lucide glyph it replaced was size-5. The export
-          keeps about a quarter of its canvas as clear space on every side, so
-          the mark inside a 20px box came out at 9px — half what stood there
-          before. Twice the box puts the mark itself back at 20. */}
-      <Image src={icons[icon]} alt="" aria-hidden sizes="40px" className="size-10" />
+      {/* 36, where the Lucide glyph it replaced was 20. The export keeps about
+          a quarter of its canvas as clear space on every side, so the mark
+          drawn inside this box comes out near 26 — which is the size it is
+          meant to read at, and why the box is larger than the glyph was. */}
+      <Image src={icons[icon]} alt="" aria-hidden sizes="36px" className="size-9" />
     </header>
   );
 }

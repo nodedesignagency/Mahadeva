@@ -124,7 +124,12 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             </p>
           </div>
 
-          <dl className="grid grid-cols-2 gap-x-5">
+          {/* Off on a phone. The four figures are the card's argument at a
+              width that can hold them side by side; at 350 they are eight
+              stacked lines between the summary and the picture, and the card
+              stops being a card. The page behind the link states them in
+              full, which is where a phone reads them. */}
+          <dl className="grid grid-cols-2 gap-x-5 max-tablet:hidden">
             {columns.map((column, i) => (
               <div
                 key={i}
