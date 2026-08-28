@@ -800,6 +800,44 @@ body:has([data-page-surface="hero"])
   will-change: transform;
 }
 
+/* Both ends dissolve rather than being cut.
+ *
+ * A row that loops has no first or last item, and a hard edge says otherwise:
+ * a logo sliced down the middle at the frame's edge reads as a clipping bug
+ * rather than as a strip that carries on past the window. Fading it out says
+ * the row continues.
+ *
+ * A mask rather than a gradient laid over the ends, because the three frames
+ * sit on three different grounds — the trust strip's white, the contact
+ * panel's blue, the feature rail's beige — and an overlay would have to be
+ * given each one's colour and then kept in step with it. A mask takes whatever
+ * is behind, so there is nothing to keep in step.
+ *
+ * The width scales with the frame and is held between two bounds: 6% is right
+ * for the 1440 feature rail and would be a sliver on the contact panel's 472,
+ * where the floor takes over. `mask-image` is the modern property and
+ * `-webkit-mask-image` is what older Safari answers to; both are set because
+ * one without the other is a frame with no fade rather than a broken one, and
+ * that is invisible until someone opens it on the wrong browser.
+ * ------------------------------------------------------------------------- */
+.mh-marquee-frame {
+  --mh-marquee-fade: clamp(2rem, 6%, 6rem);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--mh-marquee-fade),
+    #000 calc(100% - var(--mh-marquee-fade)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--mh-marquee-fade),
+    #000 calc(100% - var(--mh-marquee-fade)),
+    transparent 100%
+  );
+}
+
 /* The global backstop clamps every animation to 0.01ms, which would leave the
  * row parked a full copy to the left rather than stopped. Stop it properly and
  * hand scrolling back to the reader. */
