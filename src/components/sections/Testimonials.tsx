@@ -229,7 +229,16 @@ export function Testimonials({ content }: TestimonialsProps) {
                 </div>
               </div>
 
-              <div className="relative flex w-full flex-col justify-between gap-10 p-10 tablet:w-3/5">
+              {/* 40 all round from the tablet up, and 24 on a phone with none
+                  at the foot — the caption sits on the picture band below it
+                  rather than on a gutter of its own.
+
+                  Longhands on both sides of the breakpoint rather than `p-10`
+                  against `pb-0`: Tailwind orders the shorthand and the
+                  longhands by property, not by the order they are written, so
+                  a shorthand at one breakpoint and a longhand at the other is
+                  a race whose winner is not visible from here. */}
+              <div className="relative flex w-full flex-col justify-between gap-10 px-6 pt-6 pb-0 tablet:w-3/5 tablet:px-10 tablet:pt-10 tablet:pb-10">
                 {/* The owner's L breakpoint: 48px, -0.05em, 1.2 line. Tighter
                     tracking than any heading on the site, hence its own
                     token rather than the display one. */}
