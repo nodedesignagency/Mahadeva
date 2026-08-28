@@ -81,7 +81,10 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             leaves over. */}
         <div
           className={cn(
-            "flex flex-col justify-between gap-16 p-7",
+            // 24 on a phone and 28 from the tablet up — the owner's two
+            // values. A phone's card is the full width of a narrow window, so
+            // the gutter it can spare is the smaller one.
+            "flex flex-col justify-between gap-16 p-6 tablet:p-7",
             tones[study.tone],
           )}
         >
@@ -137,9 +140,14 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
 
         {/* The artwork half, and the whole of the hover.
 
-            Stacked under the panel on a phone, where it takes the owner's flat
-            424: the square the frame's proportion gives would be most of a
-            screen on its own.
+            Stacked under the panel below `lg`, where it takes one of the
+            owner's two flat heights rather than the frame's proportion: 305 on
+            a phone and 552 on a tablet. The proportion would give a square,
+            which at either width is most of a screen on its own.
+
+            The tablet's 552 is the same number the desktop frame settles at —
+            560:552 — so the half keeps one height across the change of layout
+            and only the width moves.
 
             From `lg` the proportion is a floor rather than a lock — see the
             spacer below. Held as a lock it set this half's height from its own
@@ -150,7 +158,7 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             window narrows. Stretching is also what the grid would have done on
             its own; `aspect-ratio` on an auto height is what stopped it. */}
         <div
-          className="relative h-[424px] overflow-clip bg-bg-light lg:h-auto"
+          className="relative h-[305px] overflow-clip bg-bg-light tablet:h-[552px] lg:h-auto"
           style={
             {
               "--mh-case-duration": `${caseHover.duration}ms`,
