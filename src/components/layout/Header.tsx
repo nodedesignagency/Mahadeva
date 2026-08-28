@@ -9,6 +9,10 @@ import { siteConfig } from "@/config/site.config";
 import { mobileNav } from "@/config/animation";
 import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
+import Image from "next/image";
+import markBlack from "@public/uploads/logos/Mahadeva Black Logo.png";
+import markWhite from "@public/uploads/logos/Mahadeva White Logo.png";
+
 import { cn } from "@/lib/cn";
 
 /**
@@ -139,11 +143,35 @@ export function Header() {
       )}
     >
       <Container className="flex h-header items-center justify-between gap-6">
+        {/* The wordmark, as the owner's two files rather than as type.
+
+            It is the one thing in the strip that cannot take `text-current`:
+            an `<img>` paints what it was exported at. So both cuts are drawn,
+            one over the other, and crossfaded against each other on the same
+            curve the surface flip uses — see `.mh-nav-mark` in globals.css.
+            Black rests, for the white and beige surfaces; the dark surface
+            brings the white one up.
+
+            Sized in `em` against the heading step it replaced, so it keeps
+            that step's fluid scale rather than needing a breakpoint of its
+            own: the files are a tight crop at 417x65, and 0.69em of height is
+            the width the type had at every size it was set.
+
+            The link carries the name and both images are decorative, so a
+            screen reader hears the site once rather than three times. */}
         <Link
           href="/"
-          className="font-display text-heading-md tracking-(--tracking-display) text-current"
+          aria-label={siteConfig.shortName}
+          className="mh-nav-mark relative block font-display text-heading-md"
         >
-          {siteConfig.shortName}
+          <Image src={markBlack} alt="" data-mark="black" priority className="h-[0.69em] w-auto" />
+          <Image
+            src={markWhite}
+            alt=""
+            data-mark="white"
+            priority
+            className="absolute inset-0 h-[0.69em] w-auto"
+          />
         </Link>
 
         {/* Desktop only. Tablet is narrow enough that six labels plus the CTA

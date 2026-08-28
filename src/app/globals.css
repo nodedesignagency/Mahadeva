@@ -322,6 +322,44 @@ body:has([data-page-surface="hero"]) .mh-nav-shell:not([data-scrolled="true"]) {
   --mh-nav-rule-color: var(--color-fg);
 }
 
+/* ---------------------------------------------------------------------------
+ * The wordmark
+ *
+ * Every other part of the strip takes `color` and is carried across by the
+ * transition below. The wordmark cannot: it is a file, and an `<img>` paints
+ * what it was exported at. So both cuts are in the document, stacked, and what
+ * crossfades is their opacity — on the same duration and curve, so the mark
+ * arrives with the surface rather than after it.
+ *
+ * Black rests, which is the white header and the beige one. The two selectors
+ * that turn the strip dark are the two that bring the white cut up, and they
+ * are written out rather than derived so that a third surface added later has
+ * to say which mark it wants.
+ * ------------------------------------------------------------------------- */
+.mh-nav-mark img {
+  transition: opacity var(--duration-nav-flip) var(--ease-nav-flip);
+}
+
+.mh-nav-mark img[data-mark="white"] {
+  opacity: 0;
+}
+
+body:has([data-page-surface="dark"]) .mh-nav-shell .mh-nav-mark img[data-mark="white"],
+body:has([data-page-surface="hero"])
+  .mh-nav-shell:not([data-scrolled="true"])
+  .mh-nav-mark
+  img[data-mark="white"] {
+  opacity: 1;
+}
+
+body:has([data-page-surface="dark"]) .mh-nav-shell .mh-nav-mark img[data-mark="black"],
+body:has([data-page-surface="hero"])
+  .mh-nav-shell:not([data-scrolled="true"])
+  .mh-nav-mark
+  img[data-mark="black"] {
+  opacity: 0;
+}
+
 .mh-nav-shell {
   overflow: clip;
   transition:

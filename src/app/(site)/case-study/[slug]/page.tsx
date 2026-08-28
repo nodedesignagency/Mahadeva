@@ -221,11 +221,17 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 {study.logo ? (
                   // Fitted inside its box rather than filling it: client marks
                   // are every shape, and `contain` keeps each one whole.
+                  //
+                  // Inverted, and only here. A client supplies one mark, drawn
+                  // in its own dark ink for a light page — which is what the
+                  // card on the index sits on, so there it is left alone. This
+                  // page is dark from the header down, and the same file on it
+                  // is a dark shape on a dark ground: present, and unreadable.
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={study.logo.url}
                     alt={study.logo.alt}
-                    className="h-8 w-auto max-w-[138px] object-contain"
+                    className="h-8 w-auto max-w-[138px] object-contain invert"
                   />
                 ) : (
                   <p className="font-ui text-meta font-normal">{study.client}</p>
