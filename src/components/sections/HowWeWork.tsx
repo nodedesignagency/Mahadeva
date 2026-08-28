@@ -80,7 +80,7 @@ export function HowWeWork({ content }: HowWeWorkProps) {
               <li key={principle.title} className="flex flex-col items-start">
                 <span
                   aria-hidden="true"
-                  className={`flex size-16 items-center justify-center ${tones[principle.tone]}`}
+                  className={`flex size-10 items-center justify-center ${tones[principle.tone]}`}
                 >
                   {/* Ink on the tint, not the tint's own darker step: the
                       drawing is the readable part of the mark and the square

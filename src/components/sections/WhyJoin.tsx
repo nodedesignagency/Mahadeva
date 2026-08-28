@@ -81,16 +81,17 @@ export function WhyJoin({ content }: WhyJoinProps) {
               <li key={benefit.title} className="flex flex-col items-start">
                 <span
                   aria-hidden="true"
-                  className={`flex size-16 items-center justify-center ${tones[benefit.tone]}`}
+                  className={`flex size-10 items-center justify-center ${tones[benefit.tone]}`}
                 >
                   {/* Ink on the tint, not the tint's own darker step: the
                       drawing is the readable part of the mark and the square
                       behind it is what carries the colour.
 
-                      Drawn at 24 inside the 64 square, which is where the
-                      About marks sit and what these files are cut for: each is
-                      64 square with the glyph inset, so it fills this box
-                      exactly and the two sections keep one scale.
+                      24 inside the 40 square, which is where the About marks
+                      sit too — the two sections are the same object and have
+                      to keep one scale. The files are cut at 64 with the glyph
+                      inset; drawn at 24 they are simply set down, not filled
+                      to the tint's edge.
 
                       Decorative — the title beside it says the same thing, so
                       an empty alt keeps it from being read out twice. */}
