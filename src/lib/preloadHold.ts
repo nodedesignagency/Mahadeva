@@ -22,10 +22,22 @@ export const PRELOAD_UNTIL = "mh-preload-until";
 
 type Flagged = Window & { [PRELOAD_UNTIL]?: number };
 
-/** Milliseconds before an entrance should start. Zero when nothing is holding it. */
-export function preloadHold(): number {
+/**
+ * Milliseconds before an entrance should start. Zero when nothing is holding it.
+ *
+ * `lead` is how much of its own run an entrance wants already behind it by the
+ * time the cover lifts. Waiting out the whole hold means the sheet goes and
+ * *then* the heading begins, which reads as two events with a seam between
+ * them; starting `lead` early means the sheet lifts on a heading already in
+ * motion, and the two are one arrival. The first stretch happens behind the
+ * cover, where it is meant to be unseen.
+ *
+ * Clamped at zero, so an entrance whose lead is longer than what is left of
+ * the preloader simply starts now rather than in the past.
+ */
+export function preloadHold(lead = 0): number {
   if (typeof window === "undefined") return 0;
   const until = (window as Flagged)[PRELOAD_UNTIL];
   if (typeof until !== "number") return 0;
-  return Math.max(0, until - performance.now());
+  return Math.max(0, until - performance.now() - lead);
 }

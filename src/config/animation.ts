@@ -51,6 +51,17 @@ export type TextRevealSettings = {
  * "Green 11". Those names are not in the published CSS, so the hex values below
  * are the closest matches in the extracted palette and are worth confirming.
  */
+/**
+ * How much of a heading's reveal is already run when the preloader lifts.
+ *
+ * A fraction of the line's own sequence — a half, so the sheet goes on a
+ * heading that is mid-sweep rather than one that has not started. Only the
+ * home page's first load has anything holding it, so this is that heading's
+ * number in practice; everywhere else the hold is zero and the fraction of
+ * zero is zero.
+ */
+export const preloadLead = 0.5;
+
 export const heroTextReveal: TextRevealSettings = {
   revealColor: "var(--mh-green-100)", // "Green 4" — pale green
   revealColor2: "var(--mh-ink-border)", // "Green 11" — dark green

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "motion/react";
+import { preloadLead } from "@/config/animation";
 import type { TextRevealSettings } from "@/config/animation";
 import { preloadHold } from "@/lib/preloadHold";
 import { cn } from "@/lib/cn";
@@ -354,8 +355,18 @@ function RevealLine({ text, settings, reduced, extraDelay, wraps = false, classN
     // cover is in view immediately, so left alone it reveals itself while
     // nobody can see it and the cover lifts on a heading that has already
     // arrived. Zero on every page and every navigation that is not covered.
+    //
+    // Less a lead, though: waiting the hold out in full put the sheet's exit
+    // and the heading's entrance end to end, and the seam between them was
+    // visible — the cover went, and only then did anything move. Handing back
+    // half of one line's sequence starts the sweep under the sheet, so it
+    // lifts on a heading already in motion and the two read as one arrival.
+    //
+    // Half of `4 × duration + pause`, which is what a line takes: the two bars
+    // across, the pause at full cover, and the two back off.
+    const lead = (duration * 4 + pause) * preloadLead;
     const start = () =>
-      timers.push(setTimeout(run, delay + extraDelay + preloadHold()));
+      timers.push(setTimeout(run, delay + extraDelay + preloadHold(lead)));
     let observer: IntersectionObserver | undefined;
 
     if (trigger === "inView") {
