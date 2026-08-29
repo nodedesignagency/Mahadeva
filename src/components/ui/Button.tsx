@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
 import { ButtonArrow } from "@/components/ui/SiteIcons";
 import { cn } from "@/lib/cn";
-import { buttonSweep } from "@/config/animation";
+import { buttonSweep, ctaCardHover } from "@/config/animation";
 
 /**
  * Button / link primitive.
@@ -19,7 +19,11 @@ import { buttonSweep } from "@/config/animation";
  */
 
 const base =
-  "group relative inline-flex items-center justify-between gap-3 rounded-(--radius-button) " +
+  // `mh-arrow-swap` is the hover trigger for the icon box's two arrows — see
+  // `.mh-cta-arrow-*` in globals.css, which the FAQ's strategy-call card
+  // already used. The class sits on the button rather than on the box because
+  // the swap answers the whole button, not the corner of it.
+  "mh-arrow-swap group relative inline-flex items-center justify-between gap-3 rounded-(--radius-button) " +
   // Same face and size as body copy, set in caps — the original's button style.
   "font-body uppercase whitespace-nowrap " +
   "transition-colors duration-(--duration-hover) ease-(--ease-out) " +
@@ -107,6 +111,21 @@ const iconSizes = {
   md: "size-9",
 } as const;
 
+/**
+ * How far each arrow travels, in pixels, per size of box.
+ *
+ * Half the box plus the arrow's own width, which is the distance at which a
+ * 16px arrow is fully outside a box of that size — the whole point of clipping
+ * it. Short of that, a corner of the arriving arrow sits in the box at rest and
+ * the button shows two. The card that this gesture comes from has a 32px box
+ * and travels 24; these are the same sum for 24, 28 and 36.
+ */
+const arrowTravels = {
+  nav: 20,
+  sm: 22,
+  md: 26,
+} as const;
+
 type BaseProps = {
   children: ReactNode;
   variant?: keyof typeof variants;
@@ -156,12 +175,25 @@ function Inner({
           className={cn(
             // `relative` lifts the icon box out of the sweep's stacking order,
             // so the bars pass behind it rather than over it.
-            "relative inline-flex shrink-0 items-center justify-center rounded-(--radius-icon)",
+            //
+            // `overflow-hidden` is what makes the pair below read as a swap
+            // rather than as two arrows sliding about: the box clips them, so
+            // one leaves through its top right corner as the other arrives
+            // from the bottom left, and the box is never empty and never
+            // shows the same mark twice.
+            "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-(--radius-icon)",
             iconSizes[size],
             iconBoxes[variant],
           )}
+          style={
+            {
+              "--mh-cta-travel": `${arrowTravels[size]}px`,
+              "--mh-cta-duration": `${ctaCardHover.duration}ms`,
+            } as CSSProperties
+          }
         >
-          <ButtonArrow className="size-4" />
+          <ButtonArrow className="mh-cta-arrow-out absolute size-4" />
+          <ButtonArrow className="mh-cta-arrow-in absolute size-4" />
         </span>
       ) : null}
     </>

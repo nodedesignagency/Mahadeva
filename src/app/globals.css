@@ -1078,13 +1078,22 @@ body:has([data-page-surface="hero"])
   transition: transform var(--mh-cta-duration) var(--ease-out);
 }
 
+/* The same swap on every button that carries an arrow — `.mh-arrow-swap` is on
+ * the button itself, so the gesture answers the whole of it rather than the
+ * corner the arrows sit in. The distance is set per size of icon box, because
+ * clearing a 24px box and a 36px one are not the same throw; see
+ * `arrowTravels` in Button.tsx. */
 .mh-cta-card:hover .mh-cta-arrow-out,
-.mh-cta-card:focus-visible .mh-cta-arrow-out {
+.mh-cta-card:focus-visible .mh-cta-arrow-out,
+.mh-arrow-swap:hover .mh-cta-arrow-out,
+.mh-arrow-swap:focus-visible .mh-cta-arrow-out {
   transform: translate(var(--mh-cta-travel), calc(var(--mh-cta-travel) * -1));
 }
 
 .mh-cta-card:hover .mh-cta-arrow-in,
-.mh-cta-card:focus-visible .mh-cta-arrow-in {
+.mh-cta-card:focus-visible .mh-cta-arrow-in,
+.mh-arrow-swap:hover .mh-cta-arrow-in,
+.mh-arrow-swap:focus-visible .mh-cta-arrow-in {
   transform: translate(0, 0);
 }
 
