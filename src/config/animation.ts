@@ -746,19 +746,38 @@ export const buttonSweep = {
   duration: 2500,
 
   /**
-   * Top bar first. `overhang` is added to the button's own width to park the
-   * bar off the left edge; at the original's 267px that reproduces Framer's
-   * -270/-370/-470/-570 exactly.
+   * Top bar first, and last to leave. `overhang` is added to the button's own
+   * width to park the bar off the left edge; at the original's 267px that
+   * reproduces Framer's -270/-370/-470/-570 exactly.
    *
    * The delays step by 75ms rather than Framer's 50ms. At 50ms against a
    * ~950ms travel the four bars overlapped enough to arrive as one mass; the
    * wider step lets them read as four, which is the point of staggering them.
+   *
+   * ── Why the delays run with the overhangs and not against them ───────────
+   *
+   * They used to run against: the top bar waited longest to start and left
+   * first, which is the reverse of the stack this is meant to be. Leaving was
+   * plainly wrong — a bar clears the button as soon as it moves, so the exit
+   * order is the exit delays and nothing else, and the top bar went first.
+   *
+   * Arriving hid the same mistake. A bar only becomes visible once it has
+   * covered its own overhang, and the top bar's is 3 against the bottom's
+   * 303 — so the top bar showed almost as soon as its delay elapsed while the
+   * bottom bar had to travel half its run first. The delay said bottom-first,
+   * the overhang said top-first, and the two very nearly cancelled: 83ms
+   * between first and last, with the bottom two arriving on the same frame.
+   * Which is why it read as right sometimes and as a scramble at others.
+   *
+   * Now the two agree. The top bar has the shortest wait and the shortest
+   * distance to cover, so it is unambiguously first in; it has the longest
+   * exit delay, so it is unambiguously last out.
    */
   bars: [
-    { overhang: 3, delayIn: 300, delayOut: 75 },
-    { overhang: 103, delayIn: 225, delayOut: 150 },
-    { overhang: 203, delayIn: 150, delayOut: 225 },
-    { overhang: 303, delayIn: 75, delayOut: 300 },
+    { overhang: 3, delayIn: 75, delayOut: 300 },
+    { overhang: 103, delayIn: 150, delayOut: 225 },
+    { overhang: 203, delayIn: 225, delayOut: 150 },
+    { overhang: 303, delayIn: 300, delayOut: 75 },
   ],
 
   /**

@@ -132,7 +132,9 @@
  * The delay lives on the rule rather than in the shorthand so the two
  * directions can differ: the resting rule carries the leave delay, the hover
  * rule overrides it with the enter delay. That asymmetry is the effect — the
- * stack fills bottom-up and empties top-down.
+ * stack fills top-down and empties bottom-up, so the bar that arrives first is
+ * the one that leaves last and the four read as a stack rather than as a
+ * queue. See `buttonSweep.bars`, which is where that order is set.
  *
  * Only `transform` animates, so the whole thing stays on the compositor.
  *
