@@ -763,11 +763,23 @@ export const buttonSweep = {
 
   /**
    * The secondary button's label flips from light to dark as the accent
-   * arrives underneath it. Framer handles this as part of the variant change;
-   * these delays are ours, timed so the label turns once the sweep has reached
-   * the middle of the button rather than before it.
+   * arrives underneath it.
+   *
+   * 500ms, the owner's transition panel, on the owner's Ease In Out — see
+   * `--ease-in-out-soft`. It ran at 310 on `--ease-out` and read as instant:
+   * that curve is at its ceiling a third of the way in, so the colour had
+   * effectively finished changing in the first hundred milliseconds and the
+   * remaining two hundred did nothing anyone could see. The fix is the shape
+   * as much as the length.
+   *
+   * The delays stay ours. The panel says none, because Framer changes the
+   * label with the variant and the sweep is its own animation there; here the
+   * two are separate, and a label that turns before the accent is under it is
+   * dark ink on the dark body for as long as it takes the bars to arrive.
+   * Halved against the old pair, because a curve this slow off the mark needs
+   * far less holding back than one that was already finished.
    */
-  label: { duration: 310, delayIn: 250, delayOut: 190 },
+  label: { duration: 500, delayIn: 120, delayOut: 95 },
 } as const;
 
 /**

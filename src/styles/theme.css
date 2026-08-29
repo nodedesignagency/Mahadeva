@@ -478,10 +478,18 @@
   --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Nav link hover, from the owner's Framer transition panel: Ease In Out at
-   * bezier 0.44, 0, 0.56, 1 over 0.4s. Gentler either end than --ease-in-out,
-   * which is why it is its own token rather than a reuse. */
-  --ease-nav-hover: cubic-bezier(0.44, 0, 0.56, 1);
+  /* The owner's "Ease In Out", from the Framer transition panels: bezier
+   * 0.44, 0, 0.56, 1. Gentler at either end than `--ease-in-out`, and the
+   * curve the file reaches for again and again — the nav's links, the arrow
+   * swap and the sweep's label all carry it, over three different times.
+   *
+   * One declaration, three names. It was written out three times, which is
+   * how a palette starts to drift: a curve corrected in one place and not the
+   * other two is three curves that used to be one. The times stay apart,
+   * because the file does give those separately. */
+  --ease-in-out-soft: cubic-bezier(0.44, 0, 0.56, 1);
+
+  --ease-nav-hover: var(--ease-in-out-soft);
   --duration-nav-hover: 400ms;
 
   /* The arrow swap — the buttons' icon boxes and the strategy-call card, where
@@ -493,7 +501,7 @@
    * standing for the other would tie two numbers the design keeps apart. The
    * half second is the point — at the site's 250 the swap read as a flicker
    * rather than as one mark handing over to another. */
-  --ease-arrow-swap: cubic-bezier(0.44, 0, 0.56, 1);
+  --ease-arrow-swap: var(--ease-in-out-soft);
   --duration-arrow-swap: 500ms;
 
   /* The header's scroll flip, from the owner's Framer transition panel: Ease
@@ -742,6 +750,7 @@
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
   --ease-nav-hover: var(--ease-nav-hover);
+  --ease-in-out-soft: var(--ease-in-out-soft);
   --ease-arrow-swap: var(--ease-arrow-swap);
   --ease-nav-flip: var(--ease-nav-flip);
   --ease-border-reveal: var(--ease-border-reveal);

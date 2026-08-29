@@ -174,7 +174,13 @@
  * it. Only the variants that need it get the custom properties. */
 .mh-sweep-label {
   position: relative;
-  transition: color var(--mh-label-duration) var(--ease-out)
+  /* The owner's curve, not `--ease-out`. `--ease-out` reaches its control
+   * point's ceiling at a third of the way through, so almost the whole colour
+   * change happened in the first fraction of the run and the label read as
+   * snapping rather than turning — the duration was never the problem. This
+   * one is symmetric and slow at both ends, which is what makes a colour
+   * change legible as one. */
+  transition: color var(--mh-label-duration) var(--ease-in-out-soft)
     var(--mh-label-delay-out);
 }
 
