@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
 import { ButtonArrow } from "@/components/ui/SiteIcons";
 import { cn } from "@/lib/cn";
-import { buttonSweep, ctaCardHover } from "@/config/animation";
+import { buttonSweep } from "@/config/animation";
 
 /**
  * Button / link primitive.
@@ -185,12 +185,10 @@ function Inner({
             iconSizes[size],
             iconBoxes[variant],
           )}
-          style={
-            {
-              "--mh-cta-travel": `${arrowTravels[size]}px`,
-              "--mh-cta-duration": `${ctaCardHover.duration}ms`,
-            } as CSSProperties
-          }
+          // Only the throw. The swap's own timing is `--duration-arrow-swap`
+          // and `--ease-arrow-swap`, which are the design file's and the same
+          // wherever this gesture appears, so they are not passed in per use.
+          style={{ "--mh-cta-travel": `${arrowTravels[size]}px` } as CSSProperties}
         >
           <ButtonArrow className="mh-cta-arrow-out absolute size-4" />
           <ButtonArrow className="mh-cta-arrow-in absolute size-4" />

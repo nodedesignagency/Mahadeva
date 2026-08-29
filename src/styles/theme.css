@@ -484,6 +484,18 @@
   --ease-nav-hover: cubic-bezier(0.44, 0, 0.56, 1);
   --duration-nav-hover: 400ms;
 
+  /* The arrow swap — the buttons' icon boxes and the strategy-call card, where
+   * one arrow leaves the box as another arrives. From the owner's Framer
+   * transition panel: Ease In Out at bezier 0.44, 0, 0.56, 1 over 0.5s.
+   *
+   * The same curve the nav's links hover on, and written out again rather than
+   * reusing that token: the file gives the nav 0.4s and this 0.5, so one
+   * standing for the other would tie two numbers the design keeps apart. The
+   * half second is the point — at the site's 250 the swap read as a flicker
+   * rather than as one mark handing over to another. */
+  --ease-arrow-swap: cubic-bezier(0.44, 0, 0.56, 1);
+  --duration-arrow-swap: 500ms;
+
   /* The header's scroll flip, from the owner's Framer transition panel: Ease
    * Custom at bezier 0.8, 0, 0.2, 1 over 1s, applied to the whole nav. The
    * curve is what makes a full second work — it is almost flat at both ends
@@ -730,6 +742,7 @@
   --ease-out: var(--ease-out);
   --ease-in-out: var(--ease-in-out);
   --ease-nav-hover: var(--ease-nav-hover);
+  --ease-arrow-swap: var(--ease-arrow-swap);
   --ease-nav-flip: var(--ease-nav-flip);
   --ease-border-reveal: var(--ease-border-reveal);
   --ease-fan: var(--ease-fan);

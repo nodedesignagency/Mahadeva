@@ -1067,7 +1067,7 @@ body:has([data-page-surface="hero"])
  * makes it read as a swap rather than as two arrows sliding around. */
 .mh-cta-arrow-out {
   transform: translate(0, 0);
-  transition: transform var(--mh-cta-duration) var(--ease-out);
+  transition: transform var(--duration-arrow-swap) var(--ease-arrow-swap);
 }
 
 .mh-cta-arrow-in {
@@ -1075,7 +1075,7 @@ body:has([data-page-surface="hero"])
     calc(var(--mh-cta-travel) * -1),
     var(--mh-cta-travel)
   );
-  transition: transform var(--mh-cta-duration) var(--ease-out);
+  transition: transform var(--duration-arrow-swap) var(--ease-arrow-swap);
 }
 
 /* The same swap on every button that carries an arrow — `.mh-arrow-swap` is on

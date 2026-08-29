@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Minus, Plus } from "lucide-react";
 
 /**
  * FAQ accordion. One item open at a time, the first by default, as in the
@@ -14,6 +13,14 @@ import { Minus, Plus } from "lucide-react";
  *
  * Real buttons with aria-expanded/aria-controls — the original's Framer
  * accordion is divs, which a keyboard cannot reach.
+ *
+ * The mark is two hairlines rather than a plus glyph and a minus glyph. Swapped
+ * glyphs cannot animate — the item opened and the mark simply became something
+ * else in the same frame, which is the one part of the row that did not move.
+ * Drawn as two bars, only one has to turn: the upright quarter-turns onto the
+ * one already lying flat, and a plus becomes a minus by moving rather than by
+ * being replaced. It turns on the panel's own clock, so the mark and the answer
+ * are one gesture.
  */
 
 type AccordionProps = {
@@ -27,7 +34,6 @@ export function Accordion({ items }: AccordionProps) {
     <ul>
       {items.map((item, i) => {
         const isOpen = i === open;
-        const Icon = isOpen ? Minus : Plus;
         return (
           <li key={item.question} className="border-b border-border-on-light first:border-t">
             <h3>
@@ -42,11 +48,24 @@ export function Accordion({ items }: AccordionProps) {
                 <span className="font-display text-heading-lg text-fg-on-light">
                   {item.question}
                 </span>
-                <Icon
-                  aria-hidden="true"
-                  className="size-6 shrink-0 text-fg-on-light"
-                  strokeWidth={1.5}
-                />
+                {/* 1 by 17, the owner's measurements. A hairline, not the
+                    1.5 stroke the icon font drew — at this length that read as
+                    a bar rather than as a rule.
+
+                    Each bar is centred by its own flex box and carries nothing
+                    but a rotation, so the turn is a single property and has no
+                    centring translate to compose with. */}
+                <span aria-hidden="true" className="relative block size-6 shrink-0">
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="h-[17px] w-px rotate-90 rounded-full bg-fg-on-light" />
+                  </span>
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span
+                      className="h-[17px] w-px rounded-full bg-fg-on-light transition-transform duration-(--duration-base) ease-(--ease-in-out)"
+                      style={{ transform: `rotate(${isOpen ? 90 : 0}deg)` }}
+                    />
+                  </span>
+                </span>
               </button>
             </h3>
             <div
