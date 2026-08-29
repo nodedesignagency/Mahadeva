@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
+import type { CSSProperties } from "react";
 import { ButtonArrow } from "@/components/ui/SiteIcons";
 
 import { Container } from "@/components/layout/Container";
@@ -205,7 +206,10 @@ function RoleRow({ role, applyLabel }: { role: Role; applyLabel: string }) {
     <Link
       href={roleHref(role.slug)}
       aria-label={`${applyLabel}: ${role.title}`}
-      className="group flex items-center justify-between gap-6 py-8 transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-70"
+      // `mh-arrow-swap` is the trigger for the arrow's swap, the same gesture
+      // the buttons and the strategy-call card make. The row is the button
+      // here — it is the whole link — so the class belongs on it.
+      className="mh-arrow-swap group flex items-center justify-between gap-6 py-8 transition-opacity duration-(--duration-hover) ease-(--ease-out) hover:opacity-70"
     >
       <span className="flex flex-col gap-3">
         <span className="font-body text-heading-lg leading-(--leading-heading)">
@@ -237,11 +241,17 @@ function RoleRow({ role, applyLabel }: { role: Role; applyLabel: string }) {
         </span>
       </span>
 
+      {/* 32 of throw: half the 44 box plus the 20 arrow, which is where the
+          arrow is fully outside it. A bigger box and a bigger arrow than the
+          buttons carry, so the number is this row's own — see `arrowTravels`
+          in Button.tsx for the same sum at the three sizes there. */}
       <span
         aria-hidden="true"
-        className="flex size-11 shrink-0 items-center justify-center rounded-(--radius-icon) bg-icon-box text-fg-on-light"
+        className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-(--radius-icon) bg-icon-box text-fg-on-light"
+        style={{ "--mh-cta-travel": "32px" } as CSSProperties}
       >
-        <ButtonArrow className="size-5" />
+        <ButtonArrow className="mh-cta-arrow-out absolute size-5" />
+        <ButtonArrow className="mh-cta-arrow-in absolute size-5" />
       </span>
     </Link>
   );

@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import markBlack from "@public/uploads/logos/Mahadeva Black Logo.png";
 import type { CSSProperties } from "react";
 import { useEffect, useLayoutEffect, useState } from "react";
 
@@ -268,8 +270,28 @@ export function Preloader() {
       ))}
 
       <div className="absolute inset-0 grid place-items-center">
-        <span className="mh-preload-word font-display text-display-md tracking-(--tracking-display) text-preloader-fg">
-          {siteConfig.shortName}
+        {/* The owner's black cut, which is the header's resting one.
+
+            Not the white: the sheet is `--color-preloader`, the light accent
+            green, and the wordmark it replaced took `--color-preloader-fg`,
+            the dark ink. The white cut on that green is very nearly not
+            there — which is what it looked like before this line was read
+            rather than assumed.
+
+            The type step it replaced is kept on the span, and the file is
+            sized in `em` against it, so the mark scales with that step exactly
+            as the words did and needs no measurement of its own. `priority`
+            because this is the first thing anyone sees on the home page: left
+            to lazy-load it would arrive after the sheet it sits on.
+
+            The name is on the span, so the sheet still announces the site
+            rather than nothing while it covers the page. */}
+        <span
+          aria-label={siteConfig.shortName}
+          role="img"
+          className="mh-preload-word font-display text-display-md tracking-(--tracking-display) text-preloader-fg"
+        >
+          <Image src={markBlack} alt="" priority className="h-[0.69em] w-auto" />
         </span>
       </div>
     </div>
