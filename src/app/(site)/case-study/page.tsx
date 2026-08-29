@@ -36,10 +36,18 @@ export default async function CaseStudyIndexPage() {
       {/* `overflow-hidden` so the band's cells cannot widen the page as they
           animate, and the top offset clears the fixed header — the field runs
           from under it rather than behind it, which would cut its first row
-          in half. */}
+          in half.
+
+          The foot is the site's own `20/30`, which every other section and
+          this page's own studies keep. It was a flat 15, and on a phone that
+          left 60px between the subheading and the first card where the home
+          page's same pair sit 136 apart — the opening read as crowded against
+          the shelf rather than as its own band. The head stays this page's:
+          the band above it is part of the opening, and its clearance is not
+          the rhythm the foot answers to. */}
       <section
         data-bg="green"
-        className="relative overflow-hidden bg-bg pt-[calc(var(--header-height)+10rem)] pb-15 text-fg"
+        className="relative overflow-hidden bg-bg pt-[calc(var(--header-height)+10rem)] pb-20 text-fg tablet:pb-30"
       >
         {/* 26px rows, to the owner's Framer measurement. The band's own
             30/34/38 are the hero's, sampled per row; this one is a flat
