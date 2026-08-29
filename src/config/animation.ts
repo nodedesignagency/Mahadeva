@@ -1048,6 +1048,32 @@ export const preloader = {
  * the same 15px the file gives them, so the corner is never empty and never
  * shows the same mark twice.
  */
+/**
+ * The case study card's cursor.
+ *
+ * The owner's Custom Cursor component, set to Follow rather than Replace: the
+ * reader keeps their own pointer and a button rides along above it, so the
+ * card says where it goes without taking the arrow away.
+ *
+ * Physics rather than a duration, from the transition panel — a spring is what
+ * makes it trail the pointer and settle rather than track it exactly, and no
+ * curve over a fixed time can do that, because the distance it has to cover is
+ * however far the pointer moved since the last frame.
+ */
+export const caseCardCursor = {
+  /** Framer's Spring panel: stiffness 500, damping 60, mass 1. */
+  spring: { stiffness: 500, damping: 60, mass: 1 },
+
+  /**
+   * Where it rides, from the panel's Position, Align and Offset: above the
+   * pointer and centred on it, then moved 20 left and 20 down.
+   */
+  offset: { x: -20, y: 20 },
+
+  /** Milliseconds for it to arrive and leave. The site's hover duration. */
+  fade: 250,
+} as const;
+
 export const ctaCardHover = {
   /** Pixels the fill overhangs each edge on hover. Framer: inset 0 to -2. */
   grow: 2,

@@ -79,6 +79,9 @@ export type CaseStudy = {
   gallery?: { url: string; alt: string }[];
 };
 
+/** The words the card's cursor carries while the pointer is over it. */
+export const caseCardCursorContent = { label: "Learn More" } as const;
+
 export const caseStudiesContent = {
   eyebrow: "Case Studies",
   headingLines: ["Latest works"],

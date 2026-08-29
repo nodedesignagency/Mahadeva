@@ -40,6 +40,27 @@
     text-wrap: pretty;
   }
 
+  /* Anything that can be pressed says so.
+   *
+   * Tailwind's own base layer sets `cursor: default` on buttons — the HTML
+   * spec's answer, and a deliberate change in v4 from the pointer v3 gave
+   * them. It is the wrong answer for this site: every button here is a
+   * control someone is meant to click, and the FAQ's rows, the testimonial
+   * and team arrows, the pricing toggle, the blog's filter chips and both
+   * forms' submits were all handing back the plain arrow.
+   *
+   * Buttons and selects only. A card that merely reacts to the pointer is not
+   * a control — the case study and blog cards are links and take the pointer
+   * from the anchor over them, while the feature and benefit cards have a
+   * hover and nowhere to go, and must keep the arrow that says so.
+   *
+   * A disabled button is exempt: it cannot be pressed, and saying otherwise
+   * with the cursor is the one place this rule would lie. */
+  button:not(:disabled),
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
   /* Framer templates routinely ship with focus rings removed. Keep them, and
    * make them visible against every surface in the palette. */
   :focus-visible {

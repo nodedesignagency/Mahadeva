@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { CardCursor } from "@/components/motion/CardCursor";
 import { caseHover } from "@/config/animation";
+import { caseCardCursorContent } from "@/content/case-studies";
 import type { CaseStat, CaseStudy, CaseTone } from "@/content/case-studies";
 import { cn } from "@/lib/cn";
 import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
@@ -16,7 +18,9 @@ import { hoverRectBox, hoverRectFrom } from "@/lib/hoverRect";
  * On a phone they stack, panel first: the numbers are the point, and a product
  * screenshot at that width is barely legible anyway.
  *
- * A server component. The hover is CSS, so nothing here ships as JavaScript.
+ * A server component. The hover is CSS, so nothing here ships as JavaScript
+ * except `CardCursor` — the button that rides the pointer over the card, which
+ * has to know where the pointer is and therefore cannot be anything else.
  */
 
 /** Fills come from theme.css; the card never names a colour itself. */
@@ -73,6 +77,8 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
         className="absolute inset-0 z-20"
         aria-label={`${study.title} — ${study.client}`}
       />
+
+      <CardCursor label={caseCardCursorContent.label} />
 
       <div className="grid lg:grid-cols-2">
         {/* `justify-between` is what separates the two groups: everything that
