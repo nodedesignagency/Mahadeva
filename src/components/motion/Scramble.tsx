@@ -10,13 +10,19 @@ import { viewport } from "@/lib/motion";
  * Scramble-appear — the owner's Framer University effect.
  *
  * A cursor walks the string from the left. Behind it every character has
- * settled; for a short run ahead of it they churn through the pool in the
- * accent green; beyond that they have not arrived yet.
+ * settled; ahead of it they churn through the pool in the accent green.
  *
- * Nothing moves: characters that have not arrived are the real ones at zero
- * opacity, so the line holds its final width from the first frame and the
- * churn cannot reflow the text around it. Rendering blanks instead would have
- * the label growing as it played.
+ * The whole line churns, not a short run of it. It used to be six characters
+ * ahead of the cursor with everything beyond them at zero opacity, and on a
+ * heading that reads as half a word: "Our Mission" spent the first half of its
+ * run as "Our Mi" with nothing after it, which looks like a bug rather than an
+ * effect. Every character is on screen from the first frame now, and what
+ * moves through the line is which of them have settled.
+ *
+ * Nothing shifts while it plays: the characters are the real ones throughout,
+ * so the line holds its final width and the churn cannot reflow the text
+ * around it. Rendering blanks instead would have the label growing as it
+ * played.
  *
  * Without JS, with reduced motion, or on the server, this is the finished
  * text — a label that never arrives is a label nobody can read.
@@ -93,9 +99,9 @@ export function Scramble({
 
       interval = window.setInterval(() => {
         cursor += 1;
-        // Once the churn itself has run off the end, the line is settled and
-        // the plain text takes over again.
-        if (cursor > text.length + textScramble.letters) {
+        // Once the cursor has passed the last character the line is settled
+        // and the plain text takes over again.
+        if (cursor > text.length) {
           window.clearInterval(interval);
           setFrame(null);
           return;
@@ -122,15 +128,10 @@ export function Scramble({
     <Tag ref={ref} className={className}>
       {[...text].map((character, i) => {
         const settled = i < frame.cursor;
-        const churning = !settled && i < frame.cursor + textScramble.letters;
 
         return (
-          <span
-            key={i}
-            className={churning ? "text-accent" : undefined}
-            style={settled || churning ? undefined : { opacity: 0 }}
-          >
-            {churning ? (frame.noise[i] ?? character) : character}
+          <span key={i} className={settled ? undefined : "text-accent"}>
+            {settled ? character : (frame.noise[i] ?? character)}
           </span>
         );
       })}
