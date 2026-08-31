@@ -40,6 +40,35 @@
     text-wrap: pretty;
   }
 
+  /* No scrollbar, anywhere.
+   *
+   * The owner hides it in Framer with a `::-webkit-scrollbar` of zero width,
+   * and the site is a full-bleed dark surface where a grey gutter down the
+   * right edge is the one piece of furniture the design does not draw.
+   *
+   * Three declarations because three engines answer to different ones:
+   * `scrollbar-width` is the standard property, the `-webkit-` pseudo-element
+   * is what Chrome and Safari read, and `-ms-overflow-style` is Edge's older
+   * one. Any one of them alone leaves the bar showing on some machine, which
+   * is invisible from whichever one this was written on.
+   *
+   * Hiding it takes away no scrolling — wheel, trackpad, touch, keyboard and
+   * the scroll position itself are all untouched. It is the bar that goes.
+   *
+   * `.no-scrollbar` in the utilities below now says the same thing for one
+   * element. It is kept: the marquees and the chip rail name it deliberately,
+   * and a rule that happens to cover them today is not the same as a rule
+   * that says why. */
+  html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
   /* Anything that can be pressed says so.
    *
    * Tailwind's own base layer sets `cursor: default` on buttons — the HTML
