@@ -24,9 +24,10 @@ export const pricingContent = {
       name: "Launch",
       tone: "sky",
       icon: "launch",
-      /** ⚠️ Yearly is ten months of the monthly rate — a placeholder
-       * convention until the owner supplies the real figure. */
-      price: { monthly: 199, yearly: 1990, period: "/month" },
+      /** The owner's figures. Yearly is the *monthly* rate when billed for
+       * the year, not the year's total — which is why `period` stays
+       * `/month` across the toggle and only the number rolls. */
+      price: { monthly: 199, yearly: 149, period: "/month" },
       body: "Automation solutions designed to help early-stage teams streamline workflows, reduce manual effort, and improve execution speed.",
       cta: { label: "Choose Launch", href: "/contact" },
       includesTitle: "Launch includes:",
@@ -42,7 +43,7 @@ export const pricingContent = {
       name: "Scale",
       tone: "lavender",
       icon: "scale",
-      price: { monthly: 299, yearly: 2990, period: "/month" },
+      price: { monthly: 299, yearly: 199, period: "/month" },
       body: "Advanced automation systems designed to improve team efficiency, accelerate growth, and support business operations.",
       cta: { label: "Choose Scale", href: "/contact" },
       includesTitle: "Scale includes:",
