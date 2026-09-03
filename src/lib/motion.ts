@@ -52,6 +52,22 @@ export const stagger = { base: 0.08 } as const;
  */
 export const viewport = { once: true, margin: "-15% 0px" } as const;
 
+/**
+ * The same, without the wait — for anything that has nothing to show until it
+ * starts.
+ *
+ * A block that fades or rises is already legible while it waits, so holding it
+ * back until it is meaningfully on screen costs nothing. A scrambled label is
+ * not: it paints nothing at all until its run begins, so the delay above is
+ * dead space where the words should be. On a 900px window that is 135px of
+ * margin, and the mission heading sat blank through some 300px of scrolling
+ * while plainly on screen.
+ *
+ * So the rule is not "start late" but "start when there is something to
+ * look at" — which for these is the moment the label is reached.
+ */
+export const viewportOnEntry = { once: true } as const;
+
 export const transitions = {
   base: { duration: durations.base, ease: easings.out },
   /** Collapsed transition used whenever reduced motion is requested. */

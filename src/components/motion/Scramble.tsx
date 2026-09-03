@@ -5,7 +5,7 @@ import type { ElementType } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { textScramble } from "@/config/animation";
 import { cn } from "@/lib/cn";
-import { viewport } from "@/lib/motion";
+import { viewportOnEntry } from "@/lib/motion";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 
 /**
@@ -70,7 +70,7 @@ export function Scramble({
   // union of intrinsic elements narrows its type to the first of them.
   const Tag = as as ElementType;
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, viewport);
+  const inView = useInView(ref, viewportOnEntry);
   const reduced = useReducedMotion() ?? false;
   const [armed, setArmed] = useState(false);
   const [frame, setFrame] = useState<Frame | null>(null);
