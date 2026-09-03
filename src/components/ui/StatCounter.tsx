@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { animate, useInView, useReducedMotion } from "motion/react";
 import { statCounter } from "@/config/animation";
 import { cn } from "@/lib/cn";
 import { easings, viewport } from "@/lib/motion";
+import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 
 /**
  * One trust statistic's figure: prefix, counting number, unit.
@@ -34,13 +35,6 @@ import { easings, viewport } from "@/lib/motion";
  * but renders it at Regular, and the reference shot is the target — at 100px
  * the difference between the two is plain.
  */
-
-/**
- * `useLayoutEffect` warns when React renders it on the server. The swap it
- * performs is client-only by definition, so there it is simply not the layout
- * one.
- */
-const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /**
  * Two typographic sizes, both Geist against the same 50px affix.

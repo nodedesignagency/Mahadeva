@@ -37,5 +37,3 @@ export const siteConfig = {
   /** Twitter/X handle including the @, or an empty string to omit the tag. */
   twitterHandle: "",
 } as const;
-
-export type SiteConfig = typeof siteConfig;

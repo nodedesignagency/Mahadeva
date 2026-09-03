@@ -3,10 +3,11 @@
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import type { CSSProperties } from "react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 
 import { photoFan } from "@/config/animation";
+import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 
 /**
  * Seven frames that rise, settle, and open into a fan.
@@ -64,10 +65,6 @@ type PhotoFanProps = {
 
 /** The owner's four variants, in the order they are stepped through. */
 type Stage = "out" | "piled" | "settled" | "open";
-
-/** See Mission: the layout effect is the client's, and only the client's. */
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export function PhotoFan({ photos, imagePending }: PhotoFanProps) {
   /**

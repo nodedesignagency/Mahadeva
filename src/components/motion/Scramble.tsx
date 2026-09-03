@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ElementType } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { textScramble } from "@/config/animation";
 import { viewport } from "@/lib/motion";
+import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 
 /**
  * Scramble-appear — the owner's Framer University effect.
@@ -27,9 +28,6 @@ import { viewport } from "@/lib/motion";
  * Without JS, with reduced motion, or on the server, this is the finished
  * text — a label that never arrives is a label nobody can read.
  */
-
-/** See StatCounter: the layout effect is the client's, and only the client's. */
-const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 type Frame = {
   /** How many characters have settled. */

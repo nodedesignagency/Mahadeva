@@ -215,6 +215,3 @@ export const compareContent = {
     },
   ],
 } as const;
-
-/** A cell: a phrase, or the tick and cross a yes/no draws. */
-export type CompareValue = (typeof compareContent.groups)[number]["rows"][number]["values"][number];

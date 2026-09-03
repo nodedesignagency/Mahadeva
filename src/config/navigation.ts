@@ -6,14 +6,14 @@
  * template's sitemap.
  */
 
-export type NavItem = {
+type NavItem = {
   label: string;
   href: string;
   /** Marks an external destination: rendered with rel/target. */
   external?: boolean;
 };
 
-export type NavGroup = {
+type NavGroup = {
   title: string;
   items: NavItem[];
 };
@@ -34,9 +34,8 @@ export const navCta: NavItem = { label: "Contact Us", href: "/contact" };
  * Footer link columns, in the original's three groups. Titles carry their
  * braces: `{NAVIGATION}` is the footer's heading style, not a placeholder.
  *
- * The legal pages sit under Company here rather than in a bottom bar, which
- * is where the original puts them — `legalNav` below is still the list, so
- * the two cannot drift.
+ * The legal pages sit under Company here rather than in the bottom bar the
+ * original puts them in, so this is the only place they are listed.
  */
 export const footerNav: NavGroup[] = [
   {
@@ -67,10 +66,4 @@ export const footerNav: NavGroup[] = [
       { label: "X/Twitter", href: "https://x.com/", external: true },
     ],
   },
-];
-
-/** Legal links, rendered in the footer's bottom bar. */
-export const legalNav: NavItem[] = [
-  { label: "Privacy Policy", href: "/legal-pages/privacy-policy" },
-  { label: "Terms of Services", href: "/legal-pages/terms-of-services" },
 ];

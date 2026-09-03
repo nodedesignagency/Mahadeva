@@ -37,9 +37,13 @@ defaults there are fine.
 
 ## What happens next
 
-Files stay where you put them. This is the one home for artwork in the project
-— nothing moves out of here once it is in use, so a file you uploaded is at the
-path you uploaded it to, for good.
+Files stay in the folder you put them in. This is the one home for artwork in
+the project, and nothing moves out of it once it is in use.
+
+The one thing that may change is a name that breaks the rule above: an upload
+called `Mahadeva Black Logo.png` becomes `mahadeva-black.png`, because the name
+ends up in the URL and a space there is served as `%20`. Nothing else about the
+file changes and it stays in the same folder.
 
 Being in `public/` they are also served as-is, at `/uploads/logos/acme.svg` and
 so on, which is what a favicon or an OG image needs. But a file used on a page

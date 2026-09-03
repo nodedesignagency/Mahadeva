@@ -26,7 +26,7 @@ export type { BlogCategory, PostTone } from "./blogTerms";
 import type { BlogCategory, PostTone } from "./blogTerms";
 
 /** A titled block of a post. The whole body is a run of these. */
-export type PostSection = {
+type PostSection = {
   heading: string;
   paragraphs: readonly string[];
 };

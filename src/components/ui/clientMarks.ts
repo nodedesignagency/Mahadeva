@@ -18,7 +18,7 @@ import loqo from "@public/uploads/logos/logo-loqo.avif";
  * in `SiteIcons` these never have to follow a surface and a file is the right
  * form for them.
  */
-export type ClientMark =
+type ClientMark =
   | "ipsumLogo"
   | "loqo"
   | "lojoIpsum"

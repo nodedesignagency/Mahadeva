@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import markBlack from "@public/uploads/logos/Mahadeva Black Logo.png";
+import markBlack from "@public/uploads/logos/mahadeva-black.png";
 import type { CSSProperties } from "react";
 import { useEffect, useLayoutEffect, useState } from "react";
 

@@ -18,7 +18,7 @@
  * enquiries are lost silently.
  */
 
-export type Enquiry = {
+type Enquiry = {
   name: string;
   email: string;
   company: string;

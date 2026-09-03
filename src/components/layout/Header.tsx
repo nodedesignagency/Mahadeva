@@ -10,8 +10,8 @@ import { mobileNav } from "@/config/animation";
 import { Button } from "@/components/ui/Button";
 import { Container } from "./Container";
 import Image from "next/image";
-import markBlack from "@public/uploads/logos/Mahadeva Black Logo.png";
-import markWhite from "@public/uploads/logos/Mahadeva White Logo.png";
+import markBlack from "@public/uploads/logos/mahadeva-black.png";
+import markWhite from "@public/uploads/logos/mahadeva-white.png";
 
 import { cn } from "@/lib/cn";
 

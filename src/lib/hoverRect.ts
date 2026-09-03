@@ -13,7 +13,7 @@ import type { CSSProperties } from "react";
  * Offsets are numbers (pixels) or any CSS length — a centred block is anchored
  * with a `calc()` rather than a transform, since `translate` is spoken for.
  */
-export type HoverRect = {
+type HoverRect = {
   /**
    * Omit to let opposing anchors set the width — a bar that spans a gap. A
    * percentage sizes the rectangle against the box it is placed in, for an

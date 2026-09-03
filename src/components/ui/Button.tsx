@@ -141,7 +141,7 @@ type ButtonAsButton = BaseProps &
 type ButtonAsLink = BaseProps &
   Omit<ComponentPropsWithoutRef<"a">, keyof BaseProps> & { href: string };
 
-export type ButtonProps = ButtonAsButton | ButtonAsLink;
+type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 function Inner({
   children,

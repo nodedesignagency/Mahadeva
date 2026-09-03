@@ -10,6 +10,7 @@ import { Container } from "@/components/layout/Container";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { sectionTextRevealBeige } from "@/config/animation";
 import type { Role, openingsContent } from "@/content/careers";
+import { formControl } from "@/components/ui/Field";
 import { roleHref } from "@/lib/careers";
 import { cn } from "@/lib/cn";
 
@@ -39,18 +40,12 @@ const FACETS = ["location", "type", "department"] as const;
 type Facet = (typeof FACETS)[number];
 
 /**
- * One control's shell — white, hairline, the ink of the surface it sits on.
- *
- * 40px to the owner's measurement, and the same corner as the form fields on
- * the contact page: these are inputs on a light panel and there is no reason
- * for the site to have two kinds.
+ * This row's controls are 40 tall to the owner's measurement, where the form
+ * fields are 41. Everything else about them — the fill, the hairline, the
+ * focus ring — is `formControl`, shared with the two forms: these are inputs
+ * on a light panel and there is no reason for the site to have two kinds.
  */
-const field =
-  "h-[40px] w-full rounded-(--radius-input) border border-border-on-light bg-bg-white " +
-  "font-body text-body-md text-fg-on-light " +
-  "placeholder:text-fg-on-light-muted " +
-  "transition-colors duration-(--duration-hover) ease-(--ease-out) " +
-  "focus:border-fg-on-light focus:outline-none";
+const field = cn(formControl, "h-[40px]");
 
 export function Openings({ content }: OpeningsProps) {
   const id = useId();

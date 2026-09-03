@@ -5,8 +5,11 @@
  * duration, delay or easing curve. Everything imports from here, so the site's
  * motion can be retuned in one place and stays internally consistent.
  *
- * The easing arrays mirror the `--ease-*` custom properties in
- * styles/theme.css one-to-one. If you change one, change both.
+ * The easing arrays and the duration table mirror the `--ease-*` and
+ * `--duration-*` custom properties in styles/theme.css one-to-one. If you
+ * change one, change both — and that mirror is why some entries here are read
+ * by nothing in this file: they exist because the CSS side has them, not
+ * because something imports them.
  */
 
 import type { Transition, Variants } from "motion/react";
@@ -23,7 +26,6 @@ export const easings = {
   out: [0.33, 1, 0.68, 1],
   outExpo: [0.16, 1, 0.3, 1],
   inOut: [0.65, 0, 0.35, 1],
-  linear: [0, 0, 1, 1],
 } as const;
 
 /** Seconds. Mirrors `--duration-*`. */
@@ -37,11 +39,8 @@ export const durations = {
   transition: 0.7,
 } as const;
 
-export const stagger = {
-  tight: 0.05,
-  base: 0.08,
-  loose: 0.12,
-} as const;
+/** Seconds between one child's entrance and the next. */
+export const stagger = { base: 0.08 } as const;
 
 /**
  * Shared viewport config for scroll-triggered entrances. `once` matters: the
@@ -55,8 +54,6 @@ export const viewport = { once: true, margin: "-15% 0px" } as const;
 
 export const transitions = {
   base: { duration: durations.base, ease: easings.out },
-  slow: { duration: durations.slow, ease: easings.outExpo },
-  hover: { duration: durations.hover, ease: easings.out },
   /** Collapsed transition used whenever reduced motion is requested. */
   instant: { duration: 0.01 },
 } satisfies Record<string, Transition>;
@@ -92,17 +89,6 @@ export function fade(reduced: boolean): Variants {
   };
 }
 
-/** Scale-in, for imagery and the hero illustration. */
-export function scaleIn(reduced: boolean, from = 0.92): Variants {
-  return {
-    hidden: { opacity: 0, scale: reduced ? 1 : from },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: reduced ? transitions.instant : transitions.slow,
-    },
-  };
-}
 
 /**
  * Masked line reveal — the line slides up from behind an `overflow-hidden`

@@ -6,7 +6,7 @@
  * means opening a component.
  */
 
-export type CtaLink = {
+type CtaLink = {
   label: string;
   href: string;
 };

@@ -29,10 +29,10 @@ import { preloader } from "@/config/animation";
 import { createRandom } from "./random";
 
 /** Which axis a tile collapses along, and which edge it collapses towards. */
-export type Axis = "x" | "y";
-export type Origin = "start" | "end";
+type Axis = "x" | "y";
+type Origin = "start" | "end";
 
-export type Tile = {
+type Tile = {
   /** Share of the row's width. */
   weight: number;
   axis: Axis;

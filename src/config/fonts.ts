@@ -26,7 +26,7 @@ import { Almarai, Geist } from "next/font/google";
  * Headings and body copy. One instance serves both roles — `theme.css` points
  * the display and body tokens at it — so the family is downloaded once.
  */
-export const displayFont = Almarai({
+const displayFont = Almarai({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-display-family",
@@ -41,7 +41,7 @@ export const displayFont = Almarai({
  *
  * 300 is the case study year chip.
  */
-export const uiFont = Geist({
+const uiFont = Geist({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-ui-family",

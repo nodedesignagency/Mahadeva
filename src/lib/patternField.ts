@@ -41,7 +41,7 @@ const BAR_COLORS = [
   "var(--mh-blue-25)",
 ] as const;
 
-export type Cell = {
+type Cell = {
   weight: number;
   /** Vertical span within the column, 0–1, used for the spacing checks. */
   start: number;
@@ -58,7 +58,7 @@ export type Cell = {
  * A track holds a run of cells. It is a column when the field is vertical and a
  * row when horizontal; `thickness` is its width or its height accordingly.
  */
-export type Track = { thickness: number; cells: Cell[] };
+type Track = { thickness: number; cells: Cell[] };
 
 /** Which way the tracks run, and so which axis the bars grow along. */
 export type Orientation = "vertical" | "horizontal";

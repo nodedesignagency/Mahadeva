@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   motion,
   useInView,
@@ -15,6 +15,7 @@ import { Scramble } from "@/components/motion/Scramble";
 import { missionCards } from "@/config/animation";
 import type { MissionTone, missionContent } from "@/content/about";
 import { easings } from "@/lib/motion";
+import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 
 /**
  * Our Mission — one card, three variants, stepped through by scroll.
@@ -38,10 +39,6 @@ import { easings } from "@/lib/motion";
  *
  * A client component: it holds which variant is showing.
  */
-
-/** See Scramble: the layout effect is the client's, and only the client's. */
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 type MissionProps = {
   content: typeof missionContent;
