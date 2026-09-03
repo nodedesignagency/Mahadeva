@@ -290,6 +290,12 @@
   --color-compare-band: color-mix(in srgb, var(--mh-slate) 5%, var(--mh-beige));
   --color-compare-cell: color-mix(in srgb, var(--mh-white) 4%, var(--mh-beige));
   --color-border-compare: var(--mh-grey-250);
+  /* And the ink inside those cells: the page's own at 75%, which is the
+   * owner's value. It is what separates a row from the band heading it sits
+   * under — the band keeps the full ink, and every label and value below it
+   * steps back from it. Left translucent rather than mixed down, so the cell
+   * fill it sits on is what shows through. */
+  --color-fg-compare-cell: var(--mh-ink-a75);
   /* The comparison button's icon frame: a quiet grey, no border of its own. */
   --color-icon-box-quiet: var(--mh-grey-100);
   /* The meta chips on a post's page — its category and its date. The same
@@ -697,6 +703,7 @@
   --color-compare-band: var(--color-compare-band);
   --color-compare-cell: var(--color-compare-cell);
   --color-border-compare: var(--color-border-compare);
+  --color-fg-compare-cell: var(--color-fg-compare-cell);
   --color-icon-box-quiet: var(--color-icon-box-quiet);
   --color-icon-box: var(--color-icon-box);
   --color-chip: var(--color-chip);

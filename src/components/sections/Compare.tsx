@@ -45,7 +45,14 @@ type CompareProps = {
 };
 
 /**
- * Shared by every body cell: the hairline above it, its fill and its padding.
+ * Shared by every body cell: the hairline above it, its fill, its ink and its
+ * padding.
+ *
+ * The ink is the page's at 75%, one step back from the full-strength band
+ * heading above each run of rows — the owner's value, and what keeps a band
+ * reading as a heading rather than as another row. The tick takes it too:
+ * `currentColor`, so a row answered with a mark and a row answered with a word
+ * carry the same weight. The cross is already its own quieter grey.
  *
  * Rules are drawn on one side only — above every cell, and down the left of
  * every cell but the first. Any pair of neighbours would otherwise lay two
@@ -53,7 +60,7 @@ type CompareProps = {
  * line in some places and not others.
  */
 const cell =
-  "border-t border-border-compare bg-compare-cell px-4 py-4 desktop:px-6";
+  "border-t border-border-compare bg-compare-cell text-fg-compare-cell px-4 py-4 desktop:px-6";
 
 export function Compare({ content }: CompareProps) {
   return (
