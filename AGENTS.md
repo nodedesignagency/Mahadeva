@@ -10,6 +10,21 @@ Standing decisions for this project. They are here because each one has already
 been got wrong at least once, and none of them is guessable from the code in
 front of you.
 
+## Work on `main`
+
+Every change lands on `main`. Not a feature branch, not a branch named after
+the session — `main`, committed and pushed there.
+
+The owner runs the site from one clone and updates it with one line:
+
+```
+cd ~/Documents/Mahadeva && git pull origin main && npm install && npm run dev
+```
+
+Work parked on a branch is work they cannot see. Where a branch is genuinely
+wanted they will say so, and it is merged back to `main` as soon as it is
+done rather than left standing.
+
 ## Every page declares its surface
 
 The header is fixed in the root layout, above every page, and has to wear the
