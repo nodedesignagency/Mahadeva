@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ElementType } from "react";
 import { useInView, useReducedMotion } from "motion/react";
 import { textScramble } from "@/config/animation";
+import { cn } from "@/lib/cn";
 import { viewport } from "@/lib/motion";
 import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
 
@@ -13,12 +14,14 @@ import { useIsomorphicLayoutEffect } from "@/lib/useIsomorphicLayoutEffect";
  * A cursor walks the string from the left. Behind it every character has
  * settled; ahead of it they churn through the pool in the accent green.
  *
- * The whole line churns, not a short run of it. It used to be six characters
- * ahead of the cursor with everything beyond them at zero opacity, and on a
- * heading that reads as half a word: "Our Mission" spent the first half of its
- * run as "Our Mi" with nothing after it, which looks like a bug rather than an
- * effect. Every character is on screen from the first frame now, and what
- * moves through the line is which of them have settled.
+ * The whole line churns, not a short run of it, and there are only three
+ * states it can be in: nothing yet, churning, or finished. There is no resting
+ * state in which part of the line is showing — both times this component has
+ * been reported broken, that is what was on screen. First six characters ahead
+ * of the cursor with the rest at zero opacity, so a waiting heading read as
+ * "Our Mi"; then, once every character churned, a waiting heading read as the
+ * finished words in the accent green. Both were the *waiting* state painting
+ * something, and neither was the animation.
  *
  * Nothing shifts while it plays: the characters are the real ones throughout,
  * so the line holds its final width and the churn cannot reflow the text
@@ -71,15 +74,31 @@ export function Scramble({
   const reduced = useReducedMotion() ?? false;
   const [armed, setArmed] = useState(false);
   const [frame, setFrame] = useState<Frame | null>(null);
+  /** Set once the run has finished, which is what tells the two `frame`-less
+   * states apart: nothing yet, and settled. */
+  const [played, setPlayed] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
     if (!reduced) setArmed(true);
   }, [reduced]);
 
-  // Parked at the start until the label is on screen, then played once.
-  useIsomorphicLayoutEffect(() => {
-    if (armed && !inView) setFrame({ cursor: 0, noise: [] });
-  }, [armed, inView]);
+  /**
+   * Waiting to play: armed, and the first churned frame has not landed.
+   *
+   * Derived rather than held as a frame of its own, which is what it used to
+   * be — `{ cursor: 0, noise: [] }`. That frame painted every character in the
+   * accent green, and with no noise to draw each one fell back to its real
+   * self, so a heading that had not started yet sat on screen as the finished
+   * words in green. Nothing about it moved and nothing said it was waiting; it
+   * simply read as a heading in the wrong colour.
+   *
+   * It is `!frame` and not `!inView` because the run does not begin the
+   * instant the label is reached — `textScramble.delay` holds it 200ms. Keyed
+   * to the viewport, those 200ms are spent showing the finished words in
+   * ordinary ink, so the reader is given the answer and then watches it
+   * scramble towards what they have already read.
+   */
+  const waiting = armed && !played && !frame;
 
   useEffect(() => {
     if (!armed || !inView) return;
@@ -102,6 +121,7 @@ export function Scramble({
         if (cursor > text.length) {
           window.clearInterval(interval);
           setFrame(null);
+          setPlayed(true);
           return;
         }
         setFrame({ cursor, noise: draw() });
@@ -114,9 +134,14 @@ export function Scramble({
     };
   }, [armed, inView, text, tick]);
 
+  // Nothing is painted before the effect starts, and the whole of it is
+  // painted after: this is an appearance, so there is no state in which a
+  // half-finished version of the line is the resting one. `invisible` rather
+  // than an unrendered line, so the text still holds its space and the page
+  // does not reflow around it when it arrives.
   if (!frame) {
     return (
-      <Tag ref={ref} className={className}>
+      <Tag ref={ref} className={cn(className, waiting && "invisible")}>
         {text}
       </Tag>
     );
