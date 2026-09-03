@@ -142,7 +142,17 @@ export function Header() {
         // deleted the other.
       )}
     >
-      <Container className="flex h-header items-center justify-between gap-6">
+      {/* The owner's row: 80 tall, 12 above and below, 20 between the three
+          groups. The vertical padding never binds — the tallest thing in the
+          row is the 33px button and everything centres in the 56 the padding
+          leaves — but it is what the file says the row is, and it is what
+          would hold the line if something taller ever joined it.
+
+          The gap is a floor rather than the spacing anyone sees: `justify-
+          between` puts the wordmark on the left gutter and the button on the
+          right one, which is where the file has them, and the links land
+          between with a couple of hundred pixels either side. */}
+      <Container className="flex h-header items-center justify-between gap-5 py-3">
         {/* The wordmark, as the owner's two files rather than as type.
 
             It is the one thing in the strip that cannot take `text-current`:
@@ -152,25 +162,26 @@ export function Header() {
             Black rests, for the white and beige surfaces; the dark surface
             brings the white one up.
 
-            Sized in `em` against the heading step it replaced, so it keeps
-            that step's fluid scale rather than needing a breakpoint of its
-            own: the files are a tight crop at 417x65, and 0.69em of height is
-            the width the type had at every size it was set.
+            19px tall, which at the files' 417x65 crop is 122 wide — the size
+            it is in the owner's file. Fixed rather than fluid, because the
+            strip it sits in is: the row is a fixed 80 there too, and a
+            wordmark that grew inside a height that did not would drift
+            against the links beside it.
 
             The link carries the name and both images are decorative, so a
             screen reader hears the site once rather than three times. */}
         <Link
           href="/"
           aria-label={siteConfig.shortName}
-          className="mh-nav-mark relative block font-display text-heading-md"
+          className="mh-nav-mark relative block"
         >
-          <Image src={markBlack} alt="" data-mark="black" priority className="h-[0.69em] w-auto" />
+          <Image src={markBlack} alt="" data-mark="black" priority className="h-[19px] w-auto" />
           <Image
             src={markWhite}
             alt=""
             data-mark="white"
             priority
-            className="absolute inset-0 h-[0.69em] w-auto"
+            className="absolute inset-0 h-[19px] w-auto"
           />
         </Link>
 

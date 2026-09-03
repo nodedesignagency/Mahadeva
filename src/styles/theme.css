@@ -464,7 +464,11 @@
   --radius-lg: 2rem;
   --radius-pill: 999px;
 
-  --header-height: 4.5rem;
+  /* 80px — the height in the owner's file, and a fixed one there rather than
+   * a fluid step. Every hero's top padding and every pattern field's top
+   * offset is derived from this, so the strip and what sits under it move
+   * together when it changes. */
+  --header-height: 5rem;
 }
 
 /* ---------------------------------------------------------------------------
