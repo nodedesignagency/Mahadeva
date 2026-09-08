@@ -1,7 +1,7 @@
 {
   "src/components/motion/PageTransition.tsx": "2079b6f53d1a340f2d77b3eacf88fdfb",
   "src/components/motion/Preloader.tsx": "5849e81efec2fde7c3bc1f61c4b91b4c",
-  "src/components/layout/SiteChrome.tsx": "455bea5bc75adc7b791ac7aa5ff609b7",
+  "src/components/layout/SiteChrome.tsx": "93c0db35954a0faa6e83d5ce3f971e74",
   "scripts/build-artifact.mjs": "de6eefe65081c58109d30e8131be81a6",
   "scripts/check-artifact-routes.mjs": "3e31fabb6910aed815483b0c6419da2e",
   "scripts/check-transitions.mjs": "0a2d083ec1a6b235a694d83ff5fdfc2f",

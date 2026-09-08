@@ -2,6 +2,7 @@ import { organizationSchema } from "@/config/seo";
 import { SkipLink } from "@/components/layout/SkipLink";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { BuyTemplate } from "@/components/layout/BuyTemplate";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { BackgroundTransition } from "@/components/motion/BackgroundTransition";
 import { PageTransition, WipeScript } from "@/components/motion/PageTransition";
@@ -35,6 +36,10 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <Header />
       <main id="main">{children}</main>
       <Footer />
+      {/* Laid over the page rather than placed in it, so it belongs to the
+          chrome and not to any one route — the 404 included, which is outside
+          the site's route group but is still the site. */}
+      <BuyTemplate />
       <script
         type="application/ld+json"
         // Static, developer-authored JSON-LD — no user input reaches this.
