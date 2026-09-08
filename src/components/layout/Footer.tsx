@@ -137,9 +137,21 @@ export function Footer() {
                 they are one row rather than a name-plus-dot per person. */}
             <span className="flex flex-wrap items-center gap-2">
               {footerContent.credits.people.map((person, i) => (
-                <span key={person} className="flex items-center gap-2">
+                <span key={person.name} className="flex items-center gap-2">
                   {i > 0 ? <span aria-hidden="true">•</span> : null}
-                  {person}
+                  {/* Each name goes to that person's own profile, off the
+                      site, so both hop out in a new tab like the Follow Us
+                      column above. `mh-nav-link` is the footer's own hover —
+                      it rests at the same ink these names already had, so
+                      nothing about the bar changes until one is pointed at. */}
+                  <a
+                    href={person.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="mh-nav-link"
+                  >
+                    {person.name}
+                  </a>
                 </span>
               ))}
             </span>

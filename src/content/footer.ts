@@ -29,7 +29,15 @@ export const footerContent = {
   ],
 
   copyright: "@2026 Mahadeva. All Rights Reserved.",
-  credits: { label: "Made by:", people: ["Breeje", "Shubham", "Anas"] },
+  /** The people who built it, each linking to their own profile. */
+  credits: {
+    label: "Made by:",
+    people: [
+      { name: "Breeje", href: "https://x.com/BreejeAnadkat" },
+      { name: "Shubham", href: "https://www.linkedin.com/in/sbiswas29/" },
+      { name: "Anas", href: "https://x.com/AnasKaratela7" },
+    ],
+  },
 
   /** The oversized wordmark the page closes on. */
   wordmark: "Mahadeva",
