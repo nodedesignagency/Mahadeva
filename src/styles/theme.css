@@ -91,7 +91,12 @@
   --mh-grey-200: #e3e3e3;
   --mh-grey-250: #e3e2e5;
   --mh-grey-300: #dbdbdb;
-  --mh-grey-mid: #808080;
+  /* Was #808080, which reads at 3.60:1 on the beige and 3.95:1 on white —
+   * under the 4.5:1 AA asks of text this size. Every ground it is set on was
+   * measured and #707070 is the first step dark enough to clear all of them
+   * (4.51 on the beige, 4.95 on white). It carries the pricing column heads,
+   * the billing toggle's unselected side and the buy-template label. */
+  --mh-grey-mid: #707070;
   --mh-red: #ff1c1c;
 }
 

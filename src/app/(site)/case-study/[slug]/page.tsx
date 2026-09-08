@@ -80,7 +80,7 @@ function Frame({
           loading="lazy"
         />
       ) : (
-        <p className="flex size-full items-center justify-center bg-bg-white p-7 font-body text-body-sm text-fg-on-light/40">
+        <p className="flex size-full items-center justify-center bg-bg-white p-7 font-body text-body-sm text-fg-on-light/65">
           {t.imagePending}
         </p>
       )}

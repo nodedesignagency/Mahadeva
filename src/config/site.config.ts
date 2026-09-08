@@ -31,8 +31,6 @@ export const siteConfig = {
     location: "",
   },
 
-  /** Falls back to the generated OG route when no static image is supplied. */
-  ogImage: "/opengraph-image",
 
   /** Twitter/X handle including the @, or an empty string to omit the tag. */
   twitterHandle: "",

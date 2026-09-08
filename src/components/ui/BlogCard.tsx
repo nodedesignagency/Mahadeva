@@ -139,7 +139,7 @@ export function BlogCard({ post, readLabel, imagePending, className }: BlogCardP
           // and this reads as a slot waiting for its picture. Out of flow for
           // the same reason as the picture it stands in for.
           <div className="mh-case-cover absolute inset-0 flex size-full items-center justify-center bg-placeholder p-6">
-            <p className="text-center font-body text-body-sm text-fg-on-light/40">
+            <p className="text-center font-body text-body-sm text-fg-on-light/65">
               {imagePending}
             </p>
           </div>

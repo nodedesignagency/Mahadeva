@@ -129,7 +129,7 @@ export function PostHero({ content, index, post }: PostHeroProps) {
               className="size-full object-cover object-center"
             />
           ) : (
-            <p className="flex size-full items-center justify-center p-7 text-center font-body text-body-sm text-fg-on-light/40">
+            <p className="flex size-full items-center justify-center p-7 text-center font-body text-body-sm text-fg-on-light/65">
               {index.imagePending}
             </p>
           )}

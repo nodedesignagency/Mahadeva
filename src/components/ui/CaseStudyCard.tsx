@@ -202,7 +202,7 @@ export function CaseStudyCard({ study, className, style }: CaseStudyCardProps) {
             />
           ) : (
             <div className="mh-case-cover absolute inset-0 flex size-full items-center justify-center p-7">
-              <p className="font-body text-body-sm text-fg-on-light/40">
+              <p className="font-body text-body-sm text-fg-on-light/65">
                 Screenshot to come
               </p>
             </div>

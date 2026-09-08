@@ -208,7 +208,7 @@ export function PhotoFan({ photos, imagePending }: PhotoFanProps) {
                     className="object-cover object-center"
                   />
                 ) : (
-                  <p className="font-body text-label text-fg-on-light/40">
+                  <p className="font-body text-label text-fg-on-light/65">
                     {imagePending}
                     {/* What this frame will hold, for anything reading the list
                         rather than looking at it. */}

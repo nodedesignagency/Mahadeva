@@ -177,9 +177,20 @@ const portraits: Record<TeamPhoto, StaticImageData> = {
  * strips' whole return before coming back — racing them home was what read as
  * cheap.
  *
- * The strips are `aria-hidden` and the whole card is one focusable link:
- * hovering three decorative panes is not a thing to announce, and a keyboard
- * reaching the card should get the person, not the effect.
+ * The strips are `aria-hidden`, because hovering three decorative panes is not
+ * a thing to announce.
+ *
+ * What a keyboard and a pointer land on is the three social links on the back
+ * of the card, and nothing else. There used to be a fourth link laid over the
+ * whole card, `href="#"`, meant to be "the person" — but a team member has no
+ * page to be, so it went nowhere, and at `z-10` after the others in the
+ * document it sat on top of the three that do: measured, the element under a
+ * pointer aimed at Daniel Cruz on X was that overlay, not the icon. Clicking
+ * any of them jumped the reader to the top of the page.
+ *
+ * The card still opens for a keyboard: `onFocus` is on the container and
+ * React's focus events bubble, so tabbing to a social link opens the card the
+ * same way hovering it does.
  */
 function TeamCard({
   member,
@@ -301,13 +312,6 @@ function TeamCard({
         <p className="font-body text-body-lg text-fg">{member.name}</p>
         <p className="mt-1 font-body text-body-sm text-fg/70">{member.role}</p>
       </div>
-
-      {/* One link over the whole card, under nothing: the card is a person,
-          and this is what a pointer and a keyboard both land on. The name is
-          repeated here for anything reading the link rather than the card. */}
-      <a href="#" className="absolute inset-0 z-10">
-        <span className="sr-only">{`${member.name}, ${member.role}`}</span>
-      </a>
     </div>
   );
 }
