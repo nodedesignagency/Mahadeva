@@ -1,3 +1,5 @@
+import { configured } from "@/lib/env";
+
 /**
  * Sanity connection details.
  *
@@ -5,10 +7,14 @@
  * project yet, and the site must still build and run — it falls back to the
  * demo content in src/content/case-studies.ts. Throwing here would mean a buyer
  * cannot see what they bought until they have finished setting up a CMS.
+ *
+ * `configured` throughout, because a dashboard row left blank is an empty
+ * string rather than nothing — and `?? "production"` does not catch that, so
+ * an unset dataset would have queried one named `""`.
  */
 
-export const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
+export const projectId = configured(process.env.NEXT_PUBLIC_SANITY_PROJECT_ID);
+export const dataset = configured(process.env.NEXT_PUBLIC_SANITY_DATASET) ?? "production";
 
 /**
  * The blog's own dataset, in the same project.
@@ -18,7 +24,8 @@ export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
  * exported or restored without touching the other. Both sit inside the free
  * tier's two.
  */
-export const blogDataset = process.env.NEXT_PUBLIC_SANITY_BLOG_DATASET ?? "blog";
+export const blogDataset =
+  configured(process.env.NEXT_PUBLIC_SANITY_BLOG_DATASET) ?? "blog";
 
 /** Pinned: `next-sanity` warns when a client floats on whatever is current. */
 export const apiVersion = "2024-10-01";

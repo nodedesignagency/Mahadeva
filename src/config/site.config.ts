@@ -1,3 +1,5 @@
+import { configuredUrl } from "@/lib/env";
+
 /**
  * Site-wide configuration.
  *
@@ -15,11 +17,17 @@ export const siteConfig = {
     "Mahadeva is an AI and automation agency template — strategy, custom agents and workflow automation for modern product teams.",
 
   /**
-   * Absolute production URL, no trailing slash. Drives canonical URLs, the
-   * sitemap and Open Graph image resolution, so it must be correct before
-   * deploying. Override per-environment with NEXT_PUBLIC_SITE_URL.
+   * Absolute production URL. Drives canonical URLs, the sitemap and the share
+   * card, so it must be right before deploying. Set NEXT_PUBLIC_SITE_URL.
+   *
+   * `configuredUrl` rather than the variable itself: set-but-empty is what a
+   * hosting dashboard hands you for a row with no value, and it used to reach
+   * `new URL("")` and take the whole build down. It also forgives a trailing
+   * slash and a missing `https://`.
    */
-  url: process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://mahadeva.example.com",
+  url:
+    configuredUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
+    "https://mahadeva.example.com",
 
   locale: "en_US",
   /** Used on <html lang>. */
