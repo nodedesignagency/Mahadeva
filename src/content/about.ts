@@ -119,9 +119,9 @@ export const teamContent = {
       role: "CEO & Founder",
       bio: "Leads AI strategy and builds scalable automation systems designed to drive measurable business growth.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
     {
@@ -130,9 +130,9 @@ export const teamContent = {
       role: "Automation Engineer",
       bio: "Designs and ships the workflow automation behind every engagement, from first integration to steady state.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
     {
@@ -141,9 +141,9 @@ export const teamContent = {
       role: "Product Lead",
       bio: "Turns operational complexity into systems teams can actually use, and keeps every build aimed at the outcome.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
     {
@@ -152,9 +152,9 @@ export const teamContent = {
       role: "Growth Strategist",
       bio: "Connects automation to revenue, measuring what each system returns and where the next one should go.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
     {
@@ -163,9 +163,9 @@ export const teamContent = {
       role: "Operations Lead",
       bio: "Keeps delivery predictable: scopes the work, sequences it, and makes sure what ships is what was agreed.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
     {
@@ -174,9 +174,9 @@ export const teamContent = {
       role: "AI Consultant",
       bio: "Turns what a business actually needs into the model and tooling that will do it, and says so when automation is the wrong answer.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
     {
@@ -185,9 +185,9 @@ export const teamContent = {
       role: "Systems Engineer",
       bio: "Builds and runs what the automation sits on, so a workflow that holds up in a demo still holds up at volume.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
     {
@@ -196,9 +196,9 @@ export const teamContent = {
       role: "Client Success Lead",
       bio: "Stays with an engagement past launch, measuring what the system returns and feeding that back into the next build.",
       links: {
-        x: "https://x.com/",
-        instagram: "https://instagram.com/",
-        linkedin: "https://linkedin.com/",
+        x: "https://x.com/BreejeAnadkat",
+        instagram: "https://www.instagram.com/breeje.work/",
+        linkedin: "https://www.linkedin.com/in/breejeanadkat/",
       },
     },
   ],

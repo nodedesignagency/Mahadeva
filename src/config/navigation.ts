@@ -61,9 +61,9 @@ export const footerNav: NavGroup[] = [
   {
     title: "{Follow Us}",
     items: [
-      { label: "LinkedIn", href: "https://linkedin.com/", external: true },
-      { label: "Instagram", href: "https://instagram.com/", external: true },
-      { label: "X/Twitter", href: "https://x.com/", external: true },
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/breejeanadkat/", external: true },
+      { label: "Instagram", href: "https://www.instagram.com/breeje.work/", external: true },
+      { label: "X/Twitter", href: "https://x.com/BreejeAnadkat", external: true },
     ],
   },
 ];
