@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/Button";
 import {
   Field,
   FormSent,
+  HONEYPOT,
+  Honeypot,
   formControl,
   formLine,
   type FormStatus,
@@ -47,6 +49,14 @@ export function ApplyForm({ content, role }: ApplyFormProps) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
+    // Filled means a bot filled it, since nobody is shown it. Answered with
+    // the sent state rather than an error: a bot told its application bounced
+    // tries again, and a bot told it worked goes away.
+    if (String(data.get(HONEYPOT) ?? "")) {
+      setStatus("sent");
+      return;
+    }
+
     setStatus("sending");
     try {
       await sendApplication({
@@ -78,6 +88,8 @@ export function ApplyForm({ content, role }: ApplyFormProps) {
       // beside it carries the generous padding instead.
       className="flex h-full flex-col gap-5 px-5 py-8"
     >
+      <Honeypot />
+
       <Field htmlFor={`${id}-name`} label={content.fields.name.label}>
         <input
           id={`${id}-name`}

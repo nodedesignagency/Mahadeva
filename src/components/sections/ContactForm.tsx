@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/Button";
 import {
   Field,
   FormSent,
+  HONEYPOT,
+  Honeypot,
   formControl,
   formLine,
   type FormStatus,
@@ -44,6 +46,14 @@ export function ContactForm({ content }: ContactFormProps) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
+    // Filled means a bot filled it, since nobody is shown it. Answered with
+    // the sent state rather than an error: a bot told its enquiry bounced
+    // tries again, and a bot told it worked goes away.
+    if (String(data.get(HONEYPOT) ?? "")) {
+      setStatus("sent");
+      return;
+    }
+
     setStatus("sending");
     try {
       await sendEnquiry({
@@ -73,6 +83,8 @@ export function ContactForm({ content }: ContactFormProps) {
       // bottom, 20 either side, and 20 between one field and the next.
       className="flex h-full flex-col gap-5 px-5 py-8"
     >
+      <Honeypot />
+
       <Field htmlFor={`${id}-name`} label={content.fields.name.label}>
         <input
           id={`${id}-name`}

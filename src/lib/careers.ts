@@ -1,4 +1,5 @@
 import { openingsContent, type Role } from "@/content/careers";
+import { submitForm } from "@/lib/submitForm";
 
 /**
  * The one place the rest of the app asks about open roles.
@@ -68,15 +69,5 @@ export async function sendApplication(application: Application): Promise<void> {
     return;
   }
 
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(application),
-  });
-
-  // Thrown rather than returned: the form has one failure state and no use for
-  // the difference between a 500 and a 422, but the console should carry it.
-  if (!response.ok) {
-    throw new Error(`Careers endpoint returned ${response.status}`);
-  }
+  await submitForm(endpoint, application);
 }

@@ -220,3 +220,94 @@ npx sanity dataset create blog
 **I want to start over.**
 Deleting the documents in the Studio is enough; `npm run seed` can be run again
 at any time. It replaces the demo entries rather than duplicating them.
+
+---
+
+# Making the forms work
+
+Two forms send somewhere: the enquiry form on **Contact**, and the application
+form on every **Careers** posting.
+
+Until you point them at something they validate, show their sent state, and
+throw the message away. That is on purpose — the page is complete and testable
+before you have chosen anything — but it means **an unconfigured form on a live
+site looks like it worked**. Set these before you launch.
+
+## What an endpoint has to be
+
+Any URL that accepts a JSON POST from a browser. That is the whole
+requirement, and it is why nothing below needs a code change: a form service,
+a webhook, an automation tool's inbound URL, or a route you write yourself.
+
+## Three that cost nothing
+
+| | Free allowance | Sign-up | Card |
+| --- | --- | --- | --- |
+| **Web3Forms** | 250 a month | email, get a key | no |
+| **FormSubmit** | unlimited | none at all | no |
+| **Formspree** | 50 a month | account | no |
+
+**Web3Forms** is the one to pick if you want it to keep working as traffic
+grows. Get a key at web3forms.com — you give an email, it sends you an access
+key, that is the entire process. Then set three variables:
+
+```
+NEXT_PUBLIC_CONTACT_ENDPOINT=https://api.web3forms.com/submit
+NEXT_PUBLIC_CAREERS_ENDPOINT=https://api.web3forms.com/submit
+NEXT_PUBLIC_FORM_ACCESS_KEY=the-key-they-emailed-you
+```
+
+Both forms can share one endpoint and one key; each submission carries enough
+to tell them apart (an application carries the `role` it was sent from).
+
+**FormSubmit** needs no account whatsoever. Put your address in the URL:
+
+```
+NEXT_PUBLIC_CONTACT_ENDPOINT=https://formsubmit.co/ajax/you@example.com
+NEXT_PUBLIC_CAREERS_ENDPOINT=https://formsubmit.co/ajax/you@example.com
+```
+
+Leave `NEXT_PUBLIC_FORM_ACCESS_KEY` blank. The first submission triggers one
+confirmation email; click it and the form is live.
+
+**Formspree** gives you a URL per form, so use two:
+
+```
+NEXT_PUBLIC_CONTACT_ENDPOINT=https://formspree.io/f/xxxxxxxx
+NEXT_PUBLIC_CAREERS_ENDPOINT=https://formspree.io/f/yyyyyyyy
+```
+
+## Where to put them
+
+Locally, in `.env.local`. On a deployed site, in your host's environment
+settings — Vercel calls it **Settings → Environment Variables**. A local
+`.env.local` is not uploaded, so setting it only there is why a form works on
+your machine and silently does nothing in public.
+
+Redeploy after adding them. Environment variables are read at build time.
+
+## About spam
+
+Both forms carry a hidden field a person never sees. Anything arriving with it
+filled is dropped without being sent, which catches the cheap kind of bot.
+
+It is not a wall, and it is worth being straight about why: the endpoint is
+public — it has to be, because the form posts from the reader's browser — so
+anything determined enough to skip the form and post straight to the endpoint
+never meets the trap. The real filtering is your form service's own, and all
+three above include it. Turn it on in their dashboard.
+
+For the same reason, do not put a secret in any `NEXT_PUBLIC_` variable. The
+access key above is meant to be public; an API key that must stay private
+cannot live in a form that submits from the page.
+
+## Checking it works
+
+Submit the contact form on the deployed site and watch for the email. If
+nothing arrives:
+
+- The variables are set on the host, not only in `.env.local`.
+- You redeployed after setting them.
+- With FormSubmit, you clicked the confirmation email.
+- The browser console shows nothing red. A failed send turns the form's error
+  message on rather than the sent state, so a form that says it sent did send.

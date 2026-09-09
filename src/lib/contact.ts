@@ -1,3 +1,5 @@
+import { submitForm } from "@/lib/submitForm";
+
 /**
  * Where a contact enquiry goes.
  *
@@ -13,9 +15,9 @@
  * provider.
  *
  * That fallback is a deliberate trade and worth stating plainly: an
- * unconfigured form looks like it worked. `SETUP.md` says so, and the console
- * warns in development, but if this site goes live before the endpoint is set,
- * enquiries are lost silently.
+ * unconfigured form looks like it worked. `SETUP.md` says so under "Making the
+ * forms work", and the console warns in development, but if this site goes
+ * live before the endpoint is set, enquiries are lost silently.
  */
 
 type Enquiry = {
@@ -39,15 +41,5 @@ export async function sendEnquiry(enquiry: Enquiry): Promise<void> {
     return;
   }
 
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(enquiry),
-  });
-
-  // Thrown rather than returned: the form has one failure state and no use for
-  // the difference between a 500 and a 422, but the console should carry it.
-  if (!response.ok) {
-    throw new Error(`Contact endpoint returned ${response.status}`);
-  }
+  await submitForm(endpoint, enquiry);
 }
