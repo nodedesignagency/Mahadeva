@@ -56,3 +56,27 @@ export const siteConfig = {
     href: "https://contra.com/payment-link/wHlBeqQJ-mahadeva-ai-agency-next-js-template-standard-license",
   },
 } as const;
+
+/**
+ * Where a primary call to action points.
+ *
+ * On the template's own demo site every one of them sells the template: the
+ * hero's consultation button, the footer's, the FAQ's strategy-call card, the
+ * three plan buttons and the comparison table's. A visitor there is not
+ * hiring an agency, they are looking at something for sale, and sending them
+ * to a contact form for an agency that is not taking the enquiry wastes the
+ * one click they were willing to give.
+ *
+ * A buyer's site is the opposite case, and the switch is already there:
+ * `template.show` is what hides the floating buy badge, and it is the first
+ * thing the launch checklist says to turn off. Off, each call to action falls
+ * back to the page it names — /contact, and the enquiry form that is already
+ * wired to their endpoint — and nothing anywhere on the site still points at
+ * where it was bought.
+ *
+ * So the buy link is written once, here, rather than nine times across four
+ * content files, and a buyer never has to find the other eight.
+ */
+export function ctaHref(fallback: string): string {
+  return siteConfig.template.show ? siteConfig.template.href : fallback;
+}

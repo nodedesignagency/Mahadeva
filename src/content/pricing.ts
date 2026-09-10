@@ -7,6 +7,7 @@
  * in the other.
  */
 
+import { ctaHref } from "@/config/site.config";
 /**
  * Pricing — "Flexible Plans for Every Growth Stage".
  *
@@ -29,7 +30,7 @@ export const pricingContent = {
        * `/month` across the toggle and only the number rolls. */
       price: { monthly: 199, yearly: 149, period: "/month" },
       body: "Automation solutions designed to help early-stage teams streamline workflows, reduce manual effort, and improve execution speed.",
-      cta: { label: "Choose Launch", href: "/contact" },
+      cta: { label: "Choose Launch", href: ctaHref("/contact") },
       includesTitle: "Launch includes:",
       includes: [
         "AI workflow audit",
@@ -45,7 +46,7 @@ export const pricingContent = {
       icon: "scale",
       price: { monthly: 299, yearly: 199, period: "/month" },
       body: "Advanced automation systems designed to improve team efficiency, accelerate growth, and support business operations.",
-      cta: { label: "Choose Scale", href: "/contact" },
+      cta: { label: "Choose Scale", href: ctaHref("/contact") },
       includesTitle: "Scale includes:",
       includes: [
         "Multiple workflows",
@@ -62,7 +63,7 @@ export const pricingContent = {
     icon: "enterprise",
     title: "Custom Quote",
     body: "Fully customized automation infrastructure built to support complex operations and long-term scalable business transformation.",
-    cta: { label: "Request a Quote", href: "/contact" },
+    cta: { label: "Request a Quote", href: ctaHref("/contact") },
     includesTitle: "Enterprise includes:",
     /** Two columns, read down each: exactly the owner's order. */
     includes: [
@@ -155,19 +156,19 @@ export const compareContent = {
       name: "Launch",
       tone: "sky",
       body: "Simple automation workflows built for growing teams.",
-      cta: { label: "Get Started", href: "/contact" },
+      cta: { label: "Get Started", href: ctaHref("/contact") },
     },
     {
       name: "Scale",
       tone: "lavender",
       body: "Advanced automation designed to accelerate team growth.",
-      cta: { label: "Get Started", href: "/contact" },
+      cta: { label: "Get Started", href: ctaHref("/contact") },
     },
     {
       name: "Enterprise",
       tone: "peach",
       body: "Custom AI infrastructure built for enterprise scale.",
-      cta: { label: "Get Started", href: "/contact" },
+      cta: { label: "Get Started", href: ctaHref("/contact") },
     },
   ],
   /** Values are in plan order: Launch, Scale, Enterprise. */

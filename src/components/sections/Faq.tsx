@@ -7,6 +7,7 @@ import { Container } from "@/components/layout/Container";
 import { Accordion } from "@/components/motion/Accordion";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { ctaCardHover, sectionTextRevealBeige } from "@/config/animation";
+import { leavesSite } from "@/lib/href";
 import type { faqContent } from "@/content/faq";
 
 /**
@@ -51,6 +52,14 @@ export function Faq({ content }: FaqProps) {
               are `.mh-cta-*` in globals.css; the numbers are `ctaCardHover`. */}
           <Link
             href={content.cta.href}
+            // The card is the one call to action on the site that is an anchor
+            // rather than a Button, so it does not get the button's handling of
+            // an outbound link and has to say the same thing itself. Which it
+            // may need to: on the template's own site this points at the buy
+            // link rather than at /contact. See `ctaHref`.
+            {...(leavesSite(content.cta.href)
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
             className="mh-cta-card relative mt-16 flex w-full max-w-[26rem] items-center gap-4 p-2 desktop:mt-auto"
             style={
               {

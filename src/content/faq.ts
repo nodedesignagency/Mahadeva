@@ -7,6 +7,7 @@
  * everywhere the section is used.
  */
 
+import { ctaHref } from "@/config/site.config";
 /**
  * FAQ — "Answers to Your Questions".
  *
@@ -62,6 +63,6 @@ export const faqContent = {
   cta: {
     title: "Still need clarity?",
     body: "Book a strategy call.",
-    href: "/contact",
+    href: ctaHref("/contact"),
   },
 } as const;

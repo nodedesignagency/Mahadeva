@@ -9,6 +9,7 @@
  * for a column heading, not a template placeholder.
  */
 
+import { ctaHref } from "@/config/site.config";
 export const footerContent = {
   cta: {
     /** One entry per visual line, as elsewhere: the break is a decision. */
@@ -19,7 +20,7 @@ export const footerContent = {
       label: "Get Free Consultation",
       /** The phone drops the verb; the button is the whole width there. */
       labelShort: "Free Consultation",
-      href: "/contact",
+      href: ctaHref("/contact"),
     },
   },
 

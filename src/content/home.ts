@@ -6,6 +6,7 @@
  * means opening a component.
  */
 
+import { ctaHref } from "@/config/site.config";
 type CtaLink = {
   label: string;
   href: string;
@@ -29,7 +30,7 @@ export const heroContent = {
   headingLinesMobile: ["Custom AI Solutions", "to Increase Revenue"],
   subheading:
     "We build intelligent systems that automate decisions, boost productivity, and drive scalable growth for modern teams.",
-  primaryCta: { label: "Get Free Consultation", href: "/contact" } satisfies CtaLink,
+  primaryCta: { label: "Get Free Consultation", href: ctaHref("/contact") } satisfies CtaLink,
   secondaryCta: { label: "Explore Our Work", href: "/case-study" } satisfies CtaLink,
 } as const;
 

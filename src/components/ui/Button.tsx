@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from "react";
 import { ButtonArrow } from "@/components/ui/SiteIcons";
 import { cn } from "@/lib/cn";
+import { leavesSite } from "@/lib/href";
 import { buttonSweep } from "@/config/animation";
 
 /**
@@ -339,7 +340,7 @@ export function Button(props: ButtonProps) {
           href={href}
           className={classes}
           rel="noopener noreferrer"
-          target={href.startsWith("http") ? "_blank" : undefined}
+          target={leavesSite(href) ? "_blank" : undefined}
           {...rest}
         >
           {inner}

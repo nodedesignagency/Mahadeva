@@ -425,7 +425,36 @@ template: {
 },
 ```
 
-The floating badge in the bottom-right corner disappears everywhere.
+**This switch does two things**, and the second is the one that matters when
+you go live.
+
+The floating badge in the bottom-right corner disappears everywhere. And every
+primary call to action stops pointing at the template's sales page and goes
+back to the page it names — `/contact`, and the enquiry form that is already
+wired to your endpoint.
+
+Nine of them: the hero's consultation button, the footer panel's, the FAQ's
+strategy-call card, the two plan buttons, the enterprise quote button, and the
+comparison table's three. On the template's own demo site they all sell the
+template, because a visitor there is looking at something for sale rather than
+hiring an agency. On yours they are enquiries.
+
+The mechanism is `ctaHref` in `src/config/site.config.ts`:
+
+```ts
+export function ctaHref(fallback: string): string {
+  return siteConfig.template.show ? siteConfig.template.href : fallback;
+}
+```
+
+So the sales link is written once rather than nine times, and turning the
+switch off leaves nothing anywhere on the site pointing at where it was
+bought. To send a call to action somewhere other than `/contact`, change the
+fallback where it is used — `ctaHref("/pricing")` and so on.
+
+The header's **Contact Us** and the footer's **Contact** link are deliberately
+not in this set. They are navigation rather than calls to action, and a visitor
+still needs a way to reach the page.
 
 ## Set the site URL
 
@@ -462,7 +491,8 @@ npx sanity cors add https://your-domain.com --credentials
 ```
 □ NEXT_PUBLIC_SITE_URL set to the real domain
 □ site.config.ts — name, tagline, description, contact email
-□ template.show set to false
+□ template.show set to false — hides the buy badge AND returns all nine
+  calls to action to /contact; check one on the home page and one on pricing
 □ Footer credits changed or removed
 □ Footer email and phone are real
 □ Legal pages rewritten — they ship as placeholders
