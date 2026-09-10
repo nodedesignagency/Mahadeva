@@ -126,12 +126,74 @@ const arrowTravels = {
   md: 26,
 } as const;
 
+/**
+ * The two marks a submit button wears in place of its arrow.
+ *
+ * Drawn here rather than in `SiteIcons`, which is the owner's own artwork and
+ * says so. These are interface marks with no drawing behind them, and nothing
+ * outside a form's button asks for either.
+ *
+ * On a 16 grid and stroked rather than filled, so they sit at the same weight
+ * as `ButtonArrow` beside them at the same rendered size. `currentColor`
+ * throughout, so both take the icon box's ink like everything else in it.
+ */
+function Spinner({ className }: { className?: string }) {
+  return (
+    // `animate-spin` turns once a second. Under `prefers-reduced-motion` the
+    // base layer caps every animation at one iteration, so this settles rather
+    // than turning — which is the right answer: the label already says the
+    // button is busy, and the mark is not carrying that alone.
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+      className={cn("animate-spin", className)}
+    >
+      {/* The full ring at a quarter strength, with a quarter of it opaque on
+          top: what turns is the bright arc, and the faint ring under it is
+          what stops the box reading as empty for three quarters of a turn. */}
+      <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" opacity="0.25" />
+      <path
+        d="M14 8a6 6 0 0 0-6-6"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function Tick({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false" className={className}>
+      <path
+        d="M3.5 8.5 6.5 11.5 12.5 5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 type BaseProps = {
   children: ReactNode;
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
   /** Renders the inset square icon box with a diagonal arrow. */
   withArrow?: boolean;
+  /**
+   * Puts a fixed mark in that box instead of the arrow pair. A submit button
+   * uses it to report where the form has got to — see `FormSubmit`.
+   *
+   * The box stays whatever the arrow left it: same size, same fill, same
+   * place. Only the mark inside it changes, so a button reporting itself busy
+   * is the same shape as the one that was pressed rather than a wider or
+   * narrower object appearing where it was.
+   */
+  mark?: "spinner" | "tick";
   className?: string;
 };
 
@@ -146,9 +208,11 @@ type ButtonProps = ButtonAsButton | ButtonAsLink;
 function Inner({
   children,
   withArrow,
+  mark,
   variant,
   size,
-}: Required<Pick<BaseProps, "children" | "variant" | "size">> & Pick<BaseProps, "withArrow">) {
+}: Required<Pick<BaseProps, "children" | "variant" | "size">> &
+  Pick<BaseProps, "withArrow" | "mark">) {
   return (
     <>
       {sweeps[variant] ? <Sweep /> : null}
@@ -190,8 +254,16 @@ function Inner({
           // wherever this gesture appears, so they are not passed in per use.
           style={{ "--mh-cta-travel": `${arrowTravels[size]}px` } as CSSProperties}
         >
-          <ButtonArrow className="mh-cta-arrow-out absolute size-4" />
-          <ButtonArrow className="mh-cta-arrow-in absolute size-4" />
+          {mark === "spinner" ? (
+            <Spinner className="size-4" />
+          ) : mark === "tick" ? (
+            <Tick className="size-4" />
+          ) : (
+            <>
+              <ButtonArrow className="mh-cta-arrow-out absolute size-4" />
+              <ButtonArrow className="mh-cta-arrow-in absolute size-4" />
+            </>
+          )}
         </span>
       ) : null}
     </>
@@ -237,15 +309,22 @@ function Sweep() {
 }
 
 export function Button(props: ButtonProps) {
-  const { children, variant = "primary", size = "md", withArrow, className } = props;
+  const { children, variant = "primary", size = "md", withArrow, mark, className } = props;
   const classes = cn(base, variants[variant], sizes[size], className);
 
   // Strip presentational props so only real DOM attributes are spread.
-  const { children: _, variant: __, size: ___, withArrow: ____, className: _____, ...domProps } =
-    props;
+  const {
+    children: _,
+    variant: __,
+    size: ___,
+    withArrow: ____,
+    mark: _____,
+    className: ______,
+    ...domProps
+  } = props;
 
   const inner = (
-    <Inner withArrow={withArrow} variant={variant} size={size}>
+    <Inner withArrow={withArrow} mark={mark} variant={variant} size={size}>
       {children}
     </Inner>
   );

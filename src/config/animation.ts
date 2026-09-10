@@ -1340,3 +1340,40 @@ export const patternField = {
     footerBottom: 16180339,
   },
 } as const;
+
+/**
+ * The submit button's own feedback, which is the whole of what a form says
+ * back once it has been sent.
+ *
+ * The forms used to replace themselves with a panel of thanks. They no longer
+ * do: the button reports its own state — busy, then sent — and the fields
+ * clear underneath it, so the panel is still there to send the next one and
+ * the reader never loses the thing they were looking at.
+ *
+ * `hold` is how long "Submitted" stays before the form clears. Long enough to
+ * be read at a glance and not so long that a reader with a second enquiry is
+ * kept waiting on it. Shorter than a second reads as a flicker — the label
+ * changes twice in quick succession and neither registers.
+ */
+export const formFeedback = {
+  /** Milliseconds the button holds its sent state before the fields clear. */
+  hold: 2200,
+
+  /**
+   * The least time the button spends looking busy, however fast the answer
+   * comes back.
+   *
+   * Without it the busy state is not a state at all on the two occasions it
+   * most needs to be one. With no endpoint configured — which is how the
+   * template arrives, and how anyone evaluating it first sees the form — the
+   * send resolves in the same tick and the spinner is never painted: the
+   * button goes straight from "Submit form" to "Submitted", which reads as
+   * nothing having happened. With a fast endpoint it is worse than absent,
+   * appearing and vanishing inside three frames as a flicker in the corner.
+   *
+   * So the floor is not a delay pretending to be work. The work is real and
+   * already done; this is the shortest showing of it that a reader can
+   * actually see. Under a third of a second does not register as a state.
+   */
+  minBusy: 450,
+} as const;

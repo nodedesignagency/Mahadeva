@@ -1,19 +1,17 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId } from "react";
 
-import { Button } from "@/components/ui/Button";
 import {
   Field,
-  FormSent,
-  HONEYPOT,
+  FormSubmit,
   Honeypot,
   formControl,
   formLine,
-  type FormStatus,
 } from "@/components/ui/Field";
 import type { jobDetailContent } from "@/content/careers";
 import { sendApplication } from "@/lib/careers";
+import { useFormSubmit } from "@/lib/useFormSubmit";
 import { cn } from "@/lib/cn";
 
 /**
@@ -23,9 +21,10 @@ import { cn } from "@/lib/cn";
  * the contact page: the browser's own validation does the work, so an empty
  * required field is caught and announced without a line of JavaScript.
  *
- * It is built from the same parts as that form — see components/ui/Field.
- * These are inputs on a light panel and there is no reason for the site to
- * have two kinds.
+ * It is built from the same parts as that form — see components/ui/Field, and
+ * lib/useFormSubmit for the sequence they both submit through. These are
+ * inputs on a light panel and there is no reason for the site to have two
+ * kinds.
  *
  * What it collects is here; where it goes is `src/lib/careers.ts`, which also
  * carries the warning about an unconfigured endpoint. The split matters —
@@ -43,40 +42,19 @@ type ApplyFormProps = {
 
 export function ApplyForm({ content, role }: ApplyFormProps) {
   const id = useId();
-  const [status, setStatus] = useState<FormStatus>("idle");
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-
-    // Filled means a bot filled it, since nobody is shown it. Answered with
-    // the sent state rather than an error: a bot told its application bounced
-    // tries again, and a bot told it worked goes away.
-    if (String(data.get(HONEYPOT) ?? "")) {
-      setStatus("sent");
-      return;
-    }
-
-    setStatus("sending");
-    try {
-      await sendApplication({
+  const { status, onSubmit } = useFormSubmit({
+    failureLog: "[careers] application failed to send.",
+    send: (data) =>
+      sendApplication({
         role,
         name: String(data.get("name") ?? ""),
         email: String(data.get("email") ?? ""),
         phone: String(data.get("phone") ?? ""),
         resume: String(data.get("resume") ?? ""),
         why: String(data.get("why") ?? ""),
-      });
-      setStatus("sent");
-    } catch (error) {
-      console.error("[careers] application failed to send.", error);
-      setStatus("failed");
-    }
-  }
-
-  if (status === "sent") {
-    return <FormSent title={content.sent.title} body={content.sent.body} />;
-  }
+      }),
+  });
 
   return (
     <form
@@ -164,21 +142,7 @@ export function ApplyForm({ content, role }: ApplyFormProps) {
         />
       </Field>
 
-      {status === "failed" ? (
-        <p role="alert" className="font-body text-body-sm text-danger">
-          {content.failed}
-        </p>
-      ) : null}
-
-      <Button
-        type="submit"
-        variant="plan"
-        withArrow
-        disabled={status === "sending"}
-        className="w-full justify-between"
-      >
-        {status === "sending" ? content.sending : content.submit}
-      </Button>
+      <FormSubmit status={status} content={content} />
     </form>
   );
 }

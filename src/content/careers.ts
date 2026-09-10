@@ -397,6 +397,8 @@ export const jobDetailContent = {
       },
       submit: "Submit form",
       sending: "Sending…",
+      /** What the button reads once it has gone. Past tense: it is a report. */
+      submitted: "Submitted",
       failed: "Something went wrong. Please try again, or email us directly.",
       sent: {
         title: "Application received",

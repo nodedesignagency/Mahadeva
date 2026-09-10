@@ -59,8 +59,15 @@ export const contactContent = {
 
     submit: "Submit form",
     sending: "Sending…",
+    /** What the button reads once it has gone. Past tense: it is a report. */
+    submitted: "Submitted",
 
-    /** What the form says back. Written out, not assembled from fragments. */
+    /**
+     * What the form says back, in full.
+     *
+     * Announced to assistive tech rather than shown — the button carries the
+     * result on screen. Written out, not assembled from fragments.
+     */
     sent: {
       title: "Thank you — that's with us.",
       body: "We read every enquiry ourselves and reply within two working days.",

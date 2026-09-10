@@ -1,20 +1,18 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId } from "react";
 import { ChevronDown } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
 import {
   Field,
-  FormSent,
-  HONEYPOT,
+  FormSubmit,
   Honeypot,
   formControl,
   formLine,
-  type FormStatus,
 } from "@/components/ui/Field";
 import type { contactContent } from "@/content/contact";
 import { sendEnquiry } from "@/lib/contact";
+import { useFormSubmit } from "@/lib/useFormSubmit";
 import { cn } from "@/lib/cn";
 
 /**
@@ -25,9 +23,10 @@ import { cn } from "@/lib/cn";
  * without a line of JavaScript, and the page still submits sensibly if the
  * script never runs.
  *
- * The shell, the label, the sent panel and the four states are shared with the
- * application form on a role's page — see components/ui/Field. The two panels
- * are the same object on two pages and should not drift apart.
+ * The shell, the label, the submit and the four states are shared with the
+ * application form on a role's page — see components/ui/Field, and
+ * lib/useFormSubmit for the sequence they both run. The two panels are the
+ * same object on two pages and should not drift apart.
  *
  * What it collects is here; where it goes is `src/lib/contact.ts`. The split
  * matters — connecting this to a provider should never mean opening a
@@ -40,39 +39,18 @@ type ContactFormProps = {
 
 export function ContactForm({ content }: ContactFormProps) {
   const id = useId();
-  const [status, setStatus] = useState<FormStatus>("idle");
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-
-    // Filled means a bot filled it, since nobody is shown it. Answered with
-    // the sent state rather than an error: a bot told its enquiry bounced
-    // tries again, and a bot told it worked goes away.
-    if (String(data.get(HONEYPOT) ?? "")) {
-      setStatus("sent");
-      return;
-    }
-
-    setStatus("sending");
-    try {
-      await sendEnquiry({
+  const { status, onSubmit } = useFormSubmit({
+    failureLog: "[contact] enquiry failed to send.",
+    send: (data) =>
+      sendEnquiry({
         name: String(data.get("name") ?? ""),
         email: String(data.get("email") ?? ""),
         company: String(data.get("company") ?? ""),
         budget: String(data.get("budget") ?? ""),
         message: String(data.get("message") ?? ""),
-      });
-      setStatus("sent");
-    } catch (error) {
-      console.error("[contact] enquiry failed to send.", error);
-      setStatus("failed");
-    }
-  }
-
-  if (status === "sent") {
-    return <FormSent title={content.sent.title} body={content.sent.body} />;
-  }
+      }),
+  });
 
   return (
     <form
@@ -174,21 +152,7 @@ export function ContactForm({ content }: ContactFormProps) {
         />
       </Field>
 
-      {status === "failed" ? (
-        <p role="alert" className="font-body text-body-sm text-danger">
-          {content.failed}
-        </p>
-      ) : null}
-
-      <Button
-        type="submit"
-        variant="plan"
-        withArrow
-        disabled={status === "sending"}
-        className="w-full justify-between"
-      >
-        {status === "sending" ? content.sending : content.submit}
-      </Button>
+      <FormSubmit status={status} content={content} />
     </form>
   );
 }

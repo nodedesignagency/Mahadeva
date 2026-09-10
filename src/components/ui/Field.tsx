@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
 /**
@@ -110,22 +111,77 @@ export function Honeypot() {
 }
 
 /**
- * What stands where the form was once it has been sent.
- *
- * It replaces the form rather than covering it: leaving the fields on screen
- * behind a message invites a second submission of the same thing.
+ * The copy a form's tail needs. Both forms already carry exactly this, so both
+ * pass their `content` straight in.
  */
-export function FormSent({ title, body }: { title: string; body: string }) {
+export type FormCopy = {
+  submit: string;
+  sending: string;
+  submitted: string;
+  failed: string;
+  sent: { title: string; body: string };
+};
+
+/**
+ * Everything below the last field: the failure notice, the submit button, and
+ * the announcement that the thing was sent.
+ *
+ * ── Why the button reports this and not a panel ────────────────────────────
+ *
+ * The form used to be replaced on success by a panel of thanks. That reads
+ * well once and badly after: the reader who wants to send a second enquiry has
+ * to reload the page to get the fields back, and on the contact page the panel
+ * displaced the half of the layout they were looking at.
+ *
+ * So the state lives in the button — busy, then sent — and the fields clear
+ * underneath it a moment later. The panel is still a form, and it is ready for
+ * the next one without anybody reloading anything.
+ *
+ * ── What that costs, and what pays it back ─────────────────────────────────
+ *
+ * A word in a button holds less than a panel did, and the sighted reader no
+ * longer gets the sentence about when we reply. The live region below still
+ * carries it in full, so assistive tech is told everything it was told before;
+ * anything a reader must act on does not belong here in either case.
+ *
+ * The region is in the DOM from the first render with nothing in it. A live
+ * region added to the page at the moment it has something to say is announced
+ * unreliably or not at all — what gets read is the change of its contents, so
+ * the element has to already be there to change.
+ */
+export function FormSubmit({ status, content }: { status: FormStatus; content: FormCopy }) {
+  const busy = status === "sending";
+  const sent = status === "sent";
+
   return (
-    // Announced without stealing focus — the reader is told it worked whether
-    // or not they can see the panel change.
-    <div role="status" className="flex h-full flex-col justify-center gap-4 px-5 py-8">
-      <p className="text-display-md leading-(--leading-display) tracking-(--tracking-display) font-normal text-fg-on-light">
-        {title}
+    <>
+      {status === "failed" ? (
+        <p role="alert" className="font-body text-body-sm text-danger">
+          {content.failed}
+        </p>
+      ) : null}
+
+      <Button
+        type="submit"
+        variant="plan"
+        withArrow
+        mark={busy ? "spinner" : sent ? "tick" : undefined}
+        // Genuinely disabled, so neither a second click nor a second Enter can
+        // send the same thing twice while the first is in flight or being
+        // reported.
+        disabled={busy || sent}
+        // The base layer dims a disabled button to half, which is right for one
+        // that cannot be used yet and wrong for both of these: the button is
+        // reporting, not unavailable, and a greyed-out "Submitted" reads as a
+        // button that failed rather than one that worked.
+        className="w-full justify-between disabled:opacity-100"
+      >
+        {busy ? content.sending : sent ? content.submitted : content.submit}
+      </Button>
+
+      <p role="status" aria-live="polite" className="sr-only">
+        {sent ? `${content.sent.title} ${content.sent.body}` : ""}
       </p>
-      <p className="max-w-[38ch] font-body text-body-md text-fg-on-light-muted">
-        {body}
-      </p>
-    </div>
+    </>
   );
 }

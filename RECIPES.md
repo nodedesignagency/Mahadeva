@@ -12,7 +12,7 @@ for the look.
 
 **Branding** · [Rename the site](#rename-the-site) · [Change the brand colour](#change-the-brand-colour) · [Change a font](#change-a-font) · [Swap the logo](#swap-the-logo) · [Change the favicon and share card](#change-the-favicon-and-share-card)
 
-**Content** · [Rewrite a page's copy](#rewrite-a-pages-copy) · [Change the menu](#change-the-menu) · [Change the footer](#change-the-footer) · [Add a job opening](#add-a-job-opening) · [Add a case study or post](#add-a-case-study-or-post) · [Replace an image](#replace-an-image) · [Re-colour a card](#re-colour-a-card)
+**Content** · [Rewrite a page's copy](#rewrite-a-pages-copy) · [Change the menu](#change-the-menu) · [Change the footer](#change-the-footer) · [Change what a form says when it sends](#change-what-a-form-says-when-it-sends) · [Add a job opening](#add-a-job-opening) · [Add a case study or post](#add-a-case-study-or-post) · [Replace an image](#replace-an-image) · [Re-colour a card](#re-colour-a-card)
 
 **Structure** · [Add a page](#add-a-page) · [Add a section](#add-a-section) · [Remove a section](#remove-a-section) · [Reorder sections](#reorder-sections)
 
@@ -175,6 +175,48 @@ when the site becomes yours.
 
 The CTA panel is site-wide — it appears above the footer on every page, so
 editing it changes it everywhere.
+
+## Change what a form says when it sends
+
+Both forms report themselves in the button rather than replacing the page with
+a panel of thanks: it reads **Submit form**, then **Sending…** with a spinner,
+then **Submitted** with a tick, and about two seconds later the fields clear
+and it is ready for the next one.
+
+The four labels are content, one set per form:
+
+| Label | `src/content/contact.ts` | `src/content/careers.ts` |
+| --- | --- | --- |
+| At rest | `form.submit` | `apply.form.submit` |
+| In flight | `form.sending` | `apply.form.sending` |
+| Sent | `form.submitted` | `apply.form.submitted` |
+| Failed | `form.failed` | `apply.form.failed` |
+
+`form.sent` — the longer "Thank you" sentence — is still there and is still
+used. It is **announced to screen readers** rather than shown, so an assistive
+reader is told everything the old panel told them while the button carries the
+result on screen. Keep it written out; it is the only place that says when you
+reply.
+
+The two timings are in `src/config/animation.ts`:
+
+```ts
+export const formFeedback = {
+  hold: 2200,     // how long "Submitted" stays before the fields clear
+  minBusy: 450,   // the least time the spinner is on screen
+};
+```
+
+`minBusy` is why the spinner is visible at all before you connect an endpoint.
+Unset, the send resolves in the same tick, and without a floor the button would
+jump straight from **Submit form** to **Submitted** as though nothing had
+happened. Set `hold` to `0` if you would rather the form cleared the instant it
+was sent — but do not, unless something else on the page confirms it went.
+
+To go back to a panel replacing the form, that is `FormSubmit` in
+`src/components/ui/Field.tsx` and the state machine in
+`src/lib/useFormSubmit.ts`. Both forms use the same two, so a change lands on
+the contact page and a role's page together.
 
 ## Add a job opening
 
