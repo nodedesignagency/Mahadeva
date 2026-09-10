@@ -158,9 +158,19 @@ export function Mission({ content }: MissionProps) {
               style={{ transitionDuration: `${missionCards.swap}ms` }}
             />
 
-            {/* A single column of cells down each edge, flush inside it — the
-                two Pattern Animations the card is built around. Same field the
-                rest of the site uses, one track wide.
+            {/* Two columns of cells down each edge, flush inside it — the two
+                Pattern Animations the card is built around, each two tracks
+                wide as in the owner's file. Same field the rest of the site
+                uses.
+
+                `thickness` is a ratio for a vertical field rather than a width
+                (see PatternField), so the 24 is what keeps the pair even and
+                the `w-12` is what makes each column 24px. Widening the field
+                without the second track would have given one 48px column.
+
+                48 of the card's 72px padding, so the text still clears the
+                field by 24 — the columns sit inside the padding rather than
+                taking a margin from the words.
 
                 Tablet and up only. On a phone the card is nearly the width of
                 the screen and the columns would be eating the text's margin to
@@ -170,16 +180,16 @@ export function Mission({ content }: MissionProps) {
               <PatternField
                 side="left"
                 orientation="vertical"
-                tracks={1}
+                tracks={2}
                 thickness={24}
-                className="left-0 w-6"
+                className="left-0 w-12"
               />
               <PatternField
                 side="right"
                 orientation="vertical"
-                tracks={1}
+                tracks={2}
                 thickness={24}
-                className="right-0 w-6"
+                className="right-0 w-12"
               />
             </div>
 
