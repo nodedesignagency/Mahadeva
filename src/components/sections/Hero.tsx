@@ -3,7 +3,8 @@ import { PatternField } from "@/components/motion/PatternField";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/layout/Container";
 import { Parallax } from "@/components/motion/Parallax";
-import { heroParallax, heroTextReveal } from "@/config/animation";
+import type { CSSProperties } from "react";
+import { heroParallax, heroTextReveal, mobileBand } from "@/config/animation";
 import type { heroContent } from "@/content/home";
 
 /**
@@ -38,7 +39,19 @@ export function Hero({ content }: HeroProps) {
       data-bg-keep=""
       // `100dvh` tracks mobile browser chrome as it hides and shows; the
       // `h-screen` fallback covers browsers without dynamic viewport units.
-      className="sticky top-0 flex h-screen bg-bg min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh]"
+      className="sticky top-0 flex h-screen bg-bg min-h-[40rem] items-center justify-center overflow-hidden h-[100dvh] max-tablet:pt-(--mh-band-top) max-tablet:pb-(--mh-band-bottom)"
+      // The band is laid over the section, not in it, so nothing about the
+      // centring below knows it is there. These reserve its worst-case height
+      // at each edge, so what the content is centred in is the gap between the
+      // two bands rather than the whole screen. Worst case and not the band's
+      // actual height because a band's rows are drawn per seed — see
+      // `mobileBand`.
+      style={
+        {
+          "--mh-band-top": `calc(var(--header-height) + ${mobileBand}px)`,
+          "--mh-band-bottom": `${mobileBand}px`,
+        } as CSSProperties
+      }
     >
       {/* Decorative background. Sits behind the content and ignores pointer events. */}
       {/* Each side field is 20% of the viewport, as in the original, so its

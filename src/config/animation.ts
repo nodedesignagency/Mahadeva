@@ -1330,13 +1330,32 @@ export const patternField = {
     thickness: [26, 34, 48, 70],
   },
 
+  /**
+   * The mobile band, across the top or bottom of a hero.
+   *
+   * The rows are thin, and that is not a preference — it is what makes the
+   * band fit beside the words. A hero is pinned, so it cannot grow past the
+   * viewport to make room: a sticky section taller than the screen stops
+   * scrolling, which AGENTS.md sets out and which is not negotiable here. The
+   * band and the heading are therefore dividing one screen between them, and
+   * every pixel the band takes is a pixel the heading does not get.
+   *
+   * At 30/34/38 the band stood 114px. A phone in a browser has 620 to 720 of
+   * usable height once its chrome is out of the way, and at that size the bars
+   * were crossing the words: measured, 38px into the home page's heading and
+   * 58px into the about page's.
+   *
+   * These are the values that clear on every phone size measured, down to a
+   * 320x568 window where the heading wraps hardest and the hero is already at
+   * its floor of 40rem.
+   */
   horizontal: {
     /** Rows per band. */
     tracks: 3,
     /** Cells laid along each row, sampled per row. */
     cellsPerTrack: { min: 4, max: 6 },
     /** Row heights in px, sampled per row. */
-    thickness: [30, 34, 38],
+    thickness: [14, 18, 22],
   },
 
   /**
@@ -1422,3 +1441,15 @@ export const formFeedback = {
    */
   minBusy: 450,
 } as const;
+
+/**
+ * The tallest a mobile band can stand: every one of its rows at its thickest.
+ *
+ * Row heights are drawn from the list at random per seed, so most bands come
+ * out shorter than this. A hero reserving room for one still has to reserve
+ * the worst case — otherwise the page that happens to roll three thick rows is
+ * the page whose heading the bars sit on, and which page that is changes with
+ * a seed nobody is thinking about at the time.
+ */
+export const mobileBand =
+  patternField.horizontal.tracks * Math.max(...patternField.horizontal.thickness);

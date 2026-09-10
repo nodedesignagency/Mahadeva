@@ -39,12 +39,47 @@ export function AboutHero({ content }: AboutHeroProps) {
       // shows; the `vh` before it is the fallback for browsers without the
       // dynamic unit. The floor is what keeps the band, the heading and the
       // paragraph from crowding on a short window.
-      className="sticky top-0 flex h-[65vh] min-h-[28rem] items-end overflow-hidden bg-bg pb-20 h-[65dvh] tablet:pb-25"
+      // `pb-10` on a phone rather than the `pb-20` the tablet keeps.
+      //
+      // This opening is end-aligned, which is the owner's, and that is exactly
+      // why reserving the band's height at the top — the fix the two centred
+      // heroes take — does nothing here: flex overflows an end-aligned item
+      // past the start edge, so padding at the top is the first thing given up
+      // when the words do not fit. What decides whether the heading clears the
+      // band is where its foot is pinned, and that is the bottom padding.
+      //
+      // The section cannot grow to solve it either. It is pinned, and a sticky
+      // section taller than the screen stops scrolling.
+      //
+      // At 80 the heading's top landed 16px inside the band on a 620px phone.
+      // 32 is what clears at every width measured, including the 375 where the
+      // heading takes an extra line. The tablet is nowhere near the limit and
+      // keeps the fuller spacing.
+      className="sticky top-0 flex h-[65vh] min-h-[28rem] items-end overflow-hidden bg-bg pb-8 h-[65dvh] tablet:pb-25"
     >
       {/* Below the header rather than behind it: the header is opaque, so a
           band that started at the top of the section would have its first row
-          cut in half by it. */}
-      <PatternField side="top" orientation="horizontal" className="top-header" />
+          cut in half by it.
+
+          Two of them, and only one is ever on screen. This is the one page
+          whose band runs at every width — the home and careers openings put
+          columns down the sides above the tablet breakpoint and keep the band
+          for phones — so the thin rows that let a phone fit the band beside
+          its heading would otherwise have thinned this page's desktop band
+          too, which nothing asked for. Above tablet it keeps the 38px rows it
+          has always had; below, it takes the phone's. */}
+      <div className="hidden tablet:contents">
+        <PatternField
+          side="top"
+          orientation="horizontal"
+          tracks={3}
+          thickness={38}
+          className="top-header"
+        />
+      </div>
+      <div className="contents tablet:hidden">
+        <PatternField side="top" orientation="horizontal" className="top-header" />
+      </div>
 
       {/* The section is pinned, so the drift tracks the stack around it —
           keyed to this section it would freeze for exactly the stretch it is

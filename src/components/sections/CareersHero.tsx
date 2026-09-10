@@ -3,7 +3,8 @@ import { Parallax } from "@/components/motion/Parallax";
 import { PatternField } from "@/components/motion/PatternField";
 import { TextReveal } from "@/components/motion/TextReveal";
 import { Button } from "@/components/ui/Button";
-import { heroParallax, sectionTextRevealDark } from "@/config/animation";
+import type { CSSProperties } from "react";
+import { heroParallax, mobileBand, sectionTextRevealDark } from "@/config/animation";
 import type { careersHeroContent } from "@/content/careers";
 
 /**
@@ -35,7 +36,19 @@ export function CareersHero({ content }: CareersHeroProps) {
       data-bg-keep=""
       // `100dvh` tracks mobile browser chrome as it hides and shows; the
       // `h-screen` fallback covers browsers without dynamic viewport units.
-      className="sticky top-0 flex h-screen min-h-[40rem] items-center overflow-hidden bg-bg h-[100dvh]"
+      className="sticky top-0 flex h-screen min-h-[40rem] items-center overflow-hidden bg-bg h-[100dvh] max-tablet:pt-(--mh-band-top) max-tablet:pb-(--mh-band-bottom)"
+      // The band is laid over the section, not in it, so nothing about the
+      // centring below knows it is there. These reserve its worst-case height
+      // at each edge, so what the content is centred in is the gap between the
+      // two bands rather than the whole screen. Worst case and not the band's
+      // actual height because a band's rows are drawn per seed — see
+      // `mobileBand`.
+      style={
+        {
+          "--mh-band-top": `calc(var(--header-height) + ${mobileBand}px)`,
+          "--mh-band-bottom": `${mobileBand}px`,
+        } as CSSProperties
+      }
     >
       {/* One field rather than the home page's two: the content is ranged
           left, so the right half is the only side with room, and a matching
