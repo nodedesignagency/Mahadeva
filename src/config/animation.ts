@@ -253,18 +253,35 @@ export const heroParallax = {
  *
  * So the scroll is driven here instead, on the numbers below.
  *
- * They are the testimonial carousel's, and deliberately: the two rows carry
- * the same arrow buttons on purpose — see the note on them in Team.tsx — and a
- * control that looks identical and moves differently is the pair coming apart.
+ * The duration is the testimonial carousel's, and deliberately: the two rows
+ * carry the same arrow buttons on purpose — see the note on them in Team.tsx.
  * Written out rather than pointed at `testimonialCarousel.slide`, which is the
  * file's habit for two objects that share a value without being the same
  * thing, so retuning one row does not silently move the other.
+ *
+ * ── The curve is not that row's, and this is the whole of why ──────────────
+ *
+ * It was `--ease-case-hover` first, on the reasoning that the two carousels
+ * should match. Measured, that curve puts 7% of the distance in the first
+ * quarter of the time and 97% by the third: 175ms where the row does not
+ * visibly move, a burst through the middle, then a crawl. Flat ends are what
+ * you want under a crossfade, where having nothing happen at either end is the
+ * point. They are the opposite of what you want under cards a reader is
+ * watching travel — the stall reads as the press not registering and the burst
+ * reads as a jump, which is the complaint the 265ms browser default drew in
+ * the first place, arrived at from the other direction.
+ *
+ * So: `--ease-out`, which only decelerates. The card cards leave the moment
+ * the arrow is pressed and settle into place. This file already says it, three
+ * blocks down, about the strips on the front of one of these very cards — "a
+ * big thing to move and the eye follows it the whole way, so it wants to
+ * arrive rather than to stop."
  */
 export const teamRail = {
   /** Milliseconds for one card's advance. */
   slide: 700,
-  /** `--ease-case-hover`. Flat at both ends, steep through the middle. */
-  ease: [0.8, 0, 0.2, 1],
+  /** `--ease-out`. Away immediately, and decelerating the whole way in. */
+  ease: [0.33, 1, 0.68, 1],
 } as const;
 
 export const teamCard = {
