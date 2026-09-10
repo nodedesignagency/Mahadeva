@@ -804,6 +804,38 @@ body:has([data-page-surface="hero"])
     opacity var(--mh-tool-duration) var(--ease-case-hover);
 }
 
+/* On a touch screen none of the above applies: there is no hover to reveal the
+ * name, so the name is simply there, and the checkerboard and the rise that
+ * make room for it never run.
+ *
+ * Which left the pair sitting low. The mark's box is centred in the tile and
+ * the name is hung off the bottom of it, out of the flow — the right way round
+ * on a pointer, where the box lifts by --mh-tool-rise as the name fades in and
+ * the two end up centred together. With nothing lifting, the mark holds the
+ * exact middle and the name hangs below it: measured on a 390px phone, the
+ * visible pair sat 28px below the tile's centre, which is what reads as the
+ * tile's contents being off.
+ *
+ * So on touch the name goes back into the flow and the box becomes the column
+ * it already looks like. The tile is items-center justify-center already, so
+ * the pair is centred by the tile itself rather than by arithmetic here — no
+ * number to keep in step with the label's height, its leading or its padding.
+ *
+ * The label's own top margin survives as the gap between the two. Only the
+ * absolute positioning, and the half-width shift that went with it, are undone.
+ */
+@media (hover: none) {
+  .mh-tool-stack {
+    width: auto;
+    height: auto;
+    flex-direction: column;
+  }
+
+  .mh-tool-label {
+    position: static;
+    translate: none;
+  }
+}
 @media (hover: hover) {
   .mh-tool-block {
     display: block;
