@@ -291,11 +291,14 @@ export function Header() {
         inert={!open}
         className="desktop:hidden outline-none"
       >
-        {/* The list's own inset, and the gap above ABOUT. 20 rather than 32:
-            with the rows tightened the old inset was the one piece of spacing
-            still set to the larger scale, and it left the list sitting low
-            under the wordmark. */}
-        <Container className="py-5">
+        {/* The list's own inset, and the gap above ABOUT. 12 rather than the 32
+            it began at: with the rows tightened, this was the one piece of
+            spacing still set to the larger scale, and it left the list sitting
+            low under the wordmark. Taken down in two passes against the
+            owner's file, 32 to 20 to 12 — the row padding below it adds 16 of
+            its own before the text starts, so what a reader sees under the
+            wordmark is this plus that plus the label's half-leading. */}
+        <Container className="py-3">
           <nav aria-label="Mobile">
             <ul className="flex flex-col">
               {mainNav.map((item, i) => (
