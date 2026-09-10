@@ -239,6 +239,34 @@ export const heroParallax = {
  * Leaving reverses it, right strip first, so the picture closes the way it
  * opened rather than snapping back.
  */
+/**
+ * The team rail's advance, when an arrow is pressed.
+ *
+ * The rail is a scroll container rather than a translated track — that is what
+ * lets one piece of markup show four cards on a desktop, two on a tablet and
+ * one on a phone, and what lets a thumb swipe it. The cost is that handing the
+ * advance to `scrollBy({ behavior: "smooth" })` hands it to the browser, and
+ * the browser's own curve is not this site's: measured in Chromium, one card
+ * took 265ms on a generic ease, against 700 and a drawn bezier for every other
+ * move on the page. It was not that the rail failed to animate. It was that it
+ * animated like something else.
+ *
+ * So the scroll is driven here instead, on the numbers below.
+ *
+ * They are the testimonial carousel's, and deliberately: the two rows carry
+ * the same arrow buttons on purpose — see the note on them in Team.tsx — and a
+ * control that looks identical and moves differently is the pair coming apart.
+ * Written out rather than pointed at `testimonialCarousel.slide`, which is the
+ * file's habit for two objects that share a value without being the same
+ * thing, so retuning one row does not silently move the other.
+ */
+export const teamRail = {
+  /** Milliseconds for one card's advance. */
+  slide: 700,
+  /** `--ease-case-hover`. Flat at both ends, steep through the middle. */
+  ease: [0.8, 0, 0.2, 1],
+} as const;
+
 export const teamCard = {
   /**
    * Milliseconds for one strip's travel, on `--ease-out` — a curve that only

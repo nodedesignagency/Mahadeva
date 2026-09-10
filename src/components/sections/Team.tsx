@@ -10,7 +10,7 @@ import teamOlivia from "@public/uploads/images/team-8.avif";
 import teamRyan from "@public/uploads/images/team-7.avif";
 import teamSarah from "@public/uploads/images/team-2.avif";
 import teamSophia from "@public/uploads/images/team-5.avif";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 
@@ -21,9 +21,10 @@ import {
   LinkedInIcon,
   XIcon,
 } from "@/components/ui/BrandIcons";
-import { sectionTextRevealBeige, teamCard } from "@/config/animation";
+import { sectionTextRevealBeige, teamCard, teamRail } from "@/config/animation";
 import type { TeamPhoto, teamContent } from "@/content/about";
 import { cn } from "@/lib/cn";
+import { cubicBezier } from "@/lib/motion";
 
 /**
  * Meet The Team — four portraits on a rail, with arrows over it.
@@ -38,6 +39,11 @@ import { cn } from "@/lib/cn";
  * The ends are read back off the scroll position, so the arrows go dead at
  * each end the way the testimonial ones do rather than wrapping.
  *
+ * The advance itself is animated here rather than by the browser. See
+ * `teamRail`: `behavior: "smooth"` moved a card in 265ms on a curve of
+ * Chromium's choosing, which beside a page where everything travels for 700 on
+ * a drawn bezier read as the row jumping rather than moving.
+ *
  * A client component: it holds where the rail has been scrolled to.
  */
 
@@ -48,10 +54,31 @@ type TeamProps = {
 /** Column gap of the rail, px — half of one advance's arithmetic. */
 const GAP = 20;
 
+/** The advance's curve, solved once for the module rather than per press. */
+const ease = cubicBezier(teamRail.ease);
+
 export function Team({ content }: TeamProps) {
   const rail = useRef<HTMLUListElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
+  const reduced = useReducedMotion() ?? false;
+
+  /** The frame the advance in flight is waiting on, so a press can cancel it. */
+  const advance = useRef(0);
+
+  /**
+   * Where the advance in flight is heading, and null when none is.
+   *
+   * A press counts from here rather than from where the row has physically
+   * got to. Three quick presses are a request for three cards, and read off
+   * the live `scrollLeft` they were not getting it: each one started from a
+   * row that had barely begun moving, so the three of them together advanced
+   * one card and change. `scrollBy` was accumulating into the browser's own
+   * pending target, and this is that target kept by hand.
+   */
+  const heading = useRef<number | null>(null);
+
+  useEffect(() => () => cancelAnimationFrame(advance.current), []);
 
   /** One card plus its gap, from the rail's first child. */
   function step() {
@@ -60,7 +87,76 @@ export function Team({ content }: TeamProps) {
   }
 
   function scrollBy(direction: 1 | -1) {
-    rail.current?.scrollBy({ left: direction * step(), behavior: "smooth" });
+    const el = rail.current;
+    if (!el) return;
+
+    /**
+     * Clamped to what the rail can actually travel. Animating past the end
+     * would spend the back half of the curve assigning values the browser
+     * pins to the same pixel — the row would stop early and the easing would
+     * land nowhere near where it was drawn to.
+     */
+    const furthest = el.scrollWidth - el.clientWidth;
+    const from = heading.current ?? el.scrollLeft;
+    const to = Math.min(furthest, Math.max(0, from + direction * step()));
+
+    // Someone who asked for less motion gets the card, not the journey.
+    if (reduced) {
+      heading.current = null;
+      el.scrollLeft = to;
+      return;
+    }
+
+    // A press during an advance takes it over from wherever the row has got
+    // to, rather than queueing behind it or fighting it for the same pixels.
+    cancelAnimationFrame(advance.current);
+
+    /**
+     * Mandatory snapping resolves against every frame of a scroll driven from
+     * JS and hauls the row back to the nearest card mid-flight. Off for the
+     * advance and on again when it lands — the resting position is a snap
+     * point either way, so a swipe still snaps exactly as it did.
+     *
+     * Restored by whichever advance finishes: a press that interrupts this one
+     * turns it off again on its way in and puts it back on its own way out.
+     */
+    el.style.scrollSnapType = "none";
+    heading.current = to;
+
+    /**
+     * Started from where the row physically is, aimed at where the presses
+     * have asked for. An interrupted advance therefore carries on from the
+     * pixel it reached rather than jumping back to a card edge, while the
+     * destination still counts every press that was made.
+     *
+     * A frame loop rather than motion's `animate`: `scrollLeft` is not a
+     * property a CSS transition or a motion component can reach, and importing
+     * the imperative engine to tween one number pulled enough into the chunk
+     * graph to break the preview bundle. Twelve routes stopped opening in it
+     * while the site itself stayed perfectly fine — the failure AGENTS.md
+     * describes under "A route can be alive on the site and dead in the
+     * bundle". The curve is the site's either way; see `cubicBezier`.
+     */
+    const startedFrom = el.scrollLeft;
+    const startedAt = performance.now();
+
+    const frame = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / teamRail.slide);
+      el.scrollLeft = startedFrom + (to - startedFrom) * ease(progress);
+
+      if (progress < 1) {
+        advance.current = requestAnimationFrame(frame);
+        return;
+      }
+
+      advance.current = 0;
+      el.style.scrollSnapType = "";
+      // Cleared only by the advance that finishes: one taken over by a later
+      // press has already had this overwritten by it.
+      heading.current = null;
+    };
+
+    advance.current = requestAnimationFrame(frame);
   }
 
   /**

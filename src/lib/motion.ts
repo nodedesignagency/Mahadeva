@@ -39,6 +39,62 @@ export const durations = {
   transition: 0.7,
 } as const;
 
+/**
+ * A cubic-bezier as a function of progress: give it the four control points,
+ * get back `eased(t)` for t in 0..1.
+ *
+ * For the rare animation that cannot be a CSS transition or a motion component
+ * — a tween of `scrollLeft`, which is a property neither of those can reach —
+ * so that it still runs on one of the site's own curves rather than on
+ * whatever the browser would have chosen. The alternative was importing
+ * motion's imperative `animate`, which pulls the whole animation engine into
+ * the chunk graph; that is a large dependency for tweening one number, and it
+ * broke the preview bundle when it was tried.
+ *
+ * Newton-Raphson, falling back to bisection on the curves where it wanders —
+ * the standard solve, and exact to within a millionth over eight iterations,
+ * which is far finer than a pixel.
+ */
+export function cubicBezier([x1, y1, x2, y2]: readonly [number, number, number, number]) {
+  const cx = 3 * x1;
+  const bx = 3 * (x2 - x1) - cx;
+  const ax = 1 - cx - bx;
+  const cy = 3 * y1;
+  const by = 3 * (y2 - y1) - cy;
+  const ay = 1 - cy - by;
+
+  const atX = (t: number) => ((ax * t + bx) * t + cx) * t;
+  const atY = (t: number) => ((ay * t + by) * t + cy) * t;
+  const slope = (t: number) => (3 * ax * t + 2 * bx) * t + cx;
+
+  return (progress: number) => {
+    if (progress <= 0) return 0;
+    if (progress >= 1) return 1;
+
+    let t = progress;
+    for (let i = 0; i < 8; i++) {
+      const error = atX(t) - progress;
+      if (Math.abs(error) < 1e-6) return atY(t);
+      const d = slope(t);
+      if (Math.abs(d) < 1e-6) break;
+      t -= error / d;
+    }
+
+    // Newton left the interval; close in on it instead.
+    let low = 0;
+    let high = 1;
+    t = progress;
+    while (high - low > 1e-6) {
+      const x = atX(t);
+      if (Math.abs(x - progress) < 1e-6) break;
+      if (progress > x) low = t;
+      else high = t;
+      t = low + (high - low) / 2;
+    }
+    return atY(t);
+  };
+}
+
 /** Seconds between one child's entrance and the next. */
 export const stagger = { base: 0.08 } as const;
 
