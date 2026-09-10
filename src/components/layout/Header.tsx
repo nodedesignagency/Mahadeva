@@ -291,7 +291,11 @@ export function Header() {
         inert={!open}
         className="desktop:hidden outline-none"
       >
-        <Container className="py-8">
+        {/* The list's own inset, and the gap above ABOUT. 20 rather than 32:
+            with the rows tightened the old inset was the one piece of spacing
+            still set to the larger scale, and it left the list sitting low
+            under the wordmark. */}
+        <Container className="py-5">
           <nav aria-label="Mobile">
             <ul className="flex flex-col">
               {mainNav.map((item, i) => (
@@ -310,7 +314,7 @@ export function Header() {
                     // `text-current`, not a fixed colour: the overlay lives
                     // inside the header, so it wears whichever surface the
                     // header is on when it opens.
-                    className="mh-nav-item inline-block py-5 font-display text-nav-mobile uppercase text-current"
+                    className="mh-nav-item inline-block py-4 font-display text-nav-mobile uppercase text-current"
                     style={
                       {
                         "--mh-nav-item-from": `${

@@ -395,9 +395,14 @@
   --text-heading-lg: clamp(1.5rem, 1.3rem + 0.7vw, 1.75rem); /* 24 -> 28 */
   --text-heading-md: clamp(1.25rem, 1.15rem + 0.4vw, 1.375rem); /* 20 -> 22 */
   --text-heading-sm: 1.125rem; /* 18 */
-  /* Mobile nav links. Flat 24 at every width the overlay appears at, rather
-   * than heading-lg's clamp, which would reach 27 on a tablet. */
-  --text-nav-mobile: 1.5rem; /* 24 */
+  /* Mobile nav links. Flat at every width the overlay appears at, rather than
+   * heading-lg's clamp, which would grow it on a tablet.
+   *
+   * Was 24, which set the list a fifth larger than the owner's file and, with
+   * the row padding that went with it, ran the five links a long way down the
+   * screen. Measured off the phone: the label at 0.8 of the width ours drew,
+   * and the rows at 0.8 of the pitch. */
+  --text-nav-mobile: 1.2rem; /* 19.2 */
 
   --text-body-lg: 1.125rem; /* 18 */
   /* The case study meta row's values — client, timeline, services. Geist at a
