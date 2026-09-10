@@ -365,7 +365,25 @@
    * tablet breakpoint and exactly on 60 at the desktop one, rather than
    * drifting past them — the previous curve only reached 60px at ~1371px, so
    * a 1200px desktop got 55px where the design asks for 60. */
-  --text-display-xl: clamp(2.25rem, 1.442rem + 3.077vw, 3.75rem);
+  /**
+   * The floor is 2rem and not the 2.25 it was, because at 2.25 it was not a
+   * floor at all — it sat above the fluid curve for every width a phone has.
+   * The curve reaches 36 at about 420px, so every screen narrower than that
+   * was pinned at 36 and the scale simply stopped scaling where it was needed
+   * most.
+   *
+   * What that cost is the About statement, whose eight authored lines are each
+   * their own reveal block: a line too wide for the column wraps inside its
+   * block, the bars run across two visual lines, and the line-by-line reveal
+   * is gone. Measured at 360 with the section's padding already halved, three
+   * of the eight still wrapped.
+   *
+   * At 2rem the floor only takes over below about 290px, which is narrower
+   * than any phone still being sold, and between there and 420 the curve runs
+   * as it was drawn. Nothing at tablet width or above moves: the curve passes
+   * 36 long before then and reaches its 3.75rem cap at 1200 either way.
+   */
+  --text-display-xl: clamp(2rem, 1.442rem + 3.077vw, 3.75rem);
   /* Every other section heading: 32 -> 40 -> 48, solved the same way. */
   --text-display-lg: clamp(2rem, 1.461rem + 2.051vw, 3rem);
   /* 28 -> 32 -> 40 */

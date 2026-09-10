@@ -43,7 +43,17 @@ export function About({ content }: AboutProps) {
       // mark's own breakpoints, not the layout's: at 640 the mark grows from
       // 200 to 260 wide and its climb grows with it, so the section has to give
       // the heading below it that much more clearance or the two cross.
-      className="sticky top-0 z-10 bg-bg-white px-10 pt-20 pb-25 text-fg-on-light sm:pb-34 lg:pb-30"
+      // `px-5` on a phone, `px-10` from tablet up.
+      //
+      // 40 a side is the desktop inset, and on a phone it was costing the
+      // statement 80px of the little width there is — the site's own gutter is
+      // 20 at that size, so this section was holding its words in a column
+      // narrower than every other section's. The statement is eight authored
+      // lines, each its own reveal block, and a line that does not fit wraps
+      // inside its own block: the bars then run across two visual lines and
+      // the line-by-line reveal is gone. Measured at 360, six of the eight
+      // were wrapping.
+      className="sticky top-0 z-10 bg-bg-white px-0 pt-20 pb-25 text-fg-on-light tablet:px-10 sm:pb-34 lg:pb-30"
     >
       {/* A viewport tall on desktop, where the statement is the whole screen
           and the mark hangs out of the section rather than sitting in it.
@@ -51,7 +61,20 @@ export function About({ content }: AboutProps) {
           section open past its content, and centring splits the difference
           above and below, which is most of the empty stretch that used to sit
           between the mark and the heading underneath. */}
-      <Container className="relative flex flex-col items-center justify-center gap-10 px-0 lg:min-h-screen">
+      {/* The Container's own gutter is the inset here, and `px-0` used to be on
+          this line trying to cancel it. It never did: `px-gutter` is a custom
+          spacing key, the class merge does not recognise it as a padding-x
+          rule, and so both survived with the gutter winning. The section was
+          therefore paying its inset twice — its own 40 a side plus the
+          gutter's 21 — and on a 360px phone that left the statement a 278px
+          column for lines that need 298. Six of eight wrapped, and a wrapped
+          line takes its reveal bars across two visual rows.
+
+          So the doubling is gone rather than papered over: nothing here adds
+          horizontal padding below tablet, and the gutter is the measure, which
+          is what it is for. Above tablet the section keeps its own 40 and the
+          desktop inset is what it always was. */}
+        <Container className="relative flex flex-col items-center justify-center gap-10 lg:min-h-screen">
         <p className="flex items-center justify-center gap-2 text-body-md">
           <Image src={ornamentLeft} alt="" aria-hidden className="h-8 w-auto" />
           {content.eyebrow}
