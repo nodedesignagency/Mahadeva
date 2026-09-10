@@ -205,8 +205,28 @@ export const smoothScroll = {
 export const heroParallax = {
   /** Per the Framer panel. The climb below is derived from it. */
   speed: 1.2,
-  /** Total climb across the stack, as a share of the hero content's height. */
-  drift: "146%",
+  /**
+   * Total climb across the stack, as a share of the *viewport*.
+   *
+   * It was 146% — of the drifting element's own height — and that is what a
+   * scroll speed is not. Framer's 120% means the section's contents outrun the
+   * page by a fifth of however far it scrolled: one distance, in pixels, for
+   * everything in the section. A share of each element's own height gives a
+   * different distance to every element, which is fine while only one thing
+   * drifts and wrong the moment two have to keep station.
+   *
+   * They do have to. The pattern band is laid over the hero and the heading
+   * climbs underneath it, so the two converge unless they move as one — on a
+   * phone the heading reached the band about 250px into the scroll and went
+   * on through it. Sharing a percentage could not fix that, because a 66px
+   * band and a 328px block of text moving 146% of themselves move 96px and
+   * 479px.
+   *
+   * A viewport unit is the same distance for both, and it is also the closer
+   * reading of the original. 47vh is what the content already travelled: 146%
+   * of its 288px on the 900px window the drift was tuned at.
+   */
+  drift: "47vh",
 } as const;
 
 /**

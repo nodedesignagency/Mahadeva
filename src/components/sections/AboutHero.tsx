@@ -77,9 +77,24 @@ export function AboutHero({ content }: AboutHeroProps) {
           className="top-header"
         />
       </div>
-      <div className="contents tablet:hidden">
+      {/* The band drifts with the words, on the same range and the same
+          distance, so the two keep station instead of converging. Static, it
+          sat at the top of the screen while the heading climbed into it —
+          about 250px of scroll on a phone before they met. Only below tablet:
+          above it the side columns are what the section carries, and those do
+          not drift today.
+
+          `absolute inset-0` so the fields inside resolve against the same box
+          they did before — a transform makes this the containing block, and
+          the box is the section's. */}
+      <Parallax
+        drift={heroParallax.drift}
+        trackSelector="[data-scroll-stack]"
+        range="top"
+        className="absolute inset-0 tablet:hidden"
+      >
         <PatternField side="top" orientation="horizontal" className="top-header" />
-      </div>
+      </Parallax>
 
       {/* The section is pinned, so the drift tracks the stack around it —
           keyed to this section it would freeze for exactly the stretch it is
