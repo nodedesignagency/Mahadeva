@@ -4,6 +4,30 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+# Start here
+
+This is a commercial template. Whoever is reading this may have bought it an
+hour ago, so nothing here assumes prior knowledge of the codebase.
+
+Five documents. This is the one about **rules** — what breaks, and what not to
+touch. The others are about **where things are**:
+
+| Doc | Answers |
+| --- | --- |
+| [README.md](README.md) | What this project is, how to run it, what to change first |
+| [CONTENT.md](CONTENT.md) | Where every word and image on the site comes from |
+| [DESIGN.md](DESIGN.md) | The token system — colour, type, spacing, motion — and how to rebrand |
+| [RECIPES.md](RECIPES.md) | How to add a page, remove a section, change a font |
+| [SETUP.md](SETUP.md) | Connecting the CMS, and making the two forms send |
+
+**Almost every request lands in one of two places: `src/content/` for the
+words, `src/styles/theme.css` for the look.** No component hardcodes a colour,
+a size, a duration, a curve or a sentence. Look there before reading a
+component.
+
+What follows is the list of things that have already been got wrong in this
+codebase. Read the section covering whatever you are about to touch.
+
 # House rules
 
 Standing decisions for this project. They are here because each one has already
@@ -15,13 +39,13 @@ front of you.
 Every change lands on `main`. Not a feature branch, not a branch named after
 the session — `main`, committed and pushed there.
 
-The owner runs the site from one clone and updates it with one line:
+The site is run from one clone, updated with one line:
 
 ```
-cd ~/Documents/Mahadeva && git pull origin main && npm install && npm run dev
+git pull origin main && npm install && npm run dev
 ```
 
-Work parked on a branch is work they cannot see. Where a branch is genuinely
+Work parked on a branch is work the owner cannot see. Where a branch is genuinely
 wanted they will say so, and it is merged back to `main` as soon as it is
 done rather than left standing.
 
