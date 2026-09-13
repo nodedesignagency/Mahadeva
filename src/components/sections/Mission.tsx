@@ -227,7 +227,23 @@ export function Mission({ content }: MissionProps) {
                   past the foot and are clipped by the card's own overflow —
                   which is what took the bottom padding away. At 1.5 the
                   longest variant sits inside its 456 with room to spare. */}
-              <div className="flex flex-col gap-5 font-body text-body-md leading-[1.5] text-fg-on-light">
+              {/* Two sets, one shown. The phone gets the shorter copy — see
+                  `paragraphsMobile`, and the owner's mobile card variants,
+                  which drop the closing paragraph for the same reason: the
+                  card is a fixed frame that clips, so on a narrow screen the
+                  third paragraph does not scroll, it disappears.
+
+                  Hidden rather than swapped at runtime, so the markup is the
+                  same on the server and the client and neither set needs a
+                  measurement to decide. `display: none` also keeps the one
+                  that is not showing out of the accessibility tree, so nothing
+                  is read out twice. */}
+              <div className="flex flex-col gap-5 font-body text-body-md leading-[1.5] text-fg-on-light tablet:hidden">
+                {card.paragraphsMobile.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+              <div className="hidden flex-col gap-5 font-body text-body-md leading-[1.5] text-fg-on-light tablet:flex">
                 {card.paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}

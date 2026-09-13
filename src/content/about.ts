@@ -231,6 +231,22 @@ export const missionContent = {
         "Mahadeva was created to rethink how modern teams work with automation. Instead of adding more software, we focus on building smarter systems that support decisions, reduce friction, and help teams operate with greater speed and confidence.",
         "What began as focused automation work has evolved into an AI-first approach that helps companies design scalable systems, streamline operations, and create a stronger foundation for long-term growth.",
       ],
+      /**
+       * The phone's two, where the desktop has three.
+       *
+       * The card is one screen with a fixed frame, and on a phone the third
+       * paragraph is what pushes the words past its foot — the card clips its
+       * own overflow, so what that costs is not a scrollbar but the end of the
+       * sentence. The owner's mobile variants drop it for the same reason.
+       *
+       * The two that stay are the desktop's own first two, verbatim. Each
+       * paragraph is a whole thought, so a card that stops after the second
+       * reads as finished rather than cut off.
+       */
+      paragraphsMobile: [
+        "Businesses once operated with clear workflows and shared context across teams. Over time, simple processes were replaced by fragmented tools, manual coordination, and growing operational complexity that slowed execution and reduced clarity.",
+        "Mahadeva was created to rethink how modern teams work with automation. Instead of adding more software, we focus on building smarter systems that support decisions, reduce friction, and help teams operate with greater speed and confidence.",
+      ],
     },
     {
       heading: "Future Vision",
@@ -239,6 +255,10 @@ export const missionContent = {
         "Teams once worked with clarity because context was shared and decisions felt connected to real outcomes. Over time, growth introduced disconnected tools, layered processes, and operational complexity that made collaboration harder and slowed meaningful progress across organizations",
         "Our vision is to simplify how modern businesses operate through intelligent systems. By connecting workflows and automation, teams gain clarity, reduce operational friction, and stay aligned around shared goals.",
         "What started as focused automation initiatives has grown into a long-term vision of building AI-driven systems that help organizations scale sustainably and operate with greater efficiency.",
+      ],
+      paragraphsMobile: [
+        "Teams once worked with clarity because context was shared and decisions felt connected to real outcomes. Over time, growth introduced disconnected tools, layered processes, and operational complexity that made collaboration harder and slowed meaningful progress across organizations",
+        "Our vision is to simplify how modern businesses operate through intelligent systems. By connecting workflows and automation, teams gain clarity, reduce operational friction, and stay aligned around shared goals.",
       ],
     },
     {
@@ -249,10 +269,15 @@ export const missionContent = {
         "Our approach focuses on building systems instead of adding more layers. Automation should feel natural and supportive, allowing teams to work smarter while removing repetitive tasks from daily operations.",
         "What began as workflow automation projects has evolved into a proven method for designing AI-powered systems that connect operations, improve consistency, and help organizations scale with confidence.",
       ],
+      paragraphsMobile: [
+        "Businesses today face growing complexity as workflows spread across tools, teams, and manual processes. What once felt simple now requires constant coordination, making execution slower and creating unnecessary overhead that prevents teams from focusing on meaningful work.",
+        "Our approach focuses on building systems instead of adding more layers. Automation should feel natural and supportive, allowing teams to work smarter while removing repetitive tasks from daily operations.",
+      ],
     },
   ] satisfies readonly {
     heading: string;
     tone: MissionTone;
     paragraphs: readonly string[];
+    paragraphsMobile: readonly string[];
   }[],
 } as const;

@@ -78,6 +78,12 @@ export function BuyTemplate() {
         label's sweep is a gradient wider than the card, and the corners would
         otherwise show it running past them.
 
+        The top is 8 against the other three sides' 4. The file has 2 there,
+        and 2 is what looks wrong: the label's own line box carries its
+        descender space below the words, so an even inset reads as tight above
+        them and loose below. The extra 4 is optical, and it is the only number
+        here chosen by eye rather than read off a panel.
+
         The gap is 8, which is not a number in the file — the file's 10 sits
         between two children this build does not have. What it reproduces is
         the one measurement that decides the look: the 23px band the label
@@ -98,7 +104,7 @@ export function BuyTemplate() {
             "--mh-shimmer-light": "var(--color-fg-label)",
           } as CSSProperties
         }
-        className="flex w-40 flex-col gap-2 overflow-hidden rounded-[5px] bg-bg-white p-1 shadow-lg"
+        className="flex w-40 flex-col gap-2 overflow-hidden rounded-[5px] bg-bg-white p-1 pt-2 shadow-lg"
       >
         <p className={LABEL}>{label}</p>
         {button}
