@@ -1473,3 +1473,21 @@ export const formFeedback = {
  */
 export const mobileBand =
   patternField.horizontal.tracks * Math.max(...patternField.horizontal.thickness);
+
+/**
+ * The buy badge's label, and the light that travels across it.
+ *
+ * The owner builds this in Framer as a two-variant component cycling on a
+ * one-second appear loop. Here it is one element and a gradient that moves
+ * across it, which lands in the same place: a band of lighter ink sweeps the
+ * width of the words, and `alternate` walks it back the other way rather than
+ * jumping home, so a full there-and-back is two of these.
+ *
+ * The band is wider than the words and the gradient wider than the band, which
+ * is what keeps the highlight a passing thing rather than a stripe parked on
+ * the text at either end of its travel.
+ */
+export const buyBadgeShimmer = {
+  /** Milliseconds for one pass. One there, one back. */
+  duration: 1000,
+} as const;

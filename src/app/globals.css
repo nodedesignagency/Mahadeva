@@ -1196,3 +1196,53 @@ body:has([data-page-surface="hero"])
     transition-duration: 1ms;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * The buy badge's shimmering label
+ *
+ * A gradient clipped to the glyphs and slid across them. `background-clip:
+ * text` is what paints the sweep into the letters rather than behind them, and
+ * it needs the text's own colour out of the way — hence `transparent`, with
+ * the resting colour supplied by the gradient's own ends.
+ *
+ * The gradient is 250% of the box so the bright band is off one edge at each
+ * end of its travel; at 100% it would sit parked on the first and last words.
+ * `alternate` sends it back the way it came, which is the movement the owner's
+ * two variants describe between them.
+ * ------------------------------------------------------------------------- */
+.mh-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--mh-shimmer-base) 40%,
+    var(--mh-shimmer-light) 50%,
+    var(--mh-shimmer-base) 60%
+  );
+  background-size: 250% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: mh-shimmer var(--mh-shimmer-duration) ease-in-out infinite alternate;
+}
+
+@keyframes mh-shimmer {
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: 0% 50%;
+  }
+}
+
+/* A reader who asked for less motion gets the words, in ink, and no sweep. The
+ * base layer's blanket rule caps the animation at one iteration rather than
+ * stopping it, which would leave the gradient parked wherever it finished — so
+ * the clip is undone here instead and the label is simply text again. */
+@media (prefers-reduced-motion: reduce) {
+  .mh-shimmer {
+    animation: none;
+    background-image: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--mh-shimmer-base);
+  }
+}
