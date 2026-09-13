@@ -166,7 +166,11 @@ export function Trust({ content }: TrustProps) {
           {/* Broken where the file breaks it, not where the measure runs out:
               the caption sets this row's height beside the marquee, and a
               line more or less moves the marquee with it. */}
-          <p className="text-ink-dynamic flex shrink-0 flex-col font-body text-body-sm">
+          {/* Centred on a phone, where the caption sits above the marquee as
+              its own full-width block and a left edge has nothing to line up
+              with. From tablet up it is the left half of a row beside the
+              logos and ranges left, as the file has it. */}
+          <p className="text-ink-dynamic flex shrink-0 flex-col text-center font-body text-body-sm tablet:text-left">
             {content.logosCaptionLines.map((line) => (
               <span key={line}>{line}</span>
             ))}

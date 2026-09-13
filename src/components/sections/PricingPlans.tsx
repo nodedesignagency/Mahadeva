@@ -105,7 +105,12 @@ function PlanBody({ tone, children }: { tone: PlanTone; children: React.ReactNod
         // `flex-none` at desktop matters: `flex-1` sets flex-basis 0, which
         // wins over `height` in a column flex, so the fixed 368 would be
         // silently ignored. Below desktop `flex-1` is what equalises a row.
-        "grid flex-1 border-[3px] bg-bg-white p-6 max-tablet:gap-8 tablet:grid-cols-2 desktop:h-[368px] desktop:flex-none",
+        // Padding 20 and gap 40 on a phone, which is what the owner's mobile
+        // variant carries on this box. Ours had 24 and 32 — tighter between
+        // the halves than the file, and looser around them, so the card read
+        // as one denser block rather than two parts with air between.
+        // The tablet and desktop values are untouched.
+        "grid flex-1 border-[3px] bg-bg-white p-5 max-tablet:gap-10 tablet:p-6 tablet:grid-cols-2 desktop:h-[368px] desktop:flex-none",
         tones[tone].border,
       )}
     >
@@ -132,7 +137,11 @@ export function PricingPlans({ content }: PricingPlansProps) {
           <article key={plan.name} className="flex flex-col">
             <PlanHeader name={plan.name} tone={plan.tone} icon={plan.icon} />
             <PlanBody tone={plan.tone}>
-              {/* Price and pitch are one stack 28px apart, per the owner. */}
+              {/* Price and pitch are one stack 28px apart, and the button sits
+                  20 below that pair — both the owner's mobile numbers. The
+                  button's 20 is a phone value only: from tablet up `mt-auto`
+                  takes over and drops it to the foot of the column, which is
+                  what keeps the two cards' buttons on one line. */}
               <div className="flex flex-col tablet:pr-6">
                 <div className="flex flex-col gap-7">
                   {/* $ is Geist regular 24, the figure Geist Light 36, and
@@ -158,7 +167,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
                   href={plan.cta.href}
                   variant="plan"
                   withArrow
-                  className="mt-auto w-full max-tablet:mt-8"
+                  className="mt-auto w-full max-tablet:mt-5"
                 >
                   {plan.cta.label}
                 </Button>
@@ -199,7 +208,7 @@ export function PricingPlans({ content }: PricingPlansProps) {
               href={content.enterprise.cta.href}
               variant="plan"
               withArrow
-              className="mt-auto w-full max-tablet:mt-8"
+              className="mt-auto w-full max-tablet:mt-5"
             >
               {content.enterprise.cta.label}
             </Button>
