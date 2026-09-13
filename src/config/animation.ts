@@ -1491,3 +1491,23 @@ export const buyBadgeShimmer = {
   /** Milliseconds for one pass. One there, one back. */
   duration: 1000,
 } as const;
+
+/**
+ * An in-page jump — the careers hero's "See Openings", and any other link to a
+ * `#id` on the page it is already on.
+ *
+ * These were landing in a single frame. Nothing sets `scroll-behavior: smooth`,
+ * and setting it would not help: Lenis drives window scroll from its own frame
+ * loop, so a native smooth scroll and Lenis would be moving the same page at
+ * once. The jump is handed to Lenis instead, which is the thing that already
+ * owns scrolling here.
+ *
+ * One duration whatever the distance, rather than a speed. A link like this is
+ * a promise that the thing is further down the same page, and the point is to
+ * show the reader the ground between here and there — not to take a fixed time
+ * per thousand pixels, which makes a long jump feel like a stall.
+ */
+export const anchorScroll = {
+  /** Seconds for the travel. */
+  duration: 1.1,
+} as const;

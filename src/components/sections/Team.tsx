@@ -138,9 +138,22 @@ export function Team({ content }: TeamProps) {
      * bundle". The curve is the site's either way; see `cubicBezier`.
      */
     const startedFrom = el.scrollLeft;
-    const startedAt = performance.now();
+
+    /**
+     * The clock is the frame loop's own timestamp, taken on the first frame,
+     * rather than a `performance.now()` read beside it.
+     *
+     * Two reasons, and the second is the one that bites. Every later frame is
+     * measured against the same clock, so the elapsed time is exact rather
+     * than out by however long the browser waited before the first callback.
+     * And `performance.now()` is impure: called in a function declared in a
+     * component body, the lint rule for hook purity cannot tell that this one
+     * only ever runs from a click, and fails the build.
+     */
+    let startedAt = 0;
 
     const frame = (now: number) => {
+      if (startedAt === 0) startedAt = now;
       const progress = Math.min(1, (now - startedAt) / teamRail.slide);
       el.scrollLeft = startedFrom + (to - startedFrom) * ease(progress);
 
