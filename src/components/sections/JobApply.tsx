@@ -1,4 +1,5 @@
 import Image from "next/image";
+import contactQuoteMark from "@public/uploads/images/contact-quote-mark.avif";
 import quotePortrait from "@public/uploads/images/careers-quote-portrait.avif";
 
 import { Container } from "@/components/layout/Container";
@@ -54,28 +55,51 @@ export function JobApply({ content, role }: JobApplyProps) {
 
         <div className="mt-15 flex flex-col overflow-clip border border-border-on-light desktop:flex-row">
           {/* The quote half. */}
-          {/* 40 on every side, against the form's 20 — the quote is a block of
-              reading matter and wants the room; the fields want the width. */}
-          <div className="relative flex flex-col justify-between gap-10 bg-contact-panel p-10 desktop:w-1/2">
-            {/* The mark is the panel's decoration, not a character anyone
-                should hear read out — the quotation itself is already marked
-                up as one. Set rather than drawn: four bars of my own read as
-                organ pipes, where the typeface's own glyph is the shape the
-                design is actually showing.
+          {/* 40 on every side from the tablet up, against the form's 20 — the
+              quote is a block of reading matter and wants the room; the fields
+              want the width. 32 on a phone, which is the contact panel's own
+              phone inset: the mark is placed against the panel's corner rather
+              than against the type, so a wider gutter there leaves it stranded
+              out to the left of the line it belongs to.
 
-                `leading-none` puts the glyph's ink near the top of its own
-                box, which is what lets it sit this close to the panel's corner
-                — pulled any higher it is simply cut off by the panel's clip. */}
-            <span
+              Not that panel's `pr-5`, though. The short right gutter there is
+              for the logo rail to reach the edge, and this panel has no rail —
+              taking it would be copying a fix for a problem that is not here. */}
+          <div className="relative flex flex-col justify-between gap-10 bg-contact-panel p-8 desktop:w-1/2 tablet:p-10">
+            {/* The owner's mark, the same drawing and the same placement the
+                contact panel uses — one mark on the site, not a drawn one here
+                and the typeface's there. Set as a glyph this was four bars
+                that read as organ pipes, sat wholly inside the panel with the
+                quote starting well below it.
+
+                Decorative: the quotation is already marked up as one and a
+                screen reader should not hear it twice.
+
+                Big, and the quote's first line runs over its foot rather than
+                starting underneath it. That is the point of the size: one that
+                clears the type reads as a small ornament above the quote, and
+                this one reads as the corner the quote is set into.
+
+                Pulled above the panel's top edge so the tops of the commas are
+                cut off by it. Whole, the mark reads as a sticker laid on the
+                corner; cut, it reads as something the panel is a window onto.
+                The clip belongs to the wrapper, and this half's top is the
+                wrapper's top, so the cut lands on the edge — a pixel inside
+                it here, where the wrapper also carries a border. */}
+            <Image
+              src={contactQuoteMark}
+              alt=""
               aria-hidden="true"
-              className="pointer-events-none absolute top-1 left-6 select-none font-display text-[9rem] leading-none text-contact-mark tablet:top-2 tablet:left-8 tablet:text-[12rem]"
-            >
-              &ldquo;
-            </span>
+              className="pointer-events-none absolute -top-[22px] left-6 w-[86px] select-none tablet:-top-[30px] tablet:left-8 tablet:w-[115px]"
+            />
 
-            {/* The same measure as the description opposite it, and now the
-                same token rather than a literal that happens to match. */}
-            <blockquote className="relative pt-10 font-body text-body-lg leading-(--leading-prose) text-fg-on-light tablet:pt-14">
+            {/* The same measure as the description opposite it, and the same
+                token rather than a literal that happens to match.
+
+                No top padding: the type starts at the panel's own inset and
+                the mark comes down over it. `relative` keeps it above the
+                mark. */}
+            <blockquote className="relative font-body text-body-lg leading-(--leading-prose) text-fg-on-light">
               {`"${content.apply.quote.body}"`}
             </blockquote>
 
