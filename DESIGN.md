@@ -463,11 +463,14 @@ section, wrong for one that paints itself.
 There is a scratch route at **`/dev/tokens`** that renders swatches and the type
 scale on one page. It is `noindex` and excluded from the sitemap.
 
-It was written early, against an earlier draft of the token names, and several
-of the swatches it asks for no longer exist — `bg-subtle`, `accent-2`,
-`accent-3` and `display-2xl` were all renamed or removed, so those tiles render
-empty. Treat it as a scratch pad rather than a reference, and delete the route
-if you would rather not ship it:
+Every swatch on it names a token that exists — checked by reading the fill back
+off each element, not by trusting the class, because an empty tile on a page of
+tiles reads as a pale colour rather than a missing one. That is how it once
+carried three renamed tokens and a dropped type size without anyone noticing.
+Same rule if you add a row.
+
+It is a scratch pad rather than part of the site, so delete the route if you
+would rather not ship it:
 
 ```
 rm -rf src/app/\(site\)/dev
