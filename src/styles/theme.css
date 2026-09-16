@@ -527,7 +527,29 @@
    * because the file does give those separately. */
   --ease-in-out-soft: cubic-bezier(0.44, 0, 0.56, 1);
 
-  --ease-nav-hover: var(--ease-in-out-soft);
+  /* The nav's links, and the one place this file leaves the owner's panel.
+   *
+   * It carried `--ease-in-out-soft` with the rest, which is what Framer gives.
+   * An ease-in-out spends its first quarter covering about a tenth of the
+   * distance, though, and on the dark surface the two endpoints are white and
+   * full accent green — the longest travel any link on the site has. Measured
+   * at 400ms on that curve: 12% of the way at 100ms, still plainly white, then
+   * a rush through the middle. Pointing at a link and watching it hold white
+   * for a tenth of a second, then snap, is the whole of the complaint.
+   *
+   * On white and beige the same curve is invisible, because there the hover is
+   * `--color-fg-on-light-hover` — the ink the link already wears, softened to
+   * 75% — and there is nowhere to travel. Which is why this only ever showed
+   * itself in the footer and on a dark page.
+   *
+   * An ease-out instead: the colour leaves white on the first frame and
+   * settles into the green. The time is unchanged, and the dotted rule under
+   * the link rides the same clock, so the two still arrive together.
+   *
+   * Written out rather than pointing at `--ease-out`, on this file's own rule:
+   * that token moves the button's arrow, and retuning one should not silently
+   * move the other. */
+  --ease-nav-hover: cubic-bezier(0.33, 1, 0.68, 1);
   --duration-nav-hover: 400ms;
 
   /* The arrow swap — the buttons' icon boxes and the strategy-call card, where
