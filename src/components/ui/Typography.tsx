@@ -10,10 +10,17 @@ import { cn } from "@/lib/cn";
  * and ending up with a broken outline.
  */
 
+/**
+ * One entry per size in the scale, and every one has to name a `--text-*`
+ * token that exists. Tailwind generates a utility only for what is in
+ * `@theme`, so a size naming a token that was renamed or dropped compiles to
+ * nothing and the heading silently renders at whatever it inherits — which is
+ * what `display-2xl` did here until it was taken out.
+ */
 const headingSizes = {
-  "display-2xl": "text-display-2xl text-balance-display font-medium",
   "display-xl": "text-display-xl text-balance-display font-medium",
   "display-lg": "text-display-lg text-balance-display font-medium",
+  "display-md": "text-display-md text-balance-display font-medium",
   "heading-lg": "text-heading-lg font-medium",
   "heading-md": "text-heading-md font-medium",
   "heading-sm": "text-heading-sm font-medium",
@@ -37,7 +44,10 @@ export function Heading({
   className,
 }: HeadingProps) {
   return (
-    <Tag id={id} className={cn("font-display text-fg", headingSizes[size], className)}>
+    <Tag
+      id={id}
+      className={cn("font-display text-fg", headingSizes[size], className)}
+    >
       {children}
     </Tag>
   );
@@ -71,7 +81,11 @@ export function Text({
   className,
 }: TextProps) {
   return (
-    <Tag className={cn("font-body", textSizes[size], textTones[tone], className)}>{children}</Tag>
+    <Tag
+      className={cn("font-body", textSizes[size], textTones[tone], className)}
+    >
+      {children}
+    </Tag>
   );
 }
 
