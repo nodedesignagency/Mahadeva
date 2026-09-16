@@ -41,26 +41,38 @@ They already exist; nothing about the schema needs importing or configuring.
 Go to [sanity.io](https://www.sanity.io) and sign up. Google or GitHub is
 fastest. The free plan is enough for this site.
 
-## 2. Create a project
+## 2. Create a project and its two datasets
 
-In the terminal, from this folder:
+At [sanity.io/manage](https://www.sanity.io/manage), create a project and name
+it after your site. When it asks for a first dataset, name it `production` and
+set its visibility to **Public**.
+
+Then add the second one, where the blog lives: **Datasets** → **Add dataset**,
+named `blog`, **Public** again.
+
+Note the **project ID** on the project's overview page. It looks like
+`7k3n2p9x`, and it is there any time you need it again.
+
+**Both datasets have to be public**, and this is the one setting that will cost
+you an afternoon. The site reads them the way a visitor's browser does — with
+no token — so a private dataset answers with nothing, the fallback takes over,
+and you get the demo content back with no error anywhere to say why. It looks
+exactly like a project ID that did not take.
+
+Public here means readable, not editable. Nobody can change anything without
+logging in.
+
+The CLI does the same job, if you would rather:
 
 ```
 npx sanity login
-npx sanity init --create-project "Your Site Name" --dataset production
+npx sanity init --project-name "Your Site Name" --dataset production
+npx sanity dataset create blog --visibility public
 ```
 
 When it asks whether to add configuration files, say **no** — this project
-already has them.
-
-Then add the second dataset, which is where the blog lives:
-
-```
-npx sanity dataset create blog
-```
-
-Note the **project ID** it prints. It looks like `7k3n2p9x`. You can find it
-again any time at [sanity.io/manage](https://www.sanity.io/manage).
+already has them. Its prompts and flags move between versions, which is why the
+dashboard is the route written up first.
 
 ## 3. Add the project ID
 
@@ -195,12 +207,19 @@ At `/studio/blog`, or **Workspaces → Blog** from anywhere in the Studio, then
 
 **The site shows demo content after I set everything up.**
 The project ID is missing or wrong in the environment. On a deployed site,
-check the host's environment variables, not `.env.local`.
+check the host's environment variables, not `.env.local`, and check you
+redeployed after adding them.
+
+**The project ID is definitely right and it still shows demo content.**
+The dataset is private. `sanity.io/manage` → your project → **Datasets**. The
+site reads without a token, so a private dataset returns nothing and the
+fallback takes over — which looks identical to a missing project ID and is the
+easier of the two to overlook, because everything you typed was correct.
 
 **The case studies are mine but the blog is still the demo posts.**
-The `blog` dataset is missing, empty, or named something else. The site falls
-back to the demo posts whenever it cannot read any, and says so in the server
-log as `[blog] Sanity query failed`.
+The `blog` dataset is missing, empty, private, or named something else. The
+site falls back to the demo posts whenever it cannot read any, and says so in
+the server log as `[blog] Sanity query failed`.
 
 **`/studio` says the CMS is not connected.**
 `NEXT_PUBLIC_SANITY_PROJECT_ID` is not set. Restart the dev server after

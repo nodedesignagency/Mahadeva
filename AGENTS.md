@@ -60,9 +60,15 @@ that forgets it comes out with a white header.
 
 | Value | Use it when | Pages |
 | --- | --- | --- |
-| `dark` | The page is dark from the header down and the strip never flips. | Case studies, contact, 404 |
-| `hero` | A dark opening with light wrappers under it — the strip flips once, past the fold. | Home, about |
+| `dark` | The page is dark from the header down and the strip never flips. | Case studies and their index, contact, 404 |
+| `hero` | A dark opening with light wrappers under it — the strip flips once, past the fold. | Home, about, careers and a role, the blog index, both legal pages |
 | `beige` | The page's own beige runs to the top, so the strip reads as the top of the surface rather than a white band over it. | Pricing |
+| `light` | White the whole way down. | A blog post |
+
+`light` is the same strip a page that declares nothing gets, and that is the
+point of having it rather than leaving such a page silent: the rule is that
+every page says what it is, and a page that says nothing is indistinguishable
+from one that forgot.
 
 Setting `data-bg` on a section is a different thing and not a substitute: that
 drives the changing background *behind* the page. Both are usually needed.
