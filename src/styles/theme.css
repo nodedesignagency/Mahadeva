@@ -550,7 +550,25 @@
    * that token moves the button's arrow, and retuning one should not silently
    * move the other. */
   --ease-nav-hover: cubic-bezier(0.33, 1, 0.68, 1);
-  --duration-nav-hover: 400ms;
+
+  /* 200, against the panel's 400, and the reason is the accent rather than the
+   * curve.
+   *
+   * `--mh-green` is a pale green: 140 255 167, which is 115 of red and 88 of
+   * blue away from white and nothing at all in green. Half way between the two
+   * is rgb(198 255 211) — a tint almost nobody reads as green. So the opening
+   * half of this transition looks like nothing has happened no matter what
+   * curve carries it, and the only question is how long that half lasts.
+   *
+   * At the panel's 400 it lasted long enough to watch: the ease-out above took
+   * the white out of it by about 108ms, which is over the threshold where a
+   * delay stops being felt and starts being seen. Halved, the same curve gets
+   * there in 54, and the link reads as green the moment it is pointed at.
+   *
+   * The dotted rule is on this same token, so the two still arrive together.
+   * The owner's file says 0.4s and this is the one number taken off it — worth
+   * knowing if you are matching the original side by side. */
+  --duration-nav-hover: 200ms;
 
   /* The arrow swap — the buttons' icon boxes and the strategy-call card, where
    * one arrow leaves the box as another arrives. From the owner's Framer
