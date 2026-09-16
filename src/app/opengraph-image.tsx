@@ -69,8 +69,9 @@ export default async function Image() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- next/image
-              has no meaning here: this renders on a server with no browser. */}
+          {/* A raw <img>, and it has to be: this is drawn by ImageResponse on
+              the server, into a PNG. There is no browser and no document, so
+              next/image has nothing to optimise and nothing to hydrate. */}
           <img src={markSrc} alt="" width={385} height={60} />
           <div
             style={{
