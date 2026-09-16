@@ -527,48 +527,27 @@
    * because the file does give those separately. */
   --ease-in-out-soft: cubic-bezier(0.44, 0, 0.56, 1);
 
-  /* The nav's links, and the one place this file leaves the owner's panel.
+  /* The nav's links, straight off the owner's Framer panel: Ease In Out at
+   * bezier 0.44, 0, 0.56, 1 over 0.4s, white at rest and the accent on hover,
+   * with the rule under the link on the same clock.
    *
-   * It carried `--ease-in-out-soft` with the rest, which is what Framer gives.
-   * An ease-in-out spends its first quarter covering about a tenth of the
-   * distance, though, and on the dark surface the two endpoints are white and
-   * full accent green — the longest travel any link on the site has. Measured
-   * at 400ms on that curve: 12% of the way at 100ms, still plainly white, then
-   * a rush through the middle. Pointing at a link and watching it hold white
-   * for a tenth of a second, then snap, is the whole of the complaint.
+   * Both numbers were moved once and moved back. The complaint they were
+   * chasing — that a link holds white for a moment before it turns green —
+   * is real, and neither an ease-out nor half the time fixed it, because
+   * neither is the cause. `--mh-green` is 140 255 167: 115 of red and 88 of
+   * blue from white, and not one step of green. The half-way tint is
+   * rgb(198 255 211), which almost nobody reads as green, so the opening half
+   * of this fade looks like nothing has happened no matter what carries it.
+   * Faster only makes the whole thing brisker; it does not put the colour
+   * anywhere the eye catches it sooner.
    *
-   * On white and beige the same curve is invisible, because there the hover is
-   * `--color-fg-on-light-hover` — the ink the link already wears, softened to
-   * 75% — and there is nowhere to travel. Which is why this only ever showed
-   * itself in the footer and on a dark page.
-   *
-   * An ease-out instead: the colour leaves white on the first frame and
-   * settles into the green. The time is unchanged, and the dotted rule under
-   * the link rides the same clock, so the two still arrive together.
-   *
-   * Written out rather than pointing at `--ease-out`, on this file's own rule:
-   * that token moves the button's arrow, and retuning one should not silently
-   * move the other. */
-  --ease-nav-hover: cubic-bezier(0.33, 1, 0.68, 1);
-
-  /* 200, against the panel's 400, and the reason is the accent rather than the
-   * curve.
-   *
-   * `--mh-green` is a pale green: 140 255 167, which is 115 of red and 88 of
-   * blue away from white and nothing at all in green. Half way between the two
-   * is rgb(198 255 211) — a tint almost nobody reads as green. So the opening
-   * half of this transition looks like nothing has happened no matter what
-   * curve carries it, and the only question is how long that half lasts.
-   *
-   * At the panel's 400 it lasted long enough to watch: the ease-out above took
-   * the white out of it by about 108ms, which is over the threshold where a
-   * delay stops being felt and starts being seen. Halved, the same curve gets
-   * there in 54, and the link reads as green the moment it is pointed at.
-   *
-   * The dotted rule is on this same token, so the two still arrive together.
-   * The owner's file says 0.4s and this is the one number taken off it — worth
-   * knowing if you are matching the original side by side. */
-  --duration-nav-hover: 200ms;
+   * So it stays as the file has it. If the white moment is ever worth losing,
+   * the thing to change is the rule under the link — it fades in on hover
+   * here, and the panel has it on the base state as well, which would make
+   * hovering change one thing rather than two. That is the difference, not
+   * the curve. */
+  --ease-nav-hover: var(--ease-in-out-soft);
+  --duration-nav-hover: 400ms;
 
   /* The arrow swap — the buttons' icon boxes and the strategy-call card, where
    * one arrow leaves the box as another arrives. From the owner's Framer
